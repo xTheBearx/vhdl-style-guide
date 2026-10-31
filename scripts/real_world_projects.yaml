@@ -25,38 +25,7 @@ projects:
   - name: vunit
     url: https://github.com/VUnit/vunit.git
     commit: 6c2f49f0ec4c4e2a84013a987901c8fce848c654
-    known_issues:
-      # #74: continuation lines are aligned before the := moves
-      vunit/vhdl/verification_components/src/axi_slave_pkg.vhd: NOT_IDEMPOTENT
-      vunit/vhdl/verification_components/test/tb_avalon_stream.vhd: NOT_IDEMPOTENT
-      # #75: constant_400 puts the padding in the wrong place
-      docs/data_types/src/vunit_events/event_pkg.vhd: NOT_IDEMPOTENT
-      examples/vhdl/axi_dma/src/axi_pkg.vhd: NOT_IDEMPOTENT
-      examples/vhdl/axi_dma/src/axil_pkg.vhd: NOT_IDEMPOTENT
-      examples/vhdl/axi_dma/src/test/tb_axi_dma.vhd: NOT_IDEMPOTENT
-      examples/vhdl/uart/src/test/tb_uart_tx.vhd: NOT_IDEMPOTENT
-      vunit/vhdl/verification_components/src/memory_pkg.vhd: NOT_IDEMPOTENT
-      vunit/vhdl/verification_components/test/tb_avalon_master.vhd: NOT_IDEMPOTENT
-      vunit/vhdl/verification_components/test/tb_avalon_slave.vhd: NOT_IDEMPOTENT
-      vunit/vhdl/verification_components/test/tb_axi_lite_master.vhd: NOT_IDEMPOTENT
-      vunit/vhdl/verification_components/test/tb_axi_read_slave.vhd: NOT_IDEMPOTENT
-      vunit/vhdl/verification_components/test/tb_axi_slave_private_pkg.vhd: NOT_IDEMPOTENT
-      vunit/vhdl/verification_components/test/tb_wishbone_master.vhd: NOT_IDEMPOTENT
-      vunit/vhdl/verification_components/test/tb_wishbone_slave.vhd: NOT_IDEMPOTENT
-      # #76: end keyword and designator fixes in nested subprograms
-      vunit/vhdl/com/src/com_messenger.vhd: FIX_BROKE_PARSE
-      vunit/vhdl/logging/src/common_log_pkg-body.vhd: FIX_BROKE_PARSE
-      vunit/vhdl/logging/src/file_pkg.vhd: NOT_IDEMPOTENT
-      vunit/vhdl/string_ops/src/string_ops.vhd: NOT_IDEMPOTENT
-      vunit/vhdl/verification_components/src/axi_stream_master.vhd: FIX_BROKE_PARSE
-      vunit/vhdl/verification_components/src/memory_pkg-body.vhd: NOT_IDEMPOTENT
-      # #77: alignment in nested subprograms never settles
-      docs/blog/src/vunit_phases/phases_pkg.vhd: NOT_IDEMPOTENT
-      vunit/vhdl/check/src/check.vhd: NOT_IDEMPOTENT
-      vunit/vhdl/data_types/src/id_pkg.vhd: NOT_IDEMPOTENT
-      vunit/vhdl/logging/src/logger_pkg-body.vhd: NOT_IDEMPOTENT
-      # #80: qualified expression with a character literal in a loop range
-      vunit/vhdl/verification_components/test/tb_axi_stream.vhd: PARSE_ERROR
+    known_issues: {}
 
   - name: poc
     url: https://github.com/VLSI-EDA/PoC.git
