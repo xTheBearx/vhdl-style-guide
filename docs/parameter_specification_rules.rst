@@ -44,3 +44,26 @@ This rule checks the **in** keyword has proper case.
 .. code-block:: vhdl
 
    for lv_thing in t_thing loop
+
+parameter_specification_502
+###########################
+
+|phase_6| |error| |case| |case_name|
+
+This rule checks for consistent capitalization of loop and generate parameter names.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   GEN_LABEL : for I in t_index_range generate
+     DATA(i) <= INPUT(i);
+   end generate GEN_LABEL;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   GEN_LABEL : for I in t_index_range generate
+     DATA(I) <= INPUT(I);
+   end generate GEN_LABEL;
