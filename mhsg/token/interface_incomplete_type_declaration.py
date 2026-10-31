@@ -19,3 +19,12 @@ class identifier(parser.identifier):
 
     def __init__(self, sString):
         super().__init__(sString)
+
+
+class is_keyword(parser.keyword):
+    """
+    unique_id = interface_incomplete_type_declaration : is_keyword
+    """
+
+    def __init__(self, sString):
+        super().__init__(sString)
