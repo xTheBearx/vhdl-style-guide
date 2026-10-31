@@ -31,7 +31,13 @@ class rule_022(structure.Rule):
     :code:`no` sorts the whole generic list.
 
     .. NOTE:: This rule is disabled by default.
-       It only reports the expected order, because moving generics by hand keeps their comments where they belong.
+
+    By default the rule only reports the expected order.
+    Moving the generics of an entity changes what a direct instantiation with positional generic association connects to.
+    With :code:`move_generics` set to :code:`when_safe`, the generics of an entity are moved if no file of the run instantiates it directly with a positional generic association.
+    Instances in files that are not part of the run are not checked, and input from stdin is never moved.
+    Generics of components, packages and subprograms are only reported.
+    Generics are only moved if each declaration is on a line of its own; comments at the end of a line move with their generic.
 
     **Violation**
 
@@ -57,38 +63,81 @@ class rule_022(structure.Rule):
     def __init__(self):
         super().__init__()
         self.disable = True
-        self.fixable = False
         self.configuration_documentation_link = None
+        self.move_generics = "never"
+        self.configuration.append("move_generics")
         self.sort_within_sections = "yes"
         self.configuration.append("sort_within_sections")
 
     def _get_tokens_of_interest(self, oFile):
-        return oFile.get_tokens_bounded_by(token.generic_clause.open_parenthesis, token.generic_clause.close_parenthesis)
-
-    def _analyze(self, lToi):
         bWithinSections = utils.convert_yes_no_option_to_boolean(self.sort_within_sections)
-        for oToi in lToi:
+        lPositional = getattr(oFile.configuration, "project_positional_generic_entities", None)
+        lReturn = []
+        for oToi in ordered_list_utils.get_generic_clauses(oFile):
             lElements = get_elements(oToi)
+            lSplit = ordered_list_utils.get_interface_elements(oToi)
+            # The declaration of each generic, with its separator, comment and section
+            dSplit = {id(dElement): find_split_element(lSplit, dElement["index"]) for dElement in lElements}
             if bWithinSections:
-                lSections = ordered_list_utils.get_interface_elements(oToi)
                 dGroups = {}
                 for dElement in lElements:
-                    dGroups.setdefault(ordered_list_utils.get_section_of_index(lSections, dElement["index"]), []).append(dElement)
+                    dGroups.setdefault(dSplit[id(dElement)]["section"], []).append(dElement)
                 lGroups = [dGroups[iSection] for iSection in sorted(dGroups)]
             else:
                 lGroups = [lElements]
+            sKind, sName = ordered_list_utils.get_generic_context(oFile, oToi)
             for lGroup in lGroups:
-                self._check_order(oToi, lGroup)
+                lExpected = get_expected_order(lGroup)
+                if lExpected == lGroup:
+                    continue
+                lSplitGroup = [dSplit[id(dElement)] for dElement in lGroup]
+                lSplitExpected = [dSplit[id(dElement)] for dElement in lExpected]
+                sReason = self._reason_not_moved(sKind, sName, lPositional, lSplitGroup, lSplit, bWithinSections)
+                oGroup = ordered_list_utils.create_group_toi(oToi, lSplitGroup, lSplitExpected, sReason)
+                oGroup.get_meta_data("action")["order"] = [dElement["names"][0] for dElement in lExpected]
+                lReturn.append(oGroup)
+        return lReturn
 
-    def _check_order(self, oToi, lElements):
-        lExpected = get_expected_order(lElements)
-        for dActual, dExpected in zip(lElements, lExpected):
-            if dActual is not dExpected:
-                sOrder = ", ".join(dElement["names"][0] for dElement in lExpected)
-                sSolution = "Order generics alphabetically: " + sOrder
-                oViolation = violation.New(dActual["line"], oToi.extract_tokens(dActual["index"], dActual["index"]), sSolution)
-                self.add_violation(oViolation)
-                break
+    def _reason_not_moved(self, sKind, sName, lPositional, lGroup, lElements, bWithinSections):
+        if self.move_generics != "when_safe":
+            return "move_generics is never"
+        if sKind == "component":
+            return "generics of component declarations are not moved"
+        if sKind != "entity":
+            return "only generics of entities are moved"
+        if lPositional is None:
+            return "the instances of the entity are not known"
+        if sName.lower() in lPositional:
+            return "the entity is instantiated with positional generic association"
+        if not bWithinSections and len(ordered_list_utils.get_sections(lElements)) > 1:
+            return "the generics are separated by blank lines or comments"
+        for dElement in lGroup:
+            if not dElement["single_line"] or dElement["close_on_same_line"]:
+                return "a generic declaration is not on a line of its own"
+        return None
+
+    def _analyze(self, lToi):
+        for oToi in lToi:
+            dAction = oToi.get_meta_data("action")
+            sSolution = "Order generics alphabetically: " + ", ".join(dAction["order"])
+            if dAction["reason"] is not None:
+                sSolution += " (not moved: " + dAction["reason"] + ")"
+            oViolation = violation.New(oToi.get_meta_data("line"), oToi, sSolution)
+            oViolation.set_action(dAction)
+            self.add_violation(oViolation)
+
+    def _fix_violation(self, oViolation):
+        dAction = oViolation.get_action()
+        if dAction["reason"] is not None:
+            return
+        oViolation.set_tokens(ordered_list_utils.reorder(oViolation.get_tokens(), dAction["slots"], dAction["sources"]))
+
+
+def find_split_element(lSplit, iIndex):
+    for dElement in lSplit:
+        if dElement["start"] <= iIndex <= dElement["end"]:
+            return dElement
+    return None
 
 
 def get_elements(oToi):

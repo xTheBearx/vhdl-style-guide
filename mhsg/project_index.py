@@ -86,6 +86,7 @@ def get_type_names(sText):
 
 reEntityInstantiation = re.compile(r"\bentity\s+[a-z][a-z0-9_]*\s*\.\s*([a-z][a-z0-9_]*)", re.IGNORECASE)
 rePortMap = re.compile(r"\bport\s+map\s*\(", re.IGNORECASE)
+reGenericMap = re.compile(r"\bgeneric\s+map\s*\(", re.IGNORECASE)
 
 
 def read_files(lFilenames):
@@ -97,28 +98,30 @@ def read_files(lFilenames):
             continue
 
 
-def collect_positional_entity_instantiations(lFilenames):
+def collect_positional_entity_instantiations(lFilenames, sMap="port"):
     """
     Returns the lower case names of the entities which are instantiated directly
-    (entity lib.name) with at least one positional port association in the files.
-    Reordering the ports of such an entity would change what these instances connect.
+    (entity lib.name) with at least one positional association in their port map,
+    or their generic map if sMap is "generic", in the files.
+    Reordering the ports or generics of such an entity would change what these instances connect.
     """
     lReturn = set()
     for sText in read_files(lFilenames):
-        lReturn.update(get_positional_entity_instantiations(sText))
+        lReturn.update(get_positional_entity_instantiations(sText, sMap))
     return lReturn
 
 
-def get_positional_entity_instantiations(sText):
+def get_positional_entity_instantiations(sText, sMap="port"):
     sText = reComment.sub(" ", sText)
     sText = reString.sub('""', sText)
+    oMapPattern = reGenericMap if sMap == "generic" else rePortMap
     lReturn = set()
     for oMatch in reEntityInstantiation.finditer(sText):
         sStatement = get_statement(sText, oMatch.end())
-        oPortMap = rePortMap.search(sStatement)
-        if oPortMap is None:
+        oMap = oMapPattern.search(sStatement)
+        if oMap is None:
             continue
-        sAssociations = get_parenthesized(sStatement, oPortMap.end())
+        sAssociations = get_parenthesized(sStatement, oMap.end())
         if any("=>" not in sElement for sElement in split_top_level(sAssociations)):
             lReturn.add(oMatch.group(1).lower())
     return lReturn

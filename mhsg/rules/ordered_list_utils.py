@@ -267,3 +267,29 @@ def reorder(lTokens, lSlots, lSources):
             lReturn.append(dInsertAfter[iIndex])
         iIndex += 1
     return lReturn
+
+
+def get_generic_context(oFile, oToi):
+    """
+    Returns ("entity", name), ("component", name) or ("other", None) for a generic clause.
+    Only the declaration directly before the generic keyword counts, since generic clauses
+    also belong to packages and subprograms.
+    """
+    lTokens = oFile.lAllObjects
+    iIndex = oToi.get_start_index() - 1
+    lSkip = (parser.whitespace, parser.carriage_return, parser.blank_line, parser.comment, token.generic_clause.generic_keyword)
+    while iIndex >= 0 and isinstance(lTokens[iIndex], lSkip):
+        iIndex -= 1
+    if iIndex < 0:
+        return "other", None
+    oToken = lTokens[iIndex]
+    if isinstance(oToken, token.component_declaration.identifier):
+        return "component", oToken.get_value()
+    if isinstance(oToken, (token.entity_declaration.is_keyword, token.component_declaration.is_keyword)):
+        for iPrevious in range(iIndex - 1, -1, -1):
+            oPrevious = lTokens[iPrevious]
+            if isinstance(oPrevious, token.entity_declaration.identifier):
+                return "entity", oPrevious.get_value()
+            if isinstance(oPrevious, token.component_declaration.identifier):
+                return "component", oPrevious.get_value()
+    return "other", None

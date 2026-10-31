@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import copy
 import os
 import unittest
 
@@ -10,6 +11,14 @@ from tests import utils
 sTestDir = os.path.dirname(__file__)
 
 lFile, eError = vhdlFile.utils.read_vhdlfile(os.path.join(sTestDir, "rule_022_test_input.vhd"))
+
+lUnchanged = []
+lUnchanged.append("")
+utils.read_file(os.path.join(sTestDir, "rule_022_test_input.vhd"), lUnchanged)
+
+lExpected_when_safe = []
+lExpected_when_safe.append("")
+utils.read_file(os.path.join(sTestDir, "rule_022_test_input.fixed_when_safe.vhd"), lExpected_when_safe)
 
 
 class test_rule(unittest.TestCase):
@@ -23,12 +32,61 @@ class test_rule(unittest.TestCase):
         self.assertEqual(oRule.name, "generic")
         self.assertEqual(oRule.identifier, "022")
         self.assertTrue(oRule.disable)
-        self.assertFalse(oRule.fixable)
+        self.assertTrue(oRule.fixable)
+        self.assertEqual(oRule.move_generics, "never")
 
         lExpected = [28, 37]
 
         oRule.analyze(self.oFile)
         self.assertEqual(lExpected, utils.extract_violation_lines_from_violation_object(oRule.violations))
 
-        self.assertEqual(oRule.violations[0].sSolution, "Order generics alphabetically: G_DEPTH, G_WIDTH")
-        self.assertEqual(oRule.violations[1].sSolution, "Order generics alphabetically: G_ADDR_WIDTH, G_DEPTH, G_WIDTH")
+        self.assertEqual(oRule.violations[0].sSolution, "Order generics alphabetically: G_DEPTH, G_WIDTH (not moved: move_generics is never)")
+        self.assertEqual(oRule.violations[1].sSolution, "Order generics alphabetically: G_ADDR_WIDTH, G_DEPTH, G_WIDTH (not moved: move_generics is never)")
+
+    def _create_file(self, lPositional):
+        oFile = vhdlFile.vhdlFile(lFile)
+        oFile.configuration = copy.copy(oFile.configuration)
+        oFile.configuration.project_positional_generic_entities = lPositional
+        return oFile
+
+    def test_fix_rule_022_move_generics_never(self):
+        oRule = generic.rule_022()
+        oFile = self._create_file(set())
+
+        oRule.fix(oFile)
+
+        self.assertEqual(lUnchanged, oFile.get_lines())
+
+    def test_fix_rule_022_when_safe(self):
+        oRule = generic.rule_022()
+        oRule.move_generics = "when_safe"
+        oFile = self._create_file(set())
+
+        oRule.fix(oFile)
+
+        self.assertEqual(lExpected_when_safe, oFile.get_lines())
+
+        # The generics of the component are reported, but not moved
+        oRule.analyze(oFile)
+        self.assertEqual([37], utils.extract_violation_lines_from_violation_object(oRule.violations))
+        self.assertIn("generics of component declarations are not moved", oRule.violations[0].sSolution)
+
+    def test_fix_rule_022_entity_instantiated_by_position(self):
+        oRule = generic.rule_022()
+        oRule.move_generics = "when_safe"
+        oFile = self._create_file({"fifo3"})
+
+        oRule.fix(oFile)
+
+        self.assertEqual(lUnchanged, oFile.get_lines())
+        oRule.analyze(oFile)
+        self.assertIn("instantiated with positional generic association", oRule.violations[0].sSolution)
+
+    def test_fix_rule_022_instances_not_known(self):
+        oRule = generic.rule_022()
+        oRule.move_generics = "when_safe"
+        oFile = self._create_file(None)
+
+        oRule.fix(oFile)
+
+        self.assertEqual(lUnchanged, oFile.get_lines())

@@ -74,3 +74,14 @@ class test_port_orders(unittest.TestCase):
             dReturn = project_index.collect_port_orders(lFiles)
         self.assertIsNone(dReturn["entity"]["sub"])
         self.assertEqual(("z", "a"), dReturn["component"]["comp"])
+
+
+class test_positional_generic_instantiations(unittest.TestCase):
+    def test_get_positional_generic_instantiations(self):
+        sText = """
+        u1 : entity work.a generic map (8, G_B => 2) port map (x => y);
+        u2 : entity work.b generic map (G => 1) port map (x, y);
+        u3 : entity work.c port map (x, y);
+        """
+        self.assertEqual({"a"}, project_index.get_positional_entity_instantiations(sText, "generic"))
+        self.assertEqual({"b", "c"}, project_index.get_positional_entity_instantiations(sText))
