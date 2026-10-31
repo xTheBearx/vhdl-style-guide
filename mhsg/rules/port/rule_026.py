@@ -7,6 +7,7 @@ from mhsg.rule_group import structure
 from mhsg.token import (
     identifier_list,
     interface_list,
+    interface_signal_declaration,
     interface_unknown_declaration,
     port_clause as token,
 )
@@ -59,7 +60,7 @@ class rule_026(structure.Rule):
             lIdentifiers = []
             lIdentifierIndexes = []
             for iToken, oToken in enumerate(lTokens):
-                if isinstance(oToken, interface_unknown_declaration.identifier):
+                if isinstance(oToken, (interface_unknown_declaration.identifier, interface_signal_declaration.identifier)):
                     lIdentifiers.append(oToken.get_value())
                     lIdentifierIndexes.append(iToken)
 
@@ -70,6 +71,7 @@ class rule_026(structure.Rule):
             else:
                 dAction["last_element"] = True
             dAction["identifier_indexes"] = lIdentifierIndexes
+            dAction["prefix_end_index"] = lIdentifierIndexes[0]
             dAction["split_index"] = lIdentifierIndexes[-1] + 1
             oViolation = violation.New(oToi.get_line_number(), oToi, sSolution)
             oViolation.set_action(dAction)
@@ -84,6 +86,8 @@ class rule_026(structure.Rule):
         dAction = oViolation.get_action()
         for iIndex in dAction["identifier_indexes"]:
             lCopyTokens = duplicate_tokens(lTokens)
+            # Keep tokens before the first identifier, such as the signal keyword, on every declaration
+            lNewTokens.extend(lCopyTokens[: dAction["prefix_end_index"]])
             lNewTokens.append(lCopyTokens[iIndex])
 
             lNewTokens.extend(lCopyTokens[dAction["split_index"] :])
