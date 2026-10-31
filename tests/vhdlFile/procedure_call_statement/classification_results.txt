@@ -68,22 +68,63 @@
 14 |
 <class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-15 |     proc;
+15 |     proc(x"1", d"5", o"X");
 <class 'mhsg.token.procedure_call.procedure_name'>
+<class 'mhsg.token.procedure_call.open_parenthesis'>
+<class 'mhsg.token.bit_string_literal.base_specifier'>
+<class 'mhsg.token.bit_string_literal.bit_value_string'>
+<class 'mhsg.token.association_list.comma'>
+<class 'mhsg.token.bit_string_literal.base_specifier'>
+<class 'mhsg.token.bit_string_literal.bit_value_string'>
+<class 'mhsg.token.association_list.comma'>
+<class 'mhsg.token.bit_string_literal.base_specifier'>
+<class 'mhsg.token.bit_string_literal.bit_value_string'>
+<class 'mhsg.token.procedure_call.close_parenthesis'>
 <class 'mhsg.token.procedure_call_statement.semicolon'>
 --------------------------------------------------------------------------------
 16 |
 <class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-17 |   end process;
-<class 'mhsg.token.process_statement.end_keyword'>
-<class 'mhsg.token.process_statement.end_process_keyword'>
-<class 'mhsg.token.process_statement.semicolon'>
+17 |     proc;
+<class 'mhsg.token.procedure_call.procedure_name'>
+<class 'mhsg.token.procedure_call_statement.semicolon'>
 --------------------------------------------------------------------------------
 18 |
 <class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-19 | end architecture RTL;
+19 |     foo(c(bar(0)) & c(aBCD(0)));
+<class 'mhsg.token.procedure_call.procedure_name'>
+<class 'mhsg.token.procedure_call.open_parenthesis'>
+<class 'mhsg.token.association_element.actual_part'>
+<class 'mhsg.parser.open_parenthesis'>
+<class 'mhsg.token.association_element.actual_part'>
+<class 'mhsg.parser.open_parenthesis'>
+<class 'mhsg.token.association_element.actual_part'>
+<class 'mhsg.parser.close_parenthesis'>
+<class 'mhsg.parser.close_parenthesis'>
+<class 'mhsg.token.association_element.actual_part'>
+<class 'mhsg.token.association_element.actual_part'>
+<class 'mhsg.parser.open_parenthesis'>
+<class 'mhsg.token.association_element.actual_part'>
+<class 'mhsg.parser.open_parenthesis'>
+<class 'mhsg.token.association_element.actual_part'>
+<class 'mhsg.parser.close_parenthesis'>
+<class 'mhsg.parser.close_parenthesis'>
+<class 'mhsg.token.procedure_call.close_parenthesis'>
+<class 'mhsg.token.procedure_call_statement.semicolon'>
+--------------------------------------------------------------------------------
+20 |
+<class 'mhsg.parser.blank_line'>
+--------------------------------------------------------------------------------
+21 |   end process;
+<class 'mhsg.token.process_statement.end_keyword'>
+<class 'mhsg.token.process_statement.end_process_keyword'>
+<class 'mhsg.token.process_statement.semicolon'>
+--------------------------------------------------------------------------------
+22 |
+<class 'mhsg.parser.blank_line'>
+--------------------------------------------------------------------------------
+23 | end architecture RTL;
 <class 'mhsg.token.architecture_body.end_keyword'>
 <class 'mhsg.token.architecture_body.end_architecture_keyword'>
 <class 'mhsg.token.architecture_body.architecture_simple_name'>

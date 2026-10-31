@@ -39,12 +39,10 @@ def classify_until(lUntils, iToken, lObjects, oType=parser.todo):
             break
         elif lObjects[iCurrent].get_lower_value() in lUntils:
             if utils.token_is_close_parenthesis(iCurrent, lObjects):
-                if iOpenParenthesis == iCloseParenthesis:
-                    utils.assign_token(lObjects, iCurrent, parser.close_parenthesis)
-                    iCurrent += 1
-                    continue
-                else:
-                    break
+                # A close parenthesis ending the expression was handled above, so this one closes a nested parenthesis
+                utils.assign_token(lObjects, iCurrent, parser.close_parenthesis)
+                iCurrent += 1
+                continue
             elif utils.token_is_comma(iCurrent, lObjects):
                 if iOpenParenthesis == iCloseParenthesis:
                     break
@@ -56,11 +54,10 @@ def classify_until(lUntils, iToken, lObjects, oType=parser.todo):
         else:
             iPrevious = iCurrent
             for oToken in [external_name, bit_string_literal]:
-                iCurrent = oToken.detect(iCurrent, lObjects)
-                if iCurrent != iPrevious:
-                    continue
-            if iCurrent != iPrevious:
-                continue
-            utils.assign_special_tokens(lObjects, iCurrent, oType)
-            iCurrent += 1
+                if iPrevious == iCurrent:
+                    iCurrent = oToken.detect(iCurrent, lObjects)
+
+            if iPrevious == iCurrent:
+                utils.assign_special_tokens(lObjects, iCurrent, oType)
+                iCurrent += 1
     return iCurrent

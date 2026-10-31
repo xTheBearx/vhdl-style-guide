@@ -706,11 +706,11 @@
 <class 'mhsg.token.association_list.comma'>
 <class 'mhsg.parser.open_parenthesis'>
 <class 'mhsg.token.association_element.actual_part'>
-<class 'mhsg.parser.open_parenthesis'>
+<class 'mhsg.token.aggregate.open_parenthesis'>
 <class 'mhsg.token.association_element.actual_part'>
+<class 'mhsg.parser.comma'>
 <class 'mhsg.token.association_element.actual_part'>
-<class 'mhsg.token.association_element.actual_part'>
-<class 'mhsg.parser.close_parenthesis'>
+<class 'mhsg.token.aggregate.close_parenthesis'>
 <class 'mhsg.parser.close_parenthesis'>
 <class 'mhsg.token.relational_operator.equal'>
 <class 'mhsg.token.aggregate.open_parenthesis'>

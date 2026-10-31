@@ -20,6 +20,11 @@ lExpected_upper.append("")
 utils.read_file(os.path.join(sTestDir, "rule_500_test_input.fixed_upper.vhd"), lExpected_upper)
 
 
+lFile_association_and_choice, eError_association_and_choice = vhdlFile.utils.read_vhdlfile(
+    os.path.join(sTestDir, "rule_500_test_input.association_and_choice.vhd"),
+)
+
+
 class test_rule(unittest.TestCase):
     def setUp(self):
         self.oFile = vhdlFile.vhdlFile(lFile)
@@ -161,3 +166,13 @@ class test_rule(unittest.TestCase):
 
         oRule.analyze(self.oFile)
         self.assertEqual(oRule.violations, [])
+
+    def test_rule_500_association_and_choice(self):
+        # Issue VSG 1449: bit string literals in procedure call arguments, port map actuals and case choices were
+        # not checked.
+        self.assertIsNone(eError_association_and_choice)
+        oRule = bit_string_literal.rule_500()
+        oFile = vhdlFile.vhdlFile(lFile_association_and_choice)
+
+        oRule.analyze(oFile)
+        self.assertEqual([26, 26, 40, 48], utils.extract_violation_lines_from_violation_object(oRule.violations))

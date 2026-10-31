@@ -2,7 +2,7 @@
 
 from mhsg.token import association_element as token
 from mhsg.vhdlFile import utils
-from mhsg.vhdlFile.classify import formal_part
+from mhsg.vhdlFile.classify import expression, formal_part
 
 
 def detect(iCurrent, lObjects):
@@ -43,9 +43,7 @@ def classify(iStart, iEnd, lObjects, sEnd):
         iCurrent = utils.assign_next_token_required("=>", token.assignment, iCurrent, lObjects)
 
     # Classify actual part
-    for iCurrent in range(iCurrent, iEnd):
-        if utils.is_item(lObjects, iCurrent):
-            utils.assign_special_tokens(lObjects, iCurrent, token.actual_part)
+    iCurrent = expression.classify_until([sEnd], iCurrent, lObjects, token.actual_part)
 
     return iCurrent
 
