@@ -409,23 +409,14 @@ This rule checks the function designator exists in the closing of the function s
 function_100
 ############
 
-|phase_2| |error| |whitespace|
+This rule has been split into the following rules:
 
-This rule checks for a single space between the following function elements:  **function** keyword, function designator, open parenthesis, close parenthesis, **return** keyword, return type and **is** keyword.
-
-|configuring_whitespace_rules_link|
-
-**Violation**
-
-.. code-block:: vhdl
-
-   function     overflow    (a: integer)     return     integer    is
-
-**Fix**
-
-.. code-block:: vhdl
-
-   function overflow (a: integer) return integer is
+* :ref:`function_102`
+* :ref:`function_103`
+* :ref:`function_104`
+* :ref:`function_105`
+* :ref:`function_106`
+* :ref:`function_107`
 
 function_101
 ############
@@ -451,6 +442,132 @@ This rule checks for a single space between the **end** and **function** keyword
    end function overflow;
    end function;
    end overflow;
+
+function_102
+############
+
+|phase_2| |error| |whitespace|
+
+This rule checks for a single space between the **pure** or **impure** keyword and the **function** keyword.
+
+|configuring_whitespace_rules_link|
+
+**Violation**
+
+.. code-block:: vhdl
+
+   impure    function func_1 (
+
+**Fix**
+
+.. code-block:: vhdl
+
+   impure function func_1 (
+
+function_103
+############
+
+|phase_2| |error| |whitespace|
+
+This rule checks for a single space after the **function** keyword.
+
+|configuring_whitespace_rules_link|
+
+**Violation**
+
+.. code-block:: vhdl
+
+   function    func_1 (
+
+**Fix**
+
+.. code-block:: vhdl
+
+   function func_1 (
+
+function_104
+############
+
+|phase_2| |error| |whitespace|
+
+This rule checks for a single space between the function designator and the open parenthesis.
+
+|configuring_whitespace_rules_link|
+
+**Violation**
+
+.. code-block:: vhdl
+
+   function func_1    (
+
+**Fix**
+
+.. code-block:: vhdl
+
+   function func_1 (
+
+function_105
+############
+
+|phase_2| |error| |whitespace|
+
+This rule checks for a single space before the **return** keyword.
+
+|configuring_whitespace_rules_link|
+
+**Violation**
+
+.. code-block:: vhdl
+
+   )    return integer is
+
+**Fix**
+
+.. code-block:: vhdl
+
+   ) return integer is
+
+function_106
+############
+
+|phase_2| |error| |whitespace|
+
+This rule checks for a single space after the **return** keyword.
+
+|configuring_whitespace_rules_link|
+
+**Violation**
+
+.. code-block:: vhdl
+
+   ) return    integer is
+
+**Fix**
+
+.. code-block:: vhdl
+
+   ) return integer is
+
+function_107
+############
+
+|phase_2| |error| |whitespace|
+
+This rule checks for a single space before the **is** keyword.
+
+|configuring_whitespace_rules_link|
+
+**Violation**
+
+.. code-block:: vhdl
+
+   ) return integer    is
+
+**Fix**
+
+.. code-block:: vhdl
+
+   ) return integer is
 
 function_201
 ############

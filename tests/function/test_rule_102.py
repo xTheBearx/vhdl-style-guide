@@ -9,11 +9,11 @@ from tests import utils
 
 sTestDir = os.path.dirname(__file__)
 
-lFile, eError = vhdlFile.utils.read_vhdlfile(os.path.join(sTestDir, "rule_100_test_input.vhd"))
+lFile, eError = vhdlFile.utils.read_vhdlfile(os.path.join(sTestDir, "rule_102_test_input.vhd"))
 
 lExpected = []
 lExpected.append("")
-utils.read_file(os.path.join(sTestDir, "rule_100_test_input.fixed.vhd"), lExpected)
+utils.read_file(os.path.join(sTestDir, "rule_102_test_input.fixed.vhd"), lExpected)
 
 
 class test_rule(unittest.TestCase):
@@ -21,19 +21,20 @@ class test_rule(unittest.TestCase):
         self.oFile = vhdlFile.vhdlFile(lFile)
         self.assertIsNone(eError)
 
-    def test_rule_100(self):
-        oRule = function.rule_100()
+    def test_rule_102(self):
+        oRule = function.rule_102()
         self.assertTrue(oRule)
         self.assertEqual(oRule.name, "function")
-        self.assertEqual(oRule.identifier, "100")
+        self.assertEqual(oRule.identifier, "102")
+        self.assertEqual(oRule.groups, ["whitespace"])
 
-        lExpected = [30, 34, 38, 42, 46, 50, 54, 58, 62, 66, 70, 74, 78, 82, 86, 90, 94, 98, 102]
+        lExpected = [46, 66]
 
         oRule.analyze(self.oFile)
         self.assertEqual(lExpected, utils.extract_violation_lines_from_violation_object(oRule.violations))
 
-    def test_fix_rule_100(self):
-        oRule = function.rule_100()
+    def test_fix_rule_102(self):
+        oRule = function.rule_102()
 
         oRule.fix(self.oFile)
 
