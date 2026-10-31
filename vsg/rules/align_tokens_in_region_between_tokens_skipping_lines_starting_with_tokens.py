@@ -72,6 +72,7 @@ class align_tokens_in_region_between_tokens_skipping_lines_starting_with_tokens(
             bSkip = False
             iMaxColumn = 0
             iLeftColumn = 0
+            bEndGroupAtEndOfLine = False
             dAnalysis = {}
 
             for iIndex in range(0, len(lTokens)):
@@ -95,19 +96,24 @@ class align_tokens_in_region_between_tokens_skipping_lines_starting_with_tokens(
 
                     iColumn += alignment_utils.update_column_width(self, oToken)
 
-                if isinstance(oToken, token.generic_clause.semicolon) and self.separate_generic_port_alignment:
-                    alignment_utils.add_adjustments_to_dAnalysis(dAnalysis, self.compact_alignment)
-                    for iKey in list(dAnalysis.keys()):
-                        if dAnalysis[iKey]["adjust"] != 0:
-                            oLineTokens = oFile.get_tokens_from_line(iKey)
-                            sSolution = "Move " + str(dAnalysis[iKey]["adjust"]) + " columns"
-                            oViolation = violation.New(oLineTokens.get_line_number(), oLineTokens, sSolution)
-                            oViolation.set_action(dAnalysis[iKey])
-                            self.add_violation(oViolation)
+                if isinstance(oToken, (token.generic_clause.semicolon, token.generic_map_aspect.close_parenthesis)) and self.separate_generic_port_alignment:
+                    # A comment following the end of the generics on the same line belongs to the generic group
+                    if only_comment_follows_on_line(iIndex, lTokens):
+                        bEndGroupAtEndOfLine = True
+                    else:
+                        alignment_utils.add_adjustments_to_dAnalysis(dAnalysis, self.compact_alignment)
+                        for iKey in list(dAnalysis.keys()):
+                            if dAnalysis[iKey]["adjust"] != 0:
+                                oLineTokens = oFile.get_tokens_from_line(iKey)
+                                sSolution = "Move " + str(dAnalysis[iKey]["adjust"]) + " columns"
+                                oViolation = violation.New(oLineTokens.get_line_number(), oLineTokens, sSolution)
+                                oViolation.set_action(dAnalysis[iKey])
+                                self.add_violation(oViolation)
 
-                    dAnalysis = {}
+                        dAnalysis = {}
 
-                if isinstance(oToken, token.generic_map_aspect.close_parenthesis) and self.separate_generic_port_alignment:
+                if isinstance(oToken, parser.carriage_return) and bEndGroupAtEndOfLine:
+                    bEndGroupAtEndOfLine = False
                     alignment_utils.add_adjustments_to_dAnalysis(dAnalysis, self.compact_alignment)
                     for iKey in list(dAnalysis.keys()):
                         if dAnalysis[iKey]["adjust"] != 0:
@@ -212,3 +218,11 @@ def not_enough_tokens_to_align(oToi, lTokens):
     if rules_utils.number_of_tokens_from_token_list_in_token_list(lTokens, lTemp) < 2:
         return True
     return False
+
+
+def only_comment_follows_on_line(iIndex, lTokens):
+    return utils.are_next_consecutive_token_types([parser.whitespace, parser.comment], iIndex + 1, lTokens) or utils.are_next_consecutive_token_types(
+        [parser.comment],
+        iIndex + 1,
+        lTokens,
+    )
