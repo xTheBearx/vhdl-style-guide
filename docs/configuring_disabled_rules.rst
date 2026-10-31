@@ -89,6 +89,7 @@ Rules Disabled by Default
 * `process_029 <process_rules.html#process-029>`_
 * `process_036 <process_rules.html#process-036>`_
 * `process_600 <process_rules.html#process-600>`_
+* `selected_assignment_401 <selected_assignment_rules.html#selected-assignment-401>`_
 * `signal_008 <signal_rules.html#signal-008>`_
 * `signal_100 <signal_rules.html#signal-100>`_
 * `signal_200 <signal_rules.html#signal-200>`_
