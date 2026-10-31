@@ -158,3 +158,37 @@ class test_rule(unittest.TestCase):
 
         oRule.analyze(self.oFile)
         self.assertEqual(oRule.violations, [])
+
+
+lFileConditional, eErrorConditional = vhdlFile.utils.read_vhdlfile(os.path.join(sTestDir, "rule_010_test_input.conditional_assignment.vhd"))
+
+lExpectedConditional = []
+lExpectedConditional.append("")
+utils.read_file(os.path.join(sTestDir, "rule_010_test_input.conditional_assignment.fixed.vhd"), lExpectedConditional)
+
+
+class test_rule_conditional_assignment(unittest.TestCase):
+    def setUp(self):
+        self.oFile = vhdlFile.vhdlFile(lFileConditional)
+        self.assertIsNone(eErrorConditional)
+        self.oFile.set_indent_map(utils.read_indent_file())
+
+    def test_rule_010_ignores_comments_in_conditional_assignments(self):
+        oRule = comment.rule_010()
+
+        lExpected = [13, 28]
+
+        oRule.analyze(self.oFile)
+        self.assertEqual(lExpected, utils.extract_violation_lines_from_violation_object(oRule.violations))
+
+    def test_fix_rule_010_ignores_comments_in_conditional_assignments(self):
+        oRule = comment.rule_010()
+
+        oRule.fix(self.oFile)
+
+        lActual = self.oFile.get_lines()
+
+        self.assertEqual(lExpectedConditional, lActual)
+
+        oRule.analyze(self.oFile)
+        self.assertEqual(oRule.violations, [])
