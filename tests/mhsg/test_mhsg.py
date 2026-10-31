@@ -228,6 +228,16 @@ class testMhsg(unittest.TestCase):
         self.assertEqual(oResult.stdout, "")
         self.assertIn("--stdout requires --fix", oResult.stderr)
 
+    def test_local_rule_code_tag(self):
+        # A local rule sets its name after the base class is initialized; code tags must still use that name.
+        oResult = subprocess.run(
+            [*utils.mhsg_exec(), "-f", "tests/code_tags/local_rule_code_tag_input.vhd", "-of", "syntastic", "-lr", "tests/mhsg/local_rules"],
+            capture_output=True,
+            text=True,
+        )
+
+        self.assertNotIn("localized_001", oResult.stdout)
+
     def test_invalid_local_rule_directory(self):
         lExpected = [
             "ERROR: encountered FileNotFoundError, No such file or directory tests/mhsg/invalid_local_rule_directory when trying to open local rules file.",

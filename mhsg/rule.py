@@ -8,7 +8,6 @@ class Rule:
     def __init__(self):
         self.name = get_rule_name(self)
         self.identifier = get_rule_identifier(self)
-        self.unique_id = str(self.name) + "_" + str(self.identifier)
         self.solution = None
         self.violations = []
         self.had_violations = False
@@ -71,8 +70,17 @@ class Rule:
         dViolation["solution"] = violation.get_solution()
         return dViolation
 
+    @property
+    def unique_id(self):
+        # Computed on use, because local rules set their name after the base class is initialized
+        return str(self.name) + "_" + str(self.identifier)
+
+    @unique_id.setter
+    def unique_id(self, sUniqueId):
+        self.name, _, self.identifier = sUniqueId.rpartition("_")
+
     def get_unique_id(self):
-        return self.name + "_" + self.identifier
+        return self.unique_id
 
     def get_violations_at_linenumber(self, iLineNumber):
         """
