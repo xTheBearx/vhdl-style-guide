@@ -177,6 +177,37 @@ class testMhsg(unittest.TestCase):
 
         self.assertEqual(lActual, lExpected)
 
+    def test_multiple_local_rule_directories(self):
+        # Issue VSG 1175: rules are loaded from every directory, even when rule files share a name.
+        lExpected = [
+            "ERROR: tests/mhsg/entity_architecture.vhd(1)localized_001 -- Split entity and architecture into separate files.",
+            "ERROR: tests/mhsg/entity_architecture.vhd(1)second_001 -- Rule from a second local rule directory.",
+        ]
+
+        try:
+            subprocess.check_output(
+                [
+                    *utils.mhsg_exec(),
+                    "--style",
+                    "jcl",
+                    "-f",
+                    "tests/mhsg/entity_architecture.vhd",
+                    "-of",
+                    "syntastic",
+                    "-lr",
+                    "tests/mhsg/local_rules",
+                    "tests/mhsg/local_rules_2",
+                ],
+            )
+            iExitStatus = 0
+        except subprocess.CalledProcessError as e:
+            lActual = str(e.output.decode("utf-8")).splitlines()
+            iExitStatus = e.returncode
+
+        self.assertEqual(iExitStatus, 1)
+
+        self.assertEqual(lActual, lExpected)
+
     def test_invalid_local_rule_directory(self):
         lExpected = [
             "ERROR: encountered FileNotFoundError, No such file or directory tests/mhsg/invalid_local_rule_directory when trying to open local rules file.",

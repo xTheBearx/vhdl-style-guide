@@ -392,7 +392,7 @@ def update_command_line_arguments(commandLineArguments, configuration):
                 commandLineArguments.filename = glob_filenames(sFilename)
 
     if "local_rules" in configuration:
-        commandLineArguments.local_rules = utils.expand_filename(configuration["local_rules"])
+        commandLineArguments.local_rules = [utils.expand_filename(sDirectory) for sDirectory in get_local_rule_directories(configuration["local_rules"])]
 
 
 dPragmas = {}
@@ -483,3 +483,14 @@ class config:
         dConfig = None
         dFixOnly = None
         severity_list = None
+
+
+def get_local_rule_directories(local_rules):
+    """
+    Returns the local rule directories as a list, accepting a single directory or a list of directories.
+    """
+    if local_rules is None:
+        return []
+    if isinstance(local_rules, str):
+        return [local_rules]
+    return list(local_rules)

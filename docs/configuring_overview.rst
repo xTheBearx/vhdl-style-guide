@@ -118,6 +118,17 @@ local_rules
 Local rules can be defined on the command line or in a configuration file.
 If they are defined in both locations, the configuration will take precedence.
 
+Either a single directory or a list of directories can be given:
+
+.. code-block:: yaml
+
+   local_rules:
+     - $DIRECTORY_PATH_1
+     - $DIRECTORY_PATH_2
+
+The rules in every directory are loaded.
+Rule identifiers must be unique across all of the directories.
+
 rule
 ----
 
