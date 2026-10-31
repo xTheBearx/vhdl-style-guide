@@ -82,6 +82,21 @@ There are several options to these rules:
 
 The options can be combined to format the conditional expression or conditional waveform.
 
+.. NOTE:: Setting |align_when_keywords| to :code:`yes` adds spaces before :code:`when` keywords.
+   The rules that check for a single space before :code:`when` would then remove them on every :code:`--fix` run.
+   Configure those rules to allow more than one space:
+
+   .. code-block:: yaml
+
+      rule:
+        conditional_waveforms_100:
+          number_of_spaces: '>=1'
+        conditional_expressions_100:
+          number_of_spaces: '>=1'
+
+   :code:`conditional_waveforms_100` applies to concurrent_009 and sequential_401.
+   :code:`conditional_expressions_100` applies to variable_assignment_400.
+
 This is an example of how to configure these options.
 
 .. code-block:: yaml
