@@ -19,6 +19,9 @@ def check_for_case_violation(oToi, self, check_prefix=False, check_suffix=False,
     if self.name != "bit_string_literal" and does_not_contain_any_alpha_characters(sObjectValue):
         return None
 
+    elif regex_exception_found(sObjectValue, self):
+        return None
+
     elif case_exception_found(sObjectValue, self):
         oViolation = check_for_exception(sObjectValue, self, oToi, iIndex, iMyLine)
 
@@ -221,6 +224,20 @@ def check_for_prefix_and_suffix_exceptions(sObjectValue, self, oToi, iIndex, iLi
         sConstant = remove_suffix(sObjectValue, sActualSuffix)
 
     return fCheck(sObjectValue, sDesiredPrefix, sConstant, sDesiredSuffix, oToi, iIndex, iLine, self)
+
+
+def regex_exception_found(sObjectValue, self):
+    """
+    Returns True if the value matches one of the regex_exceptions, which are matched from the start of the value
+    and ignoring case.
+    """
+    lPatterns = getattr(self, "regex_exceptions", None)
+    if not lPatterns:
+        return False
+    for sPattern in lPatterns:
+        if re.match(sPattern, sObjectValue, re.IGNORECASE):
+            return True
+    return False
 
 
 def case_exception_found(sObjectValue, self):

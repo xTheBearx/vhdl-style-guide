@@ -44,4 +44,5 @@ class rule_010(token_case_in_range_bounded_by_tokens):
         self.configuration.append("prefix_exceptions")
         self.configuration.append("suffix_exceptions")
         self.configuration.append("case_exceptions")
+        self.configuration.append("regex_exceptions")
         self.groups.append("case::name")
