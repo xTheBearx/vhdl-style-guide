@@ -716,6 +716,7 @@ port_map_008: port_map_no_positional_ports
 port_map_009: port_map_one_assignment_per_line
 port_map_010: port_map_no_comments_at_end_of_assignments
 port_map_011: port_map_map_keyword_on_same_line_as_port
+port_map_012: port_map_association_order
 port_map_100: port_map_space_before_arrow
 port_map_101: port_map_space_between_port_and_map
 port_map_200: port_map_blank_line_below_open_parenthesis

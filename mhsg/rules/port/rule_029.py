@@ -4,7 +4,7 @@ import re
 
 from mhsg import violation
 from mhsg.rule_group import structure
-from mhsg.rules import port_clause_utils
+from mhsg.rules import ordered_list_utils
 
 
 class rule_029(structure.Rule):
@@ -58,8 +58,8 @@ class rule_029(structure.Rule):
 
     def _get_tokens_of_interest(self, oFile):
         lReturn = []
-        for oToi in port_clause_utils.get_port_clauses(oFile):
-            for lSection in port_clause_utils.get_sections(port_clause_utils.get_elements(oToi)):
+        for oToi in ordered_list_utils.get_port_clauses(oFile):
+            for lSection in ordered_list_utils.get_sections(ordered_list_utils.get_elements(oToi)):
                 dFirst = lSection[0]
                 oSection = oToi.extract_tokens(dFirst["start"], dFirst["start"])
                 # extract_tokens shares the meta data of oToi, and each section needs its own

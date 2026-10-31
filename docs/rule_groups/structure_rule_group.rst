@@ -136,6 +136,7 @@ Rules Enforcing Structure Rule Group
 * `port_map_009 <../port_map_rules.html#port-map-009>`_
 * `port_map_010 <../port_map_rules.html#port-map-010>`_
 * `port_map_011 <../port_map_rules.html#port-map-011>`_
+* `port_map_012 <../port_map_rules.html#port-map-012>`_
 * `procedure_012 <../procedure_rules.html#procedure-012>`_
 * `procedure_013 <../procedure_rules.html#procedure-013>`_
 * `procedure_014 <../procedure_rules.html#procedure-014>`_

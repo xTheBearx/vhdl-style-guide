@@ -325,6 +325,60 @@ Use explicit port mapping.
      OVERFLOW => OVERFLOW
    );
 
+port_map_012
+############
+
+|phase_1| |disabled| |error| |structure|
+
+Alias: :code:`port_map_association_order`
+
+This rule checks the order of the associations in port maps.
+
+.. NOTE:: This rule is disabled by default.
+
+The order is set by these options:
+
+* :code:`order`: :code:`declaration` (default) follows the order of the ports in the entity or component declaration.
+  :code:`name` sorts the associations by the name of their formal part.
+* :code:`sort_within_sections`: :code:`yes` (default) sorts each group of associations separated by a blank line or comment line on its own.
+  :code:`no` sorts the whole port map.
+
+The declaration is looked up in the file and in the other files of the run.
+A component instance uses the component declaration, or the entity of the same name if there is none.
+Port maps are not checked if the declaration is not known, if it is declared differently in several places, if a formal part is not one of its ports, or if they use positional association.
+Associations of the same port, such as :code:`data(0)` and :code:`data(1)`, keep their order.
+
+Moving named associations does not change what the instance connects, so the rule moves them if each association is on a line of its own.
+Comments at the end of a line move with their association.
+When port_028 moves the ports of an entity in another file, run the fix again so the port maps follow the new order.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   entity sub is
+     port (
+       clk  : in  std_logic;
+       data : out std_logic
+     );
+   end entity sub;
+
+   u_sub : entity work.sub
+     port map (
+       data => s_data,
+       clk  => clk
+     );
+
+**Fix**
+
+.. code-block:: vhdl
+
+   u_sub : entity work.sub
+     port map (
+       clk  => clk,
+       data => s_data
+     );
+
 port_map_100
 ############
 

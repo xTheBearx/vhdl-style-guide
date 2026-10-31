@@ -2,9 +2,9 @@
 
 import fnmatch
 
-from mhsg import parser, violation
+from mhsg import violation
 from mhsg.rule_group import structure
-from mhsg.rules import port_clause_utils
+from mhsg.rules import ordered_list_utils
 from mhsg.vhdlFile import utils
 
 lKeys = ["clock_reset", "direction", "name"]
@@ -85,11 +85,11 @@ class rule_028(structure.Rule):
         bWithinSections = utils.convert_yes_no_option_to_boolean(self.sort_within_sections)
         lPositional = getattr(oFile.configuration, "project_positional_entities", None)
         lReturn = []
-        for oToi in port_clause_utils.get_port_clauses(oFile):
-            lElements = port_clause_utils.get_elements(oToi)
-            sKind, sName = port_clause_utils.get_context(oFile, oToi)
+        for oToi in ordered_list_utils.get_port_clauses(oFile):
+            lElements = ordered_list_utils.get_elements(oToi)
+            sKind, sName = ordered_list_utils.get_context(oFile, oToi)
             if bWithinSections:
-                lGroups = port_clause_utils.get_sections(lElements)
+                lGroups = ordered_list_utils.get_sections(lElements)
             else:
                 lGroups = [lElements]
             for lGroup in lGroups:
@@ -97,7 +97,7 @@ class rule_028(structure.Rule):
                 if lExpected == lGroup:
                     continue
                 sReason = self._reason_not_moved(sKind, sName, lPositional, lGroup, lElements, bWithinSections)
-                lReturn.append(create_toi(oToi, lGroup, lExpected, sReason))
+                lReturn.append(ordered_list_utils.create_group_toi(oToi, lGroup, lExpected, sReason))
         return lReturn
 
     def _sort_key(self, dElement):
@@ -129,7 +129,7 @@ class rule_028(structure.Rule):
             return "the instances of the entity are not known"
         if sName.lower() in lPositional:
             return "the entity is instantiated with positional association"
-        if not bWithinSections and len(port_clause_utils.get_sections(lElements)) > 1:
+        if not bWithinSections and len(ordered_list_utils.get_sections(lElements)) > 1:
             return "the ports are separated by blank lines or comments"
         for dElement in lGroup:
             if not dElement["single_line"] or dElement["close_on_same_line"]:
@@ -150,7 +150,7 @@ class rule_028(structure.Rule):
         dAction = oViolation.get_action()
         if dAction["reason"] is not None:
             return
-        oViolation.set_tokens(reorder(oViolation.get_tokens(), dAction["slots"], dAction["sources"]))
+        oViolation.set_tokens(ordered_list_utils.reorder(oViolation.get_tokens(), dAction["slots"], dAction["sources"]))
 
 
 def direction_rank(sMode, lDirectionOrder):
@@ -162,71 +162,3 @@ def direction_rank(sMode, lDirectionOrder):
 
 def matches_any(sName, lPatterns):
     return any(fnmatch.fnmatchcase(sName.lower(), sPattern.lower()) for sPattern in lPatterns)
-
-
-def create_toi(oToi, lGroup, lExpected, sReason):
-    """
-    Returns the tokens of a group of ports.  Each port's position in the group is a slot:
-    the declaration in the first slot is replaced by the first declaration of the expected order, and so on.
-    """
-    iStart = lGroup[0]["start"]
-    iEnd = max(max(dElement["end"], dElement["separator"] or 0, dElement["comment"] or 0) for dElement in lGroup)
-    lSlots = []
-    for dElement in lGroup:
-        lSlots.append(
-            {
-                "start": dElement["start"] - iStart,
-                "end": dElement["end"] - iStart,
-                "separator": None if dElement["separator"] is None else dElement["separator"] - iStart,
-                "comment": None if dElement["comment"] is None else dElement["comment"] - iStart,
-            },
-        )
-    lSources = [lGroup.index(dElement) for dElement in lExpected]
-    iFirstMoved = next(i for i, dElement in enumerate(lGroup) if dElement is not lExpected[i])
-    oReturn = oToi.extract_tokens(iStart, iEnd)
-    # extract_tokens shares the meta data of oToi, and each group needs its own
-    oReturn.dMetaData = {}
-    oReturn.set_meta_data("line", lGroup[iFirstMoved]["line"])
-    oReturn.set_meta_data(
-        "action",
-        {
-            "order": [dElement["names"][0] for dElement in lExpected],
-            "reason": sReason,
-            "slots": lSlots,
-            "sources": lSources,
-        },
-    )
-    return oReturn
-
-
-def reorder(lTokens, lSlots, lSources):
-    """
-    Puts the declaration and end of line comment of port lSources[i] in slot i.
-    The semicolons, line breaks and indents stay where they are.
-    """
-    dSlotAtStart = {dSlot["start"]: iSlot for iSlot, dSlot in enumerate(lSlots)}
-    setSkip = set()
-    dInsertAfter = {}
-    for iSlot, dSlot in enumerate(lSlots):
-        iAnchor = dSlot["end"] if dSlot["separator"] is None else dSlot["separator"]
-        if dSlot["comment"] is not None:
-            # The original comment of the slot and the whitespace before it are replaced
-            setSkip.update(range(iAnchor + 1, dSlot["comment"] + 1))
-        dSource = lSlots[lSources[iSlot]]
-        if dSource["comment"] is not None:
-            dInsertAfter[iAnchor] = lTokens[dSource["comment"]]
-    lReturn = []
-    iIndex = 0
-    while iIndex < len(lTokens):
-        if iIndex in dSlotAtStart:
-            iSlot = dSlotAtStart[iIndex]
-            dSource = lSlots[lSources[iSlot]]
-            lReturn.extend(lTokens[dSource["start"] : dSource["end"] + 1])
-            iIndex = lSlots[iSlot]["end"]
-        elif iIndex not in setSkip:
-            lReturn.append(lTokens[iIndex])
-        if iIndex in dInsertAfter:
-            lReturn.append(parser.whitespace(" "))
-            lReturn.append(dInsertAfter[iIndex])
-        iIndex += 1
-    return lReturn
