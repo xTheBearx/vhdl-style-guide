@@ -142,7 +142,8 @@ class align_tokens_in_region_between_tokens_skipping_lines_starting_with_tokens(
                     if bSkip:
                         bSkip = False
 
-                    for oSkip in self.lSkip:
+                    # Lines continuing a delimited comment, /* ... */, are always skipped
+                    for oSkip in self.lSkip + [token.delimited_comment.text, token.delimited_comment.ending]:
                         if utils.are_next_consecutive_token_types([parser.whitespace, oSkip], iIndex + 1, lTokens) or utils.are_next_consecutive_token_types(
                             [oSkip],
                             iIndex + 1,
