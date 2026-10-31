@@ -147,3 +147,18 @@ class test_rule(unittest.TestCase):
         oRule.analyze(self.oFile)
         lExpected = [4]
         self.assertEqual(utils.extract_violation_lines_from_violation_object(oRule.violations), lExpected)
+
+    def test_rule_502_regex_exceptions(self):
+        # Issue VSG 1574: items imported from another file, such as upper case constants, can be excluded by pattern.
+        oFile = vhdlFile.vhdlFile(
+            [
+                "use work.my_package.C_WIDTH;",
+                "use work.my_package.c_depth;",
+                "use work.my_package.My_Function;",
+            ],
+        )
+        oRule = use_clause.rule_502()
+        oRule.regex_exceptions = ["c_"]
+
+        oRule.analyze(oFile)
+        self.assertEqual(utils.extract_violation_lines_from_violation_object(oRule.violations), [3])
