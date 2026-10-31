@@ -171,7 +171,8 @@ class vhdlFile:
     def update(self, lUpdates, bUpdateMap):
         if len(lUpdates) == 0:
             return
-        for oUpdate in lUpdates[::-1]:
+        # Updates are applied from the end of the file backwards, so earlier start indexes stay valid
+        for oUpdate in sorted(lUpdates, key=lambda oUpdate: oUpdate.oTokens.iStartIndex, reverse=True):
             iStart = oUpdate.oTokens.iStartIndex
             lTokens = oUpdate.get_tokens()
             iEnd = oUpdate.oTokens.iEndIndex
