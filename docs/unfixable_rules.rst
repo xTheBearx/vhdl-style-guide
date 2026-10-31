@@ -66,6 +66,7 @@ Addressing length issues requires the user to address.
 * `length_001 <length_rules.html#length-001>`_
 * `length_002 <length_rules.html#length-002>`_
 * `length_003 <length_rules.html#length-003>`_
+* `length_004 <length_rules.html#length-004>`_
 
 Missing Labels
 --------------
