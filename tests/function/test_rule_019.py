@@ -325,3 +325,12 @@ class test_rule(unittest.TestCase):
 
         oRule.analyze(self.oFile)
         self.assertEqual(oRule.violations, [])
+
+    def test_fix_rule_019_comment_before_close_paren(self):
+        # Issue VSG 1530: the close parenthesis and the rest of its line are placed before the comment.
+        oRule = function.rule_019()
+        oRule.last_close_paren = "remove_new_line"
+        oFile = vhdlFile.vhdlFile(["package p is", "  function f (", "    a : natural -- note", "  ) return natural;", "end package p;"])
+
+        oRule.fix(oFile)
+        self.assertEqual(["", "package p is", "  function f (", "    a : natural) return natural; -- note", "end package p;"], oFile.get_lines())

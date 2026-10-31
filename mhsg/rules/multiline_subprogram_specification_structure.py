@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import token
+from mhsg import parser, token
 from mhsg.rule_group import structure
-from mhsg.rules import check, fix, tokens_of_interest as toi, utils as rules_utils
+from mhsg.rules import check, fix, utils as rules_utils
 from mhsg.vhdlFile import utils
 
 
@@ -30,7 +30,15 @@ class multiline_subprogram_specification_structure(structure.Rule):
         self.configuration.append("ignore_single_line")
 
     def _get_tokens_of_interest(self, oFile):
-        return toi.get_tokens_bounded_by(self.lTokenPairs, oFile)
+        # Include the rest of the closing line, so a fix that joins lines can move a comment past it
+        lToi = []
+        for lTokenPair in self.lTokenPairs:
+            for oToi in oFile.get_tokens_bounded_by(lTokenPair[0], lTokenPair[1], bIncludeTillEndOfLine=True):
+                lTokens = oToi.get_tokens()
+                if isinstance(lTokens[-1], parser.carriage_return):
+                    oToi = oToi.extract_tokens(0, len(lTokens) - 2)
+                lToi.append(oToi)
+        return lToi
 
     def _analyze(self, lToi):
         for oToi in lToi:

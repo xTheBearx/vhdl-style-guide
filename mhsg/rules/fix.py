@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from mhsg import parser
 from mhsg.rules import utils as rules_utils
 from mhsg.vhdlFile import utils
 
@@ -10,6 +11,8 @@ def fix_violation(oViolation):
         add_new_line(oViolation)
     elif dAction["action"] == "remove_new_line":
         remove_new_line(oViolation)
+    elif dAction["action"] == "remove_new_line_before_comment":
+        remove_new_line_before_comment(oViolation)
     elif dAction["action"] == "add_new_line_and_remove_carriage_returns":
         add_new_line_and_remove_carriage_returns(oViolation)
 
@@ -30,6 +33,27 @@ def remove_new_line(oViolation):
     rules_utils.remove_leading_whitespace_tokens(lTokens)
     rules_utils.change_all_whitespace_to_single_character(lTokens)
     lNewTokens = utils.remove_trailing_whitespace(lTokens)
+    utils.fix_blank_lines(lNewTokens)
+    oViolation.set_tokens(lNewTokens)
+
+
+def remove_new_line_before_comment(oViolation):
+    """
+    Joins lines like remove_new_line, but keeps a comment from the joined line at the end of the resulting line.
+    """
+    lTokens = oViolation.get_tokens()
+    lComments = [oToken for oToken in lTokens if isinstance(oToken, parser.comment)]
+    if len(lComments) != 1:
+        # Joining would merge comments or place code inside one, so leave the code unchanged
+        return
+    lTokens = [oToken for oToken in lTokens if not isinstance(oToken, parser.comment)]
+    lTokens = utils.remove_carriage_returns_from_token_list(lTokens)
+    lTokens = utils.remove_consecutive_whitespace_tokens(lTokens)
+    rules_utils.remove_leading_whitespace_tokens(lTokens)
+    rules_utils.change_all_whitespace_to_single_character(lTokens)
+    lNewTokens = utils.remove_trailing_whitespace(lTokens)
+    lNewTokens.append(parser.whitespace(" "))
+    lNewTokens.append(lComments[0])
     utils.fix_blank_lines(lNewTokens)
     oViolation.set_tokens(lNewTokens)
 
