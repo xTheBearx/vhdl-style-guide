@@ -547,11 +547,43 @@ def _fix_assign_on_single_line(oViolation):
     dAction = oViolation.get_action()
     lNewTokens = []
     if dAction["action"] == "remove":
-        lNewTokens = utils.remove_carriage_returns_from_token_list(lTokens)
-        lNewTokens = utils.remove_comments_from_token_list(lNewTokens)
-        lNewTokens = utils.remove_consecutive_whitespace_tokens(lNewTokens)
+        lNewTokens = utils.remove_comments_from_token_list(lTokens)
+        lNewTokens = _join_lines(lNewTokens)
 
         oViolation.set_tokens(lNewTokens)
+
+
+def _join_lines(lTokens):
+    """
+    Removes the carriage returns from a list of tokens.  Each carriage return
+    and the whitespace around it, including the indent of the next line,
+    becomes a single space, or no space after an open parenthesis and before
+    a close parenthesis, comma or semicolon.
+    """
+    lReturn = []
+    bLineBreak = False
+    for oToken in lTokens:
+        if isinstance(oToken, parser.carriage_return):
+            bLineBreak = True
+            while len(lReturn) > 0 and isinstance(lReturn[-1], parser.whitespace):
+                lReturn.pop()
+            continue
+        if isinstance(oToken, parser.whitespace) and bLineBreak:
+            continue
+        if bLineBreak:
+            bLineBreak = False
+            if _space_between(lReturn, oToken):
+                lReturn.append(parser.whitespace(" "))
+        lReturn.append(oToken)
+    return utils.remove_consecutive_whitespace_tokens(lReturn)
+
+
+def _space_between(lTokens, oNext):
+    if len(lTokens) == 0:
+        return False
+    if isinstance(lTokens[-1], parser.open_parenthesis):
+        return False
+    return not isinstance(oNext, (parser.close_parenthesis, parser.comma, parser.semicolon))
 
 
 def _inside_others_clause(iToken, lTokens):
