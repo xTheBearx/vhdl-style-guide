@@ -124,6 +124,8 @@ def get_token_of_interest_dicts(
         lEntityDicts = get_entity_declaration_indexes(oFile)
 
     lComponentDicts = get_component_declaration_indexes(oFile)
+    lPackageDicts = get_package_declaration_indexes(oFile)
+    lPackageBodyDicts = get_package_body_indexes(oFile)
 
     lAllDicts = merge_dict_lists(lArchitectureDicts, lProcessDicts)
     lAllDicts = merge_dict_lists(lAllDicts, lSubprogramBodyDicts)
@@ -131,6 +133,8 @@ def get_token_of_interest_dicts(
     lAllDicts = merge_dict_lists(lAllDicts, lComponentDicts)
     if bIncludeEntityDeclarations:
         lAllDicts = merge_dict_lists(lAllDicts, lEntityDicts)
+    lAllDicts = merge_dict_lists(lAllDicts, lPackageDicts)
+    lAllDicts = merge_dict_lists(lAllDicts, lPackageBodyDicts)
 
     lAllDicts = populate_identifiers(lAllDicts, Identifiers)
     if bIncludeDeclarativePartNames:
@@ -168,7 +172,40 @@ def get_token_of_interest_dicts(
         lAllDicts = remove_duplicate_identifiers("architecture_body", "entity_declaration", lAllDicts)
         lAllDicts = remove_duplicate_names("architecture_body", "entity_declaration", lAllDicts)
 
+    # A package body sees the declarations of its package, and the subprograms in it see both
+    lAllDicts = remove_duplicate_identifiers("package_body", "subprogram_body", lAllDicts)
+    lAllDicts = remove_duplicate_names("package_body", "subprogram_body", lAllDicts)
+    lAllDicts = add_package_identifiers_to_package_body(lAllDicts)
+    lAllDicts = add_identifiers_from_to("package_body", "subprogram_body", lAllDicts)
+
     return lAllDicts
+
+
+def add_package_identifiers_to_package_body(lAllDicts):
+    for dBody in lAllDicts:
+        if not type_matches(dBody, "package_body"):
+            continue
+        for dPackage in lAllDicts:
+            if type_matches(dPackage, "package_declaration") and dPackage["identifier"] == dBody["identifier"]:
+                dBody["identifiers"].extend(dPackage["identifiers"])
+    return lAllDicts
+
+
+def get_package_declaration_indexes(oFile):
+    lKeywords = get_indexes_of_token(oFile, token.package_declaration.package_keyword)
+    lIdentifiers = [oFile.lAllObjects[iIndex].get_value().lower() for iIndex in get_indexes_of_token(oFile, token.package_declaration.identifier)]
+    lEnd = get_indexes_of_token(oFile, token.package_declaration.end_keyword)
+
+    # A package has no statement part, so all of it is the declarative part
+    return merge_four_indexes_into_list(lKeywords, lIdentifiers, lEnd, lEnd, "package_declaration")
+
+
+def get_package_body_indexes(oFile):
+    lKeywords = get_indexes_of_token(oFile, token.package_body.package_keyword)
+    lIdentifiers = [oFile.lAllObjects[iIndex].get_value().lower() for iIndex in get_indexes_of_token(oFile, token.package_body.package_simple_name)]
+    lEnd = get_indexes_of_token(oFile, token.package_body.end_keyword)
+
+    return merge_four_indexes_into_list(lKeywords, lIdentifiers, lEnd, lEnd, "package_body")
 
 
 def create_tois(lAllDicts, oFile):

@@ -43,3 +43,36 @@ class test_rule(unittest.TestCase):
 
         oRule.analyze(self.oFile)
         self.assertEqual(oRule.violations, [])
+
+
+lFilePackage, eErrorPackage = vhdlFile.utils.read_vhdlfile(os.path.join(sTestDir, "rule_013_test_input.package.vhd"))
+
+lExpectedPackage = []
+lExpectedPackage.append("")
+utils.read_file(os.path.join(sTestDir, "rule_013_test_input.package.fixed.vhd"), lExpectedPackage)
+
+
+class test_rule_package(unittest.TestCase):
+    def setUp(self):
+        self.oFile = vhdlFile.vhdlFile(lFilePackage)
+        self.assertIsNone(eErrorPackage)
+
+    def test_rule_013_package(self):
+        oRule = constant.rule_013()
+
+        lExpected = [5, 11, 17, 17, 17]
+
+        oRule.analyze(self.oFile)
+        self.assertEqual(lExpected, utils.extract_violation_lines_from_violation_object(oRule.violations))
+
+    def test_fix_rule_013_package(self):
+        oRule = constant.rule_013()
+
+        oRule.fix(self.oFile)
+
+        lActual = self.oFile.get_lines()
+
+        self.assertEqual(lExpectedPackage, lActual)
+
+        oRule.analyze(self.oFile)
+        self.assertEqual(oRule.violations, [])
