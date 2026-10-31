@@ -18,6 +18,15 @@ lExpected.append("")
 utils.read_file(os.path.join(sTestDir, "rule_410_test_input.fixed.vhd"), lExpected)
 
 
+lFile_parameter_on_procedure_line, eError_parameter_on_procedure_line = vhdlFile.utils.read_vhdlfile(
+    os.path.join(sTestDir, "rule_410_test_input.parameter_on_procedure_line.vhd"),
+)
+
+lExpected_parameter_on_procedure_line = []
+lExpected_parameter_on_procedure_line.append("")
+utils.read_file(os.path.join(sTestDir, "rule_410_test_input.parameter_on_procedure_line.fixed.vhd"), lExpected_parameter_on_procedure_line)
+
+
 class test_rule(unittest.TestCase):
     def setUp(self):
         self.oFile = vhdlFile.vhdlFile(lFile)
@@ -46,3 +55,16 @@ class test_rule(unittest.TestCase):
 
         oRule.analyze(self.oFile)
         self.assertEqual(oRule.violations, [])
+
+    def test_fix_rule_410_parameter_on_procedure_line(self):
+        # Issue VSG 1583: with the first parameter on the procedure line, the fix padded the procedure name.
+        self.assertIsNone(eError_parameter_on_procedure_line)
+        oRule = procedure.rule_410()
+        oFile = vhdlFile.vhdlFile(lFile_parameter_on_procedure_line)
+
+        oRule.analyze(oFile)
+        self.assertEqual([6, 7], utils.extract_violation_lines_from_violation_object(oRule.violations))
+
+        oRule = procedure.rule_410()
+        oRule.fix(oFile)
+        self.assertEqual(lExpected_parameter_on_procedure_line, oFile.get_lines())
