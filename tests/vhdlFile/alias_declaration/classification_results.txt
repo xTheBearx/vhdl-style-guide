@@ -207,13 +207,49 @@
 24 |
 <class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-25 | begin
-<class 'mhsg.token.architecture_body.begin_keyword'>
+25 |   alias alias_sop : std_logic is << signal .tb_top.submodule.i_rx_data : t_mac_interface >> .sop;
+<class 'mhsg.token.alias_declaration.alias_keyword'>
+<class 'mhsg.token.alias_declaration.alias_designator'>
+<class 'mhsg.token.alias_declaration.colon'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.alias_declaration.is_keyword'>
+<class 'mhsg.token.external_signal_name.double_less_than'>
+<class 'mhsg.token.external_signal_name.signal_keyword'>
+<class 'mhsg.token.external_signal_name.external_pathname'>
+<class 'mhsg.token.external_signal_name.colon'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.external_signal_name.double_greater_than'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.alias_declaration.semicolon'>
 --------------------------------------------------------------------------------
 26 |
 <class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-27 | end architecture RTL;
+27 |   alias alias_sop : std_logic is <<signal .tb_top.submodule.i_rx_data : t_mac_interface>>.sop;
+<class 'mhsg.token.alias_declaration.alias_keyword'>
+<class 'mhsg.token.alias_declaration.alias_designator'>
+<class 'mhsg.token.alias_declaration.colon'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.alias_declaration.is_keyword'>
+<class 'mhsg.token.external_signal_name.double_less_than'>
+<class 'mhsg.token.external_signal_name.signal_keyword'>
+<class 'mhsg.token.external_signal_name.external_pathname'>
+<class 'mhsg.token.external_signal_name.colon'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.external_signal_name.double_greater_than'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.alias_declaration.semicolon'>
+--------------------------------------------------------------------------------
+28 |
+<class 'mhsg.parser.blank_line'>
+--------------------------------------------------------------------------------
+29 | begin
+<class 'mhsg.token.architecture_body.begin_keyword'>
+--------------------------------------------------------------------------------
+30 |
+<class 'mhsg.parser.blank_line'>
+--------------------------------------------------------------------------------
+31 | end architecture RTL;
 <class 'mhsg.token.architecture_body.end_keyword'>
 <class 'mhsg.token.architecture_body.end_architecture_keyword'>
 <class 'mhsg.token.architecture_body.architecture_simple_name'>
