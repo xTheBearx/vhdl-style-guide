@@ -49,7 +49,7 @@ There are several options to these rules, which can be selected by using the :co
    |require_comment| = Comment(s) required on the line(s) above and a blank line above the comment(s).
 
 .. |style__no_blank_line_unless_different_library| replace::
-   |no_blank_line_unless_different_library| = Removes blank lines on lines above unless the library is different.
+   |no_blank_line_unless_different_library| = Removes blank lines on lines above unless the library is different, and inserts a blank line above a use clause whose library differs from the line above.
 
 .. |default_value| replace::
    |require_blank_line|
@@ -220,7 +220,6 @@ The following code:
    use ieee.std_logic_1164.all;
 
    use ieee.numeric_std.all;
-
    use work.axi4_stream_pkg.all;
 
    use work.axi4_lite_pkg.all;

@@ -2,6 +2,7 @@
 
 from mhsg import parser, token
 from mhsg.vhdlFile.extract import utils
+from mhsg.vhdlFile.extract.get_line_preceding_line import get_line_preceding_line
 
 
 def get_blank_lines_above_line_starting_with_use_clause(lTokens, lAllTokens, oTokenMap):
@@ -15,6 +16,34 @@ def get_blank_lines_above_line_starting_with_use_clause(lTokens, lAllTokens, oTo
         oToi.set_meta_data("previous_library_is_different", previous_library_is_different)
 
     return lToi
+
+
+def get_lines_above_use_clause_from_different_library(lTokens, lAllTokens, oTokenMap):
+    """
+    Returns the line directly above each use clause when that line names a different library.
+    """
+    lReturn = []
+    for iIndex in get_list_of_indexes(lTokens, oTokenMap):
+        iLine = oTokenMap.get_line_number_of_index(iIndex)
+        if iLine == 1:
+            continue
+        sCurrentLibrary = get_library_on_line(iLine, lAllTokens, oTokenMap)
+        sPreviousLibrary = get_library_on_line(iLine - 1, lAllTokens, oTokenMap)
+        if sCurrentLibrary is None or sPreviousLibrary is None:
+            continue
+        if sCurrentLibrary != sPreviousLibrary:
+            lReturn.append(get_line_preceding_line(iLine, lAllTokens, 1, oTokenMap))
+    return lReturn
+
+
+def get_library_on_line(iLine, lAllTokens, oTokenMap):
+    iStartIndex = oTokenMap.get_index_of_line(iLine)
+    iEndIndex = oTokenMap.get_index_of_line(iLine + 1)
+    for oLibraryNameToken in [token.use_clause.library_name, token.logical_name_list.logical_name]:
+        lTokenIndex = oTokenMap.get_token_indexes_between_indexes(oLibraryNameToken, iStartIndex, iEndIndex)
+        if len(lTokenIndex) > 0:
+            return lAllTokens[lTokenIndex[0]].get_lower_value()
+    return None
 
 
 def get_previous_library(oToi, lAllTokens, oTokenMap):
