@@ -22,8 +22,8 @@ end entity FIFO;
 
 entity FIFO is
   port (
-    a : in std_logic;
-b : in std_logic;
+    signal a : in std_logic;
+signal b : in std_logic;
     signal c : out std_logic
   );
 end entity FIFO;
