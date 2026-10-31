@@ -43,6 +43,7 @@ Rules Enforcing Case::Name Rule Group
 * `package_instantiation_501 <../package_instantiation_rules.html#package-instantiation-501>`_
 * `package_instantiation_504 <../package_instantiation_rules.html#package-instantiation-504>`_
 * `parameter_specification_500 <../parameter_specification_rules.html#parameter-specification-500>`_
+* `parameter_specification_502 <../parameter_specification_rules.html#parameter-specification-502>`_
 * `port_010 <../port_rules.html#port-010>`_
 * `port_map_002 <../port_map_rules.html#port-map-002>`_
 * `procedure_501 <../procedure_rules.html#procedure-501>`_
