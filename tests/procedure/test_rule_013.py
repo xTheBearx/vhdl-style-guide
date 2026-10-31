@@ -47,6 +47,15 @@ lExpected_ignore_single_line__yes.append("")
 utils.read_file(os.path.join(sTestDir, "rule_013_test_input.fixed_ignore_single_line__yes.vhd"), lExpected_ignore_single_line__yes)
 
 
+lFile_comment_before_close_paren, eError_comment_before_close_paren = vhdlFile.utils.read_vhdlfile(
+    os.path.join(sTestDir, "rule_013_test_input.comment_before_close_paren.vhd"),
+)
+
+lExpected_comment_before_close_paren = []
+lExpected_comment_before_close_paren.append("")
+utils.read_file(os.path.join(sTestDir, "rule_013_test_input.comment_before_close_paren.fixed.vhd"), lExpected_comment_before_close_paren)
+
+
 class test_rule(unittest.TestCase):
     def setUp(self):
         self.oFile = vhdlFile.vhdlFile(lFile)
@@ -325,3 +334,17 @@ class test_rule(unittest.TestCase):
 
         oRule.analyze(self.oFile)
         self.assertEqual(oRule.violations, [])
+
+    def test_fix_rule_013_comment_before_close_paren(self):
+        # Issue VSG 1530: with last_close_paren set to remove_new_line, the parenthesis was moved into the comment.
+        # A comment on the closing line as well would be merged, so that case is left unchanged.
+        self.assertIsNone(eError_comment_before_close_paren)
+        oRule = procedure.rule_013()
+        oRule.last_close_paren = "remove_new_line"
+        oFile = vhdlFile.vhdlFile(lFile_comment_before_close_paren)
+
+        oRule.fix(oFile)
+        self.assertEqual(lExpected_comment_before_close_paren, oFile.get_lines())
+
+        oRule.analyze(oFile)
+        self.assertEqual([25], utils.extract_violation_lines_from_violation_object(oRule.violations))
