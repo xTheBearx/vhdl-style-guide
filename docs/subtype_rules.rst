@@ -91,6 +91,10 @@ Alias: :code:`subtype_prefix`
 This rule checks for valid prefixes in subtype identifiers.
 The default new subtype prefix is *st_*.
 
+.. NOTE:: With :code:`fixable` set to :code:`true`, the fix renames subtypes declared in an architecture, process, block, subprogram body or package body, and every reference to them in the same region.
+   The first of the prefixes is added. Names starting with one of :code:`remove_prefixes` lose it first (for example const_width becomes c_width).
+   Subtypes which other files can see, in entities and package declarations, are never renamed.
+
 |configuring_prefix_and_suffix_rules_link|
 
 **Violation**
@@ -389,6 +393,10 @@ Alias: :code:`subtype_suffix`
 
 This rule checks for valid suffixes in subtype identifiers.
 The default new subtype suffix is *_st*.
+
+.. NOTE:: With :code:`fixable` set to :code:`true`, the fix renames subtypes declared in an architecture, process, block, subprogram body or package body, and every reference to them in the same region.
+   The first of the suffixes is added. Names starting with one of :code:`remove_suffixes` lose it first (for example width_const becomes width_c).
+   Subtypes which other files can see, in entities and package declarations, are never renamed.
 
 |configuring_prefix_and_suffix_rules_link|
 
