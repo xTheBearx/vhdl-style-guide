@@ -52,6 +52,8 @@ class insert_token_right_of_possible_tokens_if_it_does_not_exist_before_token(st
             return
 
         for oToi in lToi:
+            iIndex = None
+            iLineNumber = None
             iLine, lTokens = utils.get_toi_parameters(oToi)
 
             if utils.does_token_type_exist_in_list_of_tokens(type(self.oInsertToken), lTokens):

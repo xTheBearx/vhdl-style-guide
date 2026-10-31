@@ -351,7 +351,6 @@ def get_inner_indexes(lFirst, lSecond):
     lMySecond = lSecond.copy()
     while len(lMyFirst) > 0:
         dDelta = {}
-        lTemp = []
         for iFirst in lMyFirst:
             for iSecond in lMySecond:
                 iDelta = iSecond - iFirst

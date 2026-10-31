@@ -111,7 +111,7 @@ def _analyze_no_blank_line(self, lToi):
 
 
 def are_there_process_declarative_items(lTokens):
-    for iToken, oToken in enumerate(lTokens):
+    for iToken, _ in enumerate(lTokens):
         if utils.are_next_consecutive_token_types_ignoring_whitespace([token.process_keyword, token.begin_keyword], iToken, lTokens):
             return False
         if utils.are_next_consecutive_token_types_ignoring_whitespace([token.close_parenthesis, token.begin_keyword], iToken, lTokens):

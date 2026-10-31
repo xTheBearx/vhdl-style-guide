@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 import functools
-import glob
 import json
 import multiprocessing
 import os
 import sys
-
-import yaml
 
 from mhsg.report import quality_report
 
@@ -16,7 +13,6 @@ from . import (
     config,
     junit,
     rule_list,
-    severity,
     utils,
     version,
     vhdlFile,
@@ -54,7 +50,7 @@ def generate_output_configuration(commandLineArguments, oConfig):
         dOutputConfiguration["indent"] = configuration["indent"]
         dOutputConfiguration["pragma"] = {}
         dOutputConfiguration["pragma"]["patterns"] = configuration["pragma"]["patterns"]
-        with open(commandLineArguments.output_configuration, "w") as json_file:
+        with open(commandLineArguments.output_configuration, "w", encoding="utf-8") as json_file:
             json.dump(dOutputConfiguration, json_file, sort_keys=True, indent=2)
         sys.exit(fExitStatus)
 
@@ -72,7 +68,6 @@ def display_rule_configuration(commandLineArguments, oConfig):
     Returns:  Nothing
     """
     if commandLineArguments.rule_configuration:
-        configuration = oConfig.dConfig
         fExitStatus = 0
         # Create empty file so it can be used to create the rule list
         oVhdlFile = vhdlFile.vhdlFile([""])
@@ -198,7 +193,7 @@ def main():
         utils.write_junit_xml_file(oJunitFile)
 
     if commandLineArguments.json:
-        with open(commandLineArguments.json, "w") as oFile:
+        with open(commandLineArguments.json, "w", encoding="utf-8") as oFile:
             oFile.write(json.dumps(dJson, indent=2))
 
     if commandLineArguments.quality_report:

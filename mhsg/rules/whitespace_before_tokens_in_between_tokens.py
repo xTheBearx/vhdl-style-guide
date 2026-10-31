@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import parser, violation
+from mhsg import parser
 from mhsg.rules import utils as rules_utils
 from mhsg.rules.whitespace_between_tokens import Rule as WhitespaceRule
 

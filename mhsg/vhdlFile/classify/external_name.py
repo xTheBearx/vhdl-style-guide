@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import parser
-from mhsg.token import direction
-from mhsg.vhdlFile import utils
 from mhsg.vhdlFile.classify import (
     external_constant_name,
     external_signal_name,

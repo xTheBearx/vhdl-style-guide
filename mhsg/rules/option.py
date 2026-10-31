@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import create_violation
-
 
 class New:
     def __init__(self, sName):
@@ -11,4 +9,4 @@ class New:
         self.analysis_options = None
 
     def analyze(self, oToi):
-        return self.analyze_function(self, oToi)
+        return self.analyze_function(self, oToi)  # pylint: disable=not-callable  # set by the rule which creates the option

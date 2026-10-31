@@ -8,7 +8,7 @@ def classify(lTokens, lObjects, oOptions):
     if len(lObjects) == 0 and oOptions.inside_delimited_comment():
         lObjects.append(token.text(""))
 
-    for iToken, sToken in enumerate(lTokens):
+    for iToken, _ in enumerate(lTokens):
         classify_delimited_comment_text(iToken, lObjects, oOptions)
         if classify_single_line_comment(iToken, lObjects, oOptions):
             break

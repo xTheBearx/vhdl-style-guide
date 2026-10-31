@@ -36,7 +36,7 @@ class New:
                 if isinstance(self.lTokens[iIndex], parser.carriage_return):
                     iLine += 1
             except IndexError:
-                iLine = iLine
+                pass
         oToi = New(iStartIndex, iLine, lTokens)
         oToi.sTokenValue = self.sTokenValue
         oToi.dMetaData = self.dMetaData

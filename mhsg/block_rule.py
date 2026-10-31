@@ -18,7 +18,20 @@ class Rule(structure.Rule):
         self.configuration.append("min_height")
         self.allow_indenting = "yes"
         self.configuration.append("allow_indenting")
+        # Options set by the block comment rules which use them
+        self.comment_left = None
+        self.footer_left = None
+        self.footer_left_repeat = None
+        self.footer_string = None
+        self.footer_right_repeat = None
+        self.footer_alignment = None
+        self.max_footer_column = None
         self.configuration_documentation_link = "configuring_block_comments_link"
+
+    def analyze_comments(self, oToi):
+        """
+        Checks one block comment. Each block comment rule checks a different part of the block.
+        """
 
     def _get_tokens_of_interest(self, oFile):
         lToi = oFile.get_consecutive_lines_starting_with_token(parser.comment, self.min_height)

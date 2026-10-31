@@ -6,6 +6,9 @@ from mhsg.rule_group import whitespace
 from mhsg.rules import utils as rules_utils
 from mhsg.vhdlFile import utils
 
+# number_of_spaces is an integer or a string such as ">=1", which pylint cannot follow
+# pylint: disable=no-member,unsubscriptable-object
+
 
 class Rule(whitespace.Rule):
     """

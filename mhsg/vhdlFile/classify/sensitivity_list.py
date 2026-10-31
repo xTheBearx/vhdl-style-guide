@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import copy
 
-from mhsg import parser
 from mhsg.token import sensitivity_list as token
 from mhsg.vhdlFile import utils
 from mhsg.vhdlFile.classify import name

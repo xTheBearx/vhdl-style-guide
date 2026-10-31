@@ -60,7 +60,6 @@ def check_for_carriage_return_before_token(self, oToi):
     for iToken, oToken in enumerate(lTokens):
         if rules_utils.token_exists_in_token_type_list(oToken, self.analysis_options):
             if rules_utils.token_at_beginning_of_line_in_token_list(iToken, lTokens) and self.value == "no":
-                sSolution = "jcl-fix this"
                 iViolation_line_number = iLine + rules_utils.number_of_carriage_returns(lTokens[0:iToken])
                 iStartIndex = utils.find_previous_non_whitespace_token(iToken - 1, lTokens) + 1
                 oMyToi = oToi.extract_tokens(iStartIndex, iToken - 1)
@@ -70,7 +69,6 @@ def check_for_carriage_return_before_token(self, oToi):
                 oViolation.set_action(dAction)
                 lReturn.append(oViolation)
             elif not rules_utils.token_at_beginning_of_line_in_token_list(iToken, lTokens) and self.value == "yes":
-                sSolution = "jcl-fix this"
                 iViolation_line_number = iLine + rules_utils.number_of_carriage_returns(lTokens[0:iToken])
                 iStartIndex = utils.find_previous_non_whitespace_token(iToken - 1, lTokens) + 1
                 oMyToi = oToi.extract_tokens(iStartIndex, iToken - 1)
@@ -98,8 +96,6 @@ def check_for_carriage_returns_between_tokens_ignoring_leading_and_trailing_whit
                 iEndIndex = utils.find_previous_non_whitespace_token(iEndIndex - 1, lTokens)
                 iNumberCarriageReturns = rules_utils.number_of_carriage_returns(lTokens[iStartIndex : iEndIndex + 1])
                 if iNumberCarriageReturns > 0:
-                    sSolution = "jcl-fix this"
-
                     iViolation_line_number = iLine + rules_utils.number_of_carriage_returns(lTokens[0:iStartIndex])
                     oMyToi = oToi.extract_tokens(iStartIndex, iEndIndex)
                     oViolation = violation.New(iViolation_line_number, oMyToi, "jcl-fix this")

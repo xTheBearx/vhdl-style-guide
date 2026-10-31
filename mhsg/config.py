@@ -30,7 +30,7 @@ def read_predefined_style(sStyleName):
 def open_configuration_file(sFileName, sJUnitFileName=None):
     """Attempts to open a configuration file and read its contents."""
     try:
-        with open(sFileName) as yaml_file:
+        with open(sFileName, encoding="utf-8") as yaml_file:
             dTemp = yaml.full_load(yaml_file)
             check_for_deprecated_rule_options(dTemp, sFileName)
             resolve_rule_aliases(dTemp, sFileName)
@@ -86,7 +86,6 @@ def read_configuration_files(dStyle, commandLineArguments):
         return dStyle
 
     dConfiguration = dStyle
-    lMessages = []
     for sConfigFilename in commandLineArguments.configuration:
         tempConfiguration = open_configuration_file(sConfigFilename, commandLineArguments.junit)
         dConfiguration = process_config_file(dConfiguration, tempConfiguration, sConfigFilename)
@@ -147,7 +146,7 @@ def search_list(lDict, lDeprecatedKeys, sConfigFilename, lMessages):
         if isinstance(sKey, dict):
             search_dictionary(sKey, lDeprecatedKeys, sConfigFilename, lMessages)
         elif isinstance(sKey, list):
-            search_list(sKey, lDeprectedKeys, sConfigFilename, lMessages)
+            search_list(sKey, lDeprecatedKeys, sConfigFilename, lMessages)
         elif sKey in lDeprecatedKeys:
             lMessages.append("ERROR: configuration file " + sConfigFilename + ": " + dDeprecatedOption[sKey])
             lDeprecatedKeys.remove(sKey)
@@ -264,14 +263,14 @@ def merge_indent_options(dIndent, dConfiguration):
 
 def indent_option_exists(dConfiguration):
     try:
-        dOptions = dConfiguration["indent"]["options"]
+        _ = dConfiguration["indent"]["options"]
         return True
     except KeyError:
         return False
 
 
 def raise_keyerror_if_option_parameter_does_not_exist(dIndent, sOption, sParameter):
-    sTemp = dIndent["indent"]["options"][sOption][sParameter]
+    _ = dIndent["indent"]["options"][sOption][sParameter]
 
 
 def merge_indent_tokens(dIndent, dConfiguration):
@@ -301,7 +300,7 @@ def report_indent_configuration_error(dReturn, sGroup, sToken):
 
 def report_invalid_indent_group(dReturn, sGroup):
     try:
-        lTemp = list(dReturn["indent"]["tokens"][sGroup].keys())
+        _ = list(dReturn["indent"]["tokens"][sGroup].keys())
     except KeyError:
         print("The following group does not exist:")
         print("")
@@ -320,7 +319,7 @@ def report_invalid_indent_group(dReturn, sGroup):
 
 def report_invalid_indent_token(dReturn, sGroup, sToken):
     try:
-        lTemp = list(dReturn["indent"]["tokens"][sGroup][sToken].keys())
+        _ = list(dReturn["indent"]["tokens"][sGroup][sToken].keys())
     except KeyError:
         print("The following token does not exist:")
         print("")
@@ -346,7 +345,7 @@ def report_indent_option_error(dIndent, sOption, sParameter):
 
 def report_invalid_option(dIndent, sOption):
     try:
-        lTemp = list(dIndent["indent"]["options"][sOption].keys())
+        _ = list(dIndent["indent"]["options"][sOption].keys())
     except KeyError:
         print("ERROR: Invalid indent option detected")
         print("")
@@ -367,7 +366,7 @@ def report_invalid_option(dIndent, sOption):
 
 def report_invalid_option_parameter(dIndent, sOption, sParameter):
     try:
-        dTemp = dIndent["indent"]["options"][sOption][sParameter]
+        _ = dIndent["indent"]["options"][sOption][sParameter]
     except KeyError:
         print("ERROR: Invalid indent option parameter detected")
         print("")
@@ -406,7 +405,8 @@ def update_command_line_arguments(commandLineArguments, configuration):
                 for sFileName in lFileNames:
                     if sFileName not in commandLineArguments.filename:
                         commandLineArguments.filename.append(sFileName)
-            except:
+            except TypeError:
+                # No files were given on the command line
                 commandLineArguments.filename = glob_filenames(sFilename)
 
     if "local_rules" in configuration:
@@ -461,7 +461,7 @@ def add_pragma_regular_expressions(dStyle):
                 except KeyError:
                     dStyle["pragma"]["regexp"][types] = []
                     dStyle["pragma"]["regexp"][types].append(re.compile(pragma))
-    except AttributeError as e:
+    except AttributeError:
         print("Error in pragma definition:")
         print('  Refer to "configuring pragmas" section in documentation for details on how to configure pragmas.')
         sys.exit(1)
@@ -497,10 +497,10 @@ def New(commandLineArguments):
 
 class config:
     def __init__(self):
-        dIndent = None
-        dConfig = None
-        dFixOnly = None
-        severity_list = None
+        self.dIndent = None
+        self.dConfig = None
+        self.dFixOnly = None
+        self.severity_list = None
 
 
 def get_local_rule_directories(local_rules):

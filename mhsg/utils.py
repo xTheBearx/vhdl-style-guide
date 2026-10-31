@@ -62,7 +62,7 @@ def expand_filename(sFileName):
 
 
 def write_junit_xml_file(oJunitFile):
-    with open(oJunitFile.filename, "w") as oFile:
+    with open(oJunitFile.filename, "w", encoding="utf-8") as oFile:
         oFile.write("\n".join(oJunitFile.build_junit()))
         oFile.write("\n")
 

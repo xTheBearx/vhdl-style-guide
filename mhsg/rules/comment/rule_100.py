@@ -2,7 +2,6 @@
 
 from mhsg import parser, violation
 from mhsg.rule_group import whitespace
-from mhsg.rules import utils
 
 
 class rule_100(whitespace.Rule):

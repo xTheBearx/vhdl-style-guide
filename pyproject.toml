@@ -106,9 +106,19 @@ line-length = 160
 
 [tool.pylint.MASTER]
 disable = [
-    "missing-class-docstring",
-    "missing-function-docstring",
-    "missing-module-docstring",
+    # Conventions and refactoring suggestions are not enforced yet. Many do not fit the code base,
+    # for example the type prefixes in names such as sValue and lTokens fail invalid-name.
+    "C",
+    "R",
+    # Rules often define __init__ only to call the base class, which keeps every rule class uniform.
+    "useless-parent-delegation",
+    # Methods implement a common interface, so not every argument is used.
+    "unused-argument",
+    # Module level token lists such as lTokens are passed to the base class with the same name.
+    "redefined-outer-name",
+    # Base classes set attributes in helper methods called from __init__ or configure.
+    "attribute-defined-outside-init",
+    "protected-access",
 ]
 
 [tool.pylint.FORMAT]

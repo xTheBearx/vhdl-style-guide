@@ -173,7 +173,6 @@ def check_for_case(sObjectValue, self, oToi, iIndex, iLine, fCheck):
 def check_for_prefix_exception(sObjectValue, self, oToi, iIndex, iLine, fCheck):
     sDesiredPrefix = ""
     sConstant = sObjectValue
-    sDesiredSuffix = ""
     if prefix_detected(sObjectValue, self.prefix_exceptions):
         sDesiredPrefix = get_matched_prefix(sObjectValue, self.prefix_exceptions)
         sActualPrefix = extract_prefix(sObjectValue, sDesiredPrefix)
@@ -187,7 +186,6 @@ def check_for_prefix_exception(sObjectValue, self, oToi, iIndex, iLine, fCheck):
 
 
 def check_for_suffix_exception(sObjectValue, self, oToi, iIndex, iLine, fCheck):
-    sDesiredPrefix = ""
     sConstant = sObjectValue
     sDesiredSuffix = ""
     if suffix_detected(sObjectValue, self.suffix_exceptions):
@@ -213,7 +211,6 @@ def check_for_prefix_and_suffix_exceptions(sObjectValue, self, oToi, iIndex, iLi
         sDesiredSuffix = get_matched_suffix(sConstant, self.suffix_exceptions)
         sActualSuffix = extract_suffix(sConstant, sDesiredSuffix)
         sConstant = remove_suffix(sConstant, sActualSuffix)
-        sExpected = sDesiredPrefix + sConstant.lower() + sDesiredSuffix
     elif prefix_detected(sObjectValue, self.prefix_exceptions):
         sDesiredPrefix = get_matched_prefix(sObjectValue, self.prefix_exceptions)
         sActualPrefix = extract_prefix(sObjectValue, sDesiredPrefix)

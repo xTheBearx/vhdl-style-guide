@@ -2,9 +2,8 @@
 
 import os
 import shutil
-import stat
 
-from . import config, junit, rule_list, utils, vhdlFile
+from . import config, junit, rule_list, vhdlFile
 from .exceptions import ClassifyError, ConfigurationError
 
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import parser, token, violation
+from mhsg import parser, token
 from mhsg.rule_group import alignment
 from mhsg.rules import alignment_utils, utils as rules_utils
 from mhsg.vhdlFile import utils
@@ -82,7 +82,7 @@ class align_tokens_in_region_between_tokens(alignment.Rule):
         lSearchTokens.extend(self.lTokens)
 
         if self.include_type_is_keyword:
-            lSearchTokens.append(self.is_keyword)
+            lSearchTokens.append(self.is_keyword)  # pylint: disable=no-member  # set by the rules which include it
 
         lToi = self._get_tokens_of_interest(oFile)
         for oToi in lToi:

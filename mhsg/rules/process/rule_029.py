@@ -103,6 +103,7 @@ class rule_029(structure.Rule):
         for oToi in lToi:
             lTokens = oToi.get_tokens()
             bEventFound = False
+            sSolution = None
             iStartIndex = 0
             for iToken, oToken in enumerate(lTokens):
                 if self.clock == "edge":

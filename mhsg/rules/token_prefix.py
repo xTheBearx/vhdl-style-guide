@@ -2,7 +2,7 @@
 
 import re
 
-from mhsg import parser, violation
+from mhsg import violation
 from mhsg.rule_group import naming
 from mhsg.rules import package_scope, utils as rules_utils
 
@@ -30,7 +30,7 @@ class token_prefix(naming.Rule):
     def __init__(self, lTokens):
         super().__init__()
         self.lTokens = lTokens
-        self.prefixes = None
+        self.prefixes = []
         self.configuration.append("prefixes")
         # Set by the rule list when a companion rule checks names in packages, see package_scope.py
         self.package_scope = package_scope.ALL

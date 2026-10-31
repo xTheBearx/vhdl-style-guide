@@ -2,7 +2,7 @@
 
 from mhsg import parser, token, violation
 from mhsg.rule_group import alignment
-from mhsg.rules import alignment_utils, utils as rules_utils
+from mhsg.rules import utils as rules_utils
 from mhsg.vhdlFile import utils
 
 

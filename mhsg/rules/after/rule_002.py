@@ -85,6 +85,7 @@ class rule_002(alignment.Rule):
         for oToi in lPreToi:
             iLine, lTokens = utils.get_toi_parameters(oToi)
             bInsideClockDef = False
+            iStartIndex = None
             for iToken, oToken in enumerate(lTokens):
                 iLine = utils.increment_line_number(iLine, oToken)
 

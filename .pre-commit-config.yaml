@@ -83,3 +83,16 @@ repos:
     rev: 7.0.0
     hooks: []
       #- id: flake8
+
+  - repo: local
+    hooks:
+      - id: pylint
+        name: pylint
+        # Uses the pylint configuration in pyproject.toml
+        entry: pylint
+        language: python
+        additional_dependencies:
+          - pylint==4.1.3
+          - pyyaml
+        types: [python]
+        files: "^mhsg/"

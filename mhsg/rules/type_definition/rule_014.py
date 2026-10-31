@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import parser, token
+from mhsg import token
 from mhsg.rules import consistent_token_case as Rule
 
 lTokens = []

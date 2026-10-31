@@ -3,7 +3,6 @@
 from mhsg import config, exceptions, parser, token, tokens
 from mhsg.token import (
     adding_operator,
-    aggregate,
     attribute_name,
     choices,
     delimited_comment,
@@ -482,9 +481,6 @@ class vhdlFile:
             bIncludeEndToken,
             bEarliestDetect,
         )
-
-    def get_tokens_between_indexes(self, iStartIndex, iEndIndex):
-        return extract.get_tokens_between_indexes(iStartIndex, iEndIndex, self.lAllObjects)
 
     def get_tokens_from_beginning_of_line_containing_token_to_the_next_non_whitespace_token_to_the_right(self, token):
         return extract.get_tokens_from_beginning_of_line_containing_token_to_the_next_non_whitespace_token_to_the_right(token, self.lAllObjects, self.oTokenMap)

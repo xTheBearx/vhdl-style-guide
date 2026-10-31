@@ -2,7 +2,6 @@
 
 from mhsg.token.psl import clock_declaration as token
 from mhsg.vhdlFile import utils
-from mhsg.vhdlFile.classify import utils as classify_utils
 
 
 def detect(iToken, lObjects):

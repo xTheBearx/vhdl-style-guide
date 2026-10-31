@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.vhdlFile import utils
 from mhsg.vhdlFile.classify import design_unit
 
 
