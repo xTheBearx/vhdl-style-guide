@@ -29,6 +29,28 @@ def get_port_clauses(oFile):
     return oFile.get_tokens_bounded_by(token.port_clause.open_parenthesis, token.port_clause.close_parenthesis)
 
 
+def get_generic_clauses(oFile):
+    """Returns the tokens from the open to the close parenthesis of each generic clause."""
+    return oFile.get_tokens_bounded_by(token.generic_clause.open_parenthesis, token.generic_clause.close_parenthesis)
+
+
+def get_interface_elements(oToi):
+    """Returns the declarations of a generic or port clause, see split_list, with the words of each in names."""
+    return split_list(oToi, token.interface_list.semicolon, update_words)
+
+
+def update_words(dElement, oToken):
+    dElement["names"].append(oToken.get_value())
+
+
+def get_section_of_index(lElements, iIndex):
+    """Returns the section of the element whose tokens include the token at iIndex."""
+    for dElement in lElements:
+        if dElement["start"] <= iIndex <= dElement["end"]:
+            return dElement["section"]
+    return 0
+
+
 def get_elements(oToi):
     """Returns the port declarations of a port clause, see split_list."""
     return [dElement for dElement in split_list(oToi, token.interface_list.semicolon, update_port) if len(dElement["names"]) > 0]
