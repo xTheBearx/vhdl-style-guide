@@ -21,9 +21,9 @@ def detect(iToken, lObjects):
 def classify(iToken, lObjects):
     iCurrent = utils.assign_next_token_required("[", token.open_bracket, iToken, lObjects)
 
-    detect_type_mark(iCurrent, lObjects)
+    iCurrent = detect_type_mark(iCurrent, lObjects)
 
-    detect_return(iCurrent, lObjects)
+    iCurrent = detect_return(iCurrent, lObjects)
 
     iCurrent = utils.assign_next_token_required("]", token.close_bracket, iCurrent, lObjects)
 
@@ -40,7 +40,7 @@ def detect_return(iToken, lObjects):
 
 def detect_type_mark(iToken, lObjects):
     iCurrent = iToken
-    if not utils.is_next_token("return", iCurrent, lObjects):
+    if not utils.is_next_token_one_of(["return", "]"], iCurrent, lObjects):
         iCurrent = type_mark.classify(iCurrent, lObjects)
         while utils.is_next_token(",", iCurrent, lObjects):
             iCurrent = utils.assign_next_token_required(",", token.comma, iCurrent, lObjects)

@@ -152,17 +152,29 @@
 18 |
 <class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-19 |   alias ident is write_enable;
+19 |   alias ident is std.env.stop [];
+<class 'mhsg.token.alias_declaration.alias_keyword'>
+<class 'mhsg.token.alias_declaration.alias_designator'>
+<class 'mhsg.token.alias_declaration.is_keyword'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.signature.open_bracket'>
+<class 'mhsg.token.signature.close_bracket'>
+<class 'mhsg.token.alias_declaration.semicolon'>
+--------------------------------------------------------------------------------
+20 |
+<class 'mhsg.parser.blank_line'>
+--------------------------------------------------------------------------------
+21 |   alias ident is write_enable;
 <class 'mhsg.token.alias_declaration.alias_keyword'>
 <class 'mhsg.token.alias_declaration.alias_designator'>
 <class 'mhsg.token.alias_declaration.is_keyword'>
 <class 'mhsg.parser.todo'>
 <class 'mhsg.token.alias_declaration.semicolon'>
 --------------------------------------------------------------------------------
-20 |
+22 |
 <class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-21 |   alias s_event_count : natural range 0 to 2**16 - 1 is << signal some.reference.some_signal : natural range 0 to 2**16 - 1 >>;
+23 |   alias s_event_count : natural range 0 to 2**16 - 1 is << signal some.reference.some_signal : natural range 0 to 2**16 - 1 >>;
 <class 'mhsg.token.alias_declaration.alias_keyword'>
 <class 'mhsg.token.alias_declaration.alias_designator'>
 <class 'mhsg.token.alias_declaration.colon'>
@@ -192,10 +204,10 @@
 <class 'mhsg.token.external_signal_name.double_greater_than'>
 <class 'mhsg.token.alias_declaration.semicolon'>
 --------------------------------------------------------------------------------
-22 |
+24 |
 <class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-23 |   alias opposite_view is some_view'converse;
+25 |   alias opposite_view is some_view'converse;
 <class 'mhsg.token.alias_declaration.alias_keyword'>
 <class 'mhsg.token.alias_declaration.alias_designator'>
 <class 'mhsg.token.alias_declaration.is_keyword'>
@@ -204,28 +216,10 @@
 <class 'mhsg.parser.todo'>
 <class 'mhsg.token.alias_declaration.semicolon'>
 --------------------------------------------------------------------------------
-24 |
-<class 'mhsg.parser.blank_line'>
---------------------------------------------------------------------------------
-25 |   alias alias_sop : std_logic is << signal .tb_top.submodule.i_rx_data : t_mac_interface >> .sop;
-<class 'mhsg.token.alias_declaration.alias_keyword'>
-<class 'mhsg.token.alias_declaration.alias_designator'>
-<class 'mhsg.token.alias_declaration.colon'>
-<class 'mhsg.token.type_mark.name'>
-<class 'mhsg.token.alias_declaration.is_keyword'>
-<class 'mhsg.token.external_signal_name.double_less_than'>
-<class 'mhsg.token.external_signal_name.signal_keyword'>
-<class 'mhsg.token.external_signal_name.external_pathname'>
-<class 'mhsg.token.external_signal_name.colon'>
-<class 'mhsg.token.type_mark.name'>
-<class 'mhsg.token.external_signal_name.double_greater_than'>
-<class 'mhsg.parser.todo'>
-<class 'mhsg.token.alias_declaration.semicolon'>
---------------------------------------------------------------------------------
 26 |
 <class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-27 |   alias alias_sop : std_logic is <<signal .tb_top.submodule.i_rx_data : t_mac_interface>>.sop;
+27 |   alias alias_sop : std_logic is << signal .tb_top.submodule.i_rx_data : t_mac_interface >> .sop;
 <class 'mhsg.token.alias_declaration.alias_keyword'>
 <class 'mhsg.token.alias_declaration.alias_designator'>
 <class 'mhsg.token.alias_declaration.colon'>
@@ -243,13 +237,31 @@
 28 |
 <class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-29 | begin
-<class 'mhsg.token.architecture_body.begin_keyword'>
+29 |   alias alias_sop : std_logic is <<signal .tb_top.submodule.i_rx_data : t_mac_interface>>.sop;
+<class 'mhsg.token.alias_declaration.alias_keyword'>
+<class 'mhsg.token.alias_declaration.alias_designator'>
+<class 'mhsg.token.alias_declaration.colon'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.alias_declaration.is_keyword'>
+<class 'mhsg.token.external_signal_name.double_less_than'>
+<class 'mhsg.token.external_signal_name.signal_keyword'>
+<class 'mhsg.token.external_signal_name.external_pathname'>
+<class 'mhsg.token.external_signal_name.colon'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.external_signal_name.double_greater_than'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.alias_declaration.semicolon'>
 --------------------------------------------------------------------------------
 30 |
 <class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-31 | end architecture RTL;
+31 | begin
+<class 'mhsg.token.architecture_body.begin_keyword'>
+--------------------------------------------------------------------------------
+32 |
+<class 'mhsg.parser.blank_line'>
+--------------------------------------------------------------------------------
+33 | end architecture RTL;
 <class 'mhsg.token.architecture_body.end_keyword'>
 <class 'mhsg.token.architecture_body.end_architecture_keyword'>
 <class 'mhsg.token.architecture_body.architecture_simple_name'>

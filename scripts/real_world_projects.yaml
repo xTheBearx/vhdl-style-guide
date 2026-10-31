@@ -16,10 +16,6 @@ projects:
     url: https://github.com/OSVVM/OSVVM.git
     commit: 716d751566b4fb6479f69c38cc01790744c911b7
     known_issues:
-      # #71: empty signature in alias declarations
-      AssertApiPkg.vhd: PARSE_ERROR
-      ReportPkg.vhd: PARSE_ERROR
-      TranscriptPkg.vhd: PARSE_ERROR
       # #72: VHDL-2019 generic array types
       DynamicVectorGenericPkg.vhd: PARSE_ERROR
       # #73: record_type_definition_007 reports the protected body semicolon
@@ -99,8 +95,6 @@ projects:
     url: https://github.com/VLSI-EDA/PoC.git
     commit: 8c39b2407a97ec81b8601c4b64e4d2e2141ab9cf
     known_issues:
-      # #71: empty signature in alias declarations
-      src/sim/sim_simulation.v93.vhdl: PARSE_ERROR
       # #74: continuation lines are aligned before the := moves
       src/common/strings.vhdl: NOT_IDEMPOTENT
       src/mem/sdram/sdram_ctrl_fsm.vhdl: NOT_IDEMPOTENT

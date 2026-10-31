@@ -16,6 +16,8 @@ architecture RTL of FIFO is
 
   alias ident is write_enable [return integer];
 
+  alias ident is std.env.stop [];
+
   alias ident is write_enable;
 
   alias s_event_count : natural range 0 to 2**16 - 1 is << signal some.reference.some_signal : natural range 0 to 2**16 - 1 >>;
