@@ -51,6 +51,7 @@ Rules Enforcing Case::Name Rule Group
 * `procedure_508 <../procedure_rules.html#procedure-508>`_
 * `procedure_509 <../procedure_rules.html#procedure-509>`_
 * `procedure_call_502 <../procedure_call_rules.html#procedure-call-502>`_
+* `record_type_definition_503 <../record_type_definition_rules.html#record-type-definition-503>`_
 * `signal_004 <../signal_rules.html#signal-004>`_
 * `subprogram_instantiation_500 <../subprogram_instantiation_rules.html#subprogram-instantiation-500>`_
 * `subprogram_instantiation_503 <../subprogram_instantiation_rules.html#subprogram-instantiation-503>`_

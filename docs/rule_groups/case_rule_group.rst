@@ -225,6 +225,7 @@ Rules Enforcing Case Rule Group
 * `record_type_definition_500 <../record_type_definition_rules.html#record-type-definition-500>`_
 * `record_type_definition_501 <../record_type_definition_rules.html#record-type-definition-501>`_
 * `record_type_definition_502 <../record_type_definition_rules.html#record-type-definition-502>`_
+* `record_type_definition_503 <../record_type_definition_rules.html#record-type-definition-503>`_
 * `report_statement_500 <../report_statement_rules.html#report-statement-500>`_
 * `report_statement_501 <../report_statement_rules.html#report-statement-501>`_
 * `return_statement_500 <../return_statement_rules.html#return-statement-500>`_
