@@ -14,7 +14,7 @@ def get_n_token_after_tokens_between_tokens(iToken, lTokens, oStart, oEnd, lAllT
             lTemp = oTokenMap.get_token_indexes_between_indexes(oToken, iStart, iEnd)
             for iTemp in lTemp:
                 iTokenIndex = iTemp
-                for iCount in range(0, iToken):
+                for _ in range(0, iToken):
                     iTokenIndex = oTokenMap.get_index_of_next_non_whitespace_token(iTokenIndex, bExcludeComments=True)
                 lIndexes.append(iTokenIndex)
 

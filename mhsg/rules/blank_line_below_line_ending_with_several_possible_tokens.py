@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import parser, violation
-from mhsg.rules import (
-    blank_line_below_line_ending_with_token as Rule,
-    utils as rules_utils,
-)
+from mhsg.rules import blank_line_below_line_ending_with_token as Rule
 
 
 class blank_line_below_line_ending_with_several_possible_tokens(Rule):

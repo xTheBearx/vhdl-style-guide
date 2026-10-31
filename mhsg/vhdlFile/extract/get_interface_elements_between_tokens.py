@@ -40,7 +40,7 @@ def get_interface_elements_between_tokens(oStart, oEnd, lAllTokens, oTokenMap):
                 iLine += 1
 
         if len(lTemp) > 0:
-            for i in range(1, 5):
+            for _ in range(1, 5):
                 if isinstance(lTemp[-1], parser.whitespace):
                     lTemp.pop()
                     continue

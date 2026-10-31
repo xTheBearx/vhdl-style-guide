@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import parser, violation
-from mhsg.rules import token_prefix as Rule, utils as rules_utils
+from mhsg.rules import token_prefix as Rule
 
 
 class token_prefix_between_tokens_unless_between_tokens(Rule):

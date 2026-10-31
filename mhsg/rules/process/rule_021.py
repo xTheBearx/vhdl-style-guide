@@ -74,7 +74,7 @@ class rule_021(blank_line.Rule):
         if self.style == "no_blank_line":
             lTokens.reverse()
             lNewTokens = []
-            for iToken, oToken in enumerate(lTokens):
+            for _, oToken in enumerate(lTokens):
                 if isinstance(oToken, parser.blank_line):
                     lNewTokens.pop()
                     continue
@@ -99,7 +99,7 @@ def _analyze_no_blank_line(self, lToi):
     for oToi in lToi:
         lTokens = oToi.get_tokens()
         iLine = oToi.get_line_number() + utils.count_carriage_returns(lTokens)
-        for iToken, oToken in enumerate(lTokens):
+        for iToken, _ in enumerate(lTokens):
             if utils.are_next_consecutive_token_types_ignoring_whitespace([token.process_keyword, token.begin_keyword], iToken, lTokens):
                 if blank_lines_exist(iToken, lTokens):
                     oViolation = violation.New(iLine, oToi, sSolution)
@@ -127,7 +127,7 @@ def _analyze_require_blank_line(self, lToi):
     for oToi in lToi:
         lTokens = oToi.get_tokens()
         iLine = oToi.get_line_number() + utils.count_carriage_returns(lTokens)
-        for iToken, oToken in enumerate(lTokens):
+        for iToken, _ in enumerate(lTokens):
             if utils.are_next_consecutive_token_types_ignoring_whitespace([token.process_keyword, token.begin_keyword], iToken, lTokens):
                 if not blank_lines_exist(iToken, lTokens):
                     oViolation = violation.New(iLine, oToi, sSolution)

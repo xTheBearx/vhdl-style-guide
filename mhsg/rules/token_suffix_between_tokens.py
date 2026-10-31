@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import violation
 from mhsg.rules import token_suffix as Rule
 
 

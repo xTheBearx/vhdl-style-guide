@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import parser
 from mhsg.token import type_mark as token
 from mhsg.vhdlFile import utils
 from mhsg.vhdlFile.classify import attribute_name

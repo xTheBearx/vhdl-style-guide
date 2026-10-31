@@ -49,7 +49,6 @@ class Rule:
         if self.deprecated and self.unique_id in oConfig.dConfig["rule"]:
             return self.print_output()
 
-        dConfiguration = oConfig.dConfig
         configure_global_rule_attributes(self, oConfig)
         configure_group_rule_attributes(self, oConfig)
         configure_rule_attributes(self, oConfig)
@@ -161,6 +160,23 @@ class Rule:
             if self.user_error_message != "":
                 violation.sSolution = violation.sSolution + " [user_error_message: " + self.user_error_message + "]"
             self.violations.append(violation)
+
+    def print_output(self):
+        """
+        Returns the messages printed when a deprecated rule is configured.
+        """
+        return []
+
+    def _get_tokens_of_interest(self, oFile):
+        """
+        Returns the tokens the rule checks. Rules which override analyze do not use it.
+        """
+        return []
+
+    def _analyze(self, lToi):
+        """
+        Checks the tokens returned by _get_tokens_of_interest and adds violations.
+        """
 
     def analyze(self, oFile):
         """

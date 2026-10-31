@@ -3,7 +3,7 @@
 from mhsg import parser
 from mhsg.token import attribute_name as token
 from mhsg.vhdlFile import utils
-from mhsg.vhdlFile.classify import expression, signature
+from mhsg.vhdlFile.classify import signature
 
 
 def detect(iToken, lObjects):

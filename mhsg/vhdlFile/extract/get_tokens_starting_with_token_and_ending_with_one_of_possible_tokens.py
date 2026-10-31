@@ -93,7 +93,7 @@ def gather_end_indexes(lEndTokens, oTokenMap):
         try:
             iMax = max(iMax, lIndexes[-1])
         except IndexError:
-            iMax = iMax
+            pass
         iMaxLength = max(iMaxLength, len(lIndexes))
     iMax += 1
 

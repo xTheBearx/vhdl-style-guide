@@ -14,7 +14,7 @@ class multiline_subprogram_specification_structure(structure.Rule):
     def __init__(self):
         super().__init__()
         self.phase = 1
-        self.lTokenPairs = None
+        self.lTokenPairs = []
         self.configuration_documentation_link = "configuring_subprogram_specification_statement_rules_link"
         self.oSubprogramSpecification = None
 

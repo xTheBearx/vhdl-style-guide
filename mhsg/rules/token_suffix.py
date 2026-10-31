@@ -30,7 +30,7 @@ class token_suffix(naming.Rule):
     def __init__(self, lTokens):
         super().__init__()
         self.lTokens = lTokens
-        self.suffixes = None
+        self.suffixes = []
         self.configuration.append("suffixes")
         # Set by the rule list when a companion rule checks names in packages, see package_scope.py
         self.package_scope = package_scope.ALL

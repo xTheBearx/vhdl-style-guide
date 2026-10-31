@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import parser
 from mhsg.vhdlFile import utils
 from mhsg.vhdlFile.extract import (
     get_tokens_in_architecture_declarative_part,

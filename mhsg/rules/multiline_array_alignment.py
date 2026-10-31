@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import parser, token, violation
+from mhsg import parser, violation
 from mhsg.rule_group import alignment
 from mhsg.rules import alignment_utils, utils as rules_utils
 from mhsg.vhdlFile import utils
@@ -79,15 +79,15 @@ class multiline_array_alignment(alignment.Rule):
         oViolation.set_tokens(lTokens)
 
     def calculate_expected_indents(self, oToi, oLines):
-        dExpectedIndent = {}
+        """
+        Sets the expected indent of each line in oLines.
+        """
         if not align_paren(self) and align_left(self):
-            dExpectedIndent = self.analyze_align_left_true_align_paren_false(oToi, oLines)
+            self.analyze_align_left_true_align_paren_false(oToi, oLines)
         if align_paren(self) and not align_left(self):
-            dExpectedIndent = self.analyze_align_left_false_align_paren_true(oToi, oLines)
+            self.analyze_align_left_false_align_paren_true(oToi, oLines)
         if align_paren(self) and align_left(self):
-            dExpectedIndent = self.analyze_align_left_true_align_paren_true(oToi, oLines)
-
-        return dExpectedIndent
+            self.analyze_align_left_true_align_paren_true(oToi, oLines)
 
     def analyze_align_left_true_align_paren_false(self, oToi, oLines):
         oLines.iIndent = oLines.get_first_line_indent()
@@ -293,7 +293,7 @@ class lines:
                 iOffset = 0
                 lLine = []
 
-        oLine = line(lLine, iLine, iToken - len(lLine) + 1)
+        oLine = line(lLine, iLine, iToken - len(lLine) + 1)  # pylint: disable=undefined-loop-variable
         oLine.isLast = True
         self.lLines.append(oLine)
 

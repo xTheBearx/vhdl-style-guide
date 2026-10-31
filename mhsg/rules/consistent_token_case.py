@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import parser, token, violation
+from mhsg import violation
 from mhsg.rule_group import case
 from mhsg.rules import consistent_case_utils as cc_utils
 from mhsg.vhdlFile import utils
-from mhsg.vhdlFile.extract import tokens
 
 
 class consistent_token_case(case.Rule):

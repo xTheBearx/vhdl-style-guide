@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import parser, token
+from mhsg import token
 from mhsg.vhdlFile.extract import tokens
 
 
@@ -64,6 +64,7 @@ def extract_inner_pair(lStartIndexes, lEndIndexes):
                 dPairs[iStart][iEnd] = iEnd - iStart
 
     iMinDelta = lEndIndexes[-1]
+    lPair = None
     for iStart in dPairs:
         for iEnd in dPairs[iStart]:
             if dPairs[iStart][iEnd] < iMinDelta:

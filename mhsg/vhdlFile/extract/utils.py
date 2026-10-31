@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import parser, token
+from mhsg import parser
 from mhsg.vhdlFile.extract import tokens
 
 

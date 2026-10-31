@@ -3,7 +3,10 @@
 from mhsg import parser
 from mhsg.token import range_constraint
 from mhsg.vhdlFile import utils
-from mhsg.vhdlFile.classify import range, subtype_indication
+from mhsg.vhdlFile.classify import (  # pylint: disable=redefined-builtin
+    range,
+    subtype_indication,
+)
 
 
 def detect(iToken, lObjects):

@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import does_token_value_match_one_of as Rule
+from mhsg.rules.does_token_value_match_one_of import (
+    does_token_value_match_one_of as Rule,
+)
 
 
-class does_token_value_match_none_of(Rule.does_token_value_match_one_of):
+class does_token_value_match_none_of(Rule):
     """
     Checks if a token value matches none of provided regex patterns.
     """

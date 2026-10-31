@@ -78,7 +78,6 @@ def _create_violation(oToi):
     iEndIndex = oToi.get_meta_data("iToken")
     sSolution = oToi.get_meta_data("sSolution")
     sAction = oToi.get_meta_data("sAction")
-    lTokens = oToi.get_tokens()
 
     dAction = _create_action_dictionary(sAction)
     oViolation = violation.New(iStartLine, oToi.extract_tokens(iStartIndex, iEndIndex), sSolution)

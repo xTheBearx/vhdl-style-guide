@@ -2,7 +2,7 @@
 
 import re
 
-from mhsg import parser, token, violation
+from mhsg import parser, token
 from mhsg.rule_group import case
 from mhsg.rules import case_utils, utils
 

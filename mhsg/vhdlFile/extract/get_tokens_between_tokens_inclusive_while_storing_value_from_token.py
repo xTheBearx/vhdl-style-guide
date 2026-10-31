@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import bisect
 
 from mhsg.vhdlFile.extract import tokens
 

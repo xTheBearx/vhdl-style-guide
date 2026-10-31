@@ -407,6 +407,7 @@ def _check_assign_on_single_line(self, oToi):
     iToken = _find_assignment_operator(self, lTokens) + 1
     iStopIndex = len(lTokens)
     bFirstParenFound = False
+    iPreviousToken = iToken
     while iToken < iStopIndex:
         if bFirstParenFound:
             iToken, bOthersClause = _classify_others(iToken, lTokens)
@@ -484,7 +485,6 @@ def _fix_last_paren_new_line(oViolation):
     elif dAction["action"] == "insert_and_move_comment":
         if not isinstance(lTokens[0], parser.whitespace):
             rules_utils.insert_whitespace(lTokens, 1)
-        oSemicolon = oViolation
         iSwapIndex = rules_utils.get_index_of_token_in_list(oViolation.semicolon, lTokens) + 1
         lNewTokens = []
         lNewTokens.append(lTokens[0])
@@ -586,14 +586,6 @@ def _create_action_dictionary(sType, sAction):
     dReturn["type"] = sType
     dReturn["action"] = sAction
     return dReturn
-
-
-def _found_assignment_operator(oToken, bSearch):
-    if bSearch:
-        return True
-    if isinstance(oToken, self.assignment_operator):
-        return True
-    return False
 
 
 def _find_assignment_operator(self, lTokens):

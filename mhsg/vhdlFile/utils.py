@@ -132,7 +132,6 @@ def get_range(lObjects, iStart, sEnd):
     while lObjects[iIndex].get_lower_value() != sEnd:
         iIndex += 1
     iEnd = iIndex
-    iStart = iStart
     return iStart, iEnd
 
 
@@ -256,6 +255,7 @@ def find_in_next_n_tokens(sValue, iMax, iToken, lObjects):
 
 def find_earliest_occurrence(lEnd, iToken, lObjects):
     iEarliest = len(lObjects)
+    sEarliest = None
     for sEnd in lEnd:
         for iIndex in range(iToken, len(lObjects) - 1):
             if lObjects[iIndex].get_lower_value() == sEnd:
@@ -644,8 +644,7 @@ def remove_trailing_whitespace(lTokens):
             lMyTokens = lTokens[iIndex:]
             lMyTokens.reverse()
             return lMyTokens
-    else:
-        return lTokens
+    return lTokens
 
 
 def remove_trailing_whitespace_and_comments(lTokens):
@@ -657,8 +656,7 @@ def remove_trailing_whitespace_and_comments(lTokens):
             lMyTokens = lTokens[iIndex:]
             lMyTokens.reverse()
             return lMyTokens
-    else:
-        return lTokens
+    return lTokens
 
 
 def remove_leading_whitespace_and_comments(iToken, lTokens):
@@ -667,8 +665,7 @@ def remove_leading_whitespace_and_comments(iToken, lTokens):
             continue
         else:
             return iToken + iIndex + 1, lTokens[iIndex:]
-    else:
-        return iToken, lTokens
+    return iToken, lTokens
 
 
 def remove_all_trailing_whitespace(lTokens):
@@ -999,6 +996,8 @@ def convert_boolean_to_yes_no(option):
 
 
 def extract_line_with_token_index_of(iToken, lObjects):
+    iStart = 0
+    iEnd = len(lObjects)
     for iIndex in range(0, iToken):
         if isinstance(lObjects[iIndex], parser.carriage_return):
             iStart = iIndex + 1

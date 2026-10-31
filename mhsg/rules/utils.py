@@ -469,6 +469,7 @@ def open_paren_after_assignment_operator_is_aggregate(assignment_operator, lToke
 
 def open_paren_after_assignment_operator_id_matches_last_paren_id(assignment_operator, lTokens):
     iToken = get_index_of_token_in_list(assignment_operator, lTokens)
+    iOpenParenId = None
     if is_next_token_ignoring_whitespace(parser.open_parenthesis, iToken, lTokens):
         iIndex = get_index_of_token_in_list(parser.open_parenthesis, lTokens)
         iOpenParenId = lTokens[iIndex].iId

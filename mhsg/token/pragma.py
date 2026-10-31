@@ -21,7 +21,7 @@ class pragma(parser.comment):
         super().__init__(sString)
 
 
-class open(pragma):
+class open(pragma):  # pylint: disable=redefined-builtin  # token class named after the pragma
     """
     unique_id = pragma : open
     """

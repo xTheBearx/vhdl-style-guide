@@ -133,7 +133,7 @@ class preprocessor(item):
         super().__init__(sString)
 
 
-class type(item):
+class type(item):  # pylint: disable=redefined-builtin  # token class named after the keyword
     """
     unique_id = parser : type
     """

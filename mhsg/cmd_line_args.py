@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
 import argparse
-import functools
 import glob
-import json
-import multiprocessing
 import os
-import shutil
 import sys
 
 import yaml
 
-from . import junit, rule_list, severity, utils, version, vhdlFile
+from . import utils
 from .CustomArgumentParser import CustomArgumentParser
 
 
@@ -129,7 +125,7 @@ def get_predefined_style_descriptions():
     lStyles = os.listdir(sStylePath)
     for sStyle in lStyles:
         if sStyle.endswith(".yaml"):
-            with open(os.path.join(sStylePath, sStyle)) as yaml_file:
+            with open(os.path.join(sStylePath, sStyle), encoding="utf-8") as yaml_file:
                 tempConfiguration = yaml.safe_load(yaml_file)
             dReturn[tempConfiguration["name"]] = tempConfiguration.get("description", "")
     return dReturn

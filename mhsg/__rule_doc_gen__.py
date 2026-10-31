@@ -64,7 +64,7 @@ def build_rule_class_doc(path, sRuleName, dRules):
 def import_preamble_doc(sRuleName):
     lReturn = []
     if sRuleName == "range":
-        sFileName = f"mhsg/rules/ranges/preamble_doc.rst"
+        sFileName = "mhsg/rules/ranges/preamble_doc.rst"
     else:
         sFileName = f"mhsg/rules/{sRuleName}/preamble_doc.rst"
     if os.path.exists(sFileName):
@@ -148,13 +148,13 @@ def blank_line():
 
 
 def write_file(path, sFilename, lLines):
-    with open(os.path.join(path, sFilename), "w") as oFile:
+    with open(os.path.join(path, sFilename), "w", encoding="utf-8") as oFile:
         oFile.write("\n".join(lLines))
 
 
 def read_file(sFileName):
     lLines = []
-    with open(sFileName) as oFile:
+    with open(sFileName, encoding="utf-8") as oFile:
         for sLine in oFile:
             lLines.append(sLine.rstrip())
     return lLines

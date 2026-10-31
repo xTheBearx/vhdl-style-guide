@@ -57,7 +57,7 @@ class New:
             bAllPhases=commandLineArguments.all_phases,
             lSkipPhase=commandLineArguments.skip_phase,
         )
-        sStdOut, sIgnore = oRules.report_violations(commandLineArguments.output_format)
+        sStdOut, _ = oRules.report_violations(commandLineArguments.output_format)
         oResults.set_stdout(sStdOut)
 
         oResults.set_violations(oRules.violations)

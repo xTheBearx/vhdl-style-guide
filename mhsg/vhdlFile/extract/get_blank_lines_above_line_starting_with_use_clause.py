@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import parser, token
+from mhsg import token
 from mhsg.vhdlFile.extract import utils
 from mhsg.vhdlFile.extract.get_line_preceding_line import get_line_preceding_line
 

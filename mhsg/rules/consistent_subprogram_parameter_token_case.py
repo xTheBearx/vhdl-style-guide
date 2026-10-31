@@ -46,7 +46,7 @@ class consistent_subprogram_parameter_token_case(case.Rule):
 
         if self.subprogram_token == token.procedure_specification:
             lSubprogram = oFile.get_procedure_subprogram_body()
-        elif self.subprogram_token == token.function_specification:
+        else:
             lSubprogram = oFile.get_function_subprogram_body()
 
         lRecordElementNames = cc_utils.get_record_element_names(oFile)

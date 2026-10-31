@@ -53,7 +53,7 @@ class multiline_alignment_between_tokens(alignment.Rule):
         for oToi in lToi:
             if self.skip_array and utils.toi_is_array(oToi):
                 continue
-            iLine, lTokens = utils.get_toi_parameters(oToi)
+            iLine, _ = utils.get_toi_parameters(oToi)
             oToi.set_meta_data("oFirstLineIndentToken", alignment_utils.get_first_line_indent_token(iLine, oFile))
             oToi.set_meta_data("iAssignColumn", oFile.get_column_of_token_index(oToi.get_start_index(), self.indent_size))
             lReturn.append(oToi)
@@ -170,7 +170,7 @@ class multiline_alignment_between_tokens(alignment.Rule):
                     self.bIgnoreStartParen,
                     self.bConstraint,
                 )
-            elif not align_paren(self) and not align_left(self, lTokens):
+            else:
                 dExpectedIndent = _analyze_align_paren_no_align_left_no(
                     iFirstLine,
                     iLastLine,
@@ -201,7 +201,7 @@ class multiline_alignment_between_tokens(alignment.Rule):
                 if indents_match(dActualIndent[iLine], dExpectedIndent[iLine]):
                     continue
 
-                oViolation = build_violation(iLine, oToi, iToken, dExpectedIndent, dIndex, dActualIndent)
+                oViolation = build_violation(iLine, oToi, iToken, dExpectedIndent, dIndex, dActualIndent)  # pylint: disable=undefined-loop-variable
                 self.add_violation(oViolation)
 
     def _fix_violation(self, oViolation):

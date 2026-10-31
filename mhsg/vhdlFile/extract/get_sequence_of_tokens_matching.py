@@ -28,7 +28,7 @@ def get_token_indexes(lTokens, oTokenMap):
 
     lTemp = oTokenMap.get_token_indexes(lTokens[-1])
     iAdjust = len(lTokens) - 1
-    for iIdx, iTemp in enumerate(lTemp):
+    for _, iTemp in enumerate(lTemp):
         iNewIdx = iTemp - iAdjust
         lIndexes.append(iNewIdx)
     return lIndexes

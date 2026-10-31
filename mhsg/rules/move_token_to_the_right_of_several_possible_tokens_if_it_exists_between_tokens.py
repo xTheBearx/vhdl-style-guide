@@ -42,6 +42,8 @@ class move_token_to_the_right_of_several_possible_tokens_if_it_exists_between_to
 
     def _analyze(self, lToi):
         for oToi in lToi:
+            iAnchorLine = None
+            sSolution = None
             iLine, lTokens = utils.get_toi_parameters(oToi)
             if not utils.does_token_type_exist_in_list_of_tokens(self.oMoveToken, lTokens):
                 continue

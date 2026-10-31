@@ -64,7 +64,7 @@ class rule_030(structure.Rule):
                 else:
                     oSignal = parser.todo("signal name")
 
-            if oSignal is not None and not isinstance(oToken, parser.carriage_return):
+            if oSignal is not None and not isinstance(oToken, parser.carriage_return):  # pylint: disable=undefined-loop-variable
                 lNewList.append(parser.todo("signal name"))
                 iSignals += 1
 

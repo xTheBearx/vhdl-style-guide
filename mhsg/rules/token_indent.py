@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import parser, violation
+from mhsg import violation
 from mhsg.rule_group import indent
 from mhsg.rules import utils as rules_utils
 
@@ -126,6 +126,6 @@ def create_indent_solution(self, oToken):
     iIndentLevel = oToken.get_indent()
     if self.indent_style == "spaces":
         sSolution = "Use " + str(iIndentLevel * self.indent_size) + " spaces for indent"
-    elif self.indent_style == "smart_tabs":
+    else:
         sSolution = "Use " + str(iIndentLevel) + " tab(s) for indent"
     return sSolution

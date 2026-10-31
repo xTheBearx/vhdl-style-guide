@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
 
 
-from mhsg import parser, violation
-from mhsg.rule_group import structure
-from mhsg.rules import utils as rules_utils
 from mhsg.rules.insert_token_next_to_token_if_it_does_not_exist_between_tokens_using_value_from_token import (
     insert_token_next_to_token_if_it_does_not_exist_between_tokens_using_value_from_token as Rule,
 )
-from mhsg.vhdlFile import utils
 
 
 class insert_token_left_of_token_if_it_does_not_exist_between_tokens_using_value_from_token(Rule):

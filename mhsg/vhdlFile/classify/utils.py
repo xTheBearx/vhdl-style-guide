@@ -23,7 +23,7 @@ def build_selected_name_token_list(lTokens, token):
 
 def build_use_clause_selected_name_token_list(lTokens, token):
     lNewTokens = []
-    for iThisToken, sToken in enumerate(lTokens):
+    for iThisToken, _ in enumerate(lTokens):
         classify_use_clause_selected_name_elements(iThisToken, lNewTokens, lTokens, token)
     lNewTokens.pop()
     return lNewTokens
@@ -31,7 +31,7 @@ def build_use_clause_selected_name_token_list(lTokens, token):
 
 def build_context_reference_selected_name_token_list(lTokens, token):
     lNewTokens = []
-    for iThisToken, sToken in enumerate(lTokens):
+    for iThisToken, _ in enumerate(lTokens):
         classify_context_reference_selected_name_elements(iThisToken, lNewTokens, lTokens, token)
     lNewTokens.pop()
     return lNewTokens
