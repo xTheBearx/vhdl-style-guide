@@ -98,6 +98,7 @@ Rules Enforcing Indent Rule Group
 * `selected_assignment_300 <../selected_assignment_rules.html#selected-assignment-300>`_
 * `sequential_001 <../sequential_rules.html#sequential-001>`_
 * `signal_001 <../signal_rules.html#signal-001>`_
+* `subprogram_instantiation_300 <../subprogram_instantiation_rules.html#subprogram-instantiation-300>`_
 * `subtype_001 <../subtype_rules.html#subtype-001>`_
 * `type_001 <../type_rules.html#type-001>`_
 * `type_005 <../type_rules.html#type-005>`_
