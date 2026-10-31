@@ -16,5 +16,5 @@ class rule_001(rule.Rule):
         lToiArchitecture = oFile.get_tokens_matching([token.architecture_body.architecture_keyword])
 
         if len(lToiEntity) > 0 and len(lToiArchitecture) > 0:
-            oViolation = violation.New(1, lToiEntity, self.solution)
+            oViolation = violation.New(1, lToiEntity[0], self.solution)
             self.add_violation(oViolation)
