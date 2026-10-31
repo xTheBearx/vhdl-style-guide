@@ -8,7 +8,7 @@ The command line tool can be invoked with:
 
    $ mhsg
    usage: Multiple HDL Style Guide (MHSG) [-h] [-f FILENAME [FILENAME ...]]
-                                 [-lr LOCAL_RULES]
+                                 [-lr LOCAL_RULES [LOCAL_RULES ...]]
                                  [-c CONFIGURATION [CONFIGURATION ...]] [--fix]
                                  [-fp FIX_PHASE] [-j JUNIT] [-js JSON]
                                  [-of {mhsg,syntastic,summary}] [-b]
@@ -30,8 +30,8 @@ The command line tool can be invoked with:
      -h, --help            show this help message and exit
      -f FILENAME [FILENAME ...], --filename FILENAME [FILENAME ...]
                            File to analyze
-     -lr LOCAL_RULES, --local_rules LOCAL_RULES
-                           Path to local rules
+     -lr LOCAL_RULES [LOCAL_RULES ...], --local_rules LOCAL_RULES [LOCAL_RULES ...]
+                           Path(s) to local rule directories
      -c CONFIGURATION [CONFIGURATION ...], --configuration CONFIGURATION [CONFIGURATION ...]
                            JSON or YAML configuration file(s)
      --fix                 Fix issues found
@@ -79,10 +79,11 @@ The command line tool can be invoked with:
 |                               | editors that can interact through stdin/stdout  |
 |                               | for diagnostics                                 |
 +-------------------------------+-------------------------------------------------+
-| --local_rules LOCAL_RULES     | Additional rules not in the base set.           |
+| --local_rules LOCAL_RULES     | Directories of additional rules not in the base |
+|                               | set.                                            |
 +-------------------------------+-------------------------------------------------+
 | --configuration CONFIGURATION | JSON or YAML file(s) which alters the behavior  |
-|                               | of MHSG.  Configuration can also include a list  |
+|                               | of MHSG.  Configuration can also include a list |
 |                               | files to analyze.  Any combination of JSON and  |
 |                               | YAML files can be passed.  Each will be         |
 |                               | processed in order from left to right.          |
@@ -103,7 +104,7 @@ The command line tool can be invoked with:
 |                               | the destination directory must exist.           |
 +-------------------------------+-------------------------------------------------+
 | --output_format               | Configures the sdout output format.             |
-|                               |   mhsg -- standard MHSG output                    |
+|                               |   mhsg -- standard MHSG output                  |
 |                               |   syntastic -- format compatible with the       |
 |                               |   syntastic VIM module                          |
 |                               |   summary -- Minimal output useful when running |
@@ -117,7 +118,7 @@ The command line tool can be invoked with:
 | --output_configuration        | Writes a JSON configuration file of the current |
 |                               | run.  It includes a file_list, local_rules (if  |
 |                               | used), and how every rule was configured.       |
-|                               | This configuration can be fed back into MHSG.    |
+|                               | This configuration can be fed back into MHSG.   |
 |                               | The path to the file can also be specified, but |
 |                               | the destination directory must exist.           |
 +-------------------------------+-------------------------------------------------+
@@ -125,7 +126,7 @@ The command line tool can be invoked with:
 +-------------------------------+-------------------------------------------------+
 | --style                       | Use a built in coding style.                    |
 +-------------------------------+-------------------------------------------------+
-| --version                     | Displays the version of MHSG.                    |
+| --version                     | Displays the version of MHSG.                   |
 +-------------------------------+-------------------------------------------------+
 | --all_phases                  | Executes all phases without stopping if a       |
 |                               | violation is found.                             |
@@ -141,7 +142,7 @@ The command line tool can be invoked with:
 |                               | default is the number of cores available.       |
 +-------------------------------+-------------------------------------------------+
 | --debug                       | Print verbose debug information to assist with  |
-|                               | debugging errors with MHSG.                      |
+|                               | debugging errors with MHSG.                     |
 +-------------------------------+-------------------------------------------------+
 
 
@@ -282,10 +283,10 @@ One of the following error codes will be returned after running MHSG:
 +------------+-------------------------------------------------+
 | Error Code |  Description                                    |
 +------------+-------------------------------------------------+
-|     0      |  MHSG ran without encountering any errors and no |
+|     0      |  MHSG ran without encountering any errors and no|
 |            |  rule violations were detected.                 |
 +------------+-------------------------------------------------+
-|     1      |  MHSG ran and detected a rule violation.         |
+|     1      |  MHSG ran and detected a rule violation.        |
 +------------+-------------------------------------------------+
 |     2      |  An attempt was made to configure a rule which  |
 |            |  was deprecated.                                |

@@ -148,7 +148,7 @@ The command line tool can be invoked with:
 .. code-block:: bash
 
    $ mhsg
-   usage: Multiple HDL Style Guide (MHSG) [-h] [-f FILENAME [FILENAME ...]] [-lr LOCAL_RULES] [-c CONFIGURATION [CONFIGURATION ...]] [--fix]
+   usage: Multiple HDL Style Guide (MHSG) [-h] [-f FILENAME [FILENAME ...]] [-lr LOCAL_RULES [LOCAL_RULES ...]] [-c CONFIGURATION [CONFIGURATION ...]] [--fix]
                                  [-fp FIX_PHASE] [-j JUNIT] [-js JSON] [-of {mhsg,syntastic,summary}] [-b] [-oc OUTPUT_CONFIGURATION]
                                  [-rc RULE_CONFIGURATION] [--style {indent_only,jcl}] [-v] [-ap] [--fix_only FIX_ONLY] [--stdin]
                                  [--quality_report QUALITY_REPORT] [-p JOBS] [--debug]
@@ -163,8 +163,8 @@ The command line tool can be invoked with:
      -h, --help            show this help message and exit
      -f FILENAME [FILENAME ...], --filename FILENAME [FILENAME ...]
                            File to analyze
-     -lr LOCAL_RULES, --local_rules LOCAL_RULES
-                           Path to local rules
+     -lr LOCAL_RULES [LOCAL_RULES ...], --local_rules LOCAL_RULES [LOCAL_RULES ...]
+                           Path(s) to local rule directories
      -c CONFIGURATION [CONFIGURATION ...], --configuration CONFIGURATION [CONFIGURATION ...]
                            JSON or YAML configuration file(s)
      --fix                 Fix issues found

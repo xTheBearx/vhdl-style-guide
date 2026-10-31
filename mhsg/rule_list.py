@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import importlib
+import importlib.util
 import inspect
 import os
+import sys
 
 from mhsg import exceptions
 
-from . import deprecated_rule, junit, report, severity, utils
+from . import config, deprecated_rule, junit, report, severity, utils
 
 
 def get_python_modules_from_directory(sDirectoryName, lModules):
@@ -46,20 +48,33 @@ def get_rules_from_module(lModules, lRules):
                 lRules.append(obj())
 
 
-def load_local_rules(sDirectoryName):
+def load_local_rules(sDirectoryName, iDirectory=0):
     """
     Loads rules from the directory passed to this routine.
+
+    Modules are loaded from their file path with a name unique to the directory,
+    so rule files with the same name in different directories do not collide.
 
     Parameters:
 
       sDirectoryName (string)
+
+      iDirectory (integer)
 
     Returns: (string list)
     """
     lLocalModules = []
     get_python_modules_from_directory(sDirectoryName, lLocalModules)
     lRules = []
-    get_rules_from_module(lLocalModules, lRules)
+    for sModuleName in lLocalModules:
+        sUniqueName = f"mhsg_local_rules_{iDirectory}_{sModuleName}"
+        oSpec = importlib.util.spec_from_file_location(sUniqueName, os.path.join(sDirectoryName, sModuleName + ".py"))
+        oModule = importlib.util.module_from_spec(oSpec)
+        sys.modules[sUniqueName] = oModule
+        oSpec.loader.exec_module(oModule)
+        for name, obj in inspect.getmembers(oModule):
+            if name.startswith("rule_") and name != "rule_item":
+                lRules.append(obj())
     return lRules
 
 
@@ -112,8 +127,8 @@ class rule_list:
 
     def __init__(self, oVhdlFile, oSeverityList, sLocalRulesDirectory=None):
         self.rules = load_rules()
-        if sLocalRulesDirectory:
-            self.rules.extend(load_local_rules(sLocalRulesDirectory))
+        for iDirectory, sDirectory in enumerate(config.get_local_rule_directories(sLocalRulesDirectory)):
+            self.rules.extend(load_local_rules(sDirectory, iDirectory))
         self.iNumberRulesRan = 0
         self.lastPhaseRan = 0
         self.oVhdlFile = oVhdlFile

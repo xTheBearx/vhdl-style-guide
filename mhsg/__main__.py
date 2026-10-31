@@ -111,8 +111,8 @@ def main():
     oConfig = config.New(commandLineArguments)
 
     # Add local rule path to system path so the rules can be loaded
-    if commandLineArguments.local_rules:
-        sys.path.append(os.path.abspath(commandLineArguments.local_rules))
+    for sDirectory in config.get_local_rule_directories(commandLineArguments.local_rules):
+        sys.path.append(os.path.abspath(sDirectory))
 
     if commandLineArguments.junit:
         oJunitFile = junit.xmlfile(commandLineArguments.junit)

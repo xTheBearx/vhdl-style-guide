@@ -6,7 +6,7 @@ MHSG supports multiple display output using the `-of` command line argument.
 +-------------+---------------------------------------------------------------+
 | Option      | Description                                                   |
 +=============+===============================================================+
-| mhsg         | Default output format.                                        |
+| mhsg        | Default output format.                                        |
 +-------------+---------------------------------------------------------------+
 | syntastic   | Output format following the syntastic standard.  Useful for   |
 |             | integrating with Vim.                                         |

@@ -97,7 +97,7 @@ def apply_rules(commandLineArguments, oConfig, tIndexFileName):
     except OSError as e:
         sOutputStd = (
             f"ERROR: encountered {e.__class__.__name__}, No such file or directory "
-            + commandLineArguments.local_rules
+            + ", ".join(config.get_local_rule_directories(commandLineArguments.local_rules))
             + " when trying to open local rules file."
         )
         sOutputErr = None

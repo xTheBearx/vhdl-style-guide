@@ -183,6 +183,7 @@ Use new rule to analyze
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 When we want to run with localized rules, use the **--local_rules** option.
+More than one directory can be given, for example **--local_rules ~/local_rules ~/team_rules**, which allows rules to be organized in groups.
 
 .. code-block:: bash
 
