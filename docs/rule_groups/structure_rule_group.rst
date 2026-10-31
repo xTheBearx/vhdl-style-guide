@@ -76,6 +76,7 @@ Rules Enforcing Structure Rule Group
 * `generic_016 <../generic_rules.html#generic-016>`_
 * `generic_018 <../generic_rules.html#generic-018>`_
 * `generic_021 <../generic_rules.html#generic-021>`_
+* `generic_022 <../generic_rules.html#generic-022>`_
 * `generic_map_003 <../generic_map_rules.html#generic-map-003>`_
 * `generic_map_004 <../generic_map_rules.html#generic-map-004>`_
 * `generic_map_005 <../generic_map_rules.html#generic-map-005>`_
