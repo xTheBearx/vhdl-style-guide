@@ -98,8 +98,25 @@ file_rules
 ----------
 
 The file_rules option allows for configuration of individual rules per file.
-Any file listed under this option will have the configuration applied if it is being analyzed.
-.. The file_rules is exactly the same as file_list except that it will not add the file to the scan list.
+It uses the same format as file_list, but it does not add files to the list of files to analyze.
+A file listed under this option has the configuration applied only when it is analyzed, for example because it was given with **-f**.
+
+Environment variables are expanded and globbing is supported, so a pattern can apply a configuration to a group of files.
+For example, this configuration allows upper case entity names in every file in a **test_hdl** directory:
+
+.. code-block:: yaml
+
+   file_rules:
+     - '**/test_hdl/*.vhd':
+         rule:
+           entity_008:
+             case: upper
+           entity_012:
+             case: upper
+
+A file is matched however its path is written on the command line, for example **test_hdl/tb.vhd**, **./test_hdl/tb.vhd** or the absolute path.
+If a file matches more than one entry, every matching configuration is applied in the order of the entries, so a later entry overrides an earlier one.
+The configurations are applied after the **rule** section, so they override it for the files they match.
 
 linesep
 -------
