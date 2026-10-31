@@ -12,7 +12,6 @@ from mhsg.rules import package_scope
 
 from . import config, deprecated_rule, junit, report, severity, utils
 
-
 NUMBER_OF_SUBPHASES = 7
 
 
