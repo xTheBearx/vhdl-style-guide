@@ -8,6 +8,8 @@ next_statement_300
 
 |phase_4| |error| |indent|
 
+Alias: :code:`next_statement_next_keyword_indent`
+
 This rule checks the indentation of the **next** keyword.
 
 **Violation**
@@ -28,6 +30,8 @@ next_statement_301
 ##################
 
 |phase_4| |error| |indent|
+
+Alias: :code:`next_statement_label_indent`
 
 This rule checks the indentation of the label.
 
@@ -50,6 +54,8 @@ next_statement_500
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`next_statement_next_keyword_case`
+
 This rule checks the **next** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -70,6 +76,8 @@ next_statement_501
 ##################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`next_statement_when_keyword_case`
 
 This rule checks the **when** keyword has proper case.
 

@@ -25,6 +25,8 @@ block_comment_001
 
 |phase_1| |disabled| |error| |unfixable| |structure|
 
+Alias: :code:`block_comment_header_correct`
+
 This rule checks the block comment header is correct.
 
 |configuring_block_comments_link|
@@ -52,6 +54,8 @@ block_comment_002
 
 |phase_1| |disabled| |error| |unfixable| |structure|
 
+Alias: :code:`block_comment_left_border_exists`
+
 This rule checks the **comment_left** attribute exists for all comments.
 
 |configuring_block_comments_link|
@@ -78,6 +82,8 @@ block_comment_003
 #################
 
 |phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`block_comment_footer_correct`
 
 This rule checks the block comment footer is correct.
 

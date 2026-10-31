@@ -24,6 +24,8 @@ attribute_500
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`attribute_predefined_attributes_case`
+
 This rule checks predefined attributes have the proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|

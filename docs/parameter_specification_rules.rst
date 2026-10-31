@@ -8,6 +8,8 @@ parameter_specification_500
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`parameter_specification_identifier_case`
+
 This rule checks the parameter identifier has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -29,6 +31,8 @@ parameter_specification_501
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`parameter_specification_in_keyword_case`
+
 This rule checks the **in** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -49,6 +53,8 @@ parameter_specification_502
 ###########################
 
 |phase_6| |error| |case| |case_name|
+
+Alias: :code:`parameter_specification_parameter_names_consistent_case`
 
 This rule checks for consistent capitalization of loop and generate parameter names.
 

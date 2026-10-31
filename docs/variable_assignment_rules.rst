@@ -8,6 +8,8 @@ variable_assignment_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`variable_assignment_indent`
+
 This rule checks the indent of a variable assignment.
 
 **Violation**
@@ -37,6 +39,8 @@ variable_assignment_002
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`variable_assignment_space_after_assignment`
+
 This rule checks for a single space after the assignment.
 
 |configuring_whitespace_rules_link|
@@ -60,6 +64,8 @@ variable_assignment_003
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`variable_assignment_space_before_assignment`
+
 This rule checks for at least a single space before the assignment.
 
 |configuring_whitespace_rules_link|
@@ -82,6 +88,8 @@ variable_assignment_004
 #######################
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`variable_assignment_multiline_alignment`
 
 This rule checks the alignment of multiline variable assignments.
 
@@ -111,6 +119,8 @@ variable_assignment_006
 
 |phase_2| |error| |unfixable| |structure|
 
+Alias: :code:`variable_assignment_no_comments_in_multiline_assignment`
+
 This rule checks for comments in multiline variable assignments.
 
 **Violation**
@@ -132,6 +142,8 @@ variable_assignment_007
 #######################
 
 |phase_1| |error| |structure|
+
+Alias: :code:`variable_assignment_structure`
 
 This rule checks the structure of simple and conditional variable assignments.
 
@@ -166,6 +178,8 @@ variable_assignment_008
 
 |phase_1| |error| |structure|
 
+Alias: :code:`variable_assignment_array_structure`
+
 This rule checks the structure of multiline variable assignments that contain arrays.
 
 |configuring_array_multiline_structure_rules_link|
@@ -191,6 +205,8 @@ variable_assignment_400
 #######################
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`variable_assignment_conditional_multiline_alignment`
 
 This rule checks alignment of multiline conditional variable assignments.
 
@@ -222,6 +238,8 @@ variable_assignment_401
 #######################
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`variable_assignment_array_alignment`
 
 This rule checks the alignment of multiline variable assignments that contain arrays.
 

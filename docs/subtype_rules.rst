@@ -8,6 +8,8 @@ subtype_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`subtype_indent`
+
 This rule checks for indentation of the **subtype** keyword.
 
 **Violation**
@@ -37,6 +39,8 @@ subtype_002
 ###########
 
 |phase_6| |error| |case|
+
+Alias: :code:`subtype_names_consistent_case`
 
 This rule checks for consistent capitalization of subtype names.
 
@@ -82,6 +86,8 @@ subtype_004
 
 |phase_7| |disabled| |error| |unfixable| |naming|
 
+Alias: :code:`subtype_prefix`
+
 This rule checks for valid prefixes in subtype identifiers.
 The default new subtype prefix is *st_*.
 
@@ -104,6 +110,8 @@ subtype_005
 
 |phase_1| |error| |structure|
 
+Alias: :code:`subtype_identifier_on_same_line_as_subtype_keyword`
+
 This rule checks the identifier is on the same line as the **subtype** keyword.
 
 **Violation**
@@ -125,6 +133,8 @@ subtype_006
 
 |phase_1| |error| |structure|
 
+Alias: :code:`subtype_is_keyword_on_same_line_as_identifier`
+
 This rule checks the **is** keyword is on the same line as the identifier.
 
 **Violation**
@@ -144,6 +154,8 @@ subtype_100
 ###########
 
 |phase_2| |disabled| |error| |whitespace|
+
+Alias: :code:`subtype_space_before_identifier`
 
 This rule checks for a single space before the identifier.
 
@@ -166,6 +178,8 @@ subtype_101
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`subtype_space_before_is_keyword`
+
 This rule checks for a single space before the **is** keyword.
 
 |configuring_whitespace_rules_link|
@@ -187,6 +201,8 @@ subtype_102
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`subtype_space_after_is_keyword`
+
 This rule checks for a single space after the **is** keyword.
 
 |configuring_whitespace_rules_link|
@@ -207,6 +223,8 @@ subtype_200
 ###########
 
 |phase_3| |disabled| |error| |blank_line|
+
+Alias: :code:`subtype_blank_line_below_unless_followed_by_subtype`
 
 This rule checks for a blank line below a **subtype** declaration unless there is another **subtype** declaration.
 
@@ -234,6 +252,8 @@ subtype_201
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`subtype_lines_above`
+
 This rule checks for blank lines or comments above the **subtype** declaration.
 
 |configuring_previous_line_rules_link|
@@ -258,6 +278,8 @@ subtype_202
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`subtype_blank_line_below`
+
 This rule checks for a blank line below the **subtype** declaration.
 
 |configuring_blank_lines_link|
@@ -281,6 +303,8 @@ subtype_500
 ###########
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`subtype_keyword_case`
 
 This rule checks the **subtype** keyword has proper case.
 
@@ -307,6 +331,8 @@ subtype_501
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`subtype_identifier_case`
+
 This rule checks the identifier has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -331,6 +357,8 @@ subtype_502
 ###########
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`subtype_is_keyword_case`
 
 This rule checks the **is** keyword has proper case.
 
@@ -357,6 +385,8 @@ subtype_600
 
 |phase_7| |disabled| |error| |unfixable| |naming|
 
+Alias: :code:`subtype_suffix`
+
 This rule checks for valid suffixes in subtype identifiers.
 The default new subtype suffix is *_st*.
 
@@ -378,6 +408,8 @@ subtype_601
 ###########
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`subtype_package_prefix`
 
 This rule checks for valid prefixes on subtype identifiers declared in packages and package bodies.
 Subtypes declared inside subprograms are not checked by this rule.
@@ -413,6 +445,8 @@ subtype_602
 ###########
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`subtype_package_suffix`
 
 This rule checks for valid suffixes on subtype identifiers declared in packages and package bodies.
 Subtypes declared inside subprograms are not checked by this rule.

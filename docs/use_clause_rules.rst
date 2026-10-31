@@ -8,6 +8,8 @@ use_clause_001
 
 |phase_7| |disabled| |error| |unfixable| |naming|
 
+Alias: :code:`use_clause_allowed_packages`
+
 This rule checks for packages that have been restricted by the user.
 
 |configuring_library_and_package_name_restriction_rules_link|
@@ -26,6 +28,8 @@ use_clause_500
 ##############
 
 |phase_6| |error| |case| |case_name|
+
+Alias: :code:`use_clause_library_name_case`
 
 This rule checks the library name called out in the selected name has proper case.
 
@@ -52,6 +56,8 @@ use_clause_501
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`use_clause_package_name_case`
+
 This rule checks the package name called out in the selected name has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -72,6 +78,8 @@ use_clause_502
 ##############
 
 |phase_6| |error| |case| |case_name|
+
+Alias: :code:`use_clause_item_name_case`
 
 This rule checks the item name called out in the selected name has proper case.
 
@@ -99,6 +107,8 @@ use_clause_503
 ##############
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`use_clause_all_keyword_case`
 
 This rule checks the **all** keyword called out in the selected name has proper case.
 

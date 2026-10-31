@@ -10,6 +10,8 @@ when_001
 
 |phase_1| |error| |structure|
 
+Alias: :code:`when_else_keyword_not_at_line_start`
+
 This rule checks the **else** keyword is not at the beginning of a line.
 The else should be at the end of the preceding line.
 

@@ -8,6 +8,8 @@ assert_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`assert_multiline_indent`
+
 This rule checks indent of multiline assert statements.
 
 **Violation**
@@ -30,6 +32,8 @@ assert_002
 ##########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`assert_report_keyword_on_own_line_concurrent_assertion`
 
 This rule checks the **report** keyword is on its own line for concurrent assertion statements.
 
@@ -62,6 +66,8 @@ assert_003
 ##########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`assert_report_keyword_on_own_line_sequential_assertion`
 
 This rule checks the **report** keyword is on its own line for sequential assertion statements.
 
@@ -105,6 +111,8 @@ assert_004
 
 |phase_1| |error| |structure|
 
+Alias: :code:`assert_severity_keyword_on_own_line_concurrent_assertion`
+
 This rule checks the **severity** keyword is on its own line for concurrent assertion statements.
 
 **Violation**
@@ -136,6 +144,8 @@ assert_005
 ##########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`assert_severity_keyword_on_own_line_sequential_assertion`
 
 This rule checks the **severity** keyword is on its own line for sequential assertion statements.
 
@@ -175,6 +185,8 @@ assert_100
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`assert_space_after_assert_keyword`
+
 This rule checks for a single space after the **assert** keyword.
 
 |configuring_whitespace_rules_link|
@@ -199,6 +211,8 @@ assert_101
 ##########
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`assert_space_after_report_keyword`
 
 This rule checks for a single space after the **report** keyword.
 
@@ -225,6 +239,8 @@ assert_102
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`assert_space_after_severity_keyword`
+
 This rule checks for a single space after the **severity** keyword.
 
 |configuring_whitespace_rules_link|
@@ -249,6 +265,8 @@ assert_400
 ##########
 
 |phase_4| |error| |alignment|
+
+Alias: :code:`assert_report_expressions_alignment`
 
 This rule checks the alignment of the report expressions.
 
@@ -277,6 +295,8 @@ assert_500
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`assert_keyword_case`
+
 This rule checks the **assert** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -300,6 +320,8 @@ assert_501
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`assert_report_keyword_case`
+
 This rule checks the **report** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -322,6 +344,8 @@ assert_502
 ##########
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`assert_severity_keyword_case`
 
 This rule checks the **severity** keyword has proper case.
 

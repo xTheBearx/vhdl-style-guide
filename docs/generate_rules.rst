@@ -8,6 +8,8 @@ generate_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`generate_indent`
+
 This rule checks the indent of the generate declaration.
 
 **Violation**
@@ -37,6 +39,8 @@ generate_002
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`generate_space_between_label_and_colon`
+
 This rule checks for a single space between the label and the colon.
 
 |configuring_whitespace_rules_link|
@@ -57,6 +61,8 @@ generate_003
 ############
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`generate_blank_line_below_end_generate`
 
 This rule checks for a blank line below the **end generate** keywords.
 
@@ -82,6 +88,8 @@ generate_004
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`generate_lines_above_label`
+
 This rule checks for blank lines or comments before the **generate** label.
 
 |configuring_previous_line_rules_link|
@@ -106,6 +114,8 @@ generate_005
 
 |phase_6| |error| |case| |case_label|
 
+Alias: :code:`generate_label_case`
+
 This rule checks the generate label has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -127,6 +137,8 @@ generate_006
 
 |phase_4| |error| |indent|
 
+Alias: :code:`generate_begin_keyword_indent`
+
 This rule checks the indent of the **begin** keyword.
 
 **Violation**
@@ -147,6 +159,8 @@ generate_007
 ############
 
 |phase_4| |error| |indent|
+
+Alias: :code:`generate_end_generate_keyword_indent`
 
 This rule checks the indent of the **end generate** keyword.
 
@@ -171,6 +185,8 @@ generate_008
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`generate_space_after_end_keyword`
+
 This rule checks for a single space after the **end** keyword.
 
 |configuring_whitespace_rules_link|
@@ -191,6 +207,8 @@ generate_009
 ############
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`generate_end_keyword_case`
 
 This rule checks the **end** keyword has proper case.
 
@@ -213,6 +231,8 @@ generate_010
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`generate_end_generate_keyword_case`
+
 This rule checks the **generate** keyword has the proper case in the **end generate** line.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -233,6 +253,8 @@ generate_011
 ############
 
 |phase_1| |error| |structure| |structure_optional|
+
+Alias: :code:`generate_end_label_exists`
 
 This rule checks the **end generate**  label on for, case and if generate statements.
 
@@ -259,6 +281,8 @@ generate_012
 
 |phase_6| |error| |case| |case_label|
 
+Alias: :code:`generate_end_label_case`
+
 This rule checks the **end generate** label has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -280,6 +304,8 @@ generate_013
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`generate_space_between_end_generate_and_label`
+
 This rule checks for a single space after the **generate** keyword and the label in the **end generate** keywords.
 
 |configuring_whitespace_rules_link|
@@ -300,6 +326,8 @@ generate_014
 ############
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`generate_space_between_colon_and_keyword`
 
 This rule checks for a single space between the colon and the **for** keyword.
 
@@ -332,6 +360,8 @@ generate_016
 
 |phase_4| |error| |indent|
 
+Alias: :code:`generate_case_when_keyword_indent`
+
 This rule checks the indent of the **when** keyword in generate case statements.
 
 **Violation**
@@ -357,6 +387,8 @@ generate_017
 
 |phase_7| |disabled| |error| |unfixable| |naming|
 
+Alias: :code:`generate_label_prefix`
+
 This rule checks for valid prefixes on generate statement labels.
 The default prefix is *gen_*.
 
@@ -378,6 +410,8 @@ generate_018
 ############
 
 |phase_4| |error| |indent|
+
+Alias: :code:`generate_body_end_keyword_indent`
 
 This rule checks the indent of the **end** keyword in the generate statement body.
 
@@ -404,6 +438,8 @@ generate_019
 
 |phase_1| |error| |structure|
 
+Alias: :code:`generate_end_keyword_on_own_line`
+
 This rule checks the **end** keyword is on its own line.
 
 **Violation**
@@ -426,6 +462,8 @@ generate_020
 
 |phase_1| |error| |structure|
 
+Alias: :code:`generate_label_colon_on_same_line`
+
 This rule checks a label and the colon are on the same line.
 
 **Violation**
@@ -445,6 +483,8 @@ generate_021
 ############
 
 |phase_1| |error| |structure|
+
+Alias: :code:`generate_label_colon_on_same_line_as_keyword`
 
 This rule checks a label colon is on the same line as the **case**, **if**, and **for** keywords.
 
@@ -466,6 +506,8 @@ generate_400
 ############
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`generate_for_declarative_part_identifier_alignment`
 
 This rule checks the identifiers for all declarations are aligned in the generate declarative part in for generate statements.
 
@@ -489,6 +531,8 @@ generate_401
 ############
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`generate_for_declarative_part_colon_alignment`
 
 This rule checks the colons are in the same column for all declarations in the generate declarative part in for generate statements.
 
@@ -517,6 +561,8 @@ generate_402
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`generate_if_declarative_part_identifier_alignment`
+
 This rule checks the identifiers for all declarations are aligned in the generate declarative part in if generate statements.
 
 |configuring_identifier_alignment_rules_link|
@@ -539,6 +585,8 @@ generate_403
 ############
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`generate_if_declarative_part_colon_alignment`
 
 This rule checks the colons are in the same column for all declarations in the generate declarative part in if generate statements.
 
@@ -567,6 +615,8 @@ generate_404
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`generate_case_declarative_part_identifier_alignment`
+
 This rule checks the identifiers for all declarations are aligned in the generate declarative part in case generate statements.
 
 |configuring_identifier_alignment_rules_link|
@@ -589,6 +639,8 @@ generate_405
 ############
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`generate_case_declarative_part_colon_alignment`
 
 This rule checks the colons are in the same column for all declarations in the generate declarative part in case generate statements.
 
@@ -617,6 +669,8 @@ generate_500
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`generate_begin_keyword_case`
+
 This rule checks the **begin** keyword has the proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -639,6 +693,8 @@ generate_501
 ############
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`generate_body_end_keyword_case`
 
 This rule checks the **end** keyword has the proper case.
 
@@ -667,6 +723,8 @@ generate_600
 
 |phase_7| |disabled| |error| |unfixable| |naming|
 
+Alias: :code:`generate_label_suffix`
+
 This rule checks for valid suffixes on generate statement labels.
 The default suffix is *_gen*.
 
@@ -689,6 +747,8 @@ generate_601
 
 |phase_7| |disabled| |error| |unfixable| |naming|
 
+Alias: :code:`generate_parameter_prefix`
+
 This rule checks for valid prefixes on generate parameter identifiers.
 The default generate prefix is *gv_*.
 
@@ -710,6 +770,8 @@ generate_602
 ############
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`generate_parameter_suffix`
 
 This rule checks for valid suffixes on generate parameter identifiers.
 The default generate suffix is *_gv*.

@@ -21,6 +21,8 @@ instantiation_002
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`instantiation_space_after_colon`
+
 This rule checks for a single space after the colon.
 
 |configuring_whitespace_rules_link|
@@ -42,6 +44,8 @@ instantiation_003
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`instantiation_space_before_colon`
+
 This rule checks for a single space before the colon.
 
 |configuring_whitespace_rules_link|
@@ -62,6 +66,8 @@ instantiation_004
 #################
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`instantiation_lines_above`
 
 This rule checks for blank lines or comments above the instantiation.
 
@@ -95,6 +101,8 @@ instantiation_005
 
 |phase_1| |error| |structure|
 
+Alias: :code:`instantiation_port_map_keyword_on_own_line`
+
 This rule checks the **port map** keywords are on their own line.
 
 |configuring_port_map_new_line_link|
@@ -127,6 +135,8 @@ instantiation_008
 
 |phase_6| |error| |case| |case_label|
 
+Alias: :code:`instantiation_label_case`
+
 This rule checks the instance label has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -147,6 +157,8 @@ instantiation_009
 #################
 
 |phase_6| |error| |case| |case_name|
+
+Alias: :code:`instantiation_component_name_case`
 
 This rule checks the component name has proper case.
 
@@ -169,6 +181,8 @@ instantiation_010
 #################
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`instantiation_arrow_alignment`
 
 This rule checks the alignment of the **=>** operator for each generic and port in the instantiation.
 
@@ -218,6 +232,8 @@ instantiation_012
 
 |phase_1| |error| |structure|
 
+Alias: :code:`instantiation_generic_map_not_on_label_line`
+
 This rule checks the instantiation declaration and the **generic map** keywords are not on the same line.
 
 **Violation**
@@ -265,6 +281,8 @@ instantiation_019
 #################
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`instantiation_blank_line_below`
 
 This rule checks for a blank line below the end of the instantiation declaration.
 
@@ -338,6 +356,8 @@ instantiation_027
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`instantiation_entity_keyword_case`
+
 This rule checks the **entity** keyword has proper case in direct instantiations.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -359,6 +379,8 @@ instantiation_028
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`instantiation_entity_name_case`
+
 This rule checks the entity name has proper case in direct instantiations.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -379,6 +401,8 @@ instantiation_029
 #################
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`instantiation_inline_comment_alignment`
 
 This rule checks for alignment of inline comments in an instantiation.
 
@@ -415,6 +439,8 @@ instantiation_031
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`instantiation_component_keyword_case`
+
 This rule checks the **component** keyword has proper case in component instantiations that use the **component** keyword.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -435,6 +461,8 @@ instantiation_032
 #################
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`instantiation_space_after_component_keyword`
 
 This rule checks for a single space after the **component** keyword if it is used.
 
@@ -461,6 +489,8 @@ instantiation_033
 
 |phase_1| |error| |structure| |structure_optional|
 
+Alias: :code:`instantiation_component_keyword_exists`
+
 This rule checks for the **component** keyword for a component instantiation.
 
 |configuring_optional_items_link|
@@ -481,6 +511,8 @@ instantiation_034
 #################
 
 |phase_1| |error| |unfixable| |structure|
+
+Alias: :code:`instantiation_component_or_entity`
 
 This rule checks for component versus direct instantiations.
 
@@ -514,6 +546,8 @@ instantiation_035
 
 |phase_1| |error| |structure|
 
+Alias: :code:`instantiation_semicolon_not_on_own_line`
+
 This rule checks the semicolon is not on its own line.
 
 **Violation**
@@ -540,6 +574,8 @@ instantiation_036
 
 |phase_1| |error| |unfixable| |structure| |structure_optional|
 
+Alias: :code:`instantiation_architecture_specification_exists`
+
 This rule checks for the optional architecture specification in entity instantiations.
 
 The default action is "add".
@@ -562,6 +598,8 @@ instantiation_300
 #################
 
 |phase_4| |error| |indent|
+
+Alias: :code:`instantiation_indent`
 
 This rule checks for the proper indentation of instantiations.
 
@@ -594,6 +632,8 @@ instantiation_500
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`instantiation_component_library_name_case`
+
 This rule checks the component library name has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -614,6 +654,8 @@ instantiation_600
 #################
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`instantiation_label_suffix`
 
 This rule checks for valid suffixes on instantiation labels.
 The default suffix is *_inst*.
@@ -636,6 +678,8 @@ instantiation_601
 #################
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`instantiation_label_prefix`
 
 This rule checks for valid prefixes on instantiation labels.
 The default prefix is *inst_*.

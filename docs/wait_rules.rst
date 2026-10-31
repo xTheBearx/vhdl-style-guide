@@ -8,6 +8,8 @@ wait_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`wait_keyword_indent`
+
 This rule checks for indentation of the **wait** keyword.
 Proper indentation enhances comprehension.
 
@@ -36,6 +38,8 @@ wait_300
 
 |phase_4| |error| |indent|
 
+Alias: :code:`wait_label_indent`
+
 This rule checks for indentation of the label.
 Proper indentation enhances comprehension.
 
@@ -62,6 +66,8 @@ wait_500
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`wait_keyword_case`
+
 This rule checks the **wait** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -82,6 +88,8 @@ wait_501
 ########
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`wait_on_keyword_case`
 
 This rule checks the **on** keyword has proper case.
 
@@ -104,6 +112,8 @@ wait_502
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`wait_until_keyword_case`
+
 This rule checks the **until** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -124,6 +134,8 @@ wait_503
 ########
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`wait_for_keyword_case`
 
 This rule checks the **for** keyword has proper case.
 

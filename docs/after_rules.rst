@@ -8,6 +8,8 @@ after_001
 
 |phase_1| |disabled| |error| |structure|
 
+Alias: :code:`after_clause_in_clocked_signal_assignments`
+
 This rule checks for **after x** in signal assignments in clock processes.
 
 **Violation**
@@ -54,6 +56,8 @@ after_002
 
 |phase_5| |disabled| |error| |alignment|
 
+Alias: :code:`after_keyword_alignment_clock_process`
+
 This rule checks the **after** keywords are aligned in a clock process.
 
 |configuring_keyword_alignment_rules_link|
@@ -93,6 +97,8 @@ after_003
 
 |phase_1| |disabled| |error| |structure|
 
+Alias: :code:`after_clause_not_in_reset_branch`
+
 This rule checks the **after** keywords do not exist in the reset portion of a clock process.
 
 **Violation**
@@ -129,6 +135,8 @@ after_500
 #########
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`after_keyword_case`
 
 This rule checks the **after** keyword has proper case.
 

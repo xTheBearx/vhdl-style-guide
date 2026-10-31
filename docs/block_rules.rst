@@ -8,6 +8,8 @@ block_001
 
 |phase_1| |error| |structure|
 
+Alias: :code:`block_label_on_same_line_as_block_keyword`
+
 This rule checks the block label and the **block** keyword are on the same line.
 Keeping the label and generate on the same line reduces excessive indenting.
 
@@ -28,6 +30,8 @@ block_002
 #########
 
 |phase_1| |error| |structure| |structure_optional|
+
+Alias: :code:`block_is_keyword_exists`
 
 This rule checks for the existence of the **is** keyword.
 
@@ -52,6 +56,8 @@ block_003
 
 |phase_1| |error| |structure|
 
+Alias: :code:`block_is_keyword_on_same_line_as_block_keyword`
+
 This rule checks the **is** keyword is on the same line as the **block** keyword.
 
 **Violation**
@@ -71,6 +77,8 @@ block_004
 #########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`block_begin_keyword_on_own_line`
 
 This rule checks the **begin** keyword is on its own line.
 
@@ -92,6 +100,8 @@ block_005
 
 |phase_1| |error| |structure|
 
+Alias: :code:`block_no_code_after_begin_keyword`
+
 This rule checks for code after the **begin** keyword.
 
 **Violation**
@@ -112,6 +122,8 @@ block_006
 
 |phase_1| |error| |structure|
 
+Alias: :code:`block_end_keyword_on_own_line`
+
 This rule checks the **end** keyword is on its own line.
 
 **Violation**
@@ -131,6 +143,8 @@ block_007
 #########
 
 |phase_1| |error| |structure| |structure_optional|
+
+Alias: :code:`block_end_label_exists`
 
 This rule checks the block label exists in the closing of the block statement.
 
@@ -163,6 +177,8 @@ block_101
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`block_space_between_end_block_and_label`
+
 This rule checks for a single space between the **end** and **block** keywords and label.
 
 |configuring_whitespace_rules_link|
@@ -183,6 +199,8 @@ block_102
 #########
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`block_space_after_block_label`
 
 This rule checks for a single space after the block label.
 
@@ -205,6 +223,8 @@ block_103
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`block_space_before_block_keyword`
+
 This rule checks for a single space after the colon and before the **block** keyword.
 
 |configuring_whitespace_rules_link|
@@ -225,6 +245,8 @@ block_104
 #########
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`block_space_after_block_keyword`
 
 This rule checks for a single space after the **block** keyword.
 
@@ -249,6 +271,8 @@ block_105
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`block_space_before_is_keyword`
+
 This rule checks for a single space between the guard close parenthesis and the **is** keyword.
 
 |configuring_whitespace_rules_link|
@@ -269,6 +293,8 @@ block_200
 #########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`block_lines_above_block_label`
 
 This rule checks for blank lines or comments above the block label.
 
@@ -294,6 +320,8 @@ block_201
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`block_blank_line_below_block_keyword`
+
 This rule checks for a blank line below the **block** keyword.
 
 |configuring_blank_lines_link|
@@ -317,6 +345,8 @@ block_202
 #########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`block_lines_above_begin_keyword`
 
 This rule checks for blank lines or comments above the **begin** keyword.
 
@@ -346,6 +376,8 @@ block_203
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`block_blank_line_below_begin_keyword`
+
 This rule checks for a blank line below the **begin** keyword.
 
 |configuring_blank_lines_link|
@@ -369,6 +401,8 @@ block_204
 #########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`block_lines_above_end_keyword`
 
 This rule checks for blank lines or comments above the **end** keyword.
 
@@ -398,6 +432,8 @@ block_205
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`block_blank_line_below_semicolon`
+
 This rule checks for a blank line below the semicolon.
 
 |configuring_blank_lines_link|
@@ -422,6 +458,8 @@ block_300
 
 |phase_4| |error| |indent|
 
+Alias: :code:`block_label_indent`
+
 This rule checks the indent of the block label.
 
 **Violation**
@@ -445,6 +483,8 @@ block_301
 
 |phase_4| |error| |indent|
 
+Alias: :code:`block_begin_keyword_indent`
+
 This rule checks the indent of the **begin** keyword.
 
 **Violation**
@@ -467,6 +507,8 @@ block_302
 #########
 
 |phase_4| |error| |indent|
+
+Alias: :code:`block_end_keyword_indent`
 
 This rule checks the indent of the **end** keyword.
 
@@ -495,6 +537,8 @@ block_400
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`block_declarative_part_identifier_alignment`
+
 This rule checks the identifiers for all declarations are aligned in the block declarative region.
 
 |configuring_identifier_alignment_rules_link|
@@ -517,6 +561,8 @@ block_401
 #########
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`block_declarative_part_colon_alignment`
 
 This rule checks the colons are in the same column for all declarations in the block declarative part.
 
@@ -545,6 +591,8 @@ block_402
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`block_attribute_specification_colon_alignment`
+
 This rule checks the colons are in the same column for all attribute specifications.
 
 |configuring_keyword_alignment_rules_link|
@@ -570,6 +618,8 @@ block_500
 
 |phase_6| |error| |case| |case_label|
 
+Alias: :code:`block_label_case`
+
 This rule checks the label has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -590,6 +640,8 @@ block_501
 #########
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`block_keyword_case`
 
 This rule checks the **block** keyword has proper case.
 
@@ -612,6 +664,8 @@ block_502
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`block_is_keyword_case`
+
 This rule checks the **is** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -632,6 +686,8 @@ block_503
 #########
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`block_begin_keyword_case`
 
 This rule checks the **begin** keyword has proper case.
 
@@ -656,6 +712,8 @@ block_504
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`block_end_keyword_case`
+
 This rule checks the **end** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -676,6 +734,8 @@ block_505
 #########
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`block_end_block_keyword_case`
 
 This rule checks the **block** keyword in the **end block** has proper case.
 
@@ -698,6 +758,8 @@ block_506
 
 |phase_6| |error| |case| |case_label|
 
+Alias: :code:`block_end_label_case`
+
 This rule checks the label has proper case on the end block declaration.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -718,6 +780,8 @@ block_600
 #########
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`block_label_suffix`
 
 This rule checks for valid suffixes on block labels.
 The default suffix is *_blk*.
@@ -740,6 +804,8 @@ block_601
 #########
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`block_label_prefix`
 
 This rule checks for valid prefixes on block labels.
 The default prefix is *blk_*.

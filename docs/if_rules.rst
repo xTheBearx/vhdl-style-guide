@@ -8,6 +8,8 @@ if_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`if_keyword_indent`
+
 This rule checks the indent of the **if** keyword.
 
 **Violation**
@@ -38,6 +40,8 @@ if_002
 ######
 
 |phase_1| |error| |structure|
+
+Alias: :code:`if_condition_in_parentheses`
 
 This rule checks the boolean expression is enclosed in ().
 
@@ -78,6 +82,8 @@ if_003
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`if_space_before_open_parenthesis`
+
 This rule checks for a single space between the **if** keyword and the (.
 
 |configuring_whitespace_rules_link|
@@ -103,6 +109,8 @@ if_004
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`if_space_before_then_keyword`
+
 This rule checks for a single space between the ) and the **then** keyword.
 
 |configuring_whitespace_rules_link|
@@ -127,6 +135,8 @@ if_005
 ######
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`if_space_after_elsif_keyword`
 
 This rule checks for a single space after the **elsif** keyword.
 
@@ -172,6 +182,8 @@ if_009
 
 |phase_4| |error| |alignment|
 
+Alias: :code:`if_multiline_condition_alignment`
+
 This rule checks the alignment of multiline boolean expressions.
 
 |configuring_multiline_indent_rules_link|
@@ -205,6 +217,8 @@ if_012
 
 |phase_4| |error| |indent|
 
+Alias: :code:`if_elsif_keyword_indent`
+
 This rule checks the indent of the **elsif** keyword.
 
 **Violation**
@@ -235,6 +249,8 @@ if_013
 ######
 
 |phase_4| |error| |indent|
+
+Alias: :code:`if_else_keyword_indent`
 
 This rule checks the indent of the **else** keyword.
 
@@ -267,6 +283,8 @@ if_014
 
 |phase_4| |error| |indent|
 
+Alias: :code:`if_end_if_keyword_indent`
+
 This rule checks the indent of the **end if** keyword.
 
 **Violation**
@@ -298,6 +316,8 @@ if_015
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`if_space_between_end_and_if`
+
 This rule checks for a single space between the **end if** keywords.
 
 |configuring_whitespace_rules_link|
@@ -319,6 +339,8 @@ if_020
 
 |phase_1| |error| |structure|
 
+Alias: :code:`if_end_if_keyword_on_own_line`
+
 This rule checks the **end if** keyword is on its own line.
 
 **Violation**
@@ -338,6 +360,8 @@ if_021
 ######
 
 |phase_1| |error| |structure|
+
+Alias: :code:`if_else_keyword_on_own_line`
 
 This rule checks the **else** keyword is on its own line.
 
@@ -359,6 +383,8 @@ if_022
 
 |phase_1| |error| |structure|
 
+Alias: :code:`if_no_code_after_else_keyword`
+
 This rule checks for code after the **else** keyword.
 
 **Violation**
@@ -378,6 +404,8 @@ if_023
 ######
 
 |phase_1| |error| |structure|
+
+Alias: :code:`if_elsif_keyword_on_own_line`
 
 This rule checks the **elsif** keyword is on its own line.
 
@@ -399,6 +427,8 @@ if_024
 
 |phase_1| |error| |structure|
 
+Alias: :code:`if_no_code_after_then_keyword`
+
 This rule checks for code after the **then** keyword.
 
 **Violation**
@@ -418,6 +448,8 @@ if_025
 ######
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`if_keyword_case`
 
 This rule checks the **if** keyword has proper case.
 
@@ -440,6 +472,8 @@ if_026
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`if_elsif_keyword_case`
+
 This rule checks the **elsif** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -461,6 +495,8 @@ if_027
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`if_else_keyword_case`
+
 This rule checks the **else** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -481,6 +517,8 @@ if_028
 ######
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`if_end_keyword_case`
 
 This rule checks the **end** keyword has proper case.
 
@@ -507,6 +545,8 @@ if_029
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`if_then_keyword_case`
+
 This rule checks the **then** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -527,6 +567,8 @@ if_030
 ######
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`if_blank_line_below_end_if`
 
 This rule checks a single blank line after the **end if**.
 In the case of nested **if** statements, the rule will be enforced on the last **end if**.
@@ -556,6 +598,8 @@ if_031
 ######
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`if_lines_above_if_keyword`
 
 This rule checks for blank lines or comments above the **if** keyword.
 In the case of nested **if** statements, the rule will be enforced on the first **if**.
@@ -608,6 +652,8 @@ if_034
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`if_end_if_keyword_case`
+
 This rule checks the **if** keyword in the **end if** has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -632,6 +678,8 @@ if_035
 ######
 
 |phase_1| |error| |structure|
+
+Alias: :code:`if_condition_on_same_line_as_keyword`
 
 This rule checks the expression after the **if** or **elsif** keyword starts on the same line.
 
@@ -658,6 +706,8 @@ if_036
 
 |phase_1| |error| |structure|
 
+Alias: :code:`if_then_keyword_not_on_own_line`
+
 This rule checks the **then** keyword is not on a line by itself.
 
 **Violation**
@@ -677,6 +727,8 @@ if_200
 ######
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`if_blank_line_below_then_keyword`
 
 This rule checks for blank lines below the **then** keyword.
 
@@ -706,6 +758,8 @@ if_201
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`if_lines_above_elsif_keyword`
+
 This rule checks for blank lines or comments above the **elsif** keyword.
 
 |configuring_previous_line_rules_link|
@@ -733,6 +787,8 @@ if_202
 ######
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`if_lines_above_else_keyword`
 
 This rule checks for blank lines or comments above the **else** keyword.
 
@@ -762,6 +818,8 @@ if_203
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`if_blank_line_below_else_keyword`
+
 This rule checks for blank lines below the **else** keyword.
 
 |configuring_blank_lines_link|
@@ -789,6 +847,8 @@ if_204
 ######
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`if_lines_above_end_if_keyword`
 
 This rule checks for blank lines or comments above the **end if** keywords.
 

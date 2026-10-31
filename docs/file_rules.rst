@@ -8,6 +8,8 @@ file_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`file_declaration_indent`
+
 This rule checks the indent of **file** declarations.
 
 **Violation**
@@ -40,6 +42,8 @@ file_002
 ########
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`file_keyword_case`
 
 This rule checks the **file** keyword has proper case.
 
@@ -80,6 +84,8 @@ file_100
 
 |phase_2| |disabled| |error| |whitespace|
 
+Alias: :code:`file_space_before_identifier`
+
 This rule checks for a single space before the identifier.
 
 |configuring_whitespace_rules_link|
@@ -101,6 +107,8 @@ file_101
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`file_space_after_identifier`
+
 This rule checks for a single space after the identifier.
 
 |configuring_whitespace_rules_link|
@@ -121,6 +129,8 @@ file_500
 ########
 
 |phase_6| |error| |case| |case_name|
+
+Alias: :code:`file_identifier_case`
 
 This rule checks the file identifier has proper case.
 

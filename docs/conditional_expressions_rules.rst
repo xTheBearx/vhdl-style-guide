@@ -8,6 +8,8 @@ conditional_expressions_100
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`conditional_expressions_space_before_when_keyword`
+
 This rule checks for a single space before the **when** keyword.
 
 |configuring_whitespace_rules_link|
@@ -28,6 +30,8 @@ conditional_expressions_101
 ###########################
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`conditional_expressions_space_after_when_keyword`
 
 This rule checks for a single space after the **when** keyword.
 
@@ -50,6 +54,8 @@ conditional_expressions_102
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`conditional_expressions_space_before_else_keyword`
+
 This rule checks for a single space before the **else** keyword.
 
 |configuring_whitespace_rules_link|
@@ -70,6 +76,8 @@ conditional_expressions_103
 ###########################
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`conditional_expressions_space_after_else_keyword`
 
 This rule checks for a single space after the **else** keyword.
 
@@ -92,6 +100,8 @@ conditional_expressions_500
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`conditional_expressions_when_keyword_case`
+
 This rule checks the **when** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -112,6 +122,8 @@ conditional_expressions_501
 ###########################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`conditional_expressions_else_keyword_case`
 
 This rule checks the **else** keyword has proper case.
 

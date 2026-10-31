@@ -8,6 +8,8 @@ file_open_information_100
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`file_open_information_space_before_open_keyword`
+
 This rule checks for a single space before the **open** keyword.
 
 |configuring_whitespace_rules_link|
@@ -28,6 +30,8 @@ file_open_information_101
 #########################
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`file_open_information_space_after_open_keyword`
 
 This rule checks for a single space after the **open** keyword.
 
@@ -50,6 +54,8 @@ file_open_information_102
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`file_open_information_space_before_is_keyword`
+
 This rule checks for a single space before the **is** keyword.
 
 |configuring_whitespace_rules_link|
@@ -71,6 +77,8 @@ file_open_information_103
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`file_open_information_space_after_is_keyword`
+
 This rule checks for a single space after the **is** keyword.
 
 |configuring_whitespace_rules_link|
@@ -91,6 +99,8 @@ file_open_information_500
 #########################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`file_open_information_open_keyword_case`
 
 This rule checks the **open** keyword has proper case.
 
@@ -121,6 +131,8 @@ file_open_information_501
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`file_open_information_file_open_kind_expression_case`
+
 This rule checks the file open kind expression has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -149,6 +161,8 @@ file_open_information_502
 #########################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`file_open_information_is_keyword_case`
 
 This rule checks the **is** keyword has proper case.
 

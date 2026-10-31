@@ -8,6 +8,8 @@ generic_map_001
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`generic_map_keyword_case`
+
 This rule checks the **generic map** keywords have proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -28,6 +30,8 @@ generic_map_002
 ###############
 
 |phase_6| |error| |case| |case_name|
+
+Alias: :code:`generic_map_generic_name_case`
 
 This rule checks generic names have proper case.
 
@@ -56,6 +60,8 @@ generic_map_003
 
 |phase_1| |error| |structure|
 
+Alias: :code:`generic_map_open_parenthesis_on_same_line_as_map`
+
 This rule checks the ( is on the same line as the **map** keyword.
 
 **Violation**
@@ -83,6 +89,8 @@ generic_map_004
 ###############
 
 |phase_1| |error| |structure|
+
+Alias: :code:`generic_map_closing_parenthesis_location`
 
 This rule checks the location of the closing ")" character for the generic map.
 
@@ -114,6 +122,8 @@ generic_map_005
 
 |phase_1| |error| |structure|
 
+Alias: :code:`generic_map_no_assignment_on_map_line`
+
 This rule checks if the **generic map** keywords and a generic assignment are on the same line.
 
 **Violation**
@@ -137,6 +147,8 @@ generic_map_006
 ###############
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`generic_map_space_before_open_parenthesis`
 
 This rule checks for a single space between the **map** keyword and the (.
 
@@ -162,6 +174,8 @@ generic_map_007
 ###############
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`generic_map_space_after_arrow`
 
 This rule checks for a single space after the **=>** keyword in generic maps.
 
@@ -192,6 +206,8 @@ generic_map_008
 
 |phase_1| |error| |unfixable| |structure|
 
+Alias: :code:`generic_map_no_positional_generics`
+
 This rule checks for positional generics.
 Positional ports and generics are subject to problems when the position of the underlying component changes.
 
@@ -219,6 +235,8 @@ generic_map_009
 ###############
 
 |phase_1| |error| |structure|
+
+Alias: :code:`generic_map_map_keyword_on_same_line_as_generic`
 
 This rule checks the **map** keyword is on the same line as the **generic** keyword.
 
@@ -249,6 +267,8 @@ generic_map_010
 
 |phase_1| |disabled| |error| |structure|
 
+Alias: :code:`generic_map_one_assignment_per_line`
+
 This rule checks multiple generic assignments on the same line.
 
 .. NOTE:: This rule is disabled by default, because short generic maps such as :code:`generic map (A => 1, B => 2)` are common.
@@ -278,6 +298,8 @@ generic_map_100
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`generic_map_space_before_arrow`
+
 This rules checks for whitespace before the assignment operator.
 
 |configuring_whitespace_rules_link|
@@ -305,6 +327,8 @@ generic_map_101
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`generic_map_space_between_generic_and_map`
+
 This rule checks for a single space between the **generic** keyword and the **map** keyword.
 
 |configuring_whitespace_rules_link|
@@ -325,6 +349,8 @@ generic_map_200
 ###############
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`generic_map_blank_line_below_open_parenthesis`
 
 This rule checks for a blank line below the open parenthesis in a generic map.
 
@@ -355,6 +381,8 @@ generic_map_201
 ###############
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`generic_map_blank_lines_between_associations`
 
 This rule checks for blank lines in a generic map.
 
@@ -396,6 +424,8 @@ generic_map_202
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`generic_map_lines_above_closing_parenthesis`
+
 This rule checks for blank lines or comments above the closing parenthesis in a generic map.
 
 |configuring_previous_line_rules_link|
@@ -425,6 +455,8 @@ generic_map_203
 ###############
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`generic_map_lines_above_keyword`
 
 This rule checks for blank lines or comments above the **generic map** keywords.
 
@@ -456,6 +488,8 @@ generic_map_300
 
 |phase_4| |error| |indent|
 
+Alias: :code:`generic_map_generic_keyword_indent`
+
 This rule checks for the proper indentation of the **generic** keyword in generic maps.
 
 **Violation**
@@ -484,6 +518,8 @@ generic_map_301
 ###############
 
 |phase_4| |error| |indent|
+
+Alias: :code:`generic_map_association_indent`
 
 This rule checks for the proper indentation of association elements in generic maps.
 
@@ -514,6 +550,8 @@ generic_map_302
 
 |phase_4| |error| |indent|
 
+Alias: :code:`generic_map_closing_parenthesis_indent`
+
 This rule checks for the proper indentation of the closing parenthesis in generic maps.
 
 **Violation**
@@ -542,6 +580,8 @@ generic_map_600
 ###############
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`generic_map_generic_name_suffix`
 
 This rule checks for valid suffixes on generic identifiers in generic maps
 The default generic suffix is *_g*.
@@ -572,6 +612,8 @@ generic_map_601
 ###############
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`generic_map_generic_name_prefix`
 
 This rule checks for valid prefixes on generic identifiers in generic maps
 The default generic suffix is *g_*.

@@ -8,6 +8,8 @@ port_map_001
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`port_map_keyword_case`
+
 This rule checks the **port map** keywords have proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -28,6 +30,8 @@ port_map_002
 ############
 
 |phase_6| |error| |case| |case_name|
+
+Alias: :code:`port_map_port_name_case`
 
 This rule checks the port names have proper case.
 
@@ -60,6 +64,8 @@ port_map_003
 
 |phase_1| |error| |structure|
 
+Alias: :code:`port_map_open_parenthesis_on_same_line_as_map`
+
 This rule checks the "(" character is on the same line as the **map** keyword.
 
 **Violation**
@@ -91,6 +97,8 @@ port_map_004
 
 |phase_1| |error| |structure|
 
+Alias: :code:`port_map_closing_parenthesis_location`
+
 This rule checks the location of the closing ")" character for the port map.
 
 The default location is on a line by itself.
@@ -116,6 +124,8 @@ port_map_005
 ############
 
 |phase_1| |error| |structure|
+
+Alias: :code:`port_map_no_assignment_on_map_line`
 
 This rule checks for a port assignment on the same line as the **port map** keyword.
 
@@ -143,6 +153,8 @@ port_map_006
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`port_map_space_before_open_parenthesis`
+
 This rule checks for a single space between the **map** keyword and the (.
 
 |configuring_whitespace_rules_link|
@@ -167,6 +179,8 @@ port_map_007
 ############
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`port_map_space_after_arrow`
 
 This rule checks for a single space after the **=>** operator in port maps.
 
@@ -199,6 +213,8 @@ port_map_008
 
 |phase_1| |error| |unfixable| |structure|
 
+Alias: :code:`port_map_no_positional_ports`
+
 This rule checks for positional ports.
 Positional ports are subject to problems when the position of the underlying component changes.
 
@@ -227,6 +243,8 @@ port_map_009
 
 |phase_1| |error| |structure|
 
+Alias: :code:`port_map_one_assignment_per_line`
+
 This rule checks multiple port assignments on the same line.
 
 **Violation**
@@ -253,6 +271,8 @@ port_map_010
 
 |phase_1| |error| |structure|
 
+Alias: :code:`port_map_no_comments_at_end_of_assignments`
+
 This rule checks for comments at the end of the port and generic assignments in instantiations.
 These comments represent additional maintenance.
 They will be out of sync with the entity at some point.
@@ -276,6 +296,8 @@ port_map_011
 ############
 
 |phase_1| |error| |structure|
+
+Alias: :code:`port_map_map_keyword_on_same_line_as_port`
 
 This rule checks the **map** keyword is on the same line as the **port** keyword.
 
@@ -308,6 +330,8 @@ port_map_100
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`port_map_space_before_arrow`
+
 This rules checks for whitespace before the assignment operator.
 
 |configuring_whitespace_rules_link|
@@ -337,6 +361,8 @@ port_map_101
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`port_map_space_between_port_and_map`
+
 This rule checks for a single space between the **port** keyword and the **map** keyword.
 
 |configuring_whitespace_rules_link|
@@ -357,6 +383,8 @@ port_map_200
 ############
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`port_map_blank_line_below_open_parenthesis`
 
 This rule checks for a blank line below the open parenthesis in a port map.
 
@@ -387,6 +415,8 @@ port_map_201
 ############
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`port_map_blank_lines_between_associations`
 
 This rule checks for blank lines in a port map.
 
@@ -429,6 +459,8 @@ port_map_202
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`port_map_lines_above_closing_parenthesis`
+
 This rule checks for blank lines or comments above the closing parenthesis in a port map.
 
 |configuring_previous_line_rules_link|
@@ -458,6 +490,8 @@ port_map_203
 ############
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`port_map_lines_above_keyword`
 
 This rule checks for blank lines or comments above the **port map** keywords.
 
@@ -495,6 +529,8 @@ port_map_300
 
 |phase_4| |error| |indent|
 
+Alias: :code:`port_map_port_keyword_indent`
+
 This rule checks for the proper indentation of the **port** keyword in port maps.
 
 **Violation**
@@ -524,6 +560,8 @@ port_map_301
 
 |phase_4| |error| |indent|
 
+Alias: :code:`port_map_association_indent`
+
 This rule checks for the proper indentation of association elements in port maps.
 
 **Violation**
@@ -552,6 +590,8 @@ port_map_302
 ############
 
 |phase_4| |error| |indent|
+
+Alias: :code:`port_map_closing_parenthesis_indent`
 
 This rule checks for the proper indentation of the closing parenthesis in port maps.
 

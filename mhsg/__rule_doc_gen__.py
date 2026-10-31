@@ -107,6 +107,9 @@ def do_something(lRules):
         if not oRule.deprecated and not oRule.proposed:
             lRuleDoc.extend(generate_icons(oRule))
             lRuleDoc.extend(blank_line())
+            if oRule.alias is not None:
+                lRuleDoc.append(f"Alias: :code:`{oRule.alias}`")
+                lRuleDoc.extend(blank_line())
         lRuleDoc.extend(add_doc_string(oRule))
     return lRuleDoc
 

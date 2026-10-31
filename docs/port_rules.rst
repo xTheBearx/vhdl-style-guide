@@ -8,6 +8,8 @@ port_001
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`port_blank_line_above_port_keyword`
+
 This rule checks for a blank line above the **port** keyword.
 
 |configuring_blank_lines_link|
@@ -32,6 +34,8 @@ port_002
 
 |phase_4| |error| |indent|
 
+Alias: :code:`port_keyword_indent`
+
 This rule checks the indent of the **port** keyword.
 
 **Violation**
@@ -52,6 +56,8 @@ port_003
 ########
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`port_space_after_port_keyword`
 
 This rule checks for a single space after the **port** keyword and (.
 
@@ -77,6 +83,8 @@ port_004
 ########
 
 |phase_4| |error| |indent|
+
+Alias: :code:`port_declarations_indent`
 
 This rule checks the indent of port declarations.
 
@@ -115,6 +123,8 @@ port_007
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`port_in_mode_spacing`
+
 This rule checks for spaces before and after the **in** mode keyword.
 
 |configuring_port_mode_alignment_link|
@@ -143,6 +153,8 @@ port_008
 ########
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`port_out_mode_spacing`
 
 This rule checks for spaces before and after the **out** mode keyword.
 
@@ -173,6 +185,8 @@ port_009
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`port_inout_mode_spacing`
+
 This rule checks for spaces before and after the **inout** mode keyword.
 
 |configuring_port_mode_alignment_link|
@@ -201,6 +215,8 @@ port_010
 ########
 
 |phase_6| |error| |case| |case_name|
+
+Alias: :code:`port_names_case`
 
 This rule checks the port names have proper case.
 
@@ -232,6 +248,8 @@ port_011
 ########
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`port_prefix`
 
 This rule checks for valid prefixes on port identifiers.
 The default port prefixes are: *i_*, *o_*, *io_*.
@@ -266,6 +284,8 @@ port_012
 
 |phase_1| |error| |unfixable| |structure|
 
+Alias: :code:`port_no_default_assignments`
+
 This rule checks for default assignments on port declarations.
 
 This rule is defaulted to not fixable and can be overridden with a configuration to remove the default assignments.
@@ -297,6 +317,8 @@ port_013
 
 |phase_1| |error| |structure|
 
+Alias: :code:`port_one_port_per_line`
+
 This rule checks for multiple ports declared on a single line.
 
 **Violation**
@@ -323,6 +345,8 @@ port_014
 ########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`port_closing_parenthesis_location`
 
 This rule checks the location of the closing ")" character for the port clause.
 
@@ -356,6 +380,8 @@ port_015
 
 |phase_4| |error| |indent|
 
+Alias: :code:`port_closing_parenthesis_indent`
+
 This rule checks the indent of the closing parenthesis for port clauses.
 
 **Violation**
@@ -385,6 +411,8 @@ port_016
 
 |phase_1| |error| |structure|
 
+Alias: :code:`port_no_declaration_on_port_keyword_line`
+
 This rule checks for a port definition on the same line as the **port** keyword.
 
 **Violation**
@@ -413,6 +441,8 @@ port_017
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`port_keyword_case`
+
 This rule checks the **port** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -440,6 +470,8 @@ port_019
 ########
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`port_mode_case`
 
 This rule checks the port direction has proper case.
 
@@ -472,6 +504,8 @@ port_020
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`port_space_before_colon`
+
 This rule checks for at least one space before the colon.
 
 |configuring_whitespace_rules_link|
@@ -503,6 +537,8 @@ port_021
 
 |phase_1| |error| |structure|
 
+Alias: :code:`port_open_parenthesis_on_same_line_as_keyword`
+
 This rule checks the **port** keyword is on the same line as the (.
 
 **Violation**
@@ -522,6 +558,8 @@ port_022
 ########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`port_blank_line_after_port_keyword`
 
 This rule checks for blank lines after the **port** keyword.
 
@@ -553,6 +591,8 @@ port_023
 ########
 
 |phase_1| |error| |unfixable| |structure|
+
+Alias: :code:`port_mode_exists`
 
 This rule checks for missing modes in port declarations.
 
@@ -587,6 +627,8 @@ port_024
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`port_no_blank_lines_before_closing_parenthesis`
+
 This rule checks for blank lines before the close parenthesis in port declarations.
 
 **Violation**
@@ -617,6 +659,8 @@ port_025
 ########
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`port_suffix`
 
 This rule checks for valid suffixes on port identifiers.
 The default port suffixes are *_i*, *_o*, *_io*.
@@ -650,6 +694,8 @@ port_026
 
 |phase_1| |error| |structure|
 
+Alias: :code:`port_one_identifier_per_declaration`
+
 This rule checks for multiple identifiers on port declarations.
 
 Any comments are not replicated.
@@ -681,6 +727,8 @@ port_027
 
 |phase_1| |error| |structure|
 
+Alias: :code:`port_semicolon_not_on_own_line`
+
 This rule checks the semicolon is not on its own line.
 
 **Violation**
@@ -707,6 +755,8 @@ port_100
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`port_space_before_assignment`
+
 This rule checks for at least a single space before the assignment.
 
 |configuring_whitespace_rules_link|
@@ -727,6 +777,8 @@ port_101
 ########
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`port_space_after_assignment`
 
 This rule checks for a single space after the assignment.
 
@@ -750,6 +802,8 @@ port_600
 ########
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`port_identifiers_input_ports_prefix`
 
 This rule checks for valid prefixes on port identifiers for input ports.
 
@@ -781,6 +835,8 @@ port_601
 
 |phase_7| |disabled| |error| |unfixable| |naming|
 
+Alias: :code:`port_identifiers_output_ports_prefix`
+
 This rule checks for valid prefixes on port identifiers for output ports.
 
 The default prefix is: *o_*.
@@ -810,6 +866,8 @@ port_602
 ########
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`port_identifiers_inout_ports_prefix`
 
 This rule checks for valid prefixes on port identifiers for inout ports.
 
@@ -841,6 +899,8 @@ port_603
 
 |phase_7| |disabled| |error| |unfixable| |naming|
 
+Alias: :code:`port_identifiers_buffer_ports_prefix`
+
 This rule checks for valid prefixes on port identifiers for buffer ports.
 
 The default prefix is: *b_*.
@@ -870,6 +930,8 @@ port_604
 ########
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`port_identifiers_linkage_ports_prefix`
 
 This rule checks for valid prefixes on port identifiers for linkage ports.
 
@@ -901,6 +963,8 @@ port_605
 
 |phase_7| |disabled| |error| |unfixable| |naming|
 
+Alias: :code:`port_identifiers_input_ports_suffix`
+
 This rule checks for valid suffixes on port identifiers for input ports.
 
 The default suffix is: *_i*.
@@ -931,6 +995,8 @@ port_606
 
 |phase_7| |disabled| |error| |unfixable| |naming|
 
+Alias: :code:`port_identifiers_output_ports_suffix`
+
 This rule checks for valid suffixes on port identifiers for output ports.
 
 The default suffix is: *_o*.
@@ -959,6 +1025,8 @@ port_607
 ########
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`port_identifiers_inout_ports_suffix`
 
 This rule checks for valid suffixes on port identifiers for inout ports.
 
@@ -989,6 +1057,8 @@ port_608
 
 |phase_7| |disabled| |error| |unfixable| |naming|
 
+Alias: :code:`port_identifiers_buffer_ports_suffix`
+
 This rule checks for valid suffixes on port identifiers for buffer ports.
 
 The default suffix is: *_b*.
@@ -1017,6 +1087,8 @@ port_609
 ########
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`port_identifiers_linkage_ports_suffix`
 
 This rule checks for valid suffixes on port identifiers for linkage ports.
 

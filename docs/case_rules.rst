@@ -8,6 +8,8 @@ case_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`case_when_end_case_keyword_indent`
+
 This rule checks the indent of **case**, **when**, and **end case** keywords.
 
 **Violation**
@@ -40,6 +42,8 @@ case_002
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`case_space_after_case_keyword`
+
 This rule checks for a single space after the **case** keyword.
 
 |configuring_whitespace_rules_link|
@@ -62,6 +66,8 @@ case_003
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`case_space_before_is_keyword`
+
 This rule checks for a single space before the **is** keyword.
 
 |configuring_whitespace_rules_link|
@@ -82,6 +88,8 @@ case_004
 ########
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`case_space_after_when_keyword`
 
 This rule checks for a single space after the **when** keyword.
 
@@ -108,6 +116,8 @@ case_005
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`case_space_before_arrow`
+
 This rule checks for a single space before the **=>** operator.
 
 |configuring_whitespace_rules_link|
@@ -133,6 +143,8 @@ case_006
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`case_space_between_end_and_case`
+
 This rule checks for a single space between the **end** and **case** keywords.
 
 |configuring_whitespace_rules_link|
@@ -157,6 +169,8 @@ case_007
 ########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`case_lines_above_case_keyword`
 
 This rule checks for blank lines or comments above the **case** keyword.
 
@@ -197,6 +211,8 @@ case_009
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`case_lines_above_end_keyword`
+
 This rule checks for blank lines or comments above the **end** keyword.
 
 |configuring_blank_lines_link|
@@ -223,6 +239,8 @@ case_010
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`case_blank_line_below_end_case_keyword`
+
 This rule checks for a blank line below the **end case** keywords.
 
 |configuring_blank_lines_link|
@@ -246,6 +264,8 @@ case_011
 ########
 
 |phase_4| |error| |alignment|
+
+Alias: :code:`case_multiline_when_alignment`
 
 This rule checks the alignment of multiline **when** statements.
 
@@ -272,6 +292,8 @@ case_012
 
 |phase_1| |error| |structure|
 
+Alias: :code:`case_no_code_after_arrow`
+
 This rule checks for code after the **=>** operator.
 
 **Violation**
@@ -296,6 +318,8 @@ case_014
 ########
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`case_case_keyword_case`
 
 This rule checks the **case** keyword has proper case.
 
@@ -326,6 +350,8 @@ case_015
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`case_is_keyword_case`
+
 This rule checks the **is** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -355,6 +381,8 @@ case_016
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`case_when_keyword_case`
+
 This rule checks the **when** has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -379,6 +407,8 @@ case_017
 ########
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`case_end_keyword_case`
 
 This rule checks the **end** keyword in the **end case** has proper case.
 
@@ -405,6 +435,8 @@ case_018
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`case_end_case_keyword_case`
+
 This rule checks the **case** keyword has proper case in the **end case**.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -430,6 +462,8 @@ case_019
 
 |phase_1| |error| |structure|
 
+Alias: :code:`case_no_label_before_case_keyword`
+
 This rule checks for labels before the **case** keyword.
 The label should be removed.
 The preference is to have comments above the case statement.
@@ -454,6 +488,8 @@ case_020
 ########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`case_no_label_after_end_case`
 
 This rule checks for labels after the **end case** keywords.
 The label should be removed.
@@ -483,6 +519,8 @@ case_200
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`case_blank_line_below_arrow`
+
 This rule checks for a blank line below the **=>** keyword.
 
 |configuring_blank_lines_link|
@@ -506,6 +544,8 @@ case_201
 ########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`case_lines_above_when_keyword`
 
 This rule checks for blank lines or comments above the **when** keyword.
 
@@ -537,6 +577,8 @@ case_300
 ########
 
 |phase_4| |error| |indent|
+
+Alias: :code:`case_label_indent`
 
 This rule checks the indentation of the label.
 

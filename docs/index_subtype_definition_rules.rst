@@ -8,6 +8,8 @@ index_subtype_definition_100
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`index_subtype_definition_space_before_range_keyword`
+
 This rule checks for a single space before the **range** keyword.
 
 |configuring_whitespace_rules_link|
@@ -29,6 +31,8 @@ index_subtype_definition_101
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`index_subtype_definition_space_after_range_keyword`
+
 This rule checks for a single space after the **range** keyword.
 
 |configuring_whitespace_rules_link|
@@ -49,6 +53,8 @@ index_subtype_definition_500
 ############################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`index_subtype_definition_range_keyword_case`
 
 This rule checks the **range** keyword in index subtype definitions has the proper case.
 

@@ -8,6 +8,8 @@ entity_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`entity_keyword_indent`
+
 This rule checks the indent of the **entity** keyword.
 
 **Violation**
@@ -31,6 +33,8 @@ entity_002
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`entity_space_after_entity_keyword`
+
 This rule checks for a single space after the **entity** keyword.
 
 |configuring_whitespace_rules_link|
@@ -51,6 +55,8 @@ entity_003
 ##########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`entity_lines_above_entity_keyword`
 
 This rule checks for blank lines or comments above the **entity** keyword.
 
@@ -76,6 +82,8 @@ entity_004
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`entity_keyword_case`
+
 This rule checks the **entity** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -96,6 +104,8 @@ entity_005
 ##########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`entity_is_keyword_on_same_line_as_entity_keyword`
 
 This rule checks the **is** keyword is on the same line as the **entity** keyword.
 
@@ -121,6 +131,8 @@ entity_006
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`entity_is_keyword_case`
+
 This rule checks the **is** keyword has proper case in the entity declaration.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -141,6 +153,8 @@ entity_007
 ##########
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`entity_space_before_is_keyword`
 
 This rule checks for a single space before the **is** keyword.
 
@@ -163,6 +177,8 @@ entity_008
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`entity_name_case`
+
 This rule checks the entity name has proper case in the entity declaration.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -183,6 +199,8 @@ entity_009
 ##########
 
 |phase_4| |error| |indent|
+
+Alias: :code:`entity_end_keyword_indent`
 
 This rule checks the indent of the **end** keyword.
 
@@ -209,6 +227,8 @@ entity_010
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`entity_end_keyword_case`
+
 This rule checks the **end** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -229,6 +249,8 @@ entity_011
 ##########
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`entity_space_after_end_keyword`
 
 This rule checks for a single space after the **end** keyword.
 
@@ -251,6 +273,8 @@ entity_012
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`entity_end_name_case`
+
 This rule checks the case of the entity name in the **end entity** statement.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -271,6 +295,8 @@ entity_013
 ##########
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`entity_space_before_end_name`
 
 This rule checks for a single space after the **entity** keyword in the closing of the entity declaration.
 
@@ -293,6 +319,8 @@ entity_014
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`entity_end_entity_keyword_case`
+
 This rule checks the **entity** keyword has proper case in the closing of the entity declaration.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -313,6 +341,8 @@ entity_015
 ##########
 
 |phase_1| |error| |structure| |structure_optional|
+
+Alias: :code:`entity_end_entity_keyword_exists`
 
 This rule checks for the keyword **entity** in the **end entity** statement.
 
@@ -338,6 +368,8 @@ entity_016
 ##########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`entity_blank_line_above_end_entity_keyword`
 
 This rule checks for blank lines above the **end entity** keywords.
 
@@ -368,6 +400,8 @@ entity_017
 ##########
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`entity_port_and_generic_colon_alignment`
 
 This rule checks the alignment of the colon for each generic and port in the entity declaration.
 
@@ -409,6 +443,8 @@ entity_018
 ##########
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`entity_port_and_generic_assignment_alignment`
 
 This rule checks the alignment of **:=** operator for each generic and port in the entity declaration.
 
@@ -453,6 +489,8 @@ entity_019
 
 |phase_1| |error| |structure| |structure_optional|
 
+Alias: :code:`entity_end_name_exists`
+
 This rule checks for the entity name in the **end entity** statement.
 
 |configuring_optional_items_link|
@@ -473,6 +511,8 @@ entity_020
 ##########
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`entity_inline_comment_alignment`
 
 This rule checks for alignment of inline comments in the entity declaration.
 
@@ -515,6 +555,8 @@ entity_021
 
 |phase_1| |error| |structure|
 
+Alias: :code:`entity_end_keyword_on_own_line`
+
 This rule checks the **end** keyword is on its own line.
 
 **Violation**
@@ -538,6 +580,8 @@ entity_022
 ##########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`entity_identifier_on_same_line_as_entity_keyword`
 
 This rule checks the identifier is on the same line as the **entity** keyword.
 
@@ -563,6 +607,8 @@ entity_023
 
 |phase_1| |error| |structure|
 
+Alias: :code:`entity_end_entity_keyword_on_same_line_as_end_keyword`
+
 This rule checks the end **entity** keyword is on the same line as the **end** keyword.
 
 **Violation**
@@ -586,6 +632,8 @@ entity_024
 ##########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`entity_end_name_not_on_own_line`
 
 This rule checks the end entity simple name is not on its own line.
 
@@ -611,6 +659,8 @@ entity_025
 
 |phase_1| |error| |structure|
 
+Alias: :code:`entity_semicolon_not_on_own_line`
+
 This rule checks the semicolon is not on its own line.
 
 **Violation**
@@ -635,6 +685,8 @@ entity_026
 
 |phase_1| |error| |structure|
 
+Alias: :code:`entity_no_code_after_is_keyword`
+
 This rule checks for code after the **is** keyword.
 
 **Violation**
@@ -654,6 +706,8 @@ entity_027
 ##########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`entity_no_code_after_begin_keyword`
 
 This rule checks for code after the **begin** keyword.
 
@@ -675,6 +729,8 @@ entity_028
 
 |phase_1| |error| |structure|
 
+Alias: :code:`entity_no_code_after_semicolon`
+
 This rule checks for code after the semicolon.
 
 **Violation**
@@ -694,6 +750,8 @@ entity_029
 ##########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`entity_begin_keyword_on_own_line`
 
 This rule checks the **begin** keyword is on its own line.
 
@@ -723,6 +781,8 @@ entity_200
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`entity_blank_line_above_generic_keyword`
+
 This rule checks for blank lines above the **generic** keyword in entity specifications.
 
 |configuring_blank_lines_link|
@@ -749,6 +809,8 @@ entity_201
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`entity_no_blank_line_after_is_keyword`
+
 This rule ensures no blank lines after the **is** keyword.
 
 **Violation**
@@ -771,6 +833,8 @@ entity_202
 ##########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`entity_blank_line_above_port_keyword`
 
 This rule checks for blank lines above the **port** keyword in entity specifications.
 
@@ -798,6 +862,8 @@ entity_203
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`entity_blank_line_below_semicolon`
+
 This rule checks for blank lines below the semicolon in entity specifications.
 
 |configuring_blank_lines_link|
@@ -822,6 +888,8 @@ entity_300
 
 |phase_4| |error| |indent|
 
+Alias: :code:`entity_begin_keyword_indent`
+
 This rule checks the indent of the **begin** keyword.
 
 **Violation**
@@ -844,6 +912,8 @@ entity_500
 ##########
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`entity_begin_keyword_case`
 
 This rule checks the **begin** keyword has proper case.
 
@@ -873,6 +943,8 @@ entity_600
 ##########
 
 |phase_6| |error| |case|
+
+Alias: :code:`entity_generic_names_consistent_case`
 
 This rule checks for consistent capitalization of generic names in entity declarations.
 

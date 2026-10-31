@@ -7,7 +7,7 @@ import sys
 
 import yaml
 
-from . import exceptions, junit, severity, utils
+from . import exceptions, junit, rule_aliases, severity, utils
 
 
 def read_predefined_style(sStyleName):
@@ -33,6 +33,7 @@ def open_configuration_file(sFileName, sJUnitFileName=None):
         with open(sFileName) as yaml_file:
             dTemp = yaml.full_load(yaml_file)
             check_for_deprecated_rule_options(dTemp, sFileName)
+            resolve_rule_aliases(dTemp, sFileName)
             return dTemp
     except OSError as e:
         print(f"ERROR: encountered {e.__class__.__name__}, {e.args[1]} while opening configuration file: " + sFileName)
@@ -46,6 +47,23 @@ def open_configuration_file(sFileName, sJUnitFileName=None):
     except exceptions.ConfigurationError as e:
         print(e.message)
         sys.exit(1)
+
+
+def resolve_rule_aliases(dConfiguration, sConfigFilename):
+    """
+    Replaces rule aliases with rule identifiers in the rule sections of a configuration file.
+    """
+    if not isinstance(dConfiguration, dict):
+        return
+    if "rule" in dConfiguration:
+        dConfiguration["rule"] = rule_aliases.resolve_rule_configuration(dConfiguration["rule"], sConfigFilename)
+    for sKey in ["file_list", "file_rules"]:
+        for dEntry in dConfiguration.get(sKey) or []:
+            if not isinstance(dEntry, dict):
+                continue
+            for dFileConfiguration in dEntry.values():
+                if isinstance(dFileConfiguration, dict) and "rule" in dFileConfiguration:
+                    dFileConfiguration["rule"] = rule_aliases.resolve_rule_configuration(dFileConfiguration["rule"], sConfigFilename)
 
 
 def validate_file_exists(sFilename, sConfigName, errorWhenEmpty):

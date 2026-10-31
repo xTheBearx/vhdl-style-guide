@@ -8,6 +8,8 @@ return_statement_300
 
 |phase_4| |error| |indent|
 
+Alias: :code:`return_statement_return_keyword_indent`
+
 This rule checks the indentation of the **return** keyword.
 
 **Violation**
@@ -29,6 +31,8 @@ return_statement_301
 
 |phase_4| |error| |indent|
 
+Alias: :code:`return_statement_label_indent`
+
 This rule checks the indentation of the label.
 
 **Violation**
@@ -49,6 +53,8 @@ return_statement_500
 ####################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`return_statement_return_keyword_case`
 
 This rule checks the **return** keyword has proper case.
 

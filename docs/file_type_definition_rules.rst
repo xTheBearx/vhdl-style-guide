@@ -8,6 +8,8 @@ file_type_definition_500
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`file_type_definition_file_keyword_case`
+
 This rule checks the **file** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -33,6 +35,8 @@ file_type_definition_501
 ########################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`file_type_definition_of_keyword_case`
 
 This rule checks the **of** keyword has proper case.
 

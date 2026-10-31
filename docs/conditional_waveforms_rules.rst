@@ -8,6 +8,8 @@ conditional_waveforms_001
 
 |phase_1| |error| |structure|
 
+Alias: :code:`conditional_waveforms_no_code_after_else_keyword`
+
 This rule checks for code after the **else** keyword.
 
 .. NOTE:: There is a configuration option :code:`allow_single_line` which allows single line concurrent statements.
@@ -56,6 +58,8 @@ conditional_waveforms_100
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`conditional_waveforms_space_before_when_keyword`
+
 This rule checks for a single space before the **when** keyword.
 
 |configuring_whitespace_rules_link|
@@ -76,6 +80,8 @@ conditional_waveforms_101
 #########################
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`conditional_waveforms_space_after_when_keyword`
 
 This rule checks for a single space after the **when** keyword.
 
@@ -98,6 +104,8 @@ conditional_waveforms_102
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`conditional_waveforms_space_before_else_keyword`
+
 This rule checks for a single space before the **else** keyword.
 
 |configuring_whitespace_rules_link|
@@ -118,6 +126,8 @@ conditional_waveforms_103
 #########################
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`conditional_waveforms_space_after_else_keyword`
 
 This rule checks for a single space after the **else** keyword.
 
@@ -140,6 +150,8 @@ conditional_waveforms_500
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`conditional_waveforms_when_keyword_case`
+
 This rule checks the **when** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -160,6 +172,8 @@ conditional_waveforms_501
 #########################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`conditional_waveforms_else_keyword_case`
 
 This rule checks the **else** keyword has proper case.
 

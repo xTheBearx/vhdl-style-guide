@@ -8,6 +8,8 @@ subprogram_body_201
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`subprogram_body_blank_line_below_is_keyword`
+
 This rule checks for a blank line below the **is** keyword.
 
 This rule allows the **begin** keyword to occupy the blank line:
@@ -40,6 +42,8 @@ subprogram_body_202
 ###################
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`subprogram_body_blank_line_above_begin_keyword`
 
 This rule checks for blank lines above the **begin** keyword.
 
@@ -76,6 +80,8 @@ subprogram_body_203
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`subprogram_body_blank_line_below_begin_keyword`
+
 This rule checks for a blank line below the **begin** keyword.
 
 |configuring_blank_lines_link|
@@ -101,6 +107,8 @@ subprogram_body_204
 ###################
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`subprogram_body_blank_line_above_end_keyword`
 
 This rule checks for blank lines above the **end** keyword.
 
@@ -130,6 +138,8 @@ subprogram_body_205
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`subprogram_body_blank_line_below_end`
+
 This rule checks for a blank line below the end of the function declaration.
 
 |configuring_blank_lines_link|
@@ -155,6 +165,8 @@ subprogram_body_400
 ###################
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`subprogram_body_assignment_operator_alignment`
 
 This rule checks the alignment of the **<=** and **:=** operators over consecutive sequential assignments in subprogram bodies.
 
@@ -187,6 +199,8 @@ subprogram_body_401
 ###################
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`subprogram_body_attribute_specification_colon_alignment`
 
 This rule checks the colons are in the same column for all attribute specifications.
 

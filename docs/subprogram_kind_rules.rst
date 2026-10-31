@@ -8,6 +8,8 @@ subprogram_kind_500
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`subprogram_kind_procedure_keyword_case`
+
 This rule checks that the **procedure** keyword in subprogram kinds has the proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -32,6 +34,8 @@ subprogram_kind_501
 ###################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`subprogram_kind_function_keyword_case`
 
 This rule checks that the **function** keyword in subprogram kinds has the proper case.
 

@@ -8,6 +8,8 @@ choice_500
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`choice_others_keyword_case`
+
 This rule checks the **others** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|

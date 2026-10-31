@@ -8,6 +8,8 @@ constant_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`constant_indent`
+
 This rule checks the indent of a constant declaration.
 
 **Violation**
@@ -32,6 +34,8 @@ constant_002
 ############
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`constant_keyword_case`
 
 This rule checks the **constant** keyword has proper case.
 
@@ -59,6 +63,8 @@ constant_004
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`constant_identifier_case`
+
 This rule checks the constant identifier has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -79,6 +85,8 @@ constant_005
 ############
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`constant_space_after_colon`
 
 This rule checks for a single space after the colon.
 
@@ -103,6 +111,8 @@ constant_006
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`constant_space_before_colon`
+
 This rule checks for at least a single space before the colon.
 
 |configuring_whitespace_rules_link|
@@ -125,6 +135,8 @@ constant_007
 ############
 
 |phase_1| |error| |structure|
+
+Alias: :code:`constant_assignment_on_same_line_as_constant_keyword`
 
 This rule checks the **:=** is on the same line as the **constant** keyword.
 
@@ -150,6 +162,8 @@ constant_010
 ############
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`constant_space_before_assignment_operator`
 
 This rule checks for a single space before the := keyword in constant declarations.
 Having a space makes it clearer where the assignment occurs on the line.
@@ -184,6 +198,8 @@ constant_012
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`constant_array_alignment`
+
 This rule checks the alignment of multiline constants that contain arrays.
 
 |configuring_multiline_indent_rules_link|
@@ -216,6 +232,8 @@ constant_013
 ############
 
 |phase_6| |error| |case|
+
+Alias: :code:`constant_names_consistent_case`
 
 This rule checks for consistent capitalization of constant names.
 
@@ -282,6 +300,8 @@ constant_014
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`constant_multiline_indent`
+
 This rule checks the indent of multiline constants that do not contain arrays.
 
 |configuring_multiline_indent_rules_link|
@@ -305,6 +325,8 @@ constant_015
 
 |phase_7| |disabled| |error| |unfixable| |naming|
 
+Alias: :code:`constant_prefix`
+
 This rule checks for valid prefixes on constant identifiers.
 The default constant prefix is *c_*.
 
@@ -326,6 +348,8 @@ constant_016
 ############
 
 |phase_5| |error| |structure|
+
+Alias: :code:`constant_array_structure`
 
 This rule checks the structure of multiline constants that contain arrays.
 
@@ -355,6 +379,8 @@ constant_017
 
 |phase_1| |error| |structure|
 
+Alias: :code:`constant_constraint_structure`
+
 This rule checks the structure of constant constraints.
 
 |configuring_multiline_constraint_rules_link|
@@ -378,6 +404,8 @@ constant_100
 ############
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`constant_space_after_assignment_operator`
 
 This rule checks for a single space after the := assignment in constant declarations.
 Having a space makes it clearer where the assignment occurs on the line.
@@ -403,6 +431,8 @@ constant_101
 
 |phase_2| |disabled| |error| |whitespace|
 
+Alias: :code:`constant_space_before_identifier`
+
 This rule checks for a single space before the identifier.
 
 |configuring_whitespace_rules_link|
@@ -425,6 +455,8 @@ constant_200
 ############
 
 |phase_3| |disabled| |error| |blank_line|
+
+Alias: :code:`constant_blank_line_below_unless_followed_by_constant`
 
 This rule checks for a blank line below a constant declaration unless there is another constant definition.
 
@@ -455,6 +487,8 @@ constant_400
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`constant_assignment_operator_alignment`
+
 This rule checks the alignment of assignment keywords in constant declarations.
 
 |configuring_keyword_alignment_rules_link|
@@ -484,6 +518,8 @@ constant_600
 
 |phase_7| |disabled| |error| |unfixable| |naming|
 
+Alias: :code:`constant_suffix`
+
 This rule checks for valid suffixes on constant identifiers.
 The default constant suffix is *_c*.
 
@@ -505,6 +541,8 @@ constant_601
 ############
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`constant_package_prefix`
 
 This rule checks for valid prefixes on constant identifiers declared in packages and package bodies.
 Constants declared inside subprograms are not checked by this rule.
@@ -540,6 +578,8 @@ constant_602
 ############
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`constant_package_suffix`
 
 This rule checks for valid suffixes on constant identifiers declared in packages and package bodies.
 Constants declared inside subprograms are not checked by this rule.

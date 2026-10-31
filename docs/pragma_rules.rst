@@ -8,6 +8,8 @@ pragma_300
 
 |phase_4| |error| |indent|
 
+Alias: :code:`pragma_indent`
+
 This rule checks the indent of pragmas.
 
 |configuring_pragmas_link|
@@ -43,6 +45,8 @@ pragma_400
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`pragma_lines_above_opening_pragma`
+
 This rule checks for blank lines or comments above opening pragmas.
 
 |configuring_previous_line_rules_link|
@@ -70,6 +74,8 @@ pragma_401
 ##########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`pragma_blank_line_below_opening_pragma`
 
 This rule checks for a blank line below opening pragmas.
 
@@ -100,6 +106,8 @@ pragma_402
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`pragma_lines_above_closing_pragma`
+
 This rule checks for blank lines or comments above closing pragmas.
 
 |configuring_previous_line_rules_link|
@@ -127,6 +135,8 @@ pragma_403
 ##########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`pragma_blank_line_below_closing_pragma`
 
 This rule checks for a blank line below closing pragmas.
 

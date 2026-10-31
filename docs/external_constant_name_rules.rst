@@ -8,6 +8,8 @@ external_constant_name_100
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`external_constant_name_space_after_double_less_than`
+
 This rule checks for a single space after the double less than.
 
 |configuring_whitespace_rules_link|
@@ -31,6 +33,8 @@ external_constant_name_101
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`external_constant_name_space_after_constant_keyword`
+
 This rule checks for a single space after the **constant** keyword.
 
 |configuring_whitespace_rules_link|
@@ -51,6 +55,8 @@ external_constant_name_102
 ##########################
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`external_constant_name_space_before_colon`
 
 This rule checks for a single space before the colon.
 
@@ -75,6 +81,8 @@ external_constant_name_103
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`external_constant_name_space_after_colon`
+
 This rule checks for a single space after the colon.
 
 |configuring_whitespace_rules_link|
@@ -98,6 +106,8 @@ external_constant_name_104
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`external_constant_name_space_before_double_greater_than`
+
 This rule checks for a single space before the double greater than.
 
 |configuring_whitespace_rules_link|
@@ -120,6 +130,8 @@ external_constant_name_500
 ##########################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`external_constant_name_constant_keyword_case`
 
 This rule checks the **constant** keyword has proper case.
 

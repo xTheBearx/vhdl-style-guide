@@ -8,6 +8,8 @@ signal_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`signal_indent`
+
 This rule checks the indent of signal declarations.
 
 **Violation**
@@ -36,6 +38,8 @@ signal_002
 ##########
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`signal_keyword_case`
 
 This rule checks the **signal** keyword has proper case.
 
@@ -68,6 +72,8 @@ signal_004
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`signal_name_case`
+
 This rule checks the signal name has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -88,6 +94,8 @@ signal_005
 ##########
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`signal_space_after_colon`
 
 This rule checks for a single space after the colon.
 
@@ -112,6 +120,8 @@ signal_006
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`signal_space_before_colon`
+
 This rule checks for at least a single space before the colon.
 
 |configuring_whitespace_rules_link|
@@ -135,6 +145,8 @@ signal_007
 
 |phase_1| |error| |unfixable| |structure|
 
+Alias: :code:`signal_no_default_assignment`
+
 This rule checks for default assignments in signal declarations.
 
 .. NOTE:: This rule requires the user to remove the default assignments.
@@ -155,6 +167,8 @@ signal_008
 ##########
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`signal_prefix`
 
 This rule checks for valid prefixes on signal identifiers.
 Default signal prefix is *s_*.
@@ -194,6 +208,8 @@ signal_012
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`signal_multiple_declarations_on_line_alignment`
+
 This rule checks multiple signal declarations on a single line are column aligned.
 
 .. NOTE::
@@ -219,6 +235,8 @@ signal_014
 ##########
 
 |phase_6| |error| |case|
+
+Alias: :code:`signal_names_consistent_case`
 
 This rule checks for consistent capitalization of signal names.
 
@@ -277,6 +295,8 @@ signal_015
 
 |phase_1| |error| |structure|
 
+Alias: :code:`signal_one_name_per_declaration`
+
 This rule checks for multiple signal names defined in a single signal declaration.
 By default, this rule will only flag more than two signal declarations.
 
@@ -313,6 +333,8 @@ signal_017
 
 |phase_1| |error| |structure|
 
+Alias: :code:`signal_constraint_structure`
+
 This rule checks the structure of signal constraints.
 
 |configuring_multiline_constraint_rules_link|
@@ -339,6 +361,8 @@ signal_018
 
 |phase_1| |error| |structure|
 
+Alias: :code:`signal_assignment_on_same_line_as_signal_keyword`
+
 This rule checks the **:=** is on the same line as the **signal** keyword.
 
 **Violation**
@@ -364,6 +388,8 @@ signal_100
 
 |phase_2| |disabled| |error| |whitespace|
 
+Alias: :code:`signal_space_before_identifier`
+
 This rule checks for a single space before the identifier.
 
 |configuring_whitespace_rules_link|
@@ -386,6 +412,8 @@ signal_101
 ##########
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`signal_space_before_default_assignment`
 
 This rule checks for a single space before the default assignment token.
 
@@ -410,6 +438,8 @@ signal_102
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`signal_space_after_default_assignment`
+
 This rule checks for a single space after the default assignment token.
 
 |configuring_whitespace_rules_link|
@@ -432,6 +462,8 @@ signal_200
 ##########
 
 |phase_3| |disabled| |error| |blank_line|
+
+Alias: :code:`signal_blank_line_below_unless_followed_by_signal`
 
 This rule checks for a blank line below a signal declaration unless there is another signal definition.
 
@@ -459,6 +491,8 @@ signal_400
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`signal_multiline_constraint_alignment`
+
 This rule checks alignment of multiline constraints in signal declarations.
 
 |configuring_multiline_indent_rules_link|
@@ -485,6 +519,8 @@ signal_401
 ##########
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`signal_assignment_operator_alignment`
 
 This rule checks the alignment of assignment keywords in signal declarations.
 
@@ -514,6 +550,8 @@ signal_402
 ##########
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`signal_initialization_array_alignment`
 
 This rule checks the alignment of multiline signal initializations that contain arrays.
 
@@ -548,6 +586,8 @@ signal_403
 
 |phase_5| |error| |structure|
 
+Alias: :code:`signal_initialization_array_structure`
+
 This rule checks the structure of multiline signal initializations that contain arrays.
 
 |configuring_array_multiline_structure_rules_link|
@@ -575,6 +615,8 @@ signal_600
 ##########
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`signal_suffix`
 
 This rule checks for valid suffixes on signal identifiers.
 Default signal suffix is *_s*.

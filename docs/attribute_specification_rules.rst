@@ -8,6 +8,8 @@ attribute_specification_100
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`attribute_specification_space_after_keywords_and_designator`
+
 This rule checks for a single space after the following attribute_specification elements:  **attribute** keyword, *attribute_designator*, **of** keyword and **is** keyword.
 
 |configuring_whitespace_rules_link|
@@ -33,6 +35,8 @@ attribute_specification_101
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`attribute_specification_space_before_is_keyword`
+
 This rule checks for a single space before the **is** keyword.
 
 |configuring_whitespace_rules_link|
@@ -56,6 +60,8 @@ attribute_specification_300
 
 |phase_4| |error| |indent|
 
+Alias: :code:`attribute_specification_attribute_keyword_indent`
+
 This rule checks the indent of the **attribute** keyword.
 
 **Violation**
@@ -76,6 +82,8 @@ attribute_specification_500
 ###########################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`attribute_specification_attribute_keyword_case`
 
 This rule checks the **attribute** keyword has proper case.
 
@@ -98,6 +106,8 @@ attribute_specification_501
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`attribute_specification_attribute_designator_case`
+
 This rule checks the *attribute_designator* has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -119,6 +129,8 @@ attribute_specification_502
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`attribute_specification_of_keyword_case`
+
 This rule checks the **of** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -139,6 +151,8 @@ attribute_specification_503
 ###########################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`attribute_specification_is_keyword_case`
 
 This rule checks the **is** keyword has proper case.
 
