@@ -17,7 +17,7 @@ There are several options to these rules:
    :code:`no` = Lines will be aligned to assignment operator.
 
 .. |align_left__on_new_line_after_assign| replace::
-   :code:`on_new_line_after_assign` = Lines will be aligned aligned left if there is a carriage return (alias “new line”) after the assignment operator.
+   :code:`on_new_line_after_assign` = Lines will be aligned left if there is a carriage return (alias “new line”) after the assignment operator.
 
 .. |align_paren| replace::
    :code:`align_paren`

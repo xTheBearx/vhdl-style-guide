@@ -17,8 +17,11 @@ There are several options to these rules:
 .. |align_left__no| replace::
    :code:`no` = Lines will be aligned to assignment operator
 
+.. |default_on_new_line_after_assign| replace::
+   :code:`on_new_line_after_assign`
+
 .. |align_left__on_new_line_after_assign| replace::
-   :code:`on_new_line_after_assign` = Lines will be aligned aligned left if there is a carriage return (alias “new line”) after the assignment operator.
+   :code:`on_new_line_after_assign` = Lines will be aligned left if there is a carriage return (alias “new line”) after the assignment operator.
 
 .. |align_paren| replace::
    :code:`align_paren`
@@ -117,6 +120,18 @@ Example: |align_left| set to |default_no| and |align_paren| set to |default_yes|
   wr_en <=
            resize(unsigned(I_FOO) +
                   unsigned(I_BAR), q_foo'length);
+
+Example: |align_left| set to |default_on_new_line_after_assign| and |align_paren| set to |default_yes|
+######################################################################################################
+
+.. code-block:: vhdl
+
+  wr_en <= resize(unsigned(I_FOO) +
+                  unsigned(I_BAR), q_foo'length);
+
+  wr_en <=
+    resize(unsigned(I_FOO) +
+           unsigned(I_BAR), q_foo'length);
 
 Rules Enforcing Multiline Indent Rules
 ######################################

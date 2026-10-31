@@ -4,7 +4,7 @@ import os
 import unittest
 
 from mhsg import vhdlFile
-from mhsg.rules import concurrent
+from mhsg.rules import concurrent, constant
 from tests import utils
 
 sTestDir = os.path.dirname(__file__)
@@ -28,6 +28,15 @@ utils.read_file(os.path.join(sTestDir, "rule_003_test_input.fixed_align_left_yes
 lExpected_align_left_yes_align_paren_yes = []
 lExpected_align_left_yes_align_paren_yes.append("")
 utils.read_file(os.path.join(sTestDir, "rule_003_test_input.fixed_align_left_yes_align_paren_yes.vhd"), lExpected_align_left_yes_align_paren_yes)
+
+
+lFile_on_new_line_after_assign, eError_on_new_line_after_assign = vhdlFile.utils.read_vhdlfile(
+    os.path.join(sTestDir, "rule_003_test_input.on_new_line_after_assign.vhd"),
+)
+
+lExpected_on_new_line_after_assign = []
+lExpected_on_new_line_after_assign.append("")
+utils.read_file(os.path.join(sTestDir, "rule_003_test_input.on_new_line_after_assign.fixed.vhd"), lExpected_on_new_line_after_assign)
 
 
 class test_rule(unittest.TestCase):
@@ -177,3 +186,18 @@ class test_rule(unittest.TestCase):
 
         oRule.analyze(self.oFile)
         self.assertEqual(oRule.violations, [])
+
+    def test_fix_rule_003_on_new_line_after_assign(self):
+        # Issue VSG 1582: indent one level when the expression starts on a new line after the assignment,
+        # otherwise align after the assignment operator.
+        self.assertIsNone(eError_on_new_line_after_assign)
+        oFile = vhdlFile.vhdlFile(lFile_on_new_line_after_assign)
+        oFile.set_indent_map(dIndentMap)
+
+        lRules = [concurrent.rule_003(), constant.rule_014()]
+        for oRule in lRules:
+            oRule.align_left = "on_new_line_after_assign"
+            oRule.align_paren = "yes"
+            oRule.fix(oFile)
+
+        self.assertEqual(lExpected_on_new_line_after_assign, oFile.get_lines())

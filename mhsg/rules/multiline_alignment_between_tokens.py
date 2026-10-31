@@ -134,7 +134,7 @@ class multiline_alignment_between_tokens(alignment.Rule):
 
             #            print(f'dActualIndent = {dActualIndent}')
 
-            if not align_paren(self) and align_left(self):
+            if not align_paren(self) and align_left(self, lTokens):
                 dExpectedIndent = _analyze_align_left_yes_align_paren_no(
                     iFirstLine,
                     iLastLine,
@@ -145,7 +145,7 @@ class multiline_alignment_between_tokens(alignment.Rule):
                     self.bIgnoreStartParen,
                     self.override,
                 )
-            elif align_paren(self) and not align_left(self):
+            elif align_paren(self) and not align_left(self, lTokens):
                 dExpectedIndent = _analyze_align_left_no_align_paren_yes(
                     iFirstLine,
                     iLastLine,
@@ -158,7 +158,7 @@ class multiline_alignment_between_tokens(alignment.Rule):
                     self.bIgnoreStartParen,
                     self.iIndentAfterParen,
                 )
-            elif align_paren(self) and align_left(self):
+            elif align_paren(self) and align_left(self, lTokens):
                 dExpectedIndent = _analyze_align_paren_yes_align_left_yes(
                     iFirstLine,
                     iLastLine,
@@ -170,7 +170,7 @@ class multiline_alignment_between_tokens(alignment.Rule):
                     self.bIgnoreStartParen,
                     self.bConstraint,
                 )
-            elif not align_paren(self) and not align_left(self):
+            elif not align_paren(self) and not align_left(self, lTokens):
                 dExpectedIndent = _analyze_align_paren_no_align_left_no(
                     iFirstLine,
                     iLastLine,
@@ -188,7 +188,7 @@ class multiline_alignment_between_tokens(alignment.Rule):
             #            print(f'dExpectedIndent = {dExpectedIndent}')
 
             if self.indent_style == "smart_tabs":
-                if self.bSmartTabsIndentWithTabs and align_left(self) and not align_paren(self):
+                if self.bSmartTabsIndentWithTabs and align_left(self, lTokens) and not align_paren(self):
                     alignment_utils.convert_expected_indent_to_tabs(dExpectedIndent, self.indent_size)
                 else:
                     alignment_utils.convert_expected_indent_to_smart_tab(dExpectedIndent, self.indent_size, iFirstLineIndent)
@@ -223,12 +223,19 @@ def align_paren(self):
     return False
 
 
-def align_left(self):
+def align_left(self, lTokens=None):
     if self.align_left == "yes":
         return True
     if self.align_left is True:
         return True
+    if self.align_left == "on_new_line_after_assign" and lTokens is not None:
+        return is_new_line_after_first_token(lTokens)
     return False
+
+
+def is_new_line_after_first_token(lTokens):
+    iNextToken = utils.find_next_non_whitespace_token(1, lTokens)
+    return utils.count_carriage_returns(lTokens[:iNextToken]) > 0
 
 
 def build_violation(iLine, oToi, iToken, dExpectedIndent, dIndex, dActualIndent):
