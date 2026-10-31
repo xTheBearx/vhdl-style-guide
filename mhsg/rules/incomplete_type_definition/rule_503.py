@@ -1,0 +1,31 @@
+# -*- coding: utf-8 -*-
+
+from mhsg import token
+from mhsg.rules.token_case import token_case
+
+lTokens = []
+lTokens.append(token.incomplete_type_definition.array_keyword)
+
+
+class rule_503(token_case):
+    """
+    This rule checks the **array** keyword has proper case.
+
+    |configuring_uppercase_and_lowercase_rules_link|
+
+    **Violation**
+
+    .. code-block:: vhdl
+
+       type t_data is ARRAY (type is range <>) of type is private;
+
+    **Fix**
+
+    .. code-block:: vhdl
+
+       type t_data is array (type is range <>) of type is private;
+    """
+
+    def __init__(self):
+        super().__init__(lTokens)
+        self.groups.append("case::keyword")
