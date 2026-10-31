@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import parser, token
-from mhsg.rules import (
+from mhsg.rules.align_tokens_in_region_between_tokens_skipping_lines_starting_with_tokens import (
     align_tokens_in_region_between_tokens_skipping_lines_starting_with_tokens,
 )
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import parser, token
-from mhsg.rules import consistent_token_case as Rule
+from mhsg.rules.consistent_token_case import consistent_token_case as Rule
 
 lTokens = []
 lTokens.append(token.signal_declaration.identifier)

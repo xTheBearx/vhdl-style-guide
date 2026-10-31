@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import align_tokens_in_region_between_tokens as Rule
+from mhsg.rules.align_tokens_in_region_between_tokens import (
+    align_tokens_in_region_between_tokens as Rule,
+)
 
 
 class align_tokens_in_region_between_tokens_unless_between_tokens(Rule):

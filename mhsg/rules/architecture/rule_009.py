@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import token_case
+from mhsg.rules.token_case import token_case
 from mhsg.token import architecture_body as token
 
 

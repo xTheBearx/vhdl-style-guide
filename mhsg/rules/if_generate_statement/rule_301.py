@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import token_indent as Rule
+from mhsg.rules.token_indent import token_indent as Rule
 
 lTokens = []
 lTokens.append(token.if_generate_statement.else_keyword)

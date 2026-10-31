@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import align_tokens_in_region_between_tokens as Rule
+from mhsg.rules.align_tokens_in_region_between_tokens import (
+    align_tokens_in_region_between_tokens as Rule,
+)
 
 lAlign = []
 lAlign.append(token.association_element.assignment)

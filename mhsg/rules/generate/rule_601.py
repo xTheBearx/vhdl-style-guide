@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import token_prefix_between_tokens
+from mhsg.rules.token_prefix_between_tokens import token_prefix_between_tokens
 
 lTokens = []
 lTokens.append(token.parameter_specification.identifier)

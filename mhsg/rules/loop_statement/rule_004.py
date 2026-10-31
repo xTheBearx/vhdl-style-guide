@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import (
+from mhsg.rules.move_token_to_the_right_of_several_possible_tokens_if_it_exists_between_tokens import (
     move_token_to_the_right_of_several_possible_tokens_if_it_exists_between_tokens as Rule,
 )
 

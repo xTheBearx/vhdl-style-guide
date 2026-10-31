@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import previous_line as Rule
+from mhsg.rules.previous_line import previous_line as Rule
 from mhsg.token import pragma as token
 
 

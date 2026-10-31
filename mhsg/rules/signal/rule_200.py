@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import blank_line_below_line_ending_with_token as Rule
+from mhsg.rules.blank_line_below_line_ending_with_token import (
+    blank_line_below_line_ending_with_token as Rule,
+)
 
 lTokens = []
 lTokens.append(token.signal_declaration.semicolon)

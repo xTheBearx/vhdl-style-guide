@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import separate_multiple_variable_identifiers_into_individual_statements
+from mhsg.rules.separate_multiple_variable_identifiers_into_individual_statements import (
+    separate_multiple_variable_identifiers_into_individual_statements,
+)
 
 iAllow = 2
 

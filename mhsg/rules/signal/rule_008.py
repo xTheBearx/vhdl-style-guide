@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import token_prefix
+from mhsg.rules.token_prefix import token_prefix
 
 lTokens = []
 lTokens.append(token.signal_declaration.identifier)

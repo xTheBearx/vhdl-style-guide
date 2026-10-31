@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.vhdlFile.extract import get_subprogram_body
+from mhsg.vhdlFile.extract.get_subprogram_body import get_subprogram_body
 
 
 def get_procedure_subprogram_body(lAllObjects, oTokenMap):

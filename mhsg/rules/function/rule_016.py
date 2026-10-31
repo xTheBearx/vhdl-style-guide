@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import token_indent
+from mhsg.rules.token_indent import token_indent
 
 lTokens = []
 lTokens.append(token.return_statement.return_keyword)

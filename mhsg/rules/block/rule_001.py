@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import parser
-from mhsg.rules import move_token_sequences_left_of_token
+from mhsg.rules.move_token_sequences_left_of_token import (
+    move_token_sequences_left_of_token,
+)
 from mhsg.token import block_statement as token
 
 lSequences = []

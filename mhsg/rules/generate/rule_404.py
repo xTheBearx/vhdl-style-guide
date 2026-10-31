@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import (
+from mhsg.rules.align_tokens_in_region_between_tokens_when_between_tokens_unless_between_tokens import (
     align_tokens_in_region_between_tokens_when_between_tokens_unless_between_tokens,
 )
 

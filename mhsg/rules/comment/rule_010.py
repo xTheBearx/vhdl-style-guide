@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import parser
-from mhsg.rules import token_indent_unless_between_tokens
+from mhsg.rules.token_indent_unless_between_tokens import (
+    token_indent_unless_between_tokens,
+)
 from mhsg.token import (
     concurrent_conditional_signal_assignment,
     conditional_variable_assignment,

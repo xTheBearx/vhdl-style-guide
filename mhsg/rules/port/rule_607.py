@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import token_suffix as Rule, utils
+from mhsg.rules import utils
+from mhsg.rules.token_suffix import token_suffix as Rule
 
 lTokens = []
 

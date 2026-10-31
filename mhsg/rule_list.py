@@ -4,6 +4,7 @@ import importlib
 import importlib.util
 import inspect
 import os
+import pkgutil
 import sys
 
 from mhsg import exceptions
@@ -88,7 +89,11 @@ def load_rules():
     Returns:  (rule object list)
     """
     lRules = []
-    for _, oPackage in inspect.getmembers(importlib.import_module("mhsg.rules"), inspect.ismodule):
+    oRules = importlib.import_module("mhsg.rules")
+    # Each rule group is a package in mhsg/rules
+    lPackageNames = sorted(oModule.name for oModule in pkgutil.iter_modules(oRules.__path__) if oModule.ispkg)
+    for sPackageName in lPackageNames:
+        oPackage = importlib.import_module("mhsg.rules." + sPackageName)
         for rule_name, oRule in inspect.getmembers(oPackage, inspect.isclass):
             if rule_name.startswith("rule_"):
                 lRules.append(oRule())

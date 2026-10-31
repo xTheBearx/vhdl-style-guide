@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import token_indent
+from mhsg.rules.token_indent import token_indent
 from mhsg.token import architecture_body as token
 
 

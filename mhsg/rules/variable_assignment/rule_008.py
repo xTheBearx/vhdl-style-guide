@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import multiline_structure as Rule
+from mhsg.rules.multiline_structure import multiline_structure as Rule
 
 lTokenPairs = []
 lTokenPairs.append([token.simple_variable_assignment.assignment, token.simple_variable_assignment.semicolon])

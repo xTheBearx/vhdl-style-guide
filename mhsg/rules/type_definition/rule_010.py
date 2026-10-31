@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import previous_line
+from mhsg.rules.previous_line import previous_line
 
 lTokens = []
 lTokens.append(token.incomplete_type_declaration.type_keyword)

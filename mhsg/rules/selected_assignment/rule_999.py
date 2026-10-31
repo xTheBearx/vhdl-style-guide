@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import analysis, experiment as Rule, option
+from mhsg.rules import analysis, option
+from mhsg.rules.experiment import Rule
 
 lTokenPairs = []
 lTokenPairs.append([token.concurrent_selected_signal_assignment.with_keyword, token.concurrent_selected_signal_assignment.semicolon])

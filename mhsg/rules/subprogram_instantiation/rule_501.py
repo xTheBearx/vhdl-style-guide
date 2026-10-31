@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import token_case
+from mhsg.rules.token_case import token_case
 
 lTokens = []
 lTokens.append(token.subprogram_instantiation_declaration.is_keyword)

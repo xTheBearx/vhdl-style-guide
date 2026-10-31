@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import multiline_subprogram_specification_structure as Rule
+from mhsg.rules.multiline_subprogram_specification_structure import (
+    multiline_subprogram_specification_structure as Rule,
+)
 
 oSubprogramSpecification = token.procedure_specification
 

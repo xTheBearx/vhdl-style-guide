@@ -2,7 +2,7 @@
 
 
 from mhsg import token
-from mhsg.rules import multiline_array_alignment as Rule
+from mhsg.rules.multiline_array_alignment import multiline_array_alignment as Rule
 
 lTokenPairs = []
 lTokenPairs.append([token.constant_declaration.assignment_operator, token.constant_declaration.semicolon])

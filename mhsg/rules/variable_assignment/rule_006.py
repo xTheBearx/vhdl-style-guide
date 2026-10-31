@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import parser, token
-from mhsg.rules import remove_lines_starting_with_token_between_token_pairs
+from mhsg.rules.remove_lines_starting_with_token_between_token_pairs import (
+    remove_lines_starting_with_token_between_token_pairs,
+)
 
 lTokens = []
 lTokens.append([token.simple_variable_assignment.simple_name, token.simple_variable_assignment.semicolon])

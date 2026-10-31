@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from mhsg.rules import multiline_array_alignment as Rule
+from mhsg.rules.multiline_array_alignment import multiline_array_alignment as Rule
 from mhsg.token import variable_declaration as token
 
 lTokenPairs = []

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import severity
-from mhsg.rules import line_length
+from mhsg.rules.line_length import line_length
 
 
 class rule_004(line_length):

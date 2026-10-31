@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import (
+from mhsg.rules.move_token_to_the_right_of_several_possible_tokens_if_it_exists_between_tokens import (
     move_token_to_the_right_of_several_possible_tokens_if_it_exists_between_tokens,
 )
 from mhsg.token import context_declaration as token

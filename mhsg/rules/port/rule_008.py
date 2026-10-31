@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import spaces_before_and_after_tokens_when_bounded_by_tokens as Rule
+from mhsg.rules.spaces_before_and_after_tokens_when_bounded_by_tokens import (
+    spaces_before_and_after_tokens_when_bounded_by_tokens as Rule,
+)
 
 lTokens = []
 lTokens.append(token.mode.out_keyword)

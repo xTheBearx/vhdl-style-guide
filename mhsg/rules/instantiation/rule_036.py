@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import insert_tokens_right_of_token_if_it_does_not_exist_before_token
+from mhsg.rules.insert_tokens_right_of_token_if_it_does_not_exist_before_token import (
+    insert_tokens_right_of_token_if_it_does_not_exist_before_token,
+)
 
 lInsertTokens = []
 lInsertTokens.append(token.instantiated_unit.open_parenthesis("("))

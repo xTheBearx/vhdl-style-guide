@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import remove_tokens
+from mhsg.rules.remove_tokens import remove_tokens
 from mhsg.token import case_statement as token
 
 lTokens = []

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import token_prefix as Rule
+from mhsg.rules.token_prefix import token_prefix as Rule
 
 
 class token_prefix_between_tokens(Rule):

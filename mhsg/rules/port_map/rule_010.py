@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import remove_comments_from_end_of_lines_bounded_by_tokens
+from mhsg.rules.remove_comments_from_end_of_lines_bounded_by_tokens import (
+    remove_comments_from_end_of_lines_bounded_by_tokens,
+)
 
 oStart = token.component_instantiation_statement.instantiation_label
 

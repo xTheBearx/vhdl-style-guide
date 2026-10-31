@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import move_token_left_to_next_non_whitespace_token as Rule
+from mhsg.rules.move_token_left_to_next_non_whitespace_token import (
+    move_token_left_to_next_non_whitespace_token as Rule,
+)
 
 lTokens = []
 lTokens.append(token.entity_declaration.semicolon)

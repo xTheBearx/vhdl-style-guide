@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import (
+from mhsg.rules.insert_token_left_of_token_if_it_does_not_exist_between_tokens_using_value_from_token import (
     insert_token_left_of_token_if_it_does_not_exist_between_tokens_using_value_from_token,
 )
 from mhsg.token import package_declaration as token

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import token_suffix as Rule
+from mhsg.rules.token_suffix import token_suffix as Rule
 
 lTokens = []
 lTokens.append(token.alias_declaration.alias_designator)

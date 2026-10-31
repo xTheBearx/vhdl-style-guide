@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import token_does_not_exist_before_token as Rule
+from mhsg.rules.token_does_not_exist_before_token import Rule
 from mhsg.token import process_statement as token
 
 oFirstToken = token.process_label

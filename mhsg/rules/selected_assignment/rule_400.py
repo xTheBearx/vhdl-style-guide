@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import multiline_alignment_between_tokens as Rule
+from mhsg.rules.multiline_alignment_between_tokens import (
+    multiline_alignment_between_tokens as Rule,
+)
 
 lTokenPairs = []
 lTokenPairs.append([token.concurrent_selected_signal_assignment.with_keyword, token.concurrent_selected_signal_assignment.semicolon])

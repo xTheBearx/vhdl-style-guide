@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import move_token as Rule
+from mhsg.rules.move_token import move_token as Rule
 
 oToken = token.port_clause.close_parenthesis
 

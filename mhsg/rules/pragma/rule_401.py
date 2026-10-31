@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import blank_line_below_line_ending_with_token as Rule
+from mhsg.rules.blank_line_below_line_ending_with_token import (
+    blank_line_below_line_ending_with_token as Rule,
+)
 from mhsg.token import pragma as token
 
 

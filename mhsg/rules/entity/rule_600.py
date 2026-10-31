@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import parser, token
-from mhsg.rules import consistent_case_utils as cc_utils, consistent_token_case as Rule
+from mhsg.rules import consistent_case_utils as cc_utils
+from mhsg.rules.consistent_token_case import consistent_token_case as Rule
 
 lTokens = []
 lTokens.append(token.interface_unknown_declaration.identifier)

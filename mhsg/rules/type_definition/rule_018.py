@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 
-from mhsg.rules import move_token_next_to_another_token as Rule
+from mhsg.rules.move_token_next_to_another_token import (
+    move_token_next_to_another_token as Rule,
+)
 from mhsg.token import full_type_declaration as token
 
 

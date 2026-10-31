@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import token_case_with_prefix_suffix
+from mhsg.rules.token_case_with_prefix_suffix import token_case_with_prefix_suffix
 
 lTokens = []
 lTokens.append(token.package_declaration.end_package_simple_name)

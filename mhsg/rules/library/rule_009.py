@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import (
+from mhsg.rules.align_consecutive_lines_starting_with_a_comment_above_line_starting_with_token import (
     align_consecutive_lines_starting_with_a_comment_above_line_starting_with_token,
 )
 from mhsg.token import use_clause as token

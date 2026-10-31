@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import align_left_token_with_right_token_if_right_token_starts_a_line
+from mhsg.rules.align_left_token_with_right_token_if_right_token_starts_a_line import (
+    align_left_token_with_right_token_if_right_token_starts_a_line,
+)
 
 oLeftToken = token.process_statement.open_parenthesis
 oRightToken = token.process_statement.close_parenthesis

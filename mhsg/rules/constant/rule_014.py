@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import parser, token
-from mhsg.rules import (
-    alignment_utils,
+from mhsg.rules import alignment_utils, utils as rules_utils
+from mhsg.rules.multiline_alignment_between_tokens import (
     multiline_alignment_between_tokens as Rule,
-    utils as rules_utils,
 )
 from mhsg.vhdlFile import utils
 

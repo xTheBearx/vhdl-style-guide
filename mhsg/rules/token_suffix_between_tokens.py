@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import token_suffix as Rule
+from mhsg.rules.token_suffix import token_suffix as Rule
 
 
 class token_suffix_between_tokens(Rule):
