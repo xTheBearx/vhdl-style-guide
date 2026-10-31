@@ -2,7 +2,7 @@
 
 import unittest
 
-from vsg.rules import procedure
+from mhsg.rules import procedure
 
 
 class test_rule(unittest.TestCase):

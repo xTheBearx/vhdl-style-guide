@@ -95,7 +95,7 @@ There are additional options for configuring block comments:
 |                     | "no"     |          | only detect block comments starting at column 0.                 |
 +---------------------+----------+----------+------------------------------------------------------------------+
 
-With these options, a block comment can be validated by VSG.
+With these options, a block comment can be validated by MHSG.
 
 Examples
 ########

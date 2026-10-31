@@ -1,41 +1,24 @@
-VHDL Style Guide (VSG)
-======================
+Multiple HDL Style Guide (MHSG)
+===============================
 
 **Coding style enforcement for VHDL.**
 
-.. image:: https://img.shields.io/github/tag/jeremiah-c-leary/vhdl-style-guide.svg?style=flat-square
-   :target: https://github.com/jeremiah-c-leary/vhdl-style-guide
+.. image:: https://img.shields.io/github/tag/xTheBearx/vhdl-style-guide.svg?style=flat-square
+   :target: https://github.com/xTheBearx/vhdl-style-guide
    :alt: Github Release
-.. image:: https://img.shields.io/pypi/v/vsg.svg?style=flat-square
-   :target: https://pypi.python.org/pypi/vsg
-   :alt: PyPI Version
-.. image:: https://img.shields.io/codecov/c/github/jeremiah-c-leary/vhdl-style-guide/master.svg?style=flat-square
-   :target: https://codecov.io/github/jeremiah-c-leary/vhdl-style-guide
-   :alt: Test Coverage
-.. image:: https://img.shields.io/readthedocs/vsg.svg?style=flat-square
-   :target: http://vhdl-style-guide.readthedocs.io/en/latest/index.html
-   :alt: Read The Docs
-.. image:: https://api.codacy.com/project/badge/Grade/42744dca97544824b93cfc99e8030063
-   :target: https://www.codacy.com/app/jeremiah-c-leary/vhdl-style-guide?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jeremiah-c-leary/vhdl-style-guide&amp;utm_campaign=Badge_Grade
-   :alt: Codacy
 
-Announcements
--------------
+About this project
+------------------
 
-Update 11/09/2025
+MHSG is a fork of `VHDL Style Guide (VSG) <https://github.com/jeremiah-c-leary/vhdl-style-guide>`_,
+created by Jeremiah C. Leary, and has been maintained as a separate project since 2026.
+It is distributed under the same GNU General Public License v3; see ``LICENSE``.
 
-Where has Jeremy been?
+Compared with VSG, the Python package and command are named ``mhsg`` instead of ``vsg``.
+The ``-- vsg_off``, ``-- vsg_on`` and ``-- vsg_disable_next_line`` code tags in existing source files are still recognized,
+alongside the new ``mhsg_`` versions.
 
-Just wanted to let everyone know that I have not abandoned this project.
-There was a family emergency I had to handle and now work is taking a significant amount of my time.
-
-I plan to start working on this again in December.
-
-Regards,
-
---Jeremy
-
-.. image:: https://github.com/jeremiah-c-leary/vhdl-style-guide/blob/master/docs/img/vim_macro.gif
+.. image:: https://github.com/xTheBearx/vhdl-style-guide/blob/master/docs/img/vim_macro.gif
 
 Table of Contents
 -----------------
@@ -52,7 +35,7 @@ Table of Contents
 Overview
 --------
 
-VSG was created after participating in a code review where a real issue in the code was masked by a coding style issue.
+MHSG was created after participating in a code review where a real issue in the code was masked by a coding style issue.
 A finding was created for the style issue, while the real issue was missed.
 When the code was re-reviewed, the real issue was discovered.
 
@@ -76,7 +59,7 @@ Key Benefits
 * Improve code reviews
 * Quickly bring code up to current standards
 
-VSG allows the style of the code to be defined and enforced over part or the entire code base.
+MHSG allows the style of the code to be defined and enforced over part or the entire code base.
 Configurations allow for multiple coding standards.
 
 Key Features
@@ -115,7 +98,7 @@ Key Features
 Known Limitations
 -----------------
 
-VSG is a continual work in progress.
+MHSG is a continual work in progress.
 As such, this version has the following known limitations:
 
 * Parser will not process embedded PSL
@@ -124,17 +107,25 @@ As such, this version has the following known limitations:
 Installation
 ------------
 
-You can get the latest released version of VSG via **pip**.
+Once released on PyPI, MHSG can be installed with **uv** or **pip**.
 
 .. code-block:: bash
 
-    pip install vsg
+    uv tool install mhsg
+    pip install mhsg
+
+Until then, install the latest development version directly from GitHub.
+
+.. code-block:: bash
+
+    uv tool install git+https://github.com/xTheBearx/vhdl-style-guide
+    pip install git+https://github.com/xTheBearx/vhdl-style-guide
 
 The latest development version can be cloned...
 
 .. code-block:: bash
 
-    git clone https://github.com/jeremiah-c-leary/vhdl-style-guide.git
+    git clone https://github.com/xTheBearx/vhdl-style-guide.git
 
 Install prerequisites.
 
@@ -151,14 +142,14 @@ Build locally, artifacts will appear in ``dist`` directory.
 Usage
 -----
 
-VSG is a both a command line tool and a python package.
+MHSG is a both a command line tool and a python package.
 The command line tool can be invoked with:
 
 .. code-block:: bash
 
-   $ vsg
-   usage: VHDL Style Guide (VSG) [-h] [-f FILENAME [FILENAME ...]] [-lr LOCAL_RULES] [-c CONFIGURATION [CONFIGURATION ...]] [--fix]
-                                 [-fp FIX_PHASE] [-j JUNIT] [-js JSON] [-of {vsg,syntastic,summary}] [-b] [-oc OUTPUT_CONFIGURATION]
+   $ mhsg
+   usage: Multiple HDL Style Guide (MHSG) [-h] [-f FILENAME [FILENAME ...]] [-lr LOCAL_RULES] [-c CONFIGURATION [CONFIGURATION ...]] [--fix]
+                                 [-fp FIX_PHASE] [-j JUNIT] [-js JSON] [-of {mhsg,syntastic,summary}] [-b] [-oc OUTPUT_CONFIGURATION]
                                  [-rc RULE_CONFIGURATION] [--style {indent_only,jcl}] [-v] [-ap] [--fix_only FIX_ONLY] [--stdin]
                                  [--quality_report QUALITY_REPORT] [-p JOBS] [--debug]
                                  [FILENAME ...]
@@ -183,7 +174,7 @@ The command line tool can be invoked with:
                            Extract Junit file
      -js JSON, --json JSON
                            Extract JSON file
-     -of {vsg,syntastic,summary}, --output_format {vsg,syntastic,summary}
+     -of {mhsg,syntastic,summary}, --output_format {mhsg,syntastic,summary}
                            Sets the output format.
      -b, --backup          Creates a copy of input file for comparison with fixed version.
      -oc OUTPUT_CONFIGURATION, --output_configuration OUTPUT_CONFIGURATION
@@ -203,7 +194,7 @@ The command line tool can be invoked with:
 
 Here is an example output running against a test file:
 
-.. image:: https://github.com/jeremiah-c-leary/vhdl-style-guide/blob/master/docs/img/fixing_single_file.gif
+.. image:: https://github.com/xTheBearx/vhdl-style-guide/blob/master/docs/img/fixing_single_file.gif
 
 pre-commit Integration
 ----------------------
@@ -213,15 +204,16 @@ Here is an example of ``.pre-commit-config.yaml`` file:
 .. code-block:: yaml
 
   repos:
-    - repo: https://github.com/jeremiah-c-leary/vhdl-style-guide
-      rev: v3.18.0
+    - repo: https://github.com/xTheBearx/vhdl-style-guide
+      rev: <release tag>
       hooks:
-        - id: vsg
+        - id: mhsg
 
 Documentation
 -------------
 
-All documentation for VSG is hosted at `read-the-docs <http://vhdl-style-guide.readthedocs.io/en/latest/index.html>`_.
+The documentation is in the ``docs`` directory of this repository.
+The upstream VSG documentation hosted at `read-the-docs <http://vhdl-style-guide.readthedocs.io/en/latest/index.html>`_ also applies, with ``vsg`` replaced by ``mhsg``.
 
 Contributing
 ------------
@@ -236,4 +228,5 @@ There are several ways to contribute:
 * Feature requests
 * Pull requests
 
-Please refer to the documentation hosted at `read-the-docs <http://vhdl-style-guide.readthedocs.io/en/latest/index.html>`_ for more details on contributing.
+Please open an issue or pull request at https://github.com/xTheBearx/vhdl-style-guide.
+See ``docs/contributing.rst`` for more details on contributing.

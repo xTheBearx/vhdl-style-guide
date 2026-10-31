@@ -5,7 +5,7 @@ This section will detail the guidelines followed for creating and organizing rul
 
 .. jcl - fill this section out with some more text
 
-.. NOTE:: VSG can not fully classify a VHDL file, this will place limitations on the ability to write rules.
+.. NOTE:: MHSG can not fully classify a VHDL file, this will place limitations on the ability to write rules.
 
 Goals
 =====
@@ -161,7 +161,7 @@ Alignment rules between block_declarative_items, e.g. colon alignment in signal_
 
 Other structural rules could be created:
 
-* block_declarative_part_100 = all constants defined at top of block_declarative_part (maybe this is out of scope of VSG though)
+* block_declarative_part_100 = all constants defined at top of block_declarative_part (maybe this is out of scope of MHSG though)
 
 Taking the next step down to the signal_declaration level:
 
@@ -235,4 +235,4 @@ And the same for constraint:
      | record_constraint
 
 If the subtype_indication and constraint rules were moved out of signal_declaration, and where ever else they are located, that it would reduce the number of rules.
-VSG currently uses a base rule to handle constraints, which is extended where constraints are used.
+MHSG currently uses a base rule to handle constraints, which is extended where constraints are used.

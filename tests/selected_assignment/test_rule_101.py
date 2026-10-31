@@ -3,9 +3,9 @@
 import os
 import unittest
 
+from mhsg import vhdlFile
+from mhsg.rules import selected_assignment
 from tests import utils
-from vsg import vhdlFile
-from vsg.rules import selected_assignment
 
 sTestDir = os.path.dirname(__file__)
 

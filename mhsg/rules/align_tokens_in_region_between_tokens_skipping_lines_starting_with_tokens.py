@@ -1,0 +1,228 @@
+# -*- coding: utf-8 -*-
+
+
+from mhsg import parser, token, violation
+from mhsg.rule_group import alignment
+from mhsg.rules import alignment_utils, utils as rules_utils
+from mhsg.vhdlFile import utils
+
+
+class align_tokens_in_region_between_tokens_skipping_lines_starting_with_tokens(alignment.Rule):
+    """
+    Checks for a single space between two tokens.
+
+    Parameters
+    ----------
+
+    name : string
+       The group the rule belongs to.
+
+    identifier : string
+       unique identifier.  Usually in the form of 00N.
+
+    lTokens : token object list
+       List of tokens to align
+
+    left_token : token object
+       The first token that defines the region
+
+    right_token : token object
+       The second token that defines the region
+
+    lSkip : token object list
+       List of tokens to skip if they start a line.
+    """
+
+    def __init__(self, lTokens, left_token, right_token, lSkip):
+        super().__init__()
+        self.lTokens = lTokens
+        self.left_token = left_token
+        self.right_token = right_token
+        self.lSkip = lSkip
+        ## Stuff below is from original keyword_alignment_rule
+        self.compact_alignment = "yes"
+        self.configuration.append("compact_alignment")
+
+        self.blank_line_ends_group = "yes"
+        self.configuration.append("blank_line_ends_group")
+        self.comment_line_ends_group = "yes"
+        self.configuration.append("comment_line_ends_group")
+        self.separate_generic_port_alignment = "yes"
+        self.configuration.append("separate_generic_port_alignment")
+        self.include_lines_without_comments = "no"
+        self.configuration.append("include_lines_without_comments")
+
+    def analyze(self, oFile):
+        self.compact_alignment = utils.convert_yes_no_option_to_boolean(self.compact_alignment)
+        self.blank_line_ends_group = utils.convert_yes_no_option_to_boolean(self.blank_line_ends_group)
+        self.comment_line_ends_group = utils.convert_yes_no_option_to_boolean(self.comment_line_ends_group)
+        self.separate_generic_port_alignment = utils.convert_yes_no_option_to_boolean(self.separate_generic_port_alignment)
+        self.include_lines_without_comments = utils.convert_yes_no_option_to_boolean(self.include_lines_without_comments)
+
+        lToi = oFile.get_tokens_bounded_by(self.left_token, self.right_token, bIncludeTillBeginningOfLine=True)
+        for oToi in lToi:
+            if not_enough_tokens_to_align(oToi, self.lTokens):
+                continue
+
+            lTokens = oToi.get_tokens()
+            iLine = oToi.get_line_number()
+            iColumn = 0
+            bTokenFound = False
+            iToken = -1
+            bSkip = False
+            iMaxColumn = 0
+            iLeftColumn = 0
+            bEndGroupAtEndOfLine = False
+            dAnalysis = {}
+
+            for iIndex in range(0, len(lTokens)):
+                iToken += 1
+                oToken = lTokens[iIndex]
+                iLeftColumn += oToken.length()
+
+                if not bTokenFound and not bSkip:
+                    for oSearch in self.lTokens:
+                        if isinstance(oToken, oSearch):
+                            bTokenFound = True
+                            dAnalysis[iLine] = {}
+                            dAnalysis[iLine]["token_column"] = iColumn
+                            dAnalysis[iLine]["token_index"] = iToken
+                            dAnalysis[iLine]["line_number"] = iLine
+                            if isinstance(lTokens[iIndex - 1], parser.whitespace):
+                                dAnalysis[iLine]["left_column"] = iColumn - len(lTokens[iIndex - 1].get_value())
+                            else:
+                                dAnalysis[iLine]["left_column"] = iColumn
+                            break
+
+                    iColumn += alignment_utils.update_column_width(self, oToken)
+
+                if isinstance(oToken, (token.generic_clause.semicolon, token.generic_map_aspect.close_parenthesis)) and self.separate_generic_port_alignment:
+                    # A comment following the end of the generics on the same line belongs to the generic group
+                    if only_comment_follows_on_line(iIndex, lTokens):
+                        bEndGroupAtEndOfLine = True
+                    else:
+                        alignment_utils.add_adjustments_to_dAnalysis(dAnalysis, self.compact_alignment)
+                        for iKey in list(dAnalysis.keys()):
+                            if dAnalysis[iKey]["adjust"] != 0:
+                                oLineTokens = oFile.get_tokens_from_line(iKey)
+                                sSolution = "Move " + str(dAnalysis[iKey]["adjust"]) + " columns"
+                                oViolation = violation.New(oLineTokens.get_line_number(), oLineTokens, sSolution)
+                                oViolation.set_action(dAnalysis[iKey])
+                                self.add_violation(oViolation)
+
+                        dAnalysis = {}
+
+                if isinstance(oToken, parser.carriage_return) and bEndGroupAtEndOfLine:
+                    bEndGroupAtEndOfLine = False
+                    alignment_utils.add_adjustments_to_dAnalysis(dAnalysis, self.compact_alignment)
+                    for iKey in list(dAnalysis.keys()):
+                        if dAnalysis[iKey]["adjust"] != 0:
+                            oLineTokens = oFile.get_tokens_from_line(iKey)
+                            sSolution = "Move " + str(dAnalysis[iKey]["adjust"]) + " columns"
+                            oViolation = violation.New(oLineTokens.get_line_number(), oLineTokens, sSolution)
+                            oViolation.set_action(dAnalysis[iKey])
+                            self.add_violation(oViolation)
+
+                    dAnalysis = {}
+
+                if isinstance(oToken, parser.comment):
+                    iLeftColumn -= lTokens[iIndex].length()
+                    if isinstance(lTokens[iIndex - 1], parser.whitespace):
+                        iLeftColumn -= lTokens[iIndex - 1].length()
+
+                if isinstance(oToken, parser.carriage_return):
+                    iMaxColumn = max(iMaxColumn, iLeftColumn)
+                    iLeftColumn = 0
+
+                    iLine += 1
+                    iColumn = 0
+                    bTokenFound = False
+                    iToken = -1
+
+                    if bSkip:
+                        bSkip = False
+
+                    for oSkip in self.lSkip:
+                        if utils.are_next_consecutive_token_types([parser.whitespace, oSkip], iIndex + 1, lTokens) or utils.are_next_consecutive_token_types(
+                            [oSkip],
+                            iIndex + 1,
+                            lTokens,
+                        ):
+                            bSkip = True
+                            break
+
+                    if self.comment_line_ends_group:
+                        if utils.are_next_consecutive_token_types(
+                            [parser.whitespace, parser.comment],
+                            iIndex + 1,
+                            lTokens,
+                        ) or utils.are_next_consecutive_token_types([parser.comment], iIndex + 1, lTokens):
+                            alignment_utils.add_adjustments_to_dAnalysis(dAnalysis, self.compact_alignment)
+
+                            for iKey in list(dAnalysis.keys()):
+                                if dAnalysis[iKey]["adjust"] != 0:
+                                    oLineTokens = oFile.get_tokens_from_line(iKey)
+                                    sSolution = "Move " + str(dAnalysis[iKey]["adjust"]) + " columns"
+                                    oViolation = violation.New(oLineTokens.get_line_number(), oLineTokens, sSolution)
+                                    oViolation.set_action(dAnalysis[iKey])
+                                    self.add_violation(oViolation)
+
+                            dAnalysis = {}
+
+                    if bSkip:
+                        continue
+
+                    if self.blank_line_ends_group:
+                        if utils.are_next_consecutive_token_types([parser.blank_line], iIndex + 1, lTokens):
+                            alignment_utils.add_adjustments_to_dAnalysis(dAnalysis, self.compact_alignment)
+
+                            for iKey in list(dAnalysis.keys()):
+                                if dAnalysis[iKey]["adjust"] != 0:
+                                    oLineTokens = oFile.get_tokens_from_line(iKey)
+                                    sSolution = "Move " + str(dAnalysis[iKey]["adjust"]) + " columns"
+                                    oViolation = violation.New(oLineTokens.get_line_number(), oLineTokens, sSolution)
+                                    oViolation.set_action(dAnalysis[iKey])
+                                    self.add_violation(oViolation)
+
+                            dAnalysis = {}
+
+            alignment_utils.add_adjustments_to_dAnalysis(dAnalysis, self.compact_alignment, self.include_lines_without_comments, iMaxColumn)
+
+            for iKey in list(dAnalysis.keys()):
+                if dAnalysis[iKey]["adjust"] != 0:
+                    oLineTokens = oFile.get_tokens_from_line(iKey)
+                    sSolution = "Move " + str(dAnalysis[iKey]["adjust"]) + " columns"
+                    oViolation = violation.New(oLineTokens.get_line_number(), oLineTokens, sSolution)
+                    oViolation.set_action(dAnalysis[iKey])
+                    self.add_violation(oViolation)
+
+            dAnalysis = {}
+
+    def _fix_violation(self, oViolation):
+        lTokens = oViolation.get_tokens()
+        dAction = oViolation.get_action()
+        iTokenIndex = dAction["token_index"]
+
+        if isinstance(lTokens[iTokenIndex - 1], parser.whitespace):
+            iLen = len(lTokens[iTokenIndex - 1].get_value())
+            lTokens[iTokenIndex - 1].set_value(" " * (iLen + dAction["adjust"]))
+        else:
+            rules_utils.insert_whitespace(lTokens, iTokenIndex, dAction["adjust"])
+        oViolation.set_tokens(lTokens)
+
+
+def not_enough_tokens_to_align(oToi, lTokens):
+    lTemp = oToi.get_tokens()
+    lTemp = rules_utils.remove_token_sequence_from_token_list([parser.carriage_return, parser.whitespace, parser.comment], lTemp)
+
+    if rules_utils.number_of_tokens_from_token_list_in_token_list(lTokens, lTemp) < 2:
+        return True
+    return False
+
+
+def only_comment_follows_on_line(iIndex, lTokens):
+    return utils.are_next_consecutive_token_types([parser.whitespace, parser.comment], iIndex + 1, lTokens) or utils.are_next_consecutive_token_types(
+        [parser.comment],
+        iIndex + 1,
+        lTokens,
+    )

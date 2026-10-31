@@ -2,8 +2,8 @@
 import os
 import unittest
 
+from mhsg import rule_list, severity, vhdlFile
 from tests import utils
-from vsg import rule_list, severity, vhdlFile
 
 dIndentMap = utils.read_indent_file()
 
@@ -13,7 +13,7 @@ lIteration, eIterationError = vhdlFile.utils.read_vhdlfile(
 oIteration = vhdlFile.vhdlFile(lIteration)
 oIteration.set_indent_map(dIndentMap)
 
-oConfig = utils.read_configuration(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "vsg", "styles", "indent_only.yaml"))
+oConfig = utils.read_configuration(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "mhsg", "styles", "indent_only.yaml"))
 
 oSeverityList = severity.create_list({})
 

@@ -2,203 +2,203 @@
 0 |
 --------------------------------------------------------------------------------
 1 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 2 | architecture RTL of FIFO is
-<class 'vsg.token.architecture_body.architecture_keyword'>
-<class 'vsg.token.architecture_body.identifier'>
-<class 'vsg.token.architecture_body.of_keyword'>
-<class 'vsg.token.architecture_body.entity_name'>
-<class 'vsg.token.architecture_body.is_keyword'>
+<class 'mhsg.token.architecture_body.architecture_keyword'>
+<class 'mhsg.token.architecture_body.identifier'>
+<class 'mhsg.token.architecture_body.of_keyword'>
+<class 'mhsg.token.architecture_body.entity_name'>
+<class 'mhsg.token.architecture_body.is_keyword'>
 --------------------------------------------------------------------------------
 3 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 4 |   signal fifo_wr : std_logic;
-<class 'vsg.token.signal_declaration.signal_keyword'>
-<class 'vsg.token.signal_declaration.identifier'>
-<class 'vsg.token.signal_declaration.colon'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.signal_declaration.semicolon'>
+<class 'mhsg.token.signal_declaration.signal_keyword'>
+<class 'mhsg.token.signal_declaration.identifier'>
+<class 'mhsg.token.signal_declaration.colon'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.signal_declaration.semicolon'>
 --------------------------------------------------------------------------------
 5 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 6 |   signal fifo_wr : std_logic_vector(3 downto 0);
-<class 'vsg.token.signal_declaration.signal_keyword'>
-<class 'vsg.token.signal_declaration.identifier'>
-<class 'vsg.token.signal_declaration.colon'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.index_constraint.open_parenthesis'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.direction.downto'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.index_constraint.close_parenthesis'>
-<class 'vsg.token.signal_declaration.semicolon'>
+<class 'mhsg.token.signal_declaration.signal_keyword'>
+<class 'mhsg.token.signal_declaration.identifier'>
+<class 'mhsg.token.signal_declaration.colon'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.index_constraint.open_parenthesis'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.direction.downto'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.index_constraint.close_parenthesis'>
+<class 'mhsg.token.signal_declaration.semicolon'>
 --------------------------------------------------------------------------------
 7 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 8 |   signal fifo_wr : std_logic_vector(3 downto 0) := "000";
-<class 'vsg.token.signal_declaration.signal_keyword'>
-<class 'vsg.token.signal_declaration.identifier'>
-<class 'vsg.token.signal_declaration.colon'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.index_constraint.open_parenthesis'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.direction.downto'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.index_constraint.close_parenthesis'>
-<class 'vsg.token.signal_declaration.assignment_operator'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.signal_declaration.semicolon'>
+<class 'mhsg.token.signal_declaration.signal_keyword'>
+<class 'mhsg.token.signal_declaration.identifier'>
+<class 'mhsg.token.signal_declaration.colon'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.index_constraint.open_parenthesis'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.direction.downto'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.index_constraint.close_parenthesis'>
+<class 'mhsg.token.signal_declaration.assignment_operator'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.signal_declaration.semicolon'>
 --------------------------------------------------------------------------------
 9 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 10 |   signal fifo_wr, fifo_rd, fifo_empty : std_logic := '1';
-<class 'vsg.token.signal_declaration.signal_keyword'>
-<class 'vsg.token.signal_declaration.identifier'>
-<class 'vsg.token.identifier_list.comma'>
-<class 'vsg.token.signal_declaration.identifier'>
-<class 'vsg.token.identifier_list.comma'>
-<class 'vsg.token.signal_declaration.identifier'>
-<class 'vsg.token.signal_declaration.colon'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.signal_declaration.assignment_operator'>
-<class 'vsg.parser.character_literal'>
-<class 'vsg.token.signal_declaration.semicolon'>
+<class 'mhsg.token.signal_declaration.signal_keyword'>
+<class 'mhsg.token.signal_declaration.identifier'>
+<class 'mhsg.token.identifier_list.comma'>
+<class 'mhsg.token.signal_declaration.identifier'>
+<class 'mhsg.token.identifier_list.comma'>
+<class 'mhsg.token.signal_declaration.identifier'>
+<class 'mhsg.token.signal_declaration.colon'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.signal_declaration.assignment_operator'>
+<class 'mhsg.parser.character_literal'>
+<class 'mhsg.token.signal_declaration.semicolon'>
 --------------------------------------------------------------------------------
 11 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 12 |   signal fifo_rd : fifo_wr'subtype;
-<class 'vsg.token.signal_declaration.signal_keyword'>
-<class 'vsg.token.signal_declaration.identifier'>
-<class 'vsg.token.signal_declaration.colon'>
-<class 'vsg.token.attribute_name.name'>
-<class 'vsg.token.attribute_name.tic'>
-<class 'vsg.token.attribute_name.attribute'>
-<class 'vsg.token.signal_declaration.semicolon'>
+<class 'mhsg.token.signal_declaration.signal_keyword'>
+<class 'mhsg.token.signal_declaration.identifier'>
+<class 'mhsg.token.signal_declaration.colon'>
+<class 'mhsg.token.attribute_name.name'>
+<class 'mhsg.token.attribute_name.tic'>
+<class 'mhsg.token.attribute_name.attribute'>
+<class 'mhsg.token.signal_declaration.semicolon'>
 --------------------------------------------------------------------------------
 13 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 14 |   signal slv : std_logic_vector(integer_range_subtype);
-<class 'vsg.token.signal_declaration.signal_keyword'>
-<class 'vsg.token.signal_declaration.identifier'>
-<class 'vsg.token.signal_declaration.colon'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.index_constraint.open_parenthesis'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.index_constraint.close_parenthesis'>
-<class 'vsg.token.signal_declaration.semicolon'>
+<class 'mhsg.token.signal_declaration.signal_keyword'>
+<class 'mhsg.token.signal_declaration.identifier'>
+<class 'mhsg.token.signal_declaration.colon'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.index_constraint.open_parenthesis'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.index_constraint.close_parenthesis'>
+<class 'mhsg.token.signal_declaration.semicolon'>
 --------------------------------------------------------------------------------
 15 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 16 |   signal slv : std_logic_vector(open);
-<class 'vsg.token.signal_declaration.signal_keyword'>
-<class 'vsg.token.signal_declaration.identifier'>
-<class 'vsg.token.signal_declaration.colon'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.array_constraint.open_parenthesis'>
-<class 'vsg.token.array_constraint.open_keyword'>
-<class 'vsg.token.array_constraint.close_parenthesis'>
-<class 'vsg.token.signal_declaration.semicolon'>
+<class 'mhsg.token.signal_declaration.signal_keyword'>
+<class 'mhsg.token.signal_declaration.identifier'>
+<class 'mhsg.token.signal_declaration.colon'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.array_constraint.open_parenthesis'>
+<class 'mhsg.token.array_constraint.open_keyword'>
+<class 'mhsg.token.array_constraint.close_parenthesis'>
+<class 'mhsg.token.signal_declaration.semicolon'>
 --------------------------------------------------------------------------------
 17 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 18 |   signal slv : std_logic_vector(open) bus;
-<class 'vsg.token.signal_declaration.signal_keyword'>
-<class 'vsg.token.signal_declaration.identifier'>
-<class 'vsg.token.signal_declaration.colon'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.array_constraint.open_parenthesis'>
-<class 'vsg.token.array_constraint.open_keyword'>
-<class 'vsg.token.array_constraint.close_parenthesis'>
-<class 'vsg.token.signal_kind.bus_keyword'>
-<class 'vsg.token.signal_declaration.semicolon'>
+<class 'mhsg.token.signal_declaration.signal_keyword'>
+<class 'mhsg.token.signal_declaration.identifier'>
+<class 'mhsg.token.signal_declaration.colon'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.array_constraint.open_parenthesis'>
+<class 'mhsg.token.array_constraint.open_keyword'>
+<class 'mhsg.token.array_constraint.close_parenthesis'>
+<class 'mhsg.token.signal_kind.bus_keyword'>
+<class 'mhsg.token.signal_declaration.semicolon'>
 --------------------------------------------------------------------------------
 19 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 20 |   signal slv : std_logic_vector(open) register;
-<class 'vsg.token.signal_declaration.signal_keyword'>
-<class 'vsg.token.signal_declaration.identifier'>
-<class 'vsg.token.signal_declaration.colon'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.array_constraint.open_parenthesis'>
-<class 'vsg.token.array_constraint.open_keyword'>
-<class 'vsg.token.array_constraint.close_parenthesis'>
-<class 'vsg.token.signal_kind.register_keyword'>
-<class 'vsg.token.signal_declaration.semicolon'>
+<class 'mhsg.token.signal_declaration.signal_keyword'>
+<class 'mhsg.token.signal_declaration.identifier'>
+<class 'mhsg.token.signal_declaration.colon'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.array_constraint.open_parenthesis'>
+<class 'mhsg.token.array_constraint.open_keyword'>
+<class 'mhsg.token.array_constraint.close_parenthesis'>
+<class 'mhsg.token.signal_kind.register_keyword'>
+<class 'mhsg.token.signal_declaration.semicolon'>
 --------------------------------------------------------------------------------
 21 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 22 |   signal sig_inst : record_array_type(index).record_element'subtype;
-<class 'vsg.token.signal_declaration.signal_keyword'>
-<class 'vsg.token.signal_declaration.identifier'>
-<class 'vsg.token.signal_declaration.colon'>
-<class 'vsg.token.attribute_name.name'>
-<class 'vsg.parser.open_parenthesis'>
-<class 'vsg.parser.todo'>
-<class 'vsg.parser.close_parenthesis'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.attribute_name.tic'>
-<class 'vsg.token.attribute_name.attribute'>
-<class 'vsg.token.signal_declaration.semicolon'>
+<class 'mhsg.token.signal_declaration.signal_keyword'>
+<class 'mhsg.token.signal_declaration.identifier'>
+<class 'mhsg.token.signal_declaration.colon'>
+<class 'mhsg.token.attribute_name.name'>
+<class 'mhsg.parser.open_parenthesis'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.parser.close_parenthesis'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.attribute_name.tic'>
+<class 'mhsg.token.attribute_name.attribute'>
+<class 'mhsg.token.signal_declaration.semicolon'>
 --------------------------------------------------------------------------------
 23 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 24 |   signal sig_inst : array_type(1)(2)'subtype;
-<class 'vsg.token.signal_declaration.signal_keyword'>
-<class 'vsg.token.signal_declaration.identifier'>
-<class 'vsg.token.signal_declaration.colon'>
-<class 'vsg.token.attribute_name.name'>
-<class 'vsg.parser.open_parenthesis'>
-<class 'vsg.parser.todo'>
-<class 'vsg.parser.close_parenthesis'>
-<class 'vsg.parser.open_parenthesis'>
-<class 'vsg.parser.todo'>
-<class 'vsg.parser.close_parenthesis'>
-<class 'vsg.token.attribute_name.tic'>
-<class 'vsg.token.attribute_name.attribute'>
-<class 'vsg.token.signal_declaration.semicolon'>
+<class 'mhsg.token.signal_declaration.signal_keyword'>
+<class 'mhsg.token.signal_declaration.identifier'>
+<class 'mhsg.token.signal_declaration.colon'>
+<class 'mhsg.token.attribute_name.name'>
+<class 'mhsg.parser.open_parenthesis'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.parser.close_parenthesis'>
+<class 'mhsg.parser.open_parenthesis'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.parser.close_parenthesis'>
+<class 'mhsg.token.attribute_name.tic'>
+<class 'mhsg.token.attribute_name.attribute'>
+<class 'mhsg.token.signal_declaration.semicolon'>
 --------------------------------------------------------------------------------
 25 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 26 |   signal sig_inst : record_array_type(index).record_element(3)'element;
-<class 'vsg.token.signal_declaration.signal_keyword'>
-<class 'vsg.token.signal_declaration.identifier'>
-<class 'vsg.token.signal_declaration.colon'>
-<class 'vsg.token.attribute_name.name'>
-<class 'vsg.parser.open_parenthesis'>
-<class 'vsg.parser.todo'>
-<class 'vsg.parser.close_parenthesis'>
-<class 'vsg.token.todo.name'>
-<class 'vsg.token.todo.open_parenthesis'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.todo.close_parenthesis'>
-<class 'vsg.token.attribute_name.tic'>
-<class 'vsg.token.attribute_name.attribute'>
-<class 'vsg.token.signal_declaration.semicolon'>
+<class 'mhsg.token.signal_declaration.signal_keyword'>
+<class 'mhsg.token.signal_declaration.identifier'>
+<class 'mhsg.token.signal_declaration.colon'>
+<class 'mhsg.token.attribute_name.name'>
+<class 'mhsg.parser.open_parenthesis'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.parser.close_parenthesis'>
+<class 'mhsg.token.todo.name'>
+<class 'mhsg.token.todo.open_parenthesis'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.todo.close_parenthesis'>
+<class 'mhsg.token.attribute_name.tic'>
+<class 'mhsg.token.attribute_name.attribute'>
+<class 'mhsg.token.signal_declaration.semicolon'>
 --------------------------------------------------------------------------------
 27 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 28 | begin
-<class 'vsg.token.architecture_body.begin_keyword'>
+<class 'mhsg.token.architecture_body.begin_keyword'>
 --------------------------------------------------------------------------------
 29 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 30 | end architecture RTL;
-<class 'vsg.token.architecture_body.end_keyword'>
-<class 'vsg.token.architecture_body.end_architecture_keyword'>
-<class 'vsg.token.architecture_body.architecture_simple_name'>
-<class 'vsg.token.architecture_body.semicolon'>
+<class 'mhsg.token.architecture_body.end_keyword'>
+<class 'mhsg.token.architecture_body.end_architecture_keyword'>
+<class 'mhsg.token.architecture_body.architecture_simple_name'>
+<class 'mhsg.token.architecture_body.semicolon'>

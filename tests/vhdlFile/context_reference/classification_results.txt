@@ -2,31 +2,31 @@
 0 |
 --------------------------------------------------------------------------------
 1 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 2 | context name1;
-<class 'vsg.token.context_reference.keyword'>
-<class 'vsg.token.context_reference.context_name'>
-<class 'vsg.token.context_reference.semicolon'>
+<class 'mhsg.token.context_reference.keyword'>
+<class 'mhsg.token.context_reference.context_name'>
+<class 'mhsg.token.context_reference.semicolon'>
 --------------------------------------------------------------------------------
 3 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 4 | context name2, name3;
-<class 'vsg.token.context_reference.keyword'>
-<class 'vsg.token.context_reference.context_name'>
-<class 'vsg.token.context_reference.comma'>
-<class 'vsg.token.context_reference.context_name'>
-<class 'vsg.token.context_reference.semicolon'>
+<class 'mhsg.token.context_reference.keyword'>
+<class 'mhsg.token.context_reference.context_name'>
+<class 'mhsg.token.context_reference.comma'>
+<class 'mhsg.token.context_reference.context_name'>
+<class 'mhsg.token.context_reference.semicolon'>
 --------------------------------------------------------------------------------
 5 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 6 | context name4, name5, name6;
-<class 'vsg.token.context_reference.keyword'>
-<class 'vsg.token.context_reference.context_name'>
-<class 'vsg.token.context_reference.comma'>
-<class 'vsg.token.context_reference.context_name'>
-<class 'vsg.token.context_reference.comma'>
-<class 'vsg.token.context_reference.context_name'>
-<class 'vsg.token.context_reference.semicolon'>
+<class 'mhsg.token.context_reference.keyword'>
+<class 'mhsg.token.context_reference.context_name'>
+<class 'mhsg.token.context_reference.comma'>
+<class 'mhsg.token.context_reference.context_name'>
+<class 'mhsg.token.context_reference.comma'>
+<class 'mhsg.token.context_reference.context_name'>
+<class 'mhsg.token.context_reference.semicolon'>

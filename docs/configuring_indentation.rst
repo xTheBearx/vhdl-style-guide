@@ -4,7 +4,7 @@
 Configuring Indentation
 -----------------------
 
-VSG follows a predefined set of rules when indenting VHDL code.
+MHSG follows a predefined set of rules when indenting VHDL code.
 The indenting algorithm is driven by a YAML file.
 
 The indent values feeding the algorithm can be obtained by using the **-oc** command line argument.
@@ -50,9 +50,9 @@ where:
 The **group_name** and **token_name** keys provide unique identifier which can be matched to types of tokens after the file has been parsed.
 There are more tokens than are currently defined in the indent configuration, as not all tokens require indenting rules.
 
-The **token** key informs VSG how to apply indents when it encounters the token.
+The **token** key informs MHSG how to apply indents when it encounters the token.
 
-The **after** key informs VSG how to apply indents to successive tokens it encounters.
+The **after** key informs MHSG how to apply indents to successive tokens it encounters.
 
 The **value** defines the behavior for each **token** and **after** key, and are defined as:
 
@@ -73,7 +73,7 @@ Using the **group_name** and **token_name** to identify types of VHDL tokens and
 Example 1
 #########
 
-VSG assumes the closing parenthesis will match with the **port** keyword.
+MHSG assumes the closing parenthesis will match with the **port** keyword.
 
 .. code-block:: vhdl
 
@@ -97,7 +97,7 @@ If we use the following configuration...
                    token : current
                    after : '-2'
 
-...then VSG will enforce the following format:
+...then MHSG will enforce the following format:
 
 .. code-block:: vhdl
 
@@ -113,13 +113,13 @@ If we use the following configuration...
 How does this work?
 ^^^^^^^^^^^^^^^^^^^
 
-VSG is setting the indent levels as it goes.
+MHSG is setting the indent levels as it goes.
 The port definitions in the above example are set to an indent of 2.
-When the closing parenthesis is encountered, VSG checks the **port_clause.close_parenthesis.token** key to determine what to do.
+When the closing parenthesis is encountered, MHSG checks the **port_clause.close_parenthesis.token** key to determine what to do.
 In this case the key is set to **current**.
-This tells VSG to keep the indent of 2 for the closing parenthesis token.
-VSG then looks at the **port_clause.close_parenthesis.after** key and finds a **'-2'**.
-This tells VSG to subtract two from the current indent value of 2.
+This tells MHSG to keep the indent of 2 for the closing parenthesis token.
+MHSG then looks at the **port_clause.close_parenthesis.after** key and finds a **'-2'**.
+This tells MHSG to subtract two from the current indent value of 2.
 Which will set the indent to 0.
 The next token in the indent configuration with a **token** key value of **current** would then get 0.
 
@@ -175,13 +175,13 @@ Check the LRM entry for instantiations.
                [ generic_map_aspect ]
                [ port_map_aspect ] ;
 
-VSG tokenizes a VHDL file based on the LRM and tokens are named per the LRM.
-Tokens are located in the directory `vsg/tokens` and stored in files based on the entry name.
+MHSG tokenizes a VHDL file based on the LRM and tokens are named per the LRM.
+Tokens are located in the directory `mhsg/tokens` and stored in files based on the entry name.
 In this case, there is a file named `component_instantiation_statement.py` file:
 
 .. code-block:: python
 
-   from vsg import parser
+   from mhsg import parser
 
 
    class instantiation_label(parser.label):
@@ -261,7 +261,7 @@ Update indent configuration
 
 The default indent is to increase the indent by 1 after the `instantiation_label` is found and then decrease the indent by 1 when the `semicolon` is found.
 To enforce the desired indent, change the `after` entry for both `instantiation_label` and `semicolon` to `"current"`.
-Using `"current"` tells VSG to not change the indent after the label and semicolon are encountered.
+Using `"current"` tells MHSG to not change the indent after the label and semicolon are encountered.
 
 Extract the `component_instantiation_statement` section out of the JSON file and save it to a new configuration file or add it to an existing one.
 
@@ -287,11 +287,11 @@ Extract the `component_instantiation_statement` section out of the JSON file and
 Run with indent configuration
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Include the configuration when executing VSG:
+Include the configuration when executing MHSG:
 
 .. code-block:: text
 
-   $ vsg -c indent.json -f fifo.vhd --fix
+   $ mhsg -c indent.json -f fifo.vhd --fix
 
 Using the above configuration on the following file...
 

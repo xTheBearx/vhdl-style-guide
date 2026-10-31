@@ -11,8 +11,8 @@ repos:
         # These are abuse of python import mechanism
         # please conisder to remove in favor of direct module import.
         exclude: "^(\
-          vsg/rules/__init__\\.py|\
-          vsg/vhdlFile/extract/__init__\\.py\
+          mhsg/rules/__init__\\.py|\
+          mhsg/vhdlFile/extract/__init__\\.py\
           )$"
 
   - repo: https://github.com/asottile/add-trailing-comma
@@ -41,7 +41,7 @@ repos:
         # * config_error - intentional
         # * *_run_config.json - legacy not json compliant
         exclude: "^(\
-          tests/vsg/config_error\\.json\
+          tests/mhsg/config_error\\.json\
           )$"
       - id: check-executables-have-shebangs
       - id: check-shebang-scripts-are-executable

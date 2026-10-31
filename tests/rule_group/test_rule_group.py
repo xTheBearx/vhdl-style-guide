@@ -10,8 +10,8 @@ import unittest
 from io import StringIO
 from tempfile import TemporaryDirectory
 
+from mhsg import __main__, version
 from tests import utils
-from vsg import __main__, version
 
 
 def full_source_path():
@@ -52,7 +52,7 @@ class testMain(unittest.TestCase):
         sConfigName = "config_1"
         shutil.copy(full_source_path(), self.full_actual_path(sConfigName))
 
-        sys.argv = ["vsg"]
+        sys.argv = ["mhsg"]
         sys.argv.extend(["--output_format", "syntastic"])
         sys.argv.extend(["--configuration", full_config_path(sConfigName)])
         sys.argv.extend(["-p 1"])
@@ -75,7 +75,7 @@ class testMain(unittest.TestCase):
         sConfigName = "config_2"
         shutil.copy(full_source_path(), self.full_actual_path(sConfigName))
 
-        sys.argv = ["vsg"]
+        sys.argv = ["mhsg"]
         sys.argv.extend(["--output_format", "syntastic"])
         sys.argv.extend(["--configuration", full_config_path(sConfigName)])
         sys.argv.extend(["-p 1"])
@@ -98,7 +98,7 @@ class testMain(unittest.TestCase):
         sConfigName = "config_3"
         shutil.copy(full_source_path(), self.full_actual_path(sConfigName))
 
-        sys.argv = ["vsg"]
+        sys.argv = ["mhsg"]
         sys.argv.extend(["--output_format", "syntastic"])
         sys.argv.extend(["--configuration", full_config_path(sConfigName)])
         sys.argv.extend(["-p 1"])

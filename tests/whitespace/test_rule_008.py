@@ -2,7 +2,7 @@
 
 import unittest
 
-from vsg.rules import whitespace
+from mhsg.rules import whitespace
 
 
 class test_rule(unittest.TestCase):

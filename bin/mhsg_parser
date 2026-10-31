@@ -1,0 +1,16 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import os
+import sys
+
+# Get the path to the executable
+executablePath = os.path.dirname(os.path.realpath(__file__))
+
+# Import program modules
+sys.path.append(os.path.join(executablePath, ".."))
+
+from mhsg.__parser__ import main
+
+if __name__ == "__main__":
+    main()

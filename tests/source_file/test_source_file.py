@@ -8,11 +8,11 @@ import unittest
 from tempfile import TemporaryDirectory
 from unittest import mock
 
-sys.path.append("vsg")
+sys.path.append("mhsg")
 
+from mhsg import __main__, vhdlFile
+from mhsg.rules import source_file
 from tests import utils
-from vsg import __main__, vhdlFile
-from vsg.rules import source_file
 
 sNoPermissionFile = "no_permission.vhd"
 sEmptyFile = "empty_file.vhd"
@@ -31,7 +31,7 @@ class testOSError(unittest.TestCase):
 
     def test_file_not_found(self):
         try:
-            subprocess.check_output([*utils.vsg_exec(), "-f", "no_file.vhd"], stderr=subprocess.STDOUT)
+            subprocess.check_output([*utils.mhsg_exec(), "-f", "no_file.vhd"], stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
             exit_status: int = e.returncode
 
@@ -45,7 +45,7 @@ class testOSError(unittest.TestCase):
         pathlib.Path(sNoPermissionTempFile).touch(mode=0o222, exist_ok=True)
 
         try:
-            subprocess.check_output([*utils.vsg_exec(), "-f", sNoPermissionTempFile])
+            subprocess.check_output([*utils.mhsg_exec(), "-f", sNoPermissionTempFile])
         except subprocess.CalledProcessError as e:
             lActual = str(e.output.decode("utf-8")).splitlines()
             iExitStatus = e.returncode
@@ -57,7 +57,7 @@ class testOSError(unittest.TestCase):
 
     def test_file_empty(self):
         try:
-            subprocess.check_output([*utils.vsg_exec(), "-f", "tests/source_file/" + sEmptyFile])
+            subprocess.check_output([*utils.mhsg_exec(), "-f", "tests/source_file/" + sEmptyFile])
         except subprocess.CalledProcessError as e:
             lActual = str(e.output.decode("utf-8")).splitlines()
             iExitStatus = e.returncode

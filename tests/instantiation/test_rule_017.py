@@ -2,7 +2,7 @@
 
 import unittest
 
-from vsg.rules import instantiation
+from mhsg.rules import instantiation
 
 
 class test_rule(unittest.TestCase):

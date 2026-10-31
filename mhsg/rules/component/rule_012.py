@@ -1,0 +1,31 @@
+# -*- coding: utf-8 -*-
+
+from mhsg import token
+from mhsg.rules import token_case_with_prefix_suffix
+
+lTokens = []
+lTokens.append(token.component_declaration.component_simple_name)
+
+
+class rule_012(token_case_with_prefix_suffix):
+    """
+    This rule checks the proper case of the component name in the **end component** line.
+
+    |configuring_uppercase_and_lowercase_rules_link|
+
+    **Violation**
+
+    .. code-block:: vhdl
+
+       end component FIFO;
+
+    **Fix**
+
+    .. code-block:: vhdl
+
+       end component fifo;
+    """
+
+    def __init__(self):
+        super().__init__(lTokens)
+        self.groups.append("case::name")

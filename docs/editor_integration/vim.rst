@@ -7,16 +7,16 @@ Add the following macro into your .vimrc file:
 
 ::
 
-    map <F9> :setl autoread<CR>:let b:current_file = @%<CR>:w!<CR>:execute '!vsg -f ' . b:current_file ' --fix'<CR><CR>:edit<CR>:setl noautoread<CR>
+    map <F9> :setl autoread<CR>:let b:current_file = @%<CR>:w!<CR>:execute '!mhsg -f ' . b:current_file ' --fix'<CR><CR>:edit<CR>:setl noautoread<CR>
 
 
 This macro bound to the <F9> key performs the following steps:
 
 1. Save the current buffer
-2. Execute vsg with the --fix option
+2. Execute mhsg with the --fix option
 3. Reload the buffer
 
-When you are editing a file, you can hit <F9> and VSG will run on the current buffer without leaving VIM.
+When you are editing a file, you can hit <F9> and MHSG will run on the current buffer without leaving VIM.
 
 Linting/Diagnostics with ALE
 ----------------------------
@@ -25,11 +25,11 @@ A custom linter can be defined for 'ALE <https://github.com/dense-analysis/ale>'
 
 .. code-block:: vim
 
-    function! ale_linters#vhdl#vsg_ale#GetCommand(buffer)
-        return "vsg --config ./vsg_config.yaml -of syntastic -f " . expand('%p')
+    function! ale_linters#vhdl#mhsg_ale#GetCommand(buffer)
+        return "mhsg --config ./mhsg_config.yaml -of syntastic -f " . expand('%p')
     endfunction
 
-    function! ale_linters#vhdl#vsg_ale#Handle(buffer, lines)
+    function! ale_linters#vhdl#mhsg_ale#Handle(buffer, lines)
         let l:pattern = '^\(\w\{-}\):\s\+\(.*\)(\(\d\+\))\(\w\+\)\s\+--\s\+\(.*\)$'
         let l:output = []
 
@@ -44,12 +44,12 @@ A custom linter can be defined for 'ALE <https://github.com/dense-analysis/ale>'
     endfunction
 
     call ale#linter#Define('vhdl', {
-    \   'name': 'vsg_ale',
-    \   'executable': 'vsg',
+    \   'name': 'mhsg_ale',
+    \   'executable': 'mhsg',
     \   'output_stream': 'stdout',
     \   'lint_file': 0,
-    \   'command': function('ale_linters#vhdl#vsg_ale#GetCommand'),
-    \   'callback': 'ale_linters#vhdl#vsg_ale#Handle',
+    \   'command': function('ale_linters#vhdl#mhsg_ale#GetCommand'),
+    \   'callback': 'ale_linters#vhdl#mhsg_ale#Handle',
     \})
 
 And then enable that linter as you normally would for ALE
@@ -66,26 +66,26 @@ There are a number of plugins that allow you to create arbitrary integrations to
 Null-LS Plugin
 ^^^^^^^^^^^^^^
 
-One option to interact with the LSP client with VSG is to use 'null-ls <https://github.com/jose-elias-alvarez/null-ls.nvim>'_. This plugin acts as a middle man between the LSP client and your own "sources". Below are two sources that you can use to provide diagnostics and formatting in neovim with VSG. This assumes you have a file `vsg_config.yaml` in the root of your project (aka your working directory), this may need to be modified.
+One option to interact with the LSP client with MHSG is to use 'null-ls <https://github.com/jose-elias-alvarez/null-ls.nvim>'_. This plugin acts as a middle man between the LSP client and your own "sources". Below are two sources that you can use to provide diagnostics and formatting in neovim with MHSG. This assumes you have a file `mhsg_config.yaml` in the root of your project (aka your working directory), this may need to be modified.
 
-This works by taking the current buffer's contents and passing it into the standard input for VSG, then using a regex, parses the syntastic style output from standard output to generate the diagnostics. For the formatting it puts the current buffer's contents into a temporary file, has VSG "fix" that file and then writes that temporary file back to the buffer (without saving).
+This works by taking the current buffer's contents and passing it into the standard input for MHSG, then using a regex, parses the syntastic style output from standard output to generate the diagnostics. For the formatting it puts the current buffer's contents into a temporary file, has MHSG "fix" that file and then writes that temporary file back to the buffer (without saving).
 
 .. code-block:: lua
 
     local null_ls = require('null-ls')
     local helpers = require('null-ls.helpers')
-    local vsg_lint = {
-        name = "VSG",
+    local mhsg_lint = {
+        name = "MHSG",
         method = null_ls.methods.DIAGNOSTICS,
         filetypes = { "vhdl" },
         generator = helpers.generator_factory({
-            command = "vsg",
+            command = "mhsg",
             args = function(params)
                 local rv = {}
                 -- check if there is a config file in the root directory, if so
                 -- insert the -c argument with it
-                if vim.fn.filereadable(params.root .. '/vsg_config.yaml') == 1 then
-                    table.insert(rv, '-c=' .. params.root .. '/vsg_config.yaml')
+                if vim.fn.filereadable(params.root .. '/mhsg_config.yaml') == 1 then
+                    table.insert(rv, '-c=' .. params.root .. '/mhsg_config.yaml')
                 end
                 table.insert(rv, '--stdin')
                 table.insert(rv, '-of=syntastic')
@@ -116,13 +116,13 @@ This works by taking the current buffer's contents and passing it into the stand
         })
     }
 
-    local vsg_format = {
-        name = "VSG Formatting",
+    local mhsg_format = {
+        name = "MHSG Formatting",
         method = null_ls.methods.FORMATTING,
         filetypes = { "vhdl" },
         generator = helpers.formatter_factory({
-            command = "vsg",
-            args = { "-c$ROOT/vsg_config.yaml", "-f=$FILENAME", "-of=syntastic", "--fix" },
+            command = "mhsg",
+            args = { "-c$ROOT/mhsg_config.yaml", "-f=$FILENAME", "-of=syntastic", "--fix" },
             cwd = nil,
             check_exit_code = { 0, 1 },
             ignore_stderr = true,
@@ -135,5 +135,5 @@ This works by taking the current buffer's contents and passing it into the stand
 
     null_ls.setup({
         diagnostics_format = "[#{c}] #{m} (#{s})",
-        sources = { vsg_lint, vsg_format }
+        sources = { mhsg_lint, mhsg_format }
     })

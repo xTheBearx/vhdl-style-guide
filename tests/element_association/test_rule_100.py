@@ -3,9 +3,9 @@
 import os
 import unittest
 
+from mhsg import vhdlFile
+from mhsg.rules import element_association
 from tests import utils
-from vsg import vhdlFile
-from vsg.rules import element_association
 
 sTestDir = os.path.dirname(__file__)
 

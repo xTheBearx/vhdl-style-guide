@@ -1,7 +1,7 @@
 Installation
 ============
 
-There are two methods to install VSG.
+There are two methods to install MHSG.
 
 PIP
 ---
@@ -11,9 +11,9 @@ It can be installed using **pip**.
 
 .. code-block:: bash
 
-  pip install vsg --use-pep517
+  pip install mhsg --use-pep517
 
-This is the preferred method for installing VSG.
+This is the preferred method for installing MHSG.
 
 GitHub
 ------

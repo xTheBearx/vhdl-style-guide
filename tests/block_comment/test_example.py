@@ -2,8 +2,8 @@
 import os
 import unittest
 
+from mhsg import config, rule_list, severity, vhdlFile
 from tests import utils
-from vsg import config, rule_list, severity, vhdlFile
 
 sSourceCodeDir = os.path.dirname(__file__)
 

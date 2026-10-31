@@ -2,7 +2,7 @@
 
 import unittest
 
-from vsg.rules import case_generate_alternative
+from mhsg.rules import case_generate_alternative
 
 
 class test_rule(unittest.TestCase):

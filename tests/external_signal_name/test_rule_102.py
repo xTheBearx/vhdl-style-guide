@@ -3,9 +3,9 @@
 import os
 import unittest
 
+from mhsg import vhdlFile
+from mhsg.rules import external_signal_name
 from tests import utils
-from vsg import vhdlFile
-from vsg.rules import external_signal_name
 
 sTestDir = os.path.dirname(__file__)
 

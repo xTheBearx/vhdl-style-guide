@@ -3,9 +3,9 @@
 import os
 import unittest
 
+from mhsg import vhdlFile
+from mhsg.rules import delay_mechanism
 from tests import utils
-from vsg import vhdlFile
-from vsg.rules import delay_mechanism
 
 sTestDir = os.path.dirname(__file__)
 

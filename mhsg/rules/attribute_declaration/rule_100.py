@@ -1,0 +1,31 @@
+# -*- coding: utf-8 -*-
+
+from mhsg import token
+from mhsg.rules.whitespace_after_token import Rule
+
+lTokens = []
+lTokens.append(token.attribute_declaration.attribute_keyword)
+lTokens.append(token.attribute_declaration.colon)
+
+
+class rule_100(Rule):
+    """
+    This rule checks for a single space after the following elements:  **attribute** keyword and colon.
+
+    |configuring_whitespace_rules_link|
+
+    **Violation**
+
+    .. code-block:: vhdl
+
+       attribute   max_delay :   time;
+
+    **Fix**
+
+    .. code-block:: vhdl
+
+       attribute max_delay : time;
+    """
+
+    def __init__(self):
+        super().__init__(lTokens)

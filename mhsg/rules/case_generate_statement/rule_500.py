@@ -1,0 +1,31 @@
+# -*- coding: utf-8 -*-
+
+from mhsg import token
+from mhsg.rules import token_case as Rule
+
+lTokens = []
+lTokens.append(token.case_generate_statement.case_keyword)
+
+
+class rule_500(Rule):
+    """
+    This rule checks the **case** keyword has proper case.
+
+    |configuring_uppercase_and_lowercase_rules_link|
+
+    **Violation**
+
+    .. code-block:: vhdl
+
+       CASE expression generate
+
+    **Fix**
+
+    .. code-block:: vhdl
+
+       case expression generate
+    """
+
+    def __init__(self):
+        super().__init__(lTokens)
+        self.groups.append("case::keyword")

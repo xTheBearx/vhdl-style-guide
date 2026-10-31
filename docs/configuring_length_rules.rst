@@ -4,7 +4,7 @@
 Configuring Length Rules
 ------------------------
 
-VSG includes several rules enforcing maximum lengths of code structures.
+MHSG includes several rules enforcing maximum lengths of code structures.
 These rules are set as warnings.
 
 Overriding Line Length

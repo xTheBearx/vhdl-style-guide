@@ -2,7 +2,7 @@
 
 import unittest
 
-from vsg.rules import ieee
+from mhsg.rules import ieee
 
 
 class test_rule(unittest.TestCase):

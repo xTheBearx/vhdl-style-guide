@@ -2,7 +2,7 @@
 -- Gerard Sharp, November 2023
 -- Public Domain
 
--- Making identifiers out of reserved keywords to test the awesome vsg project
+-- Making identifiers out of reserved keywords to test the awesome mhsg project
 
 entity null is             -- 'null' is a reserved keyword since 1987
   generic (

@@ -3,9 +3,9 @@
 import os
 import unittest
 
+from mhsg import vhdlFile
+from mhsg.rules import bit_string_literal
 from tests import utils
-from vsg import vhdlFile
-from vsg.rules import bit_string_literal
 
 sTestDir = os.path.dirname(__file__)
 

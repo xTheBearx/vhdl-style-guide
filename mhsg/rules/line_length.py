@@ -1,0 +1,35 @@
+# -*- coding: utf-8 -*-
+
+
+from mhsg import violation
+from mhsg.rule_group import length
+
+
+class line_length(length.Rule):
+    """
+    Checks for a at least a single space before a token.
+
+    Parameters
+    ----------
+
+    name : string
+       The group the rule belongs to.
+
+    identifier : string
+       unique identifier.  Usually in the form of 00N.
+
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.disable = False
+        self.length = 120
+
+    def _get_tokens_of_interest(self, oFile):
+        return oFile.get_lines_with_length_that_exceed_column(self.length)
+
+    def _analyze(self, lToi):
+        for oToi in lToi:
+            self.solution = "Reduce line to less than " + str(self.length) + " characters"
+            oViolation = violation.New(oToi.get_line_number(), oToi, self.solution)
+            self.add_violation(oViolation)

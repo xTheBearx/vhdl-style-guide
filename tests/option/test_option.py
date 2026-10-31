@@ -3,10 +3,10 @@ import sys
 import unittest
 from unittest import mock
 
-from vsg import __main__, config, deprecated_rule, parser, rule, violation
-from vsg.rules import option
-from vsg.rules.entity import rule_001
-from vsg.vhdlFile.extract import tokens
+from mhsg import __main__, config, deprecated_rule, parser, rule, violation
+from mhsg.rules import option
+from mhsg.rules.entity import rule_001
+from mhsg.vhdlFile.extract import tokens
 
 
 class testRuleMethods(unittest.TestCase):

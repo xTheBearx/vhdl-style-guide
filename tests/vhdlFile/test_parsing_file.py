@@ -2,11 +2,11 @@
 import os
 import unittest
 
+from mhsg import vhdlFile
 from tests import utils
-from vsg import vhdlFile
 
 try:
-    sLrmUnit = os.environ["vsg_file_to_parse"]
+    sLrmUnit = os.environ["mhsg_file_to_parse"]
 
     lFile, eError = vhdlFile.utils.read_vhdlfile(sLrmUnit)
     oFile = vhdlFile.vhdlFile(lFile)

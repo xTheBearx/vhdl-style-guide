@@ -2,8 +2,8 @@
 import os
 import unittest
 
+from mhsg import rule_list, severity, vhdlFile
 from tests import utils
-from vsg import rule_list, severity, vhdlFile
 
 sSourceDir = os.path.join(os.path.dirname(__file__), "..", "..", "code_examples", "c16")
 
@@ -21,7 +21,7 @@ lDataCore, eDataCoreError = vhdlFile.utils.read_vhdlfile(os.path.join(sSourceDir
 oDataCore = vhdlFile.vhdlFile(lDataCore)
 oDataCore.set_indent_map(dIndentMap)
 
-oConfig = utils.read_configuration(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "vsg", "styles", "jcl.yaml"))
+oConfig = utils.read_configuration(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "mhsg", "styles", "jcl.yaml"))
 
 oSeverityList = severity.create_list({})
 

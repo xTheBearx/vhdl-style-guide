@@ -1,0 +1,38 @@
+# -*- coding: utf-8 -*-
+
+from mhsg import parser, token
+from mhsg.rules.whitespace_after_token import Rule
+
+lTokens = []
+lTokens.append(token.if_statement.elsif_keyword)
+
+
+class rule_005(Rule):
+    """
+    This rule checks for a single space after the **elsif** keyword.
+
+    |configuring_whitespace_rules_link|
+
+    **Violation**
+
+    .. code-block:: vhdl
+
+      elsif(c = '1') then
+
+      elsif   (c = '1') then
+
+      elsif    b = '0' then
+
+    **Fix**
+
+    .. code-block:: vhdl
+
+      elsif (c = '1') then
+
+      elsif (c = '1') then
+
+      elsif b = '0' then
+    """
+
+    def __init__(self):
+        super().__init__(lTokens)

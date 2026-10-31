@@ -2,8 +2,8 @@
 import os
 import unittest
 
+from mhsg import rule_list, severity, vhdlFile
 from tests import utils
-from vsg import rule_list, severity, vhdlFile
 
 sSourceDir = os.path.join(os.path.dirname(__file__), "..", "..", "code_examples", "graphicsaccelerator")
 
@@ -37,7 +37,7 @@ lFrameBuffer, eFrameBufferError = vhdlFile.utils.read_vhdlfile(os.path.join(sSou
 oFrameBuffer = vhdlFile.vhdlFile(lFrameBuffer)
 oFrameBuffer.set_indent_map(dIndentMap)
 
-oConfig = utils.read_configuration(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "vsg", "styles", "indent_only.yaml"))
+oConfig = utils.read_configuration(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", "mhsg", "styles", "indent_only.yaml"))
 
 oSeverityList = severity.create_list({})
 

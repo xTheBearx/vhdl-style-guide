@@ -1,7 +1,7 @@
 Pragmas
 =======
 
-VSG treats all pragmas as comments.
+MHSG treats all pragmas as comments.
 Most pragmas are ignored as they do not affect the style of the code.
 
 However, the following pragmas do affect the parser:  **--vhdl_comp_off** and **--vhdl_comp_on**.
@@ -30,5 +30,5 @@ A parser which did not take the pragmas into account would fail because the code
 
 Which does not follow the VHDL LRM.
 
-When VSG encounters the **--vhdl_comp_off** pragma, it will ignore anything after it until it encounters the **--vhdl_comp_on** pragma.
+When MHSG encounters the **--vhdl_comp_off** pragma, it will ignore anything after it until it encounters the **--vhdl_comp_on** pragma.
 No formatting will be enforced between the pragmas.

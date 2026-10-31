@@ -3,7 +3,7 @@
 import platform
 import unittest
 
-from vsg import junit
+from mhsg import junit
 
 
 class testJunitClasses(unittest.TestCase):

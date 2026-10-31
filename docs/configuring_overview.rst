@@ -1,7 +1,7 @@
 Overview
 ========
 
-VSG can use a configuration file to alter its behavior and/or include a list of files to analyze.
+MHSG can use a configuration file to alter its behavior and/or include a list of files to analyze.
 This is accomplished by passing JSON and/or YAML file(s) through the **--configuration** command line argument.
 This is the basic form of a configuration file in JSON:
 
@@ -85,7 +85,7 @@ The file_list is a list of files that will be analyzed.
 Environment variables will expanded.
 File globbing is also supported.
 The Environment variables will be expanded before globbing occurs.
-This option can be useful when running VSG over multiple files.
+This option can be useful when running MHSG over multiple files.
 
 The file name will be converted to POSIX style using '/' as a separator for all platforms.
 
@@ -153,7 +153,7 @@ The configuration for a single rule can be reported using the **-rc** option:
 
 .. code-block:: text
 
-   $ vsg -rc entity_001
+   $ mhsg -rc entity_001
    {
      "rule": {
        "entity_001": {
@@ -165,7 +165,7 @@ The configuration for a single rule can be reported using the **-rc** option:
      }
    }
 
-VSG will print the configuration for the rule given in a JSON format.
+MHSG will print the configuration for the rule given in a JSON format.
 This configuration can be altered and added to a configuration file.
 
 Reporting Configuration for All Rules
@@ -175,9 +175,9 @@ Every rule configuration can be report and saved to a file using the **-oc** opt
 
 .. code-block:: text
 
-   $ vsg -oc configuration.json
+   $ mhsg -oc configuration.json
 
-The output file will be in JSON format and can be modified and passed back to VSG using the *-c* option.
+The output file will be in JSON format and can be modified and passed back to MHSG using the *-c* option.
 
 Rule Configuration Priorities
 -----------------------------
@@ -249,7 +249,7 @@ Use the configuration with the **--configuration** command line argument:
 
 .. code-block:: text
 
-   $ vsg -f RAM.vhd --configuration entity_004_disable.json
+   $ mhsg -f RAM.vhd --configuration entity_004_disable.json
 
 Example: Setting the indent increment size for a single rule
 ------------------------------------------------------------

@@ -1,0 +1,68 @@
+# -*- coding: utf-8 -*-
+
+from mhsg import parser, violation
+from mhsg.rule_group import structure
+from mhsg.rules import utils as rules_utils
+from mhsg.vhdlFile import utils
+
+
+class remove_carriage_return_after_token(structure.Rule):
+    """
+    Checks for a carriage return within the next two tokens after the one given.
+
+    Parameters
+    ----------
+
+    name : string
+       The group the rule belongs to.
+
+    identifier : string
+       unique identifier.  Usually in the form of 00N.
+
+    lTokens : list of parser object types
+       object types to check the prefix
+
+    lPrefixes : string list
+       acceptable prefixes
+    """
+
+    def __init__(self, lTokens, bInsertSpace=False):
+        super().__init__()
+        self.lTokens = lTokens
+        self.bInsertSpace = bInsertSpace
+        self.configuration_documentation_link = None
+
+    def _get_tokens_of_interest(self, oFile):
+        lToi = oFile.get_n_tokens_after_token(4, self.lTokens)
+        return [oToi for oToi in lToi if not comment_exists_before_next_code_token(oToi.get_start_index(), oFile.lAllObjects)]
+
+    def _analyze(self, lToi):
+        for oToi in lToi:
+            lTokens = oToi.get_tokens()
+            for iToken, oToken in enumerate(lTokens[: len(lTokens)]):
+                if iToken < 3:
+                    if isinstance(oToken, parser.carriage_return):
+                        oViolation = violation.New(oToi.get_line_number(), oToi, self.solution)
+                        self.add_violation(oViolation)
+                        break
+
+    def _fix_violation(self, oViolation):
+        lTokens = oViolation.get_tokens()
+
+        lTokens = utils.remove_carriage_returns_from_token_list(lTokens)
+        lTokens = utils.remove_consecutive_whitespace_tokens(lTokens)
+        if self.bInsertSpace:
+            if not isinstance(lTokens[1], parser.whitespace):
+                rules_utils.insert_whitespace(lTokens, 1)
+
+        oViolation.set_tokens(lTokens)
+
+
+def comment_exists_before_next_code_token(iToken, lAllObjects):
+    for iIndex in range(iToken + 1, len(lAllObjects)):
+        oToken = lAllObjects[iIndex]
+        if isinstance(oToken, parser.comment):
+            return True
+        if not isinstance(oToken, (parser.whitespace, parser.carriage_return, parser.blank_line)):
+            return False
+    return False

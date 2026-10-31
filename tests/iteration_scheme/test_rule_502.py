@@ -2,7 +2,7 @@
 
 import unittest
 
-from vsg.rules import iteration_scheme
+from mhsg.rules import iteration_scheme
 
 
 class test_rule(unittest.TestCase):

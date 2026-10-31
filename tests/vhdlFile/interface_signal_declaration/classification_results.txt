@@ -2,314 +2,314 @@
 0 |
 --------------------------------------------------------------------------------
 1 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 2 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 3 | entity FIFO is
-<class 'vsg.token.entity_declaration.entity_keyword'>
-<class 'vsg.token.entity_declaration.identifier'>
-<class 'vsg.token.entity_declaration.is_keyword'>
+<class 'mhsg.token.entity_declaration.entity_keyword'>
+<class 'mhsg.token.entity_declaration.identifier'>
+<class 'mhsg.token.entity_declaration.is_keyword'>
 --------------------------------------------------------------------------------
 4 |   port (
-<class 'vsg.token.port_clause.port_keyword'>
-<class 'vsg.token.port_clause.open_parenthesis'>
+<class 'mhsg.token.port_clause.port_keyword'>
+<class 'mhsg.token.port_clause.open_parenthesis'>
 --------------------------------------------------------------------------------
 5 |     port1 : in std_logic;
-<class 'vsg.token.interface_unknown_declaration.identifier'>
-<class 'vsg.token.interface_unknown_declaration.colon'>
-<class 'vsg.token.mode.in_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_unknown_declaration.identifier'>
+<class 'mhsg.token.interface_unknown_declaration.colon'>
+<class 'mhsg.token.mode.in_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 6 |     port1 : out std_logic;
-<class 'vsg.token.interface_unknown_declaration.identifier'>
-<class 'vsg.token.interface_unknown_declaration.colon'>
-<class 'vsg.token.mode.out_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_unknown_declaration.identifier'>
+<class 'mhsg.token.interface_unknown_declaration.colon'>
+<class 'mhsg.token.mode.out_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 7 |     port1 : inout std_logic bus;
-<class 'vsg.token.interface_unknown_declaration.identifier'>
-<class 'vsg.token.interface_unknown_declaration.colon'>
-<class 'vsg.token.mode.inout_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.simple_mode_indication.bus_keyword'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_unknown_declaration.identifier'>
+<class 'mhsg.token.interface_unknown_declaration.colon'>
+<class 'mhsg.token.mode.inout_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.simple_mode_indication.bus_keyword'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 8 |     port1 : buffer std_logic bus := "asdf";
-<class 'vsg.token.interface_unknown_declaration.identifier'>
-<class 'vsg.token.interface_unknown_declaration.colon'>
-<class 'vsg.token.mode.buffer_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.simple_mode_indication.bus_keyword'>
-<class 'vsg.token.simple_mode_indication.assignment'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_unknown_declaration.identifier'>
+<class 'mhsg.token.interface_unknown_declaration.colon'>
+<class 'mhsg.token.mode.buffer_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.simple_mode_indication.bus_keyword'>
+<class 'mhsg.token.simple_mode_indication.assignment'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 9 |     port1 : linkage std_logic := "asdf";
-<class 'vsg.token.interface_unknown_declaration.identifier'>
-<class 'vsg.token.interface_unknown_declaration.colon'>
-<class 'vsg.token.mode.linkage_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.simple_mode_indication.assignment'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_unknown_declaration.identifier'>
+<class 'mhsg.token.interface_unknown_declaration.colon'>
+<class 'mhsg.token.mode.linkage_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.simple_mode_indication.assignment'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 10 |     port1 : std_logic;
-<class 'vsg.token.interface_unknown_declaration.identifier'>
-<class 'vsg.token.interface_unknown_declaration.colon'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_unknown_declaration.identifier'>
+<class 'mhsg.token.interface_unknown_declaration.colon'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 11 |     port1 : view some_view;
-<class 'vsg.token.interface_unknown_declaration.identifier'>
-<class 'vsg.token.interface_unknown_declaration.colon'>
-<class 'vsg.token.record_mode_view_indication.view_keyword'>
-<class 'vsg.token.record_mode_view_indication.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_unknown_declaration.identifier'>
+<class 'mhsg.token.interface_unknown_declaration.colon'>
+<class 'mhsg.token.record_mode_view_indication.view_keyword'>
+<class 'mhsg.token.record_mode_view_indication.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 12 |     port1 : view some_view of rec;
-<class 'vsg.token.interface_unknown_declaration.identifier'>
-<class 'vsg.token.interface_unknown_declaration.colon'>
-<class 'vsg.token.record_mode_view_indication.view_keyword'>
-<class 'vsg.token.record_mode_view_indication.name'>
-<class 'vsg.token.record_mode_view_indication.of_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_unknown_declaration.identifier'>
+<class 'mhsg.token.interface_unknown_declaration.colon'>
+<class 'mhsg.token.record_mode_view_indication.view_keyword'>
+<class 'mhsg.token.record_mode_view_indication.name'>
+<class 'mhsg.token.record_mode_view_indication.of_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 13 |     port1 : view some_view of rec(f1(5 downto 0));
-<class 'vsg.token.interface_unknown_declaration.identifier'>
-<class 'vsg.token.interface_unknown_declaration.colon'>
-<class 'vsg.token.record_mode_view_indication.view_keyword'>
-<class 'vsg.token.record_mode_view_indication.name'>
-<class 'vsg.token.record_mode_view_indication.of_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.record_constraint.open_parenthesis'>
-<class 'vsg.token.record_element_constraint.record_element_simple_name'>
-<class 'vsg.token.index_constraint.open_parenthesis'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.direction.downto'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.index_constraint.close_parenthesis'>
-<class 'vsg.token.record_constraint.close_parenthesis'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_unknown_declaration.identifier'>
+<class 'mhsg.token.interface_unknown_declaration.colon'>
+<class 'mhsg.token.record_mode_view_indication.view_keyword'>
+<class 'mhsg.token.record_mode_view_indication.name'>
+<class 'mhsg.token.record_mode_view_indication.of_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.record_constraint.open_parenthesis'>
+<class 'mhsg.token.record_element_constraint.record_element_simple_name'>
+<class 'mhsg.token.index_constraint.open_parenthesis'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.direction.downto'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.index_constraint.close_parenthesis'>
+<class 'mhsg.token.record_constraint.close_parenthesis'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 14 |     port1 : view some_view of rec(f1(5 downto 0), f2(0 to 1));
-<class 'vsg.token.interface_unknown_declaration.identifier'>
-<class 'vsg.token.interface_unknown_declaration.colon'>
-<class 'vsg.token.record_mode_view_indication.view_keyword'>
-<class 'vsg.token.record_mode_view_indication.name'>
-<class 'vsg.token.record_mode_view_indication.of_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.record_constraint.open_parenthesis'>
-<class 'vsg.token.record_element_constraint.record_element_simple_name'>
-<class 'vsg.token.index_constraint.open_parenthesis'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.direction.downto'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.index_constraint.close_parenthesis'>
-<class 'vsg.token.record_constraint.comma'>
-<class 'vsg.token.record_element_constraint.record_element_simple_name'>
-<class 'vsg.token.index_constraint.open_parenthesis'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.direction.to'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.index_constraint.close_parenthesis'>
-<class 'vsg.token.record_constraint.close_parenthesis'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_unknown_declaration.identifier'>
+<class 'mhsg.token.interface_unknown_declaration.colon'>
+<class 'mhsg.token.record_mode_view_indication.view_keyword'>
+<class 'mhsg.token.record_mode_view_indication.name'>
+<class 'mhsg.token.record_mode_view_indication.of_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.record_constraint.open_parenthesis'>
+<class 'mhsg.token.record_element_constraint.record_element_simple_name'>
+<class 'mhsg.token.index_constraint.open_parenthesis'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.direction.downto'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.index_constraint.close_parenthesis'>
+<class 'mhsg.token.record_constraint.comma'>
+<class 'mhsg.token.record_element_constraint.record_element_simple_name'>
+<class 'mhsg.token.index_constraint.open_parenthesis'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.direction.to'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.index_constraint.close_parenthesis'>
+<class 'mhsg.token.record_constraint.close_parenthesis'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 15 |     port1 : view (some_array_view) of rec_array;
-<class 'vsg.token.interface_unknown_declaration.identifier'>
-<class 'vsg.token.interface_unknown_declaration.colon'>
-<class 'vsg.token.array_mode_view_indication.view_keyword'>
-<class 'vsg.token.array_mode_view_indication.open_parenthesis'>
-<class 'vsg.token.array_mode_view_indication.name'>
-<class 'vsg.token.array_mode_view_indication.close_parenthesis'>
-<class 'vsg.token.array_mode_view_indication.of_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_unknown_declaration.identifier'>
+<class 'mhsg.token.interface_unknown_declaration.colon'>
+<class 'mhsg.token.array_mode_view_indication.view_keyword'>
+<class 'mhsg.token.array_mode_view_indication.open_parenthesis'>
+<class 'mhsg.token.array_mode_view_indication.name'>
+<class 'mhsg.token.array_mode_view_indication.close_parenthesis'>
+<class 'mhsg.token.array_mode_view_indication.of_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 16 |     port1 : view (some_array_view) of rec_array(0 to 7)
-<class 'vsg.token.interface_unknown_declaration.identifier'>
-<class 'vsg.token.interface_unknown_declaration.colon'>
-<class 'vsg.token.array_mode_view_indication.view_keyword'>
-<class 'vsg.token.array_mode_view_indication.open_parenthesis'>
-<class 'vsg.token.array_mode_view_indication.name'>
-<class 'vsg.token.array_mode_view_indication.close_parenthesis'>
-<class 'vsg.token.array_mode_view_indication.of_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.index_constraint.open_parenthesis'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.direction.to'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.index_constraint.close_parenthesis'>
+<class 'mhsg.token.interface_unknown_declaration.identifier'>
+<class 'mhsg.token.interface_unknown_declaration.colon'>
+<class 'mhsg.token.array_mode_view_indication.view_keyword'>
+<class 'mhsg.token.array_mode_view_indication.open_parenthesis'>
+<class 'mhsg.token.array_mode_view_indication.name'>
+<class 'mhsg.token.array_mode_view_indication.close_parenthesis'>
+<class 'mhsg.token.array_mode_view_indication.of_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.index_constraint.open_parenthesis'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.direction.to'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.index_constraint.close_parenthesis'>
 --------------------------------------------------------------------------------
 17 |   );
-<class 'vsg.token.port_clause.close_parenthesis'>
-<class 'vsg.token.port_clause.semicolon'>
+<class 'mhsg.token.port_clause.close_parenthesis'>
+<class 'mhsg.token.port_clause.semicolon'>
 --------------------------------------------------------------------------------
 18 | end entity FIFO;
-<class 'vsg.token.entity_declaration.end_keyword'>
-<class 'vsg.token.entity_declaration.end_entity_keyword'>
-<class 'vsg.token.entity_declaration.entity_simple_name'>
-<class 'vsg.token.entity_declaration.semicolon'>
+<class 'mhsg.token.entity_declaration.end_keyword'>
+<class 'mhsg.token.entity_declaration.end_entity_keyword'>
+<class 'mhsg.token.entity_declaration.entity_simple_name'>
+<class 'mhsg.token.entity_declaration.semicolon'>
 --------------------------------------------------------------------------------
 19 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 20 | entity FIFO is
-<class 'vsg.token.entity_declaration.entity_keyword'>
-<class 'vsg.token.entity_declaration.identifier'>
-<class 'vsg.token.entity_declaration.is_keyword'>
+<class 'mhsg.token.entity_declaration.entity_keyword'>
+<class 'mhsg.token.entity_declaration.identifier'>
+<class 'mhsg.token.entity_declaration.is_keyword'>
 --------------------------------------------------------------------------------
 21 |   port (
-<class 'vsg.token.port_clause.port_keyword'>
-<class 'vsg.token.port_clause.open_parenthesis'>
+<class 'mhsg.token.port_clause.port_keyword'>
+<class 'mhsg.token.port_clause.open_parenthesis'>
 --------------------------------------------------------------------------------
 22 |     signal port1 : in std_logic;
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.in_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.in_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 23 |     signal port1 : out std_logic;
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.out_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.out_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 24 |     signal port1 : inout std_logic;
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.inout_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.inout_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 25 |     signal port1 : buffer std_logic;
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.buffer_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.buffer_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 26 |     signal port1 : linkage std_logic;
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.linkage_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.linkage_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 27 |     signal port1 : std_logic;
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 28 |     signal port1 : view some_view;
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.record_mode_view_indication.view_keyword'>
-<class 'vsg.token.record_mode_view_indication.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.record_mode_view_indication.view_keyword'>
+<class 'mhsg.token.record_mode_view_indication.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 29 |     signal port1 : view some_view of rec;
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.record_mode_view_indication.view_keyword'>
-<class 'vsg.token.record_mode_view_indication.name'>
-<class 'vsg.token.record_mode_view_indication.of_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.record_mode_view_indication.view_keyword'>
+<class 'mhsg.token.record_mode_view_indication.name'>
+<class 'mhsg.token.record_mode_view_indication.of_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 30 |     signal port1 : view some_view of rec(f1(5 downto 0));
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.record_mode_view_indication.view_keyword'>
-<class 'vsg.token.record_mode_view_indication.name'>
-<class 'vsg.token.record_mode_view_indication.of_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.record_constraint.open_parenthesis'>
-<class 'vsg.token.record_element_constraint.record_element_simple_name'>
-<class 'vsg.token.index_constraint.open_parenthesis'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.direction.downto'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.index_constraint.close_parenthesis'>
-<class 'vsg.token.record_constraint.close_parenthesis'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.record_mode_view_indication.view_keyword'>
+<class 'mhsg.token.record_mode_view_indication.name'>
+<class 'mhsg.token.record_mode_view_indication.of_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.record_constraint.open_parenthesis'>
+<class 'mhsg.token.record_element_constraint.record_element_simple_name'>
+<class 'mhsg.token.index_constraint.open_parenthesis'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.direction.downto'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.index_constraint.close_parenthesis'>
+<class 'mhsg.token.record_constraint.close_parenthesis'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 31 |     signal port1 : view some_view of rec(f1(5 downto 0), f2(0 to 1));
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.record_mode_view_indication.view_keyword'>
-<class 'vsg.token.record_mode_view_indication.name'>
-<class 'vsg.token.record_mode_view_indication.of_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.record_constraint.open_parenthesis'>
-<class 'vsg.token.record_element_constraint.record_element_simple_name'>
-<class 'vsg.token.index_constraint.open_parenthesis'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.direction.downto'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.index_constraint.close_parenthesis'>
-<class 'vsg.token.record_constraint.comma'>
-<class 'vsg.token.record_element_constraint.record_element_simple_name'>
-<class 'vsg.token.index_constraint.open_parenthesis'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.direction.to'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.index_constraint.close_parenthesis'>
-<class 'vsg.token.record_constraint.close_parenthesis'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.record_mode_view_indication.view_keyword'>
+<class 'mhsg.token.record_mode_view_indication.name'>
+<class 'mhsg.token.record_mode_view_indication.of_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.record_constraint.open_parenthesis'>
+<class 'mhsg.token.record_element_constraint.record_element_simple_name'>
+<class 'mhsg.token.index_constraint.open_parenthesis'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.direction.downto'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.index_constraint.close_parenthesis'>
+<class 'mhsg.token.record_constraint.comma'>
+<class 'mhsg.token.record_element_constraint.record_element_simple_name'>
+<class 'mhsg.token.index_constraint.open_parenthesis'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.direction.to'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.index_constraint.close_parenthesis'>
+<class 'mhsg.token.record_constraint.close_parenthesis'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 32 |     signal port1 : view (some_array_view) of rec_array;
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.array_mode_view_indication.view_keyword'>
-<class 'vsg.token.array_mode_view_indication.open_parenthesis'>
-<class 'vsg.token.array_mode_view_indication.name'>
-<class 'vsg.token.array_mode_view_indication.close_parenthesis'>
-<class 'vsg.token.array_mode_view_indication.of_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.array_mode_view_indication.view_keyword'>
+<class 'mhsg.token.array_mode_view_indication.open_parenthesis'>
+<class 'mhsg.token.array_mode_view_indication.name'>
+<class 'mhsg.token.array_mode_view_indication.close_parenthesis'>
+<class 'mhsg.token.array_mode_view_indication.of_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 33 |     signal port1 : view (some_array_view) of rec_array(0 to 7)
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.array_mode_view_indication.view_keyword'>
-<class 'vsg.token.array_mode_view_indication.open_parenthesis'>
-<class 'vsg.token.array_mode_view_indication.name'>
-<class 'vsg.token.array_mode_view_indication.close_parenthesis'>
-<class 'vsg.token.array_mode_view_indication.of_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.index_constraint.open_parenthesis'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.direction.to'>
-<class 'vsg.parser.todo'>
-<class 'vsg.token.index_constraint.close_parenthesis'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.array_mode_view_indication.view_keyword'>
+<class 'mhsg.token.array_mode_view_indication.open_parenthesis'>
+<class 'mhsg.token.array_mode_view_indication.name'>
+<class 'mhsg.token.array_mode_view_indication.close_parenthesis'>
+<class 'mhsg.token.array_mode_view_indication.of_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.index_constraint.open_parenthesis'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.direction.to'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.index_constraint.close_parenthesis'>
 --------------------------------------------------------------------------------
 34 |   );
-<class 'vsg.token.port_clause.close_parenthesis'>
-<class 'vsg.token.port_clause.semicolon'>
+<class 'mhsg.token.port_clause.close_parenthesis'>
+<class 'mhsg.token.port_clause.semicolon'>
 --------------------------------------------------------------------------------
 35 | end entity FIFO;
-<class 'vsg.token.entity_declaration.end_keyword'>
-<class 'vsg.token.entity_declaration.end_entity_keyword'>
-<class 'vsg.token.entity_declaration.entity_simple_name'>
-<class 'vsg.token.entity_declaration.semicolon'>
+<class 'mhsg.token.entity_declaration.end_keyword'>
+<class 'mhsg.token.entity_declaration.end_entity_keyword'>
+<class 'mhsg.token.entity_declaration.entity_simple_name'>
+<class 'mhsg.token.entity_declaration.semicolon'>

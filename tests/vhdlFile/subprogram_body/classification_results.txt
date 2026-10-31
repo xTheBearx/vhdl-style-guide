@@ -2,333 +2,333 @@
 0 |
 --------------------------------------------------------------------------------
 1 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 2 | architecture RTL of FIFO is
-<class 'vsg.token.architecture_body.architecture_keyword'>
-<class 'vsg.token.architecture_body.identifier'>
-<class 'vsg.token.architecture_body.of_keyword'>
-<class 'vsg.token.architecture_body.entity_name'>
-<class 'vsg.token.architecture_body.is_keyword'>
+<class 'mhsg.token.architecture_body.architecture_keyword'>
+<class 'mhsg.token.architecture_body.identifier'>
+<class 'mhsg.token.architecture_body.of_keyword'>
+<class 'mhsg.token.architecture_body.entity_name'>
+<class 'mhsg.token.architecture_body.is_keyword'>
 --------------------------------------------------------------------------------
 3 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 4 |   procedure PARITY
-<class 'vsg.token.procedure_specification.procedure_keyword'>
-<class 'vsg.token.procedure_specification.designator'>
+<class 'mhsg.token.procedure_specification.procedure_keyword'>
+<class 'mhsg.token.procedure_specification.designator'>
 --------------------------------------------------------------------------------
 5 |    (signal X : in std_logic_vector;
-<class 'vsg.token.procedure_specification.open_parenthesis'>
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.in_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.procedure_specification.open_parenthesis'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.in_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 6 |     signal Y : out std_logic) is
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.out_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.procedure_specification.close_parenthesis'>
-<class 'vsg.token.subprogram_body.is_keyword'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.out_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.procedure_specification.close_parenthesis'>
+<class 'mhsg.token.subprogram_body.is_keyword'>
 --------------------------------------------------------------------------------
 7 |    begin
-<class 'vsg.token.subprogram_body.begin_keyword'>
+<class 'mhsg.token.subprogram_body.begin_keyword'>
 --------------------------------------------------------------------------------
 8 |    end procedure PARITY;
-<class 'vsg.token.subprogram_body.end_keyword'>
-<class 'vsg.token.subprogram_kind.procedure_keyword'>
-<class 'vsg.token.subprogram_body.designator'>
-<class 'vsg.token.subprogram_body.semicolon'>
+<class 'mhsg.token.subprogram_body.end_keyword'>
+<class 'mhsg.token.subprogram_kind.procedure_keyword'>
+<class 'mhsg.token.subprogram_body.designator'>
+<class 'mhsg.token.subprogram_body.semicolon'>
 --------------------------------------------------------------------------------
 9 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 10 |   procedure PARITY
-<class 'vsg.token.procedure_specification.procedure_keyword'>
-<class 'vsg.token.procedure_specification.designator'>
+<class 'mhsg.token.procedure_specification.procedure_keyword'>
+<class 'mhsg.token.procedure_specification.designator'>
 --------------------------------------------------------------------------------
 11 |    (signal X : in std_logic_vector;
-<class 'vsg.token.procedure_specification.open_parenthesis'>
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.in_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.procedure_specification.open_parenthesis'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.in_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 12 |     signal Y : out std_logic) is
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.out_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.procedure_specification.close_parenthesis'>
-<class 'vsg.token.subprogram_body.is_keyword'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.out_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.procedure_specification.close_parenthesis'>
+<class 'mhsg.token.subprogram_body.is_keyword'>
 --------------------------------------------------------------------------------
 13 |    begin
-<class 'vsg.token.subprogram_body.begin_keyword'>
+<class 'mhsg.token.subprogram_body.begin_keyword'>
 --------------------------------------------------------------------------------
 14 |    end procedure;
-<class 'vsg.token.subprogram_body.end_keyword'>
-<class 'vsg.token.subprogram_kind.procedure_keyword'>
-<class 'vsg.token.subprogram_body.semicolon'>
+<class 'mhsg.token.subprogram_body.end_keyword'>
+<class 'mhsg.token.subprogram_kind.procedure_keyword'>
+<class 'mhsg.token.subprogram_body.semicolon'>
 --------------------------------------------------------------------------------
 15 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 16 |   procedure PARITY
-<class 'vsg.token.procedure_specification.procedure_keyword'>
-<class 'vsg.token.procedure_specification.designator'>
+<class 'mhsg.token.procedure_specification.procedure_keyword'>
+<class 'mhsg.token.procedure_specification.designator'>
 --------------------------------------------------------------------------------
 17 |    (signal X : in std_logic_vector;
-<class 'vsg.token.procedure_specification.open_parenthesis'>
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.in_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.procedure_specification.open_parenthesis'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.in_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 18 |     signal Y : out std_logic) is
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.out_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.procedure_specification.close_parenthesis'>
-<class 'vsg.token.subprogram_body.is_keyword'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.out_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.procedure_specification.close_parenthesis'>
+<class 'mhsg.token.subprogram_body.is_keyword'>
 --------------------------------------------------------------------------------
 19 |    begin
-<class 'vsg.token.subprogram_body.begin_keyword'>
+<class 'mhsg.token.subprogram_body.begin_keyword'>
 --------------------------------------------------------------------------------
 20 |    end PARITY;
-<class 'vsg.token.subprogram_body.end_keyword'>
-<class 'vsg.token.subprogram_body.designator'>
-<class 'vsg.token.subprogram_body.semicolon'>
+<class 'mhsg.token.subprogram_body.end_keyword'>
+<class 'mhsg.token.subprogram_body.designator'>
+<class 'mhsg.token.subprogram_body.semicolon'>
 --------------------------------------------------------------------------------
 21 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 22 |   procedure PARITY
-<class 'vsg.token.procedure_specification.procedure_keyword'>
-<class 'vsg.token.procedure_specification.designator'>
+<class 'mhsg.token.procedure_specification.procedure_keyword'>
+<class 'mhsg.token.procedure_specification.designator'>
 --------------------------------------------------------------------------------
 23 |    (signal X : in std_logic_vector;
-<class 'vsg.token.procedure_specification.open_parenthesis'>
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.in_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.procedure_specification.open_parenthesis'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.in_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 24 |     signal Y : out std_logic) is
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.out_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.procedure_specification.close_parenthesis'>
-<class 'vsg.token.subprogram_body.is_keyword'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.out_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.procedure_specification.close_parenthesis'>
+<class 'mhsg.token.subprogram_body.is_keyword'>
 --------------------------------------------------------------------------------
 25 |    begin
-<class 'vsg.token.subprogram_body.begin_keyword'>
+<class 'mhsg.token.subprogram_body.begin_keyword'>
 --------------------------------------------------------------------------------
 26 |    end;
-<class 'vsg.token.subprogram_body.end_keyword'>
-<class 'vsg.token.subprogram_body.semicolon'>
+<class 'mhsg.token.subprogram_body.end_keyword'>
+<class 'mhsg.token.subprogram_body.semicolon'>
 --------------------------------------------------------------------------------
 27 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 28 |   procedure PARITY is
-<class 'vsg.token.procedure_specification.procedure_keyword'>
-<class 'vsg.token.procedure_specification.designator'>
-<class 'vsg.token.subprogram_body.is_keyword'>
+<class 'mhsg.token.procedure_specification.procedure_keyword'>
+<class 'mhsg.token.procedure_specification.designator'>
+<class 'mhsg.token.subprogram_body.is_keyword'>
 --------------------------------------------------------------------------------
 29 |    begin
-<class 'vsg.token.subprogram_body.begin_keyword'>
+<class 'mhsg.token.subprogram_body.begin_keyword'>
 --------------------------------------------------------------------------------
 30 |    end;
-<class 'vsg.token.subprogram_body.end_keyword'>
-<class 'vsg.token.subprogram_body.semicolon'>
+<class 'mhsg.token.subprogram_body.end_keyword'>
+<class 'mhsg.token.subprogram_body.semicolon'>
 --------------------------------------------------------------------------------
 31 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 32 |   function PARITY
-<class 'vsg.token.function_specification.function_keyword'>
-<class 'vsg.token.function_specification.designator'>
+<class 'mhsg.token.function_specification.function_keyword'>
+<class 'mhsg.token.function_specification.designator'>
 --------------------------------------------------------------------------------
 33 |    (signal X : in std_logic_vector;
-<class 'vsg.token.function_specification.open_parenthesis'>
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.in_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.function_specification.open_parenthesis'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.in_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 34 |     signal Y : out std_logic) return integer is
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.out_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.function_specification.close_parenthesis'>
-<class 'vsg.token.function_specification.return_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.subprogram_body.is_keyword'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.out_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.function_specification.close_parenthesis'>
+<class 'mhsg.token.function_specification.return_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.subprogram_body.is_keyword'>
 --------------------------------------------------------------------------------
 35 |    begin
-<class 'vsg.token.subprogram_body.begin_keyword'>
+<class 'mhsg.token.subprogram_body.begin_keyword'>
 --------------------------------------------------------------------------------
 36 |    end function PARITY;
-<class 'vsg.token.subprogram_body.end_keyword'>
-<class 'vsg.token.subprogram_kind.function_keyword'>
-<class 'vsg.token.subprogram_body.designator'>
-<class 'vsg.token.subprogram_body.semicolon'>
+<class 'mhsg.token.subprogram_body.end_keyword'>
+<class 'mhsg.token.subprogram_kind.function_keyword'>
+<class 'mhsg.token.subprogram_body.designator'>
+<class 'mhsg.token.subprogram_body.semicolon'>
 --------------------------------------------------------------------------------
 37 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 38 |   function PARITY
-<class 'vsg.token.function_specification.function_keyword'>
-<class 'vsg.token.function_specification.designator'>
+<class 'mhsg.token.function_specification.function_keyword'>
+<class 'mhsg.token.function_specification.designator'>
 --------------------------------------------------------------------------------
 39 |    (signal X : in std_logic_vector;
-<class 'vsg.token.function_specification.open_parenthesis'>
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.in_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.function_specification.open_parenthesis'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.in_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 40 |     signal Y : out std_logic) return string is
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.out_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.function_specification.close_parenthesis'>
-<class 'vsg.token.function_specification.return_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.subprogram_body.is_keyword'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.out_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.function_specification.close_parenthesis'>
+<class 'mhsg.token.function_specification.return_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.subprogram_body.is_keyword'>
 --------------------------------------------------------------------------------
 41 |    begin
-<class 'vsg.token.subprogram_body.begin_keyword'>
+<class 'mhsg.token.subprogram_body.begin_keyword'>
 --------------------------------------------------------------------------------
 42 |    end function;
-<class 'vsg.token.subprogram_body.end_keyword'>
-<class 'vsg.token.subprogram_kind.function_keyword'>
-<class 'vsg.token.subprogram_body.semicolon'>
+<class 'mhsg.token.subprogram_body.end_keyword'>
+<class 'mhsg.token.subprogram_kind.function_keyword'>
+<class 'mhsg.token.subprogram_body.semicolon'>
 --------------------------------------------------------------------------------
 43 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 44 |   function PARITY
-<class 'vsg.token.function_specification.function_keyword'>
-<class 'vsg.token.function_specification.designator'>
+<class 'mhsg.token.function_specification.function_keyword'>
+<class 'mhsg.token.function_specification.designator'>
 --------------------------------------------------------------------------------
 45 |    (signal X : in std_logic_vector;
-<class 'vsg.token.function_specification.open_parenthesis'>
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.in_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.function_specification.open_parenthesis'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.in_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 46 |     signal Y : out std_logic) return natural is
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.out_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.function_specification.close_parenthesis'>
-<class 'vsg.token.function_specification.return_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.subprogram_body.is_keyword'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.out_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.function_specification.close_parenthesis'>
+<class 'mhsg.token.function_specification.return_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.subprogram_body.is_keyword'>
 --------------------------------------------------------------------------------
 47 |    begin
-<class 'vsg.token.subprogram_body.begin_keyword'>
+<class 'mhsg.token.subprogram_body.begin_keyword'>
 --------------------------------------------------------------------------------
 48 |    end PARITY;
-<class 'vsg.token.subprogram_body.end_keyword'>
-<class 'vsg.token.subprogram_body.designator'>
-<class 'vsg.token.subprogram_body.semicolon'>
+<class 'mhsg.token.subprogram_body.end_keyword'>
+<class 'mhsg.token.subprogram_body.designator'>
+<class 'mhsg.token.subprogram_body.semicolon'>
 --------------------------------------------------------------------------------
 49 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 50 |   function PARITY
-<class 'vsg.token.function_specification.function_keyword'>
-<class 'vsg.token.function_specification.designator'>
+<class 'mhsg.token.function_specification.function_keyword'>
+<class 'mhsg.token.function_specification.designator'>
 --------------------------------------------------------------------------------
 51 |    (signal X : in std_logic_vector;
-<class 'vsg.token.function_specification.open_parenthesis'>
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.in_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.interface_list.semicolon'>
+<class 'mhsg.token.function_specification.open_parenthesis'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.in_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
 --------------------------------------------------------------------------------
 52 |     signal Y : out std_logic) return positive is
-<class 'vsg.token.interface_signal_declaration.signal_keyword'>
-<class 'vsg.token.interface_signal_declaration.identifier'>
-<class 'vsg.token.interface_signal_declaration.colon'>
-<class 'vsg.token.mode.out_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.function_specification.close_parenthesis'>
-<class 'vsg.token.function_specification.return_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.subprogram_body.is_keyword'>
+<class 'mhsg.token.interface_signal_declaration.signal_keyword'>
+<class 'mhsg.token.interface_signal_declaration.identifier'>
+<class 'mhsg.token.interface_signal_declaration.colon'>
+<class 'mhsg.token.mode.out_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.function_specification.close_parenthesis'>
+<class 'mhsg.token.function_specification.return_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.subprogram_body.is_keyword'>
 --------------------------------------------------------------------------------
 53 |    begin
-<class 'vsg.token.subprogram_body.begin_keyword'>
+<class 'mhsg.token.subprogram_body.begin_keyword'>
 --------------------------------------------------------------------------------
 54 |    end;
-<class 'vsg.token.subprogram_body.end_keyword'>
-<class 'vsg.token.subprogram_body.semicolon'>
+<class 'mhsg.token.subprogram_body.end_keyword'>
+<class 'mhsg.token.subprogram_body.semicolon'>
 --------------------------------------------------------------------------------
 55 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 56 |   function PARITY return positive is
-<class 'vsg.token.function_specification.function_keyword'>
-<class 'vsg.token.function_specification.designator'>
-<class 'vsg.token.function_specification.return_keyword'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.subprogram_body.is_keyword'>
+<class 'mhsg.token.function_specification.function_keyword'>
+<class 'mhsg.token.function_specification.designator'>
+<class 'mhsg.token.function_specification.return_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.subprogram_body.is_keyword'>
 --------------------------------------------------------------------------------
 57 |    begin
-<class 'vsg.token.subprogram_body.begin_keyword'>
+<class 'mhsg.token.subprogram_body.begin_keyword'>
 --------------------------------------------------------------------------------
 58 |    end;
-<class 'vsg.token.subprogram_body.end_keyword'>
-<class 'vsg.token.subprogram_body.semicolon'>
+<class 'mhsg.token.subprogram_body.end_keyword'>
+<class 'mhsg.token.subprogram_body.semicolon'>
 --------------------------------------------------------------------------------
 59 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 60 | begin
-<class 'vsg.token.architecture_body.begin_keyword'>
+<class 'mhsg.token.architecture_body.begin_keyword'>
 --------------------------------------------------------------------------------
 61 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 62 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 63 | end architecture RTL;
-<class 'vsg.token.architecture_body.end_keyword'>
-<class 'vsg.token.architecture_body.end_architecture_keyword'>
-<class 'vsg.token.architecture_body.architecture_simple_name'>
-<class 'vsg.token.architecture_body.semicolon'>
+<class 'mhsg.token.architecture_body.end_keyword'>
+<class 'mhsg.token.architecture_body.end_architecture_keyword'>
+<class 'mhsg.token.architecture_body.architecture_simple_name'>
+<class 'mhsg.token.architecture_body.semicolon'>

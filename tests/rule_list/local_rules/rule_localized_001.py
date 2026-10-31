@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from vsg import rule
+from mhsg import rule
 
 
 class rule_localized_001(rule.rule):

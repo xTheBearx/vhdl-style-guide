@@ -15,13 +15,13 @@ Clone the repo with the following command:
 Setup alias
 ###########
 
-Set an alias to VSG as follows:
+Set an alias to MHSG as follows:
 
 .. code-block:: bash
 
-   $ set alias vsg='python3 <path_to_clone_directory>/bin/vsg'
+   $ set alias mhsg='python3 <path_to_clone_directory>/bin/mhsg'
 
-This allows you to execute VSG without installing it.
+This allows you to execute MHSG without installing it.
 
 Install prerequisites
 #####################

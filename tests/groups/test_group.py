@@ -11,8 +11,8 @@ from io import StringIO
 from tempfile import TemporaryFile
 from unittest import mock
 
+from mhsg import __main__, version
 from tests import utils
-from vsg import __main__, version
 
 
 class command_line_args:
@@ -27,7 +27,7 @@ class testGroup(unittest.TestCase):
     def test_group_by_disabling(self, mock_stdout):
         lExpected = []
 
-        sys.argv = ["vsg"]
+        sys.argv = ["mhsg"]
         sys.argv.extend(["--output_format", "syntastic"])
         sys.argv.extend(["-f", "tests/groups/group_config_example.vhd"])
         sys.argv.extend(["-c", "tests/groups/disable_indent_group.yaml"])
@@ -50,7 +50,7 @@ class testGroup(unittest.TestCase):
         lExpected.append(mock.call(sOutput))
         lExpected.append(mock.call("\n"))
 
-        sys.argv = ["vsg"]
+        sys.argv = ["mhsg"]
         sys.argv.extend(["--output_format", "syntastic"])
         sys.argv.extend(["-f", "tests/groups/group_config_example.vhd"])
         sys.argv.extend(["-c", "tests/groups/warning_indent_group.yaml"])

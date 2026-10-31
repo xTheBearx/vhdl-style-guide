@@ -14,17 +14,17 @@ There are several ways to contribute:
 Bug Reports
 ###########
 
-Code from open cores was utilized to develop VSG.
+Code from open cores was utilized to develop MHSG.
 It provided many different coding styles to process.
 There are bound to be some corner cases or incorrect assumptions in the code due to the small sample size.
-If problems are found with the output or in using VSG, please submit an issue.
+If problems are found with the output or in using MHSG, please submit an issue.
 When creating the issue, use the **bug** label to highlight it.
 Fixing bugs is prioritized over feature enhancements.
 
 Code Base Improvements
 ######################
 
-VSG started out to solve a problem and learn how to code in Python.
+MHSG started out to solve a problem and learn how to code in Python.
 The learning part is still on going, and the code base could always be improved.
 The code base is run through *Codacy* and *Code Climate*, and they are very helpful.
 However, any suggestions to improve the code base would be appreciated.
@@ -34,8 +34,8 @@ Create an issue and use the **refactor** label for any code which could be impro
 Feature Requests
 ################
 
-VSG is still a work in progress and by no means feature complete.
-In fact, the following features were not in the original concept of VSG.
+MHSG is still a work in progress and by no means feature complete.
+In fact, the following features were not in the original concept of MHSG.
 
 * fix
 * fix_phase
@@ -43,7 +43,7 @@ In fact, the following features were not in the original concept of VSG.
 * backup
 
 Fix is probably the most important feature.
-It was added when a user said it would be nice if VSG just fixed the problems it found.
+It was added when a user said it would be nice if MHSG just fixed the problems it found.
 There may be other important missing features in the current implementation.
 
 Create an issue with the **enhancement** label for any new features.
@@ -53,8 +53,8 @@ Pull Requests
 
 Pull requests are always welcome.
 
-VSG was developed using a Test Driven Development (TDD) process.
-There are over 1000 tests which cover individual rules and other features of VSG.
+MHSG was developed using a Test Driven Development (TDD) process.
+There are over 1000 tests which cover individual rules and other features of MHSG.
 For each pull request, an accompanying test to validate the pull request would be appreciated.
 
 Quality Control

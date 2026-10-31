@@ -2,8 +2,8 @@
 import os
 import unittest
 
+from mhsg import config, rule_list, severity, vhdlFile
 from tests import utils
-from vsg import config, rule_list, severity, vhdlFile
 
 sSourceCodeDir = os.path.join(os.path.dirname(__file__), "..", "styles", "code_examples")
 
@@ -45,7 +45,7 @@ oSpiMaster.set_indent_map(dIndentMap)
 # oComments = vhdlFile.vhdlFile(lComments)
 # oComments.set_indent_map(dIndentMap)
 
-oStyle = utils.read_configuration(os.path.join(os.path.dirname(__file__), "..", "..", "vsg", "styles", "jcl.yaml"))
+oStyle = utils.read_configuration(os.path.join(os.path.dirname(__file__), "..", "..", "mhsg", "styles", "jcl.yaml"))
 oConfig = utils.read_configuration(os.path.join(os.path.dirname(__file__), "config.yaml"))
 
 oSeverityList = severity.create_list({})

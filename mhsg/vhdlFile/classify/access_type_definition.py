@@ -1,0 +1,25 @@
+# -*- coding: utf-8 -*-
+
+from mhsg.token import access_type_definition as token
+from mhsg.vhdlFile import utils
+from mhsg.vhdlFile.classify import subtype_indication
+
+
+def detect(iToken, lObjects):
+    """
+    access_type_definition ::=
+        access subtype_indication
+    """
+
+    if utils.is_next_token("access", iToken, lObjects):
+        return classify(iToken, lObjects)
+
+    return iToken
+
+
+def classify(iToken, lObjects):
+    iCurrent = utils.assign_next_token_required("access", token.access_keyword, iToken, lObjects)
+
+    iCurrent = subtype_indication.classify(iCurrent, lObjects)
+
+    return iCurrent

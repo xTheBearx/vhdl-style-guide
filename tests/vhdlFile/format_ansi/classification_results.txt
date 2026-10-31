@@ -2,4 +2,4 @@
 0 |
 --------------------------------------------------------------------------------
 1 | -- ANSI "" comment
-<class 'vsg.parser.comment'>
+<class 'mhsg.parser.comment'>

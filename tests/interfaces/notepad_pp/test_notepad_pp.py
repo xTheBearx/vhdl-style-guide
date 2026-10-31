@@ -4,8 +4,8 @@ import os
 import re
 import unittest
 
-import vsg
-import vsg.interfaces.notepad_pp
+import mhsg
+import mhsg.interfaces.notepad_pp
 from tests import utils
 
 lFile = []
@@ -56,7 +56,7 @@ sExpectedConfigurationErrorOutput += "    architecture_033\n"
 
 class test_interface(unittest.TestCase):
     def setUp(self):
-        self.oInterface = vsg.interfaces.notepad_pp.New()
+        self.oInterface = mhsg.interfaces.notepad_pp.New()
 
     def test_interface_exists(self):
         self.assertEqual("notepad++ interface", self.oInterface.identifier)
@@ -139,7 +139,7 @@ class test_interface(unittest.TestCase):
 
 class test_input_arguments(unittest.TestCase):
     def setUp(self):
-        self.oInterface = vsg.interfaces.notepad_pp.New()
+        self.oInterface = mhsg.interfaces.notepad_pp.New()
         self.oInputArguments = self.oInterface.get_input_arguments()
 
     def test_get_input_arguments_set_text_method(self):

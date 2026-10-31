@@ -3,9 +3,9 @@
 import os
 import unittest
 
+from mhsg import vhdlFile
+from mhsg.rules import loop_statement
 from tests import utils
-from vsg import vhdlFile
-from vsg.rules import loop_statement
 
 sTestDir = os.path.dirname(__file__)
 

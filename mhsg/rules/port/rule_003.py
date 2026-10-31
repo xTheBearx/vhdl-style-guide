@@ -1,0 +1,35 @@
+# -*- coding: utf-8 -*-
+
+from mhsg import token
+from mhsg.rules.whitespace_between_token_pairs import Rule
+
+lTokens = []
+lTokens.append([token.port_clause.port_keyword, token.port_clause.open_parenthesis])
+
+
+class rule_003(Rule):
+    """
+    This rule checks for a single space after the **port** keyword and (.
+
+    |configuring_whitespace_rules_link|
+
+    **Violation**
+
+    .. code-block:: vhdl
+
+       port   (
+
+       port(
+
+    **Fix**
+
+    .. code-block:: vhdl
+
+       port (
+
+       port (
+    """
+
+    def __init__(self):
+        super().__init__(lTokens)
+        self.solution = 'Change spacing between "port" and "(" to one space.'

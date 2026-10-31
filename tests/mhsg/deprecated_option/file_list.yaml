@@ -1,0 +1,21 @@
+file_list:
+  - tests/mhsg/deprecated_option/example.vhd
+  - tests/mhsg/deprecated_option/example.vhd:
+      rule:
+        architecture_001:
+           indentSize: 4
+  - tests/mhsg/deprecated_option/example.vhd
+  - tests/mhsg/deprecated_option/example.vhd:
+      rule:
+        architecture_003:
+           indentStyle: 'spaces'
+  - tests/mhsg/deprecated_option/example.vhd
+  - tests/mhsg/deprecated_option/example.vhd:
+      rule:
+        architecture_001:
+           indentSize : 4
+  - tests/mhsg/deprecated_option/example.vhd
+  - tests/mhsg/deprecated_option/example.vhd:
+      rule:
+        architecture_003:
+           indentStyle: 'spaces'

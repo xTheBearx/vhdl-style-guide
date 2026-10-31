@@ -5,8 +5,8 @@ import re
 import unittest
 from tempfile import TemporaryDirectory
 
+from mhsg import __rule_doc_gen__, rule_list, vhdlFile
 from tests import utils
-from vsg import __rule_doc_gen__, rule_list, vhdlFile
 
 
 class testDocGen(unittest.TestCase):

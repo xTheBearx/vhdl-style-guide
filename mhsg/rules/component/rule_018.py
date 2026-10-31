@@ -1,0 +1,31 @@
+# -*- coding: utf-8 -*-
+
+from mhsg.rules import blank_line_below_line_ending_with_token
+from mhsg.token import component_declaration as token
+
+
+class rule_018(blank_line_below_line_ending_with_token):
+    """
+    This rule checks for a blank line below the **end component** line.
+
+    |configuring_blank_lines_link|
+
+    **Violation**
+
+    .. code-block:: vhdl
+
+       end component fifo;
+       signal rd_en : std_logic;
+
+
+    **Fix**
+
+    .. code-block:: vhdl
+
+       end component fifo;
+
+       signal rd_en : std_logic;
+    """
+
+    def __init__(self):
+        super().__init__([token.semicolon])

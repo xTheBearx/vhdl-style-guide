@@ -1,7 +1,7 @@
 Gallery
 -------
 
-The examples shown below illustrate the formatting enforced by VSG.
+The examples shown below illustrate the formatting enforced by MHSG.
 They show a subset of the rules:
 
 * capitalization

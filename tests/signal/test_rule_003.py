@@ -2,7 +2,7 @@
 
 import unittest
 
-from vsg.rules import signal
+from mhsg.rules import signal
 
 
 class test_rule(unittest.TestCase):

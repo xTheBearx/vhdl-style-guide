@@ -8,14 +8,14 @@ source_file_001
 
 |phase_1| |error| |unfixable| |structure|
 
-This rule checks for the existence of the source file passed to VSG.
+This rule checks for the existence of the source file passed to MHSG.
 
 **Violation**
 
-Source file passed to VSG does not exist.
+Source file passed to MHSG does not exist.
 This violation will be reported at the command line in the normal output.
 It will also be reported in the junit file if the --junit option is used.
 
 **Fix**
 
-Pass correct file name to VSG.
+Pass correct file name to MHSG.

@@ -2,8 +2,8 @@
 import os
 import unittest
 
+from mhsg import rule_list, severity, vhdlFile
 from tests import utils
-from vsg import rule_list, severity, vhdlFile
 
 sSourceCodeDir = os.path.join(os.path.dirname(__file__), "..", "code_examples")
 
@@ -29,7 +29,7 @@ lPIC, ePICError = vhdlFile.utils.read_vhdlfile(os.path.join(sSourceCodeDir, "PIC
 oPIC = vhdlFile.vhdlFile(lPIC)
 oPIC.set_indent_map(dIndentMap)
 
-oConfig = utils.read_configuration(os.path.join(os.path.dirname(__file__), "..", "..", "..", "vsg", "styles", "indent_only.yaml"))
+oConfig = utils.read_configuration(os.path.join(os.path.dirname(__file__), "..", "..", "..", "mhsg", "styles", "indent_only.yaml"))
 
 oSeverityList = severity.create_list({})
 

@@ -3,9 +3,9 @@
 import unittest
 from unittest import mock
 
-from vsg import config, deprecated_rule, parser, rule, violation
-from vsg.rules import option
-from vsg.vhdlFile.extract import tokens
+from mhsg import config, deprecated_rule, parser, rule, violation
+from mhsg.rules import option
+from mhsg.vhdlFile.extract import tokens
 
 
 class command_line_args:
@@ -108,7 +108,7 @@ class testRuleMethods(unittest.TestCase):
         self.assertEqual(oRule._get_solution(0), "Solution Line 0")
         self.assertEqual(oRule._get_solution(1), "Solution Line 1")
 
-    def test_get_violations_w_vsg_output_method(self):
+    def test_get_violations_w_mhsg_output_method(self):
         oRule = rule.Rule()
         oRule.name = "xyz"
         oRule.identifier = "001"

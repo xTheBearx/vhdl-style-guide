@@ -1,0 +1,30 @@
+# -*- coding: utf-8 -*-
+
+from mhsg import parser
+
+
+class signal_keyword(parser.keyword):
+    """
+    unique_id = interface_signal_declaration : signal_keyword
+    """
+
+    def __init__(self, sString):
+        super().__init__(sString)
+
+
+class identifier(parser.identifier):
+    """
+    unique_id = interface_signal_declaration : identifier
+    """
+
+    def __init__(self, sString):
+        super().__init__(sString)
+
+
+class colon(parser.colon):
+    """
+    unique_id = interface_signal_declaration : colon
+    """
+
+    def __init__(self, sString=":"):
+        super().__init__(sString)

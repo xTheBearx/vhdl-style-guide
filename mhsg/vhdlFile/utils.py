@@ -1,0 +1,982 @@
+# -*- coding: utf-8 -*-
+
+import sys
+
+from mhsg import exceptions, parser, token
+from mhsg.token import (
+    aggregate,
+    choice,
+    direction,
+    element_association,
+    exponent,
+    predefined_attribute,
+    relational_operator,
+)
+
+# Cache parser.item for speed, since it is referenced so frequently.
+parser_item = parser.item
+
+
+def assign_tokens_until(sToken, token, iToken, lObjects):
+    iCurrent = iToken
+    while not is_next_token(sToken, iCurrent, lObjects):
+        iCurrent = assign_next_token(token, iCurrent, lObjects)
+    return iCurrent
+
+
+def assign_tokens_until_ignoring_paren(sToken, token, iToken, lObjects):
+    iParen = 0
+    for iCurrent in range(iToken, len(lObjects) - 1):
+        iParen = update_paren_counter(iCurrent, lObjects, iParen)
+        if lObjects[iCurrent].get_lower_value() == sToken:
+            if iParen == 0:
+                return iCurrent
+        if is_item(lObjects, iCurrent):
+            assign_token(lObjects, iCurrent, token)
+    return None
+
+
+def assign_next_token(token, iToken, lObjects):
+    iCurrent = find_next_token(iToken, lObjects)
+    try:
+        lObjects[iCurrent] = token(lObjects[iCurrent].get_value())
+    except TypeError:
+        lObjects[iCurrent] = token()
+    iCurrent += 1
+    return iCurrent
+
+
+def assign_token(lObjects, iToken, token):
+    iCurrent = find_next_token(iToken, lObjects)
+    try:
+        lObjects[iCurrent] = token(lObjects[iCurrent].get_value())
+    except TypeError:
+        lObjects[iToken] = token()
+    return iToken + 1
+
+
+def assign_next_token_if(sToken, token, iToken, lObjects):
+    iCurrent = find_next_token(iToken, lObjects)
+    if object_value_is(lObjects, iCurrent, sToken):
+        lObjects[iCurrent] = token(lObjects[iCurrent].get_value())
+        iCurrent += 1
+        return iCurrent
+    return iToken
+
+
+def assign_next_token_if_not(sToken, token, iToken, lObjects):
+    iCurrent = find_next_token(iToken, lObjects)
+    if not object_value_is(lObjects, iCurrent, sToken):
+        lObjects[iCurrent] = token(lObjects[iCurrent].get_value())
+        iCurrent += 1
+        return iCurrent
+    return iToken
+
+
+def assign_next_token_if_not_one_of(lTokens, token, iToken, lObjects):
+    iCurrent = find_next_token(iToken, lObjects)
+    if lObjects[iCurrent].get_lower_value() not in lTokens:
+        lObjects[iCurrent] = token(lObjects[iCurrent].get_value())
+        iCurrent += 1
+        return iCurrent
+    return iToken
+
+
+def assign_next_token_required(sToken, token, iToken, lObjects):
+    iCurrent = find_next_token(iToken, lObjects)
+    if object_value_is(lObjects, iCurrent, sToken):
+        lObjects[iCurrent] = token(lObjects[iCurrent].get_value())
+        return iCurrent + 1
+    else:
+        print_error_message(sToken, token, iCurrent, lObjects)
+    return iToken
+
+
+def assign_tokens_until_matching_closing_paren(token, iToken, lObjects):
+    iCounter = 1
+    iCurrent = iToken
+    while iCurrent < len(lObjects):
+        iCurrent = find_next_token(iCurrent, lObjects)
+        iCounter = update_paren_counter(iCurrent, lObjects, iCounter)
+        if token_is_close_parenthesis(iCurrent, lObjects) and iCounter == 0:
+            return iCurrent
+        lObjects[iCurrent] = token(lObjects[iCurrent].get_value())
+
+
+def assign_parenthesis_as_todo(iToken, lObjects):
+    iCurrent = iToken
+    if is_next_token("(", iCurrent, lObjects):
+        iCurrent = assign_next_token(parser.open_parenthesis, iCurrent, lObjects)
+        iCurrent = assign_tokens_until_matching_closing_paren(parser.todo, iCurrent, lObjects)
+        iCurrent = assign_next_token(parser.close_parenthesis, iCurrent, lObjects)
+    return iCurrent
+
+
+def object_value_is(lAllObjects, iToken, sString):
+    return lAllObjects[iToken].get_lower_value() == sString.lower()
+
+
+def object_value_matches(lAllObjects, iToken, oRegex):
+    sToken = lAllObjects[iToken].get_lower_value()
+    return oRegex.fullmatch(sToken) is not None
+
+
+def is_item(lAllObjects, iToken):
+    return type(lAllObjects[iToken]) is parser_item
+
+
+def get_range(lObjects, iStart, sEnd):
+    iIndex = iStart
+    while lObjects[iIndex].get_lower_value() != sEnd:
+        iIndex += 1
+    iEnd = iIndex
+    iStart = iStart
+    return iStart, iEnd
+
+
+def classify_next_token(token, iToken, lObjects):
+    iCurrent = find_next_token(iToken, lObjects)
+    iCurrent = assign_token(lObjects, iCurrent, token)
+    return iCurrent
+
+
+def find_in_range(sValue, iToken, sEnd, lObjects):
+    iStart, iEnd = get_range(lObjects, iToken, sEnd)
+    for iIndex in range(iStart, iEnd + 1):
+        if object_value_is(lObjects, iIndex, sValue):
+            return True
+    return False
+
+
+def find_in_index_range(sValue, iStart, iEnd, lObjects):
+    for iIndex in range(iStart, iEnd + 1):
+        if object_value_is(lObjects, iIndex, sValue):
+            return True
+    return False
+
+
+def are_next_consecutive_tokens(lTokens, iToken, lObjects):
+    iMaxTokenCount = len(lTokens)
+    iTokenCount = 0
+    iCurrent = iToken
+    while iTokenCount < iMaxTokenCount:
+        iCurrent = find_next_token(iCurrent, lObjects)
+        if not lTokens[iTokenCount] is None:
+            if not is_next_token(lTokens[iTokenCount], iCurrent, lObjects):
+                return False
+        iCurrent += 1
+        iTokenCount += 1
+
+    return True
+
+
+def are_next_consecutive_token_types(lTypes, iToken, lObjects):
+    iMaxTokenCount = len(lTypes)
+    iTokenCount = 0
+    iCurrent = iToken
+    try:
+        while iTokenCount < iMaxTokenCount:
+            if not lTypes[iTokenCount] is None:
+                if not isinstance(lObjects[iCurrent], lTypes[iTokenCount]):
+                    return False
+            iCurrent += 1
+            iTokenCount += 1
+        return True
+    except IndexError:
+        return False
+
+
+def are_next_consecutive_tokens_ignoring_whitespace(lTokens, iToken, lObjects):
+    iMaxTokenCount = len(lTokens)
+    iTokenCount = 0
+    iCurrent = iToken
+    try:
+        while iTokenCount < iMaxTokenCount:
+            iCurrent = find_next_non_whitespace_token(iCurrent, lObjects)
+            if not lTokens[iTokenCount] is None:
+                if not is_next_token(lTokens[iTokenCount], iCurrent, lObjects):
+                    return False
+            iCurrent += 1
+            iTokenCount += 1
+        return True
+    except IndexError:
+        return False
+
+
+def are_next_consecutive_token_types_ignoring_whitespace(lTypes, iToken, lObjects):
+    iMaxTokenCount = len(lTypes)
+    iTokenCount = 0
+    iCurrent = iToken
+    try:
+        while iTokenCount < iMaxTokenCount:
+            iCurrent = find_next_non_whitespace_token(iCurrent, lObjects)
+            if not lTypes[iTokenCount] is None:
+                if not isinstance(lObjects[iCurrent], lTypes[iTokenCount]):
+                    return False
+            iCurrent += 1
+            iTokenCount += 1
+        return True
+    except IndexError:
+        return False
+
+
+def are_previous_consecutive_token_types_ignoring_whitespace(lTypes, iToken, lObjects):
+    iMinTokenCount = 0
+    iTokenCount = len(lTypes)
+    iCurrent = iToken
+    try:
+        while iTokenCount != iMinTokenCount:
+            iCurrent = find_previous_non_whitespace_token(iCurrent, lObjects)
+            if not lTypes[iTokenCount - 1] is None:
+                if not isinstance(lObjects[iCurrent], lTypes[iTokenCount - 1]):
+                    return False
+            iCurrent -= 1
+            iTokenCount -= 1
+        return True
+    except IndexError:
+        return False
+
+
+def find_in_next_n_tokens(sValue, iMax, iToken, lObjects):
+    iEnd = len(lObjects)
+    iTokenCount = 0
+    iCurrent = iToken
+    while iTokenCount < iMax:
+        iCurrent = find_next_token(iCurrent, lObjects)
+        iTokenCount += 1
+        if object_value_is(lObjects, iCurrent, sValue):
+            return True
+        iCurrent += 1
+        if iCurrent == iEnd:
+            return False
+    return False
+
+
+def find_earliest_occurrence(lEnd, iToken, lObjects):
+    iEarliest = len(lObjects)
+    for sEnd in lEnd:
+        for iIndex in range(iToken, len(lObjects) - 1):
+            if lObjects[iIndex].get_lower_value() == sEnd:
+                if iIndex < iEarliest:
+                    sEarliest = lObjects[iIndex].get_value()
+                    iEarliest = iIndex
+    return sEarliest
+
+
+def find_earliest_occurrence_not_in_paren(lEnd, iToken, lObjects):
+    iEarliest = len(lObjects)
+    iParen = 0
+    for sEnd in lEnd:
+        for iIndex in range(iToken, len(lObjects) - 1):
+            iParen = update_paren_counter(iIndex, lObjects, iParen)
+            if lObjects[iIndex].get_lower_value() == sEnd:
+                if iIndex < iEarliest and iParen == 0:
+                    return lObjects[iIndex].get_value()
+    return None
+
+
+def find_next_token(iToken, lObjects):
+    iLenObjects = len(lObjects)
+    iCurrent = iToken
+    while iCurrent < iLenObjects:
+        if type(lObjects[iCurrent]) is parser_item:
+            return iCurrent
+        iCurrent += 1
+    return iToken
+
+
+def rename_this_is_item_function(oToken):
+    return type(oToken) is parser_item
+
+
+def find_next_non_whitespace_token(iToken, lObjects):
+    iCurrent = iToken
+    for iIndex in range(iToken, len(lObjects)):
+        oToken = lObjects[iIndex]
+        if token_is_whitespace_or_comment(oToken):
+            continue
+        return iIndex
+    return iCurrent
+
+
+def find_previous_non_whitespace_token(iToken, lObjects):
+    iCurrent = iToken
+    for iIndex in range(iToken, -1, -1):
+        oToken = lObjects[iIndex]
+        if token_is_whitespace_or_comment(oToken):
+            continue
+        return iIndex
+    return iCurrent
+
+
+def detect_submodule(iToken, lObjects, module):
+    iLast = -1
+    iReturn = iToken
+    while iLast != iReturn:
+        if is_next_token("end", iReturn, lObjects):
+            return iToken
+        iReturn = find_next_token(iReturn, lObjects)
+        iLast = iReturn
+        iReturn = module.detect(iReturn, lObjects)
+
+    return iReturn
+
+
+def has_label(iObject, lObjects):
+    iCurrent = find_next_token(iObject, lObjects)
+    iCurrent = increment_token_count(iCurrent)
+    iCurrent = find_next_token(iCurrent, lObjects)
+    return object_value_is(lObjects, iCurrent, ":")
+
+
+def tokenize_postponed(iObject, lObjects, token):
+    iIndex = find_next_token(iObject, lObjects)
+    if object_value_is(lObjects, iIndex, "postponed"):
+        assign_token(lObjects, iIndex, token)
+        return iIndex + 1
+    return iObject
+
+
+def tokenize_label(iToken, lObjects, label_token, colon_token):
+    iCurrent = find_next_token(iToken, lObjects)
+    iItemCount = 0
+    if has_label(iCurrent, lObjects):
+        while iItemCount < 2:
+            if is_item(lObjects, iCurrent):
+                if iItemCount == 0:
+                    assign_token(lObjects, iCurrent, label_token)
+                if iItemCount == 1:
+                    assign_token(lObjects, iCurrent, colon_token)
+                iItemCount += 1
+            iCurrent += 1
+        return iCurrent
+    return iToken
+
+
+def print_debug(sTitle, iStart, iEnd, lObjects):
+    print("--> " + sTitle)
+    sOutput = ""
+    for iIndex in range(iStart, iEnd + 1):
+        print(f"{iIndex} | {lObjects[iIndex]}")
+        sOutput += lObjects[iIndex].get_value()
+    print(sOutput)
+
+
+def print_next_token(iObject, lObjects):
+    iCurrent = find_next_token(iObject, lObjects)
+    iLine = calculate_line_number(iObject, lObjects)
+    print(f"{iLine} | {iCurrent} | {lObjects[iCurrent].get_value()}")
+
+
+def print_token(iObject, lObjects):
+    iLine = calculate_line_number(iObject, lObjects)
+    print(f"{iLine} | {iObject} | {lObjects[iObject].get_value()} | {lObjects[iObject]}")
+
+
+def print_line(lObjects, iStart):
+    iIndex = iStart
+    sOutput = ""
+    while not isinstance(lObjects[iIndex], parser.carriage_return):
+        sOutput += lObjects[iIndex].get_value()
+        iIndex += 1
+    print(sOutput)
+
+
+def print_lines(lObjects):
+    sOutput = ""
+    for oObject in lObjects:
+        sOutput += oObject.get_value()
+    print(sOutput)
+
+
+def token_is_semicolon(iObject, lObjects):
+    return object_value_is(lObjects, iObject, ";")
+
+
+def token_is_comma(iObject, lObjects):
+    return object_value_is(lObjects, iObject, ",")
+
+
+def token_is_open_parenthesis(iObject, lObjects):
+    return object_value_is(lObjects, iObject, "(")
+
+
+def token_is_close_parenthesis(iObject, lObjects):
+    return object_value_is(lObjects, iObject, ")")
+
+
+def token_is_assignment_operator(iObject, lObjects):
+    return object_value_is(lObjects, iObject, "<=")
+
+
+def increment_token_count(iToken):
+    return iToken + 1
+
+
+def matches_next_token(oRegex, iToken, lObjects):
+    iCurrent = find_next_token(iToken, lObjects)
+    return object_value_matches(lObjects, iCurrent, oRegex)
+
+
+def is_next_token(sToken, iToken, lObjects):
+    iCurrent = find_next_token(iToken, lObjects)
+    return object_value_is(lObjects, iCurrent, sToken)
+
+
+def is_next_token_one_of(lTokens, iToken, lObjects):
+    iCurrent = find_next_token(iToken, lObjects)
+    return lObjects[iCurrent].get_lower_value() in lTokens
+
+
+def detect_subelement_until(sToken, element, iToken, lObjects):
+    iCurrent = iToken
+    while not is_next_token(sToken, iCurrent, lObjects):
+        iLast = iCurrent
+        iCurrent = element.detect(iCurrent, lObjects)
+        if iLast == iCurrent:
+            return iCurrent
+    return iCurrent
+
+
+def classify_subelement_until(sToken, element, iToken, lObjects):
+    iCurrent = iToken
+    while not is_next_token(sToken, iCurrent, lObjects):
+        iCurrent = element.classify(iCurrent, lObjects)
+    return iCurrent
+
+
+def calculate_line_number(iToken, lObjects):
+    iReturn = 1
+    for iIndex in range(0, iToken):
+        if isinstance(lObjects[iIndex], parser.carriage_return):
+            iReturn += 1
+    return iReturn
+
+
+def calculate_column(iToken, lObjects):
+    iColumn = 0
+    for iCarriageReturn in range(iToken, 0, -1):
+        if isinstance(lObjects[iCarriageReturn], parser.carriage_return):
+            break
+    for iIndex in range(iCarriageReturn + 1, iToken):
+        iColumn += len(lObjects[iIndex].get_value())
+    iColumn += 1
+    return iColumn
+
+
+def print_error_message(sToken, token, iToken, lObjects):
+    sFoundToken = lObjects[iToken].get_value()
+    iLine = calculate_line_number(iToken, lObjects)
+    iColumn = calculate_column(iToken, lObjects)
+    sModuleName = extract_module_name(token)
+
+    sErrorMessage = "\n"
+    sErrorMessage += f"Error: Unexpected token detected while parsing {sModuleName} @ Line {iLine}, Column {iColumn} in file {lObjects[0].get_filename()}"
+    sErrorMessage += "\n"
+    sErrorMessage += f"       Expecting : {sToken}"
+    sErrorMessage += "\n"
+    sErrorMessage += f"       Found     : {sFoundToken}"
+    sErrorMessage += "\n"
+
+    raise exceptions.ClassifyError(sErrorMessage)
+
+
+def print_missing_error_message(lTokens, iToken, lObjects):
+    iLine = calculate_line_number(iToken, lObjects)
+
+    sErrorMessage = "\n"
+    sErrorMessage += f"Error: Closing token not found while parsing Line {iLine}"
+    sErrorMessage += "\n"
+    sErrorMessage += "\n"
+    sErrorMessage += f" {iLine} | "
+    sErrorMessage += extract_line_with_token_index_of(iToken, lObjects)
+    sErrorMessage += "\n"
+
+    raise exceptions.ClassifyError(sErrorMessage)
+
+
+def extract_module_name(token):
+    return token.__module__.split(".")[-1]
+
+
+def keyword_found(sKeyword, iToken, lObjects):
+    if find_in_next_n_tokens(":", 2, iToken, lObjects):
+        return find_in_next_n_tokens(sKeyword, 3, iToken, lObjects)
+    return is_next_token(sKeyword, iToken, lObjects)
+
+
+def is_next_token_in_list(lUntils, iToken, lObjects):
+    iCurrent = find_next_token(iToken, lObjects)
+    return lObjects[iCurrent].get_lower_value() in lUntils
+
+
+def combine_two_token_class_lists(lToi_a, lToi_b):
+    """
+    Takes two lists that contain Token classes and merges them into a single list.
+    The final list is ordered by the iStartIndex attribute on the Token classes.
+    """
+    if len(lToi_a) == 0:
+        return lToi_b
+    if len(lToi_b) == 0:
+        return lToi_a
+    lReturn = lToi_a.copy()
+    for oToi in lToi_b:
+        bInserted = False
+        for iIndex, oReturn in enumerate(lReturn):
+            if oToi.iStartIndex < oReturn.iStartIndex:
+                lReturn.insert(iIndex, oToi)
+                bInserted = True
+                break
+        if not bInserted:
+            lReturn.append(oToi)
+    return lReturn
+
+
+def does_length_of_tokens_exceed(lObjects, iLength):
+    iTotalLength = 0
+    for oObject in lObjects:
+        iTotalLength += len(oObject.get_value())
+    return iTotalLength > iLength
+
+
+def remove_carriage_returns_from_token_list(lTokens):
+    lMyTokens = []
+    for oToken in lTokens:
+        if isinstance(oToken, parser.carriage_return):
+            continue
+        lMyTokens.append(oToken)
+    return lMyTokens
+
+
+def remove_comments_from_token_list(lTokens):
+    lMyTokens = []
+    for oToken in lTokens:
+        if isinstance(oToken, parser.comment):
+            continue
+        lMyTokens.append(oToken)
+    return lMyTokens
+
+
+def remove_consecutive_whitespace_tokens(lTokens):
+    lMyTokens = []
+    for iToken, oToken in enumerate(lTokens):
+        if iToken == 0:
+            lMyTokens.append(oToken)
+        else:
+            if isinstance(oToken, parser.whitespace) and isinstance(lTokens[iToken - 1], parser.whitespace):
+                continue
+            else:
+                lMyTokens.append(oToken)
+    return lMyTokens
+
+
+def remove_whitespace_from_token_list(lTokens):
+    lMyTokens = []
+    for oToken in lTokens:
+        if isinstance(oToken, parser.whitespace):
+            continue
+        lMyTokens.append(oToken)
+    return lMyTokens
+
+
+def remove_comment_at_end_of_token_list(lTokens):
+    if isinstance(lTokens[-1], parser.comment):
+        return lTokens[:-1]
+    return lTokens
+
+
+def does_token_type_match(oToken, oType):
+    return isinstance(oToken, oType)
+
+
+def remove_trailing_whitespace(lTokens):
+    lTokens.reverse()
+    for iIndex in range(0, len(lTokens)):
+        if token_is_whitespace(lTokens[iIndex]):
+            continue
+        else:
+            lMyTokens = lTokens[iIndex:]
+            lMyTokens.reverse()
+            return lMyTokens
+    else:
+        return lTokens
+
+
+def remove_trailing_whitespace_and_comments(lTokens):
+    lTokens.reverse()
+    for iIndex in range(0, len(lTokens)):
+        if token_is_whitespace_or_comment(lTokens[iIndex]):
+            continue
+        else:
+            lMyTokens = lTokens[iIndex:]
+            lMyTokens.reverse()
+            return lMyTokens
+    else:
+        return lTokens
+
+
+def remove_leading_whitespace_and_comments(iToken, lTokens):
+    for iIndex in range(0, len(lTokens)):
+        if token_is_whitespace_or_comment(lTokens[iIndex]):
+            continue
+        else:
+            return iToken + iIndex + 1, lTokens[iIndex:]
+    else:
+        return iToken, lTokens
+
+
+def remove_all_trailing_whitespace(lTokens):
+    lReturn = []
+    for iToken, oToken in enumerate(lTokens):
+        if token_is_whitespace_token(oToken) and token_is_carriage_return(lTokens[iToken + 1]):
+            continue
+        lReturn.append(oToken)
+    return lReturn
+
+
+def token_is_whitespace_or_comment(oToken):
+    return (
+        isinstance(oToken, parser.whitespace)
+        or isinstance(oToken, parser.carriage_return)
+        or isinstance(oToken, parser.comment)
+        or isinstance(oToken, parser.blank_line)
+        or isinstance(oToken, parser.preprocessor)
+    )
+
+
+def token_is_whitespace_token(oToken):
+    return isinstance(oToken, parser.whitespace)
+
+
+def token_is_whitespace(oToken):
+    return (
+        isinstance(oToken, parser.whitespace)
+        or isinstance(oToken, parser.carriage_return)
+        or isinstance(oToken, parser.blank_line)
+        or isinstance(oToken, parser.preprocessor)
+    )
+
+
+def token_is_carriage_return(oToken):
+    return isinstance(oToken, parser.carriage_return)
+
+
+def increment_line_number(iLine, oToken):
+    if isinstance(oToken, parser.carriage_return):
+        return iLine + 1
+    return iLine
+
+
+def decrement_line_number(iLine, oToken):
+    if isinstance(oToken, parser.carriage_return):
+        return iLine - 1
+    return iLine
+
+
+def count_carriage_returns(lTokens):
+    iReturn = 0
+    for oToken in lTokens:
+        iReturn = increment_line_number(iReturn, oToken)
+    return iReturn
+
+
+def increment_comment_counter(iComment, oToken):
+    if isinstance(oToken, parser.comment):
+        return iComment + 1
+    return iComment
+
+
+def find_carriage_return(lTokens, iToken=0):
+    for iIndex in range(iToken, len(lTokens)):
+        if isinstance(lTokens[iIndex], parser.carriage_return):
+            return iIndex
+    return None
+
+
+def count_token_types_in_list_of_tokens(oType, lTokens):
+    iReturn = 0
+    for oToken in lTokens:
+        if isinstance(oToken, oType):
+            iReturn += 1
+    return iReturn
+
+
+def does_token_type_exist_in_list_of_tokens(oType, lTokens):
+    return count_token_types_in_list_of_tokens(oType, lTokens) != 0
+
+
+def get_toi_parameters(oToi):
+    return oToi.get_line_number(), oToi.get_tokens()
+
+
+def toi_is_array(oToi):
+    lTokens = oToi.get_tokens()
+    for oToken in lTokens:
+        if isinstance(oToken, aggregate.open_parenthesis):
+            return True
+    return False
+
+
+def does_token_start_line(iToken, lTokens):
+    if isinstance(lTokens[iToken - 1], parser.whitespace) and isinstance(lTokens[iToken - 2], parser.carriage_return):
+        return True
+    else:
+        return isinstance(lTokens[iToken - 1], parser.carriage_return)
+
+
+def convert_token_list_to_string(lTokens):
+    return "".join([oToken.get_value() for oToken in lTokens])
+
+
+def fix_blank_lines(lTokens):
+    lReturn = []
+    for iToken, oToken in enumerate(lTokens):
+        try:
+            if isinstance(oToken, parser.carriage_return) and isinstance(lTokens[iToken + 1], parser.carriage_return):
+                lReturn.append(oToken)
+                lReturn.append(parser.blank_line())
+                continue
+        except IndexError:
+            pass
+        try:
+            if (
+                isinstance(lTokens[iToken - 1], parser.carriage_return)
+                and isinstance(oToken, parser.whitespace)
+                and isinstance(lTokens[iToken + 1], parser.carriage_return)
+            ):
+                lReturn.append(parser.blank_line())
+                continue
+        except IndexError:
+            pass
+        lReturn.append(oToken)
+
+    return lReturn
+
+
+def fix_trailing_whitespace(lTokens):
+    lReturn = []
+    for iToken, oToken in enumerate(lTokens):
+        try:
+            if isinstance(oToken, parser.carriage_return) and isinstance(lTokens[iToken - 1], parser.whitespace):
+                lReturn.pop()
+                lReturn.append(oToken)
+                continue
+        except IndexError:
+            pass
+        lReturn.append(oToken)
+
+    return lReturn
+
+
+def is_whitespace(oObject):
+    return (
+        isinstance(oObject, parser.carriage_return)
+        or isinstance(oObject, parser.blank_line)
+        or isinstance(oObject, parser.comment)
+        or isinstance(oObject, parser.whitespace)
+        or isinstance(oObject, parser.preprocessor)
+    )
+
+
+def read_vhdlfile(sFileName, bIncludeEncoding=False):
+    def _read(oFile):
+        lLines = []
+        for sLine in oFile:
+            lLines.append(sLine.rstrip("\r\n"))
+        return lLines
+
+    if sFileName == "stdin":
+        if bIncludeEncoding:
+            return _read(sys.stdin), None, None
+        else:
+            return _read(sys.stdin), None
+    try:
+        with open(sFileName, encoding="utf-8") as oFile:
+            if bIncludeEncoding:
+                return _read(oFile), None, "utf-8"
+            else:
+                return _read(oFile), None
+    except UnicodeDecodeError:
+        with open(sFileName, encoding="ISO-8859-1") as oFile:
+            if bIncludeEncoding:
+                return _read(oFile), None, "ISO-8859-1"
+            else:
+                return _read(oFile), None
+    except OSError as e:
+        if bIncludeEncoding:
+            return [], e, None
+        else:
+            return [], e
+
+
+def is_token_at_end_of_line(iToken, lTokens):
+    iMyToken = iToken + 1
+    return (
+        are_next_consecutive_token_types([parser.carriage_return], iMyToken, lTokens)
+        or are_next_consecutive_token_types([parser.whitespace, parser.carriage_return], iMyToken, lTokens)
+        or are_next_consecutive_token_types([parser.comment, parser.carriage_return], iMyToken, lTokens)
+        or are_next_consecutive_token_types([parser.whitespace, parser.comment, parser.carriage_return], iMyToken, lTokens)
+    )
+
+
+def find_next_token_with_value(iToken, sValue, lTokens):
+    for iIndex, oToken in enumerate(lTokens[iToken::]):
+        if oToken.get_value() == sValue:
+            return iToken + iIndex
+    return None
+
+
+def all_assignments_inside_parenthesis(iToken, sStop, lTokens):
+    iStop = find_next_token_with_value(iToken, sStop, lTokens)
+    iParen = 0
+    for iIndex in range(iToken, iStop + 1):
+        iParen = update_paren_counter(iIndex, lTokens, iParen)
+        if token_is_assignment_operator(iIndex, lTokens) and iParen == 0:
+            return False
+    return True
+
+
+def update_paren_counter(iToken, lTokens, iCounter):
+    if token_is_open_parenthesis(iToken, lTokens):
+        return iCounter + 1
+    if token_is_close_parenthesis(iToken, lTokens):
+        return iCounter - 1
+    return iCounter
+
+
+def assignment_operator_found(iToken, lObjects):
+    if find_in_range("<=", iToken, ";", lObjects):
+        if all_assignments_inside_parenthesis(iToken, ";", lObjects):
+            return False
+        return True
+    return False
+
+
+def assign_special_tokens(lObjects, iCurrent, oType):
+    sValue = lObjects[iCurrent].get_lower_value()
+    if sValue == ")":
+        assign_token(lObjects, iCurrent, parser.close_parenthesis)
+    elif sValue == "(":
+        assign_token(lObjects, iCurrent, parser.open_parenthesis)
+    elif sValue == "-":
+        if isinstance(lObjects[iCurrent - 1], exponent.e_keyword):
+            assign_token(lObjects, iCurrent, exponent.minus_sign)
+        else:
+            assign_token(lObjects, iCurrent, parser.todo)
+    elif sValue == "+":
+        if isinstance(lObjects[iCurrent - 1], exponent.e_keyword):
+            assign_token(lObjects, iCurrent, exponent.plus_sign)
+        else:
+            assign_token(lObjects, iCurrent, parser.todo)
+    elif sValue == "*":
+        assign_token(lObjects, iCurrent, parser.todo)
+    elif sValue == "**":
+        assign_token(lObjects, iCurrent, parser.todo)
+    elif sValue == "/":
+        assign_token(lObjects, iCurrent, parser.todo)
+    elif sValue == "downto":
+        assign_token(lObjects, iCurrent, direction.downto)
+    elif sValue == "to":
+        assign_token(lObjects, iCurrent, direction.to)
+    elif sValue == "others":
+        assign_token(lObjects, iCurrent, choice.others_keyword)
+    elif sValue == "=>":
+        assign_token(lObjects, iCurrent, element_association.assignment)
+    elif sValue == "e":
+        if lObjects[iCurrent + 1].get_value().isdigit() or lObjects[iCurrent + 1].get_value() == "-" or lObjects[iCurrent + 1].get_value() == "+":
+            assign_token(lObjects, iCurrent, exponent.e_keyword)
+        else:
+            assign_token(lObjects, iCurrent, oType)
+    elif sValue == "=":
+        assign_token(lObjects, iCurrent, relational_operator.equal)
+    elif sValue == "/=":
+        assign_token(lObjects, iCurrent, relational_operator.not_equal)
+    elif sValue == "<":
+        assign_token(lObjects, iCurrent, relational_operator.less_than)
+    elif sValue == "<=":
+        assign_token(lObjects, iCurrent, relational_operator.less_than_or_equal)
+    elif sValue == ">":
+        assign_token(lObjects, iCurrent, relational_operator.greater_than)
+    elif sValue == ">=":
+        assign_token(lObjects, iCurrent, relational_operator.greater_than_or_equal)
+    elif sValue == "?=":
+        assign_token(lObjects, iCurrent, relational_operator.question_equal)
+    elif sValue == "?/=":
+        assign_token(lObjects, iCurrent, relational_operator.question_not_equal)
+    elif sValue == "?<":
+        assign_token(lObjects, iCurrent, relational_operator.question_less_than)
+    elif sValue == "?<=":
+        assign_token(lObjects, iCurrent, relational_operator.question_less_than_or_equal)
+    elif sValue == "?>":
+        assign_token(lObjects, iCurrent, relational_operator.question_greater_than)
+    elif sValue == "?>=":
+        assign_token(lObjects, iCurrent, relational_operator.question_greater_than_or_equal)
+
+    elif exponent_detected(lObjects, iCurrent):
+        assign_token(lObjects, iCurrent, exponent.integer)
+    else:
+        assign_token(lObjects, iCurrent, oType)
+
+
+def exponent_detected(lObjects, iCurrent):
+    return (
+        isinstance(lObjects[iCurrent - 1], exponent.e_keyword)
+        or isinstance(lObjects[iCurrent - 1], exponent.plus_sign)
+        or isinstance(lObjects[iCurrent - 1], exponent.minus_sign)
+    )
+
+
+def classify_predefined_types(lObjects, iCurrent):
+    if not isinstance(lObjects[iCurrent], parser.todo):
+        return
+    if lObjects[iCurrent].get_lower_value() in predefined_attribute.values:
+        if lObjects[iCurrent].get_lower_value() == "event":
+            assign_token(lObjects, iCurrent, predefined_attribute.event_keyword)
+        else:
+            assign_token(lObjects, iCurrent, predefined_attribute.keyword)
+
+
+def convert_yes_no_option_to_boolean(option):
+    if option == "yes":
+        return True
+    elif option == "no":
+        return False
+    return option
+
+
+def convert_boolean_to_yes_no(option):
+    if isinstance(option, bool):
+        if option:
+            return "yes"
+        else:
+            return "no"
+    return option
+
+
+def extract_line_with_token_index_of(iToken, lObjects):
+    for iIndex in range(0, iToken):
+        if isinstance(lObjects[iIndex], parser.carriage_return):
+            iStart = iIndex + 1
+    for iIndex in range(iToken, len(lObjects)):
+        if isinstance(lObjects[iIndex], parser.carriage_return):
+            iEnd = iIndex
+            break
+    sReturn = ""
+    for oObject in lObjects[iStart:iEnd]:
+        sReturn += oObject.get_value()
+    return sReturn
+
+
+def skip_tokens_until_matching_closing_paren(iToken, lObjects):
+    iCounter = 1
+    iCurrent = iToken
+    while iCurrent < len(lObjects):
+        iCurrent = find_next_token(iCurrent, lObjects)
+        iCounter = update_paren_counter(iCurrent, lObjects, iCounter)
+        if token_is_close_parenthesis(iCurrent, lObjects) and iCounter == 0:
+            return iCurrent
+        iCurrent += 1
+
+
+def pragma_exists_in_tokens(lTokens, iStartIndex):
+    return does_token_type_exist_in_list_of_tokens(token.pragma.pragma, lTokens[iStartIndex::])

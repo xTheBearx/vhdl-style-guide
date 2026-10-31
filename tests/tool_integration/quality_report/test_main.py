@@ -9,8 +9,8 @@ from io import StringIO
 from tempfile import TemporaryDirectory
 from unittest import mock
 
+from mhsg import __main__
 from tests import utils
-from vsg import __main__
 
 
 class testMain(unittest.TestCase):
@@ -35,7 +35,7 @@ class testMain(unittest.TestCase):
 
         actual_file = os.path.join(self._tmpdir.name, "actual.json")
 
-        sys.argv = ["vsg"]
+        sys.argv = ["mhsg"]
         sys.argv.extend(["--output_format", "syntastic"])
         sys.argv.extend(["-f", "tests/tool_integration/quality_report/example.vhd"])
         sys.argv.extend(["-p 1"])

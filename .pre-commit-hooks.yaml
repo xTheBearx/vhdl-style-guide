@@ -1,7 +1,7 @@
-- id: vsg
+- id: mhsg
   name: fix VHDL style
-  description: VHDL Style Guide
-  entry: vsg --fix --jobs=1
+  description: Multiple HDL Style Guide
+  entry: mhsg --fix --jobs=1
   language: python
   types:
     - file

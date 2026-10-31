@@ -2,7 +2,7 @@ Overview
 ========
 
 Rule groups allow for easier configuration of rules that perform similar functions.
-Using rule groups can make upgrading VSG versions easier as new rules are added.
+Using rule groups can make upgrading MHSG versions easier as new rules are added.
 
 The following is a list of the rule groups:
 

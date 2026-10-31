@@ -2,7 +2,7 @@
 
 import unittest
 
-from vsg.rules import for_generate_statement
+from mhsg.rules import for_generate_statement
 
 
 class test_rule(unittest.TestCase):

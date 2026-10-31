@@ -3,9 +3,9 @@
 import os
 import unittest
 
+from mhsg import vhdlFile
+from mhsg.rules import interface_incomplete_type_declaration
 from tests import utils
-from vsg import vhdlFile
-from vsg.rules import interface_incomplete_type_declaration
 
 sTestDir = os.path.dirname(__file__)
 

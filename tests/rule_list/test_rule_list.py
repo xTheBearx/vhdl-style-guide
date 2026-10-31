@@ -2,15 +2,15 @@
 import json
 import unittest
 
+from mhsg import rule_list, severity, vhdlFile
 from tests import utils
-from vsg import rule_list, severity, vhdlFile
 
 dIndentMap = utils.read_indent_file()
 
 oSeverityList = severity.create_list({})
 
 
-class testVsg(unittest.TestCase):
+class testMhsg(unittest.TestCase):
     def test_extract_violation_dictionary(self):
         lFile = []
         utils.read_file("tests/styles/code_examples/spi_master.vhd", lFile)

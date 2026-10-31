@@ -556,7 +556,7 @@ port_023
 
 This rule checks for missing modes in port declarations.
 
-.. NOTE:: This must be fixed by the user.  VSG makes no assumption on the direction of the port.
+.. NOTE:: This must be fixed by the user.  MHSG makes no assumption on the direction of the port.
 
 **Violation**
 

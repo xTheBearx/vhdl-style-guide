@@ -1,12 +1,12 @@
 Formatting Terminal Output
 --------------------------
 
-VSG supports multiple display output using the `-of` command line argument.
+MHSG supports multiple display output using the `-of` command line argument.
 
 +-------------+---------------------------------------------------------------+
 | Option      | Description                                                   |
 +=============+===============================================================+
-| vsg         | Default output format.                                        |
+| mhsg         | Default output format.                                        |
 +-------------+---------------------------------------------------------------+
 | syntastic   | Output format following the syntastic standard.  Useful for   |
 |             | integrating with Vim.                                         |
@@ -15,14 +15,14 @@ VSG supports multiple display output using the `-of` command line argument.
 +-------------+---------------------------------------------------------------+
 
 
-VSG
+MHSG
 ###
 
-This is the default output format of VSG.
+This is the default output format of MHSG.
 It gives analysis statistics along with individual rule violations.
 This format is the most verbose of all output formats.
 
-Sample output using VSG option:
+Sample output using MHSG option:
 
 .. code-block:: text
 
@@ -60,7 +60,7 @@ Sample output using VSG option:
 Syntastic
 #########
 
-Using the syntastic format allows editors with understand that standard to use the output of VSG.
+Using the syntastic format allows editors with understand that standard to use the output of MHSG.
 
 Below is the output format definition:
 

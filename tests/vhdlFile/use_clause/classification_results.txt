@@ -2,64 +2,64 @@
 0 |
 --------------------------------------------------------------------------------
 1 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 2 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 3 | use ieee.std_logic.1164;
-<class 'vsg.token.use_clause.keyword'>
-<class 'vsg.token.use_clause.library_name'>
-<class 'vsg.token.use_clause.dot'>
-<class 'vsg.token.use_clause.package_name'>
-<class 'vsg.token.use_clause.dot'>
-<class 'vsg.token.use_clause.item_name'>
-<class 'vsg.token.use_clause.semicolon'>
+<class 'mhsg.token.use_clause.keyword'>
+<class 'mhsg.token.use_clause.library_name'>
+<class 'mhsg.token.use_clause.dot'>
+<class 'mhsg.token.use_clause.package_name'>
+<class 'mhsg.token.use_clause.dot'>
+<class 'mhsg.token.use_clause.item_name'>
+<class 'mhsg.token.use_clause.semicolon'>
 --------------------------------------------------------------------------------
 4 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 5 | use ieee.std_logic.1164, ieee.std_logic_arith.all;
-<class 'vsg.token.use_clause.keyword'>
-<class 'vsg.token.use_clause.library_name'>
-<class 'vsg.token.use_clause.dot'>
-<class 'vsg.token.use_clause.package_name'>
-<class 'vsg.token.use_clause.dot'>
-<class 'vsg.token.use_clause.item_name'>
-<class 'vsg.token.use_clause.comma'>
-<class 'vsg.token.use_clause.library_name'>
-<class 'vsg.token.use_clause.dot'>
-<class 'vsg.token.use_clause.package_name'>
-<class 'vsg.token.use_clause.dot'>
-<class 'vsg.token.use_clause.all_keyword'>
-<class 'vsg.token.use_clause.semicolon'>
+<class 'mhsg.token.use_clause.keyword'>
+<class 'mhsg.token.use_clause.library_name'>
+<class 'mhsg.token.use_clause.dot'>
+<class 'mhsg.token.use_clause.package_name'>
+<class 'mhsg.token.use_clause.dot'>
+<class 'mhsg.token.use_clause.item_name'>
+<class 'mhsg.token.use_clause.comma'>
+<class 'mhsg.token.use_clause.library_name'>
+<class 'mhsg.token.use_clause.dot'>
+<class 'mhsg.token.use_clause.package_name'>
+<class 'mhsg.token.use_clause.dot'>
+<class 'mhsg.token.use_clause.all_keyword'>
+<class 'mhsg.token.use_clause.semicolon'>
 --------------------------------------------------------------------------------
 6 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 7 | use ieee.std_logic."ceil";
-<class 'vsg.token.use_clause.keyword'>
-<class 'vsg.token.use_clause.library_name'>
-<class 'vsg.token.use_clause.dot'>
-<class 'vsg.token.use_clause.package_name'>
-<class 'vsg.token.use_clause.dot'>
-<class 'vsg.token.use_clause.item_name'>
-<class 'vsg.token.use_clause.semicolon'>
+<class 'mhsg.token.use_clause.keyword'>
+<class 'mhsg.token.use_clause.library_name'>
+<class 'mhsg.token.use_clause.dot'>
+<class 'mhsg.token.use_clause.package_name'>
+<class 'mhsg.token.use_clause.dot'>
+<class 'mhsg.token.use_clause.item_name'>
+<class 'mhsg.token.use_clause.semicolon'>
 --------------------------------------------------------------------------------
 8 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 9 | use ieee.std_logic."ceil", ieee.std_logic."ceil";
-<class 'vsg.token.use_clause.keyword'>
-<class 'vsg.token.use_clause.library_name'>
-<class 'vsg.token.use_clause.dot'>
-<class 'vsg.token.use_clause.package_name'>
-<class 'vsg.token.use_clause.dot'>
-<class 'vsg.token.use_clause.item_name'>
-<class 'vsg.token.use_clause.comma'>
-<class 'vsg.token.use_clause.library_name'>
-<class 'vsg.token.use_clause.dot'>
-<class 'vsg.token.use_clause.package_name'>
-<class 'vsg.token.use_clause.dot'>
-<class 'vsg.token.use_clause.item_name'>
-<class 'vsg.token.use_clause.semicolon'>
+<class 'mhsg.token.use_clause.keyword'>
+<class 'mhsg.token.use_clause.library_name'>
+<class 'mhsg.token.use_clause.dot'>
+<class 'mhsg.token.use_clause.package_name'>
+<class 'mhsg.token.use_clause.dot'>
+<class 'mhsg.token.use_clause.item_name'>
+<class 'mhsg.token.use_clause.comma'>
+<class 'mhsg.token.use_clause.library_name'>
+<class 'mhsg.token.use_clause.dot'>
+<class 'mhsg.token.use_clause.package_name'>
+<class 'mhsg.token.use_clause.dot'>
+<class 'mhsg.token.use_clause.item_name'>
+<class 'mhsg.token.use_clause.semicolon'>

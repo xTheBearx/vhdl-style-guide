@@ -18,7 +18,7 @@ Many code bases are large enough to be broken into multiple sub blocks.
 A single configuration can be created and maintained for each subblock.
 This allows each subblock to be analyzed independently.
 
-When the entire code base needs be analyzed, all the subblock configurations can be passed to VSG.
+When the entire code base needs be analyzed, all the subblock configurations can be passed to MHSG.
 This reduces the amount of external scripting required.
 
 **config_1.json**
@@ -46,11 +46,11 @@ This reduces the amount of external scripting required.
        ]
    }
 
-Both configuration files can be processed by vsg with the following command:
+Both configuration files can be processed by mhsg with the following command:
 
 .. code-block:: bash
 
-  $ vsg --configuration config_1.json config_2.json
+  $ mhsg --configuration config_1.json config_2.json
 
 
 Multilevel rule configurations
@@ -60,7 +60,7 @@ Some code bases may require rule adjustments that apply to all the files along w
 Use multiple configurations to accomplish this.
 One configuration can handle code base wide adjustments.
 A second configuration can target individual files.
-VSG will combine any number of configurations to provide a unique set of rules for any file.
+MHSG will combine any number of configurations to provide a unique set of rules for any file.
 
 **config_1.json**
 
@@ -94,13 +94,13 @@ VSG will combine any number of configurations to provide a unique set of rules f
    }
 
 
-Both configuration files can be processed by VSG with the following command:
+Both configuration files can be processed by MHSG with the following command:
 
 .. code-block:: bash
 
-  $ vsg --configuration config_1.json config_2.json -f fifo.vhd
+  $ mhsg --configuration config_1.json config_2.json -f fifo.vhd
 
-VSG will combine the two configurations into this equivalent configuration...
+MHSG will combine the two configurations into this equivalent configuration...
 
 .. code-block:: json
 

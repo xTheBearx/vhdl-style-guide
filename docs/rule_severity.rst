@@ -4,7 +4,7 @@
 Rule Severity
 =============
 
-VSG supports rule severity with two built in levels:  Error and Warning.
+MHSG supports rule severity with two built in levels:  Error and Warning.
 The default behavior for most rules is **Error**.
 Only the **Error** severity level will result in an exit status of 1.
 **Errors** will also be the only errors written to a JUnit XML file if that option is chosen.
@@ -44,7 +44,7 @@ For example, if you want to change the line length rule, *length_001*, to an **E
 Defining Severity Levels
 ------------------------
 
-VSG supports user defined severity level.
+MHSG supports user defined severity level.
 Any new severity level will follow the same rules as the severity it is based on.
 It will be reported to the screen, but will not be reported in JUnit XML files and will not force an exit status of 1.
 
@@ -83,7 +83,7 @@ Apply the defined severity levels by calling both configurations:
 
 .. code-block:: bash
 
-   vsg -c severity.json rule_configuration.json -f fifo.vhd
+   mhsg -c severity.json rule_configuration.json -f fifo.vhd
 
 Rules Which are Warnings by Default
 ###################################

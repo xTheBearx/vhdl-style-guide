@@ -2,7 +2,7 @@ VSCode
 ######
 
 Integration with VSCode is accomplished using the task interface.
-This interface allows VSCode to run VSG in a shell and extract the results.
+This interface allows VSCode to run MHSG in a shell and extract the results.
 
 Configuring
 -----------
@@ -34,11 +34,11 @@ Replace the contents of the template file with the following...
       "version": "2.0.0",
       "tasks": [
         {
-          "label": "vsg-check",
+          "label": "mhsg-check",
           "type": "shell",
-          "command": "vsg -f \"${relativeFile}\"",
+          "command": "mhsg -f \"${relativeFile}\"",
           "problemMatcher": {
-            "owner": "vsg",
+            "owner": "mhsg",
             "fileLocation": ["autoDetect", "${workspaceFolder}"],
             "pattern": [
               {
@@ -84,11 +84,11 @@ Replace the contents of the template file with the following...
           }
         },
         {
-          "label": "vsg-fix",
+          "label": "mhsg-fix",
           "type": "shell",
-          "command": "vsg -f \"${relativeFile}\" --fix",
+          "command": "mhsg -f \"${relativeFile}\" --fix",
           "problemMatcher": {
-            "owner": "vsg",
+            "owner": "mhsg",
             "fileLocation": ["autoDetect", "${workspaceFolder}"],
             "pattern": [
               {
@@ -141,7 +141,7 @@ Replace the contents of the template file with the following...
 Executing Task
 --------------
 
-The two tasks `vsg-check` and `vsg-fix` are available under the **Terminal=>Run Task...** menu option...
+The two tasks `mhsg-check` and `mhsg-fix` are available under the **Terminal=>Run Task...** menu option...
 
 .. image:: vscode_terminal_run_task.png
 
@@ -149,7 +149,7 @@ The two tasks `vsg-check` and `vsg-fix` are available under the **Terminal=>Run 
 Keybindings
 -----------
 
-A keybinding can be created to make it easier to run the `vsg-check` and `vsg-fix` tasks.
+A keybinding can be created to make it easier to run the `mhsg-check` and `mhsg-fix` tasks.
 This involves creating a `keybindings.json` file.
 This file is located in the same directory as the `tasks.json` file.
 
@@ -158,8 +158,8 @@ Copy the following into the `keybindings.json` file...
 .. code-block:: json
 
     [
-        {"key": "ctrl+f", "command": "workbench.action.tasks.runTask", "args": "vsg-fix"},
-        {"key": "ctrl+i", "command": "workbench.action.tasks.runTask", "args": "vsg-check"}
+        {"key": "ctrl+f", "command": "workbench.action.tasks.runTask", "args": "mhsg-fix"},
+        {"key": "ctrl+i", "command": "workbench.action.tasks.runTask", "args": "mhsg-check"}
     ]
 
 ...and save it to the same directory as the `task.json` file.

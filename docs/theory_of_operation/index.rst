@@ -1,7 +1,7 @@
 Theory of Operation
 ===================
 
-The following gives a brief overview of how VSG works.
+The following gives a brief overview of how MHSG works.
 
 .. toctree::
    :maxdepth: 2

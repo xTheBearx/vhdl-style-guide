@@ -3,8 +3,8 @@ Classifying
 
 The Classifying process takes the output of the tokenize process along with the defined tokens and applies the rules in the VHDL LRM.
 The process employs a recursive methodology to apply the rules.
-The rules are divided into python modules under the :code:`vsg/vhdlFile/classify` directory.
-Each module name under :code:`vsg/vhdlFile/classify` matches a VHDL production name.
+The rules are divided into python modules under the :code:`mhsg/vhdlFile/classify` directory.
+Each module name under :code:`mhsg/vhdlFile/classify` matches a VHDL production name.
 
 Each module provides functions to parse a VHDL production and will have at least one of the following functions:
 
@@ -43,7 +43,7 @@ Given the following production for the architecture_body:
            architecture_statement_part
        end [ architecture ] [ *architecture*_simple_name ] ;
 
-There is a classifier file named :code:`vsg/vhdlFile/classify/architecture_body.py`.
+There is a classifier file named :code:`mhsg/vhdlFile/classify/architecture_body.py`.
 
 This file has a :code:`detect` function:
 

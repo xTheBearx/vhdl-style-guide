@@ -26,7 +26,7 @@ The following error report is generated:
 
 .. code-block:: bash
 
-   $vsg -f original.vhd -c config.yaml
+   $mhsg -f original.vhd -c config.yaml
    ================================================================================
    File:  original.vhd
    ================================================================================
@@ -61,7 +61,7 @@ The following error report is generated:
 
 .. code-block:: bash
 
-   $vsg -f original.vhd -c config.yaml
+   $mhsg -f original.vhd -c config.yaml
    ================================================================================
    File:  original.vhd
    ================================================================================

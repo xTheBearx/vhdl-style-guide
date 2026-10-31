@@ -2,7 +2,7 @@
 
 import unittest
 
-from vsg.rules import type_definition
+from mhsg.rules import type_definition
 
 
 class test_rule(unittest.TestCase):

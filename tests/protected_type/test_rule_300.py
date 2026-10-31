@@ -3,9 +3,9 @@
 import os
 import unittest
 
+from mhsg import vhdlFile
+from mhsg.rules import protected_type
 from tests import utils
-from vsg import vhdlFile
-from vsg.rules import protected_type
 
 sTestDir = os.path.dirname(__file__)
 

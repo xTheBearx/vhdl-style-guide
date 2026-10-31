@@ -7,9 +7,9 @@ include .pre-commit-config.yaml
 include .pre-commit-hooks.yaml
 include .readthedocs.yaml
 include CODE_OF_CONDUCT.md
-include bin/vsg
-include bin/vsg_parser
-include bin/vsg_rule_doc_gen
+include bin/mhsg
+include bin/mhsg_parser
+include bin/mhsg_rule_doc_gen
 include docs/conf.py
 include docs/example_configuration_json_file.json
 include tox.ini

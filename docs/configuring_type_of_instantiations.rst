@@ -6,7 +6,7 @@ Configuring Type of Instantiations
 
 There are two methods to instantiate components:  component or entity.
 
-VSG can check which method is being used and throw a violation if the incorrect method is detected.
+MHSG can check which method is being used and throw a violation if the incorrect method is detected.
 
 .. |method| replace::
    :code:`method`

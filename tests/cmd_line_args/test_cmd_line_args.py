@@ -8,8 +8,8 @@ import unittest
 from tempfile import TemporaryFile
 from unittest import mock
 
+from mhsg import cmd_line_args, version
 from tests import utils
-from vsg import cmd_line_args, version
 
 sAFile = os.path.join(os.path.dirname(__file__), "a.vhd")
 sBFile = os.path.join(os.path.dirname(__file__), "b.vhd")
@@ -20,7 +20,7 @@ sInvalidGlobFile = os.path.join(os.path.dirname(__file__), "*.vhs")
 
 class test(unittest.TestCase):
     def test_filename_w_single_file(self):
-        sys.argv = ["vsg"]
+        sys.argv = ["mhsg"]
         sys.argv.extend(["-f", sAFile])
 
         lExpected = [sAFile]
@@ -33,7 +33,7 @@ class test(unittest.TestCase):
         self.assertEqual(lActual, lExpected)
 
     def test_filename_w_two_files(self):
-        sys.argv = ["vsg"]
+        sys.argv = ["mhsg"]
         sys.argv.extend(["-f", sAFile, sBFile])
 
         lExpected = [sAFile, sBFile]
@@ -46,7 +46,7 @@ class test(unittest.TestCase):
         self.assertEqual(lActual, lExpected)
 
     def test_filename_w_two_files_positional(self):
-        sys.argv = ["vsg"]
+        sys.argv = ["mhsg"]
         sys.argv.extend([sAFile, sBFile])
 
         lExpected = [sAFile, sBFile]
@@ -59,7 +59,7 @@ class test(unittest.TestCase):
         self.assertEqual(lActual, lExpected)
 
     def test_filename_w_two_files_positional_merge(self):
-        sys.argv = ["vsg"]
+        sys.argv = ["mhsg"]
         sys.argv.extend(["-f", sAFile, sBFile])
 
         lExpected = [sAFile, sBFile]
@@ -72,7 +72,7 @@ class test(unittest.TestCase):
         self.assertEqual(lActual, lExpected)
 
     def test_valid_glob(self):
-        sys.argv = ["vsg"]
+        sys.argv = ["mhsg"]
         sys.argv.extend(["-f", sGlobFile])
 
         lExpected = [sAFile, sBFile]
@@ -85,7 +85,7 @@ class test(unittest.TestCase):
         self.assertEqual(lActual, lExpected)
 
     def test_valid_glob_w_individual_files(self):
-        sys.argv = ["vsg"]
+        sys.argv = ["mhsg"]
         sys.argv.extend(["-f", sGlobFile, sAFile, sGlobFile, sBFile])
 
         lExpected = [sAFile, sBFile, sAFile, sAFile, sBFile, sBFile]

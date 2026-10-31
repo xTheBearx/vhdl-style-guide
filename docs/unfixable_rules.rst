@@ -4,7 +4,7 @@
 Unfixable Rules
 ===============
 
-VSG is capable of fixing a wide range of formatting issues.
+MHSG is capable of fixing a wide range of formatting issues.
 However, there are a class of issues which can be checked but can not be fixed.
 These issues require the user to make the required changes.
 In the documentation, these rules are marked with the following icon:  |unfixable|
@@ -13,7 +13,7 @@ In the documentation, these rules are marked with the following icon:  |unfixabl
 Comments
 --------
 
-The existence and formatting of comments is left to the user as VSG can not have an opinion.
+The existence and formatting of comments is left to the user as MHSG can not have an opinion.
 
 * `block_comment_001 <block_comment_rules.html#block-001>`_
 * `block_comment_002 <block_comment_rules.html#block-002>`_

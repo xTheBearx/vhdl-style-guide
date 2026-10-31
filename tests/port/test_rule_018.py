@@ -2,7 +2,7 @@
 
 import unittest
 
-from vsg.rules import port
+from mhsg.rules import port
 
 
 class test_rule(unittest.TestCase):

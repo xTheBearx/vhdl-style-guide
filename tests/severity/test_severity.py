@@ -2,7 +2,7 @@
 
 import unittest
 
-from vsg import severity
+from mhsg import severity
 
 
 class testMethods(unittest.TestCase):

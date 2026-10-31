@@ -3,9 +3,9 @@
 import os
 import unittest
 
+from mhsg import vhdlFile
+from mhsg.rules import constrained_array_definition
 from tests import utils
-from vsg import vhdlFile
-from vsg.rules import constrained_array_definition
 
 sTestDir = os.path.dirname(__file__)
 

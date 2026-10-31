@@ -1,7 +1,7 @@
 Styles
 ======
 
-VSG supports several predefined styles.
+MHSG supports several predefined styles.
 They can be used with the **--style** command line option.
 
 The table below lists the built in styles available
@@ -106,4 +106,4 @@ Then use the style and configuration together:
 
 .. code-block:: text
 
-   $ vsg --style jcl --configuration my_config.yaml -f fifo.vhd
+   $ mhsg --style jcl --configuration my_config.yaml -f fifo.vhd

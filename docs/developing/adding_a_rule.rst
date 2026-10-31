@@ -51,7 +51,7 @@ Rule documentation contains the following items:
       begin
 
 
-The Rule ID identifies the rule and is unique through all versions of VSG.
+The Rule ID identifies the rule and is unique through all versions of MHSG.
 A Rule ID will never be re-used.
 
 Icons provide information about the rule at a quick glance.
@@ -168,14 +168,14 @@ If configuration options are available for the rule, then additional files are r
 Run failing test
 ^^^^^^^^^^^^^^^^
 
-VSG uses pytest and individual tests can be executed:
+MHSG uses pytest and individual tests can be executed:
 
 .. code-block:: text
 
    $ pytest tests/architecture/test_rule_001.py
    ======================================== test session starts =========================================
    platform linux -- Python 3.10.13, pytest-8.1.1, pluggy-1.4.0
-   rootdir: /home/jcleary/projects/vsg-master
+   rootdir: /home/jcleary/projects/mhsg-master
    configfile: pyproject.toml
    plugins: html-4.1.1, html-reporter-0.2.9, metadata-3.1.1
    collected 2 items
@@ -189,7 +189,7 @@ VSG uses pytest and individual tests can be executed:
 
        def test_fix_rule_001(self):
    >       oRule = architecture.rule_001()
-   E       AttributeError: module 'vsg.rules.architecture' has no attribute 'rule_001'. Did you mean: 'rule_002'?
+   E       AttributeError: module 'mhsg.rules.architecture' has no attribute 'rule_001'. Did you mean: 'rule_002'?
 
    tests/architecture/test_rule_001.py:39: AttributeError
    ________________________________ test_architecture_rule.test_rule_001 ________________________________
@@ -198,12 +198,12 @@ VSG uses pytest and individual tests can be executed:
 
        def test_rule_001(self):
    >       oRule = architecture.rule_001()
-   E       AttributeError: module 'vsg.rules.architecture' has no attribute 'rule_001'. Did you mean: 'rule_002'?
+   E       AttributeError: module 'mhsg.rules.architecture' has no attribute 'rule_001'. Did you mean: 'rule_002'?
 
    tests/architecture/test_rule_001.py:28: AttributeError
    ====================================== short test summary info =======================================
-   FAILED tests/architecture/test_rule_001.py::test_architecture_rule::test_fix_rule_001 - AttributeError: module 'vsg.rules.architecture' has no attribute 'rule_001'. Did you mean: 'rule_...
-   FAILED tests/architecture/test_rule_001.py::test_architecture_rule::test_rule_001 - AttributeError: module 'vsg.rules.architecture' has no attribute 'rule_001'. Did you mean: 'rule_...
+   FAILED tests/architecture/test_rule_001.py::test_architecture_rule::test_fix_rule_001 - AttributeError: module 'mhsg.rules.architecture' has no attribute 'rule_001'. Did you mean: 'rule_...
+   FAILED tests/architecture/test_rule_001.py::test_architecture_rule::test_rule_001 - AttributeError: module 'mhsg.rules.architecture' has no attribute 'rule_001'. Did you mean: 'rule_...
    ========================================= 2 failed in 0.43s ==========================================
 
 The test failed because the rule does not yet exist.
@@ -239,8 +239,8 @@ The rule implementation could be unique or it could call a base rule.
 
    # -*- coding: utf-8 -*-
 
-   from vsg.rules import token_indent
-   from vsg.token import architecture_body as token
+   from mhsg.rules import token_indent
+   from mhsg.token import architecture_body as token
 
 
    class rule_001(token_indent):
@@ -276,7 +276,7 @@ Re-run the test and make any changes until the test passes.
 
    ======================================== test session starts =========================================
    platform linux -- Python 3.10.13, pytest-8.1.1, pluggy-1.4.0
-   rootdir: /home/jcleary/projects/vsg-master
+   rootdir: /home/jcleary/projects/mhsg-master
    configfile: pyproject.toml
    plugins: html-4.1.1, html-reporter-0.2.9, metadata-3.1.1
    collected 2 items
@@ -296,7 +296,7 @@ Now that the single test runs, the entire suite of tests must be ran to ensure t
    ======================================== test session starts =========================================
    platform linux -- Python 3.8.10, pytest-8.1.1, pluggy-1.4.0
    cachedir: .tox/test-py38/.pytest_cache
-   rootdir: /home/jcleary/projects/vsg-master
+   rootdir: /home/jcleary/projects/mhsg-master
    configfile: pyproject.toml
    plugins: cov-5.0.0, html-4.1.1, xdist-3.5.0, html-reporter-0.2.9, metadata-3.1.1
    8 workers [3005 items]
@@ -310,7 +310,7 @@ Now that the single test runs, the entire suite of tests must be ran to ensure t
    Coverage HTML written to dir build.out/test-py38/coverage
    Coverage XML written to file build.out/test-py38/coverage.xml
 
-   - Generated html report: file:///home/jcleary/projects/vsg-master/build.out/test-py38/test/pytest.html -
+   - Generated html report: file:///home/jcleary/projects/mhsg-master/build.out/test-py38/test/pytest.html -
    ================================== 3005 passed in 72.67s (0:01:12) ===================================
      test-py38: OK (81.82=setup[8.52]+cmd[73.30] seconds)
      congratulations :) (81.87 seconds)

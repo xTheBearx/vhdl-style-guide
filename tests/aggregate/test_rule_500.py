@@ -2,7 +2,7 @@
 
 import unittest
 
-from vsg.rules import aggregate
+from mhsg.rules import aggregate
 
 
 class test_rule(unittest.TestCase):

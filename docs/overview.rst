@@ -1,12 +1,12 @@
 Overview
 --------
 
-VHDL Style Guide (VSG) provides coding style guide enforcement for VHDL code.
+Multiple HDL Style Guide (MHSG) provides coding style guide enforcement for VHDL code.
 
-Why VSG?
+Why MHSG?
 ########
 
-VSG was created after participating in a code review in which a real issue was masked by a coding style issue.
+MHSG was created after participating in a code review in which a real issue was masked by a coding style issue.
 A finding was created for the style issue, while the real issue was missed.
 When the code was re-reviewed, the real issue was discovered.
 The coding style issue seemed to blind me to the real issue.
@@ -30,7 +30,7 @@ Key Benefits
 * Improve code reviews
 * Quickly bring code up to current standards
 
-VSG allows the style of the code to be defined and enforced over portions or the entire code base.
+MHSG allows the style of the code to be defined and enforced over portions or the entire code base.
 
 Key Features
 ############
@@ -61,7 +61,7 @@ Key Features
 Known Limitations
 #################
 
-VSG is a continual work in progress.
+MHSG is a continual work in progress.
 As such, this version has the following known limitations:
 
 * Minumal support for embedded PSL

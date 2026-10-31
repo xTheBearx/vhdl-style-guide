@@ -6,8 +6,8 @@ import subprocess
 import unittest
 from tempfile import TemporaryDirectory
 
+from mhsg import __main__, severity
 from tests import utils
-from vsg import __main__, severity
 
 sFileName = "context_classification_test_input.vhd"
 sFixedFileName = "context_classification_test_input.fixed.vhd"
@@ -30,7 +30,7 @@ class test_context_using_main(unittest.TestCase):
 
     def test_classification_file(self):
         self.maxDiff = None
-        subprocess.check_output([*utils.vsg_exec(), "-f", self._sFileName, "--fix"]).decode("utf-8").splitlines()
+        subprocess.check_output([*utils.mhsg_exec(), "-f", self._sFileName, "--fix"]).decode("utf-8").splitlines()
 
         lActual = pathlib.Path(self._sFileName).read_text().splitlines()
         lExpected = pathlib.Path(sFixedFile).read_text().splitlines()

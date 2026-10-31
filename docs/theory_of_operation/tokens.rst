@@ -2,8 +2,8 @@ Tokens
 ------
 
 Tokens are a collection of classes used to represent elements of the VHDL language.
-They are grouped together under the :code:`vsg/tokens` directory.
-Each file under :code:`vsg/tokens` matches a VHDL production name.
+They are grouped together under the :code:`mhsg/tokens` directory.
+Each file under :code:`mhsg/tokens` matches a VHDL production name.
 Each class in each file maps to an element in the VHDL production.
 
 For example, the following production for the architecture_body:
@@ -17,7 +17,7 @@ For example, the following production for the architecture_body:
            architecture_statement_part
        end [ architecture ] [ *architecture*_simple_name ] ;
 
-has a file named vsg/tokens/architecture_body.py.
+has a file named mhsg/tokens/architecture_body.py.
 
 In the :code:`architecture_body.py` file, the following classes exist:
 

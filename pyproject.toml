@@ -7,8 +7,8 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "vsg"
-description = "VHDL Style Guide"
+name = "mhsg"
+description = "Multiple HDL Style Guide"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Console",
@@ -61,28 +61,33 @@ docs = [
 name = "Jeremiah C Leary"
 email = "jeremiah.c.leary@gmail.com"
 
+[[project.maintainers]]
+name = "Hal Reid"
+
 [project.urls]
-Homepage = "https://github.com/jeremiah-c-leary/vhdl-style-guide"
-Download = "https://github.com/jeremiah-c-leary/vhdl-style-guide"
+Homepage = "https://github.com/xTheBearx/vhdl-style-guide"
+Download = "https://github.com/xTheBearx/vhdl-style-guide"
+Issues = "https://github.com/xTheBearx/vhdl-style-guide/issues"
+Upstream = "https://github.com/jeremiah-c-leary/vhdl-style-guide"
 
 [project.scripts]
-vsg = "vsg.__main__:main"
+mhsg = "mhsg.__main__:main"
 
 [tool.setuptools-git-versioning]
 enabled = true
 template = "{tag}"
 
 [tool.setuptools.package-data]
-"vsg.rules" = [
+"mhsg.rules" = [
     "*/preamble_doc.rst",
 ]
-"vsg.styles" = [
+"mhsg.styles" = [
     "*.yaml",
 ]
-"vsg.styles.code_examples" = [
+"mhsg.styles.code_examples" = [
     "README.rst",
 ]
-"vsg.vhdlFile.indent" = [
+"mhsg.vhdlFile.indent" = [
     "*.yaml",
 ]
 
@@ -114,7 +119,7 @@ combine_as_imports = true
 
 [tool.pytest.ini_options]
 addopts = [
-    "--cov=vsg",
+    "--cov=mhsg",
     "--import-mode=importlib",
     "--self-contained-html",
     "-n", "auto",
@@ -131,7 +136,7 @@ testpaths = [
 parallel = true
 branch = true
 source = [
-    "vsg",
+    "mhsg",
 ]
 data_file = "${COVERAGE_DATA_FILE-.coverage}"
 

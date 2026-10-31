@@ -5,7 +5,7 @@ import unittest
 from tempfile import TemporaryDirectory
 from unittest import mock
 
-from vsg import __rule_doc_gen__
+from mhsg import __rule_doc_gen__
 
 
 class testMain(unittest.TestCase):
@@ -19,7 +19,7 @@ class testMain(unittest.TestCase):
     def test_w_user_provided_path(self, mock_stdout):
         lExpected = []
 
-        sys.argv = ["vsg_rule_doc_gen"]
+        sys.argv = ["mhsg_rule_doc_gen"]
         sys.argv.extend(["-p", self._tmpdir.name])
 
         try:

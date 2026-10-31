@@ -3,9 +3,9 @@
 import os
 import unittest
 
+from mhsg import vhdlFile
+from mhsg.rules import case_generate_alternative
 from tests import utils
-from vsg import vhdlFile
-from vsg.rules import case_generate_alternative
 
 sTestDir = os.path.dirname(__file__)
 

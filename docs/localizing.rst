@@ -4,9 +4,9 @@ Localizing
 .. WARNING:: This information is out of date with the release of 3.0.0
 .. NOTE:: If you have local rules defined in a version prior to 3.0.0, create an issue and I can work with you to convert it to 3.0.0 format.
 
-VSG supports customization to your coding style standards by allowing localized rules.
+MHSG supports customization to your coding style standards by allowing localized rules.
 These rules are stored in a directory with an __init__.py file and one or more python files.
-The files should follow the same structure and naming convention as the rules found in the vsg/rules directory.
+The files should follow the same structure and naming convention as the rules found in the mhsg/rules directory.
 
 The localized rules will be used when the **--local_rules** command line argument is given or using the **local_rules** option in a configuration file.
 
@@ -34,14 +34,14 @@ We will create a new rule by extending the base rule class.
 
 .. NOTE::
   The file name and class name must start with **rule_**.
-  Otherwise VSG will not recognize it as a rule.
+  Otherwise MHSG will not recognize it as a rule.
 
 The rule will be in the **localized** group.
 Since this is the first rule, we will number it **001**.
 
 .. code-block:: python
 
-   from vsg import rule
+   from mhsg import rule
 
 
    class rule_001(rule.rule):
@@ -54,7 +54,7 @@ Referencing the :doc:`phases`, we decide it should be in phase 1: structural.
 
 .. code-block:: python
 
-   from vsg import rule
+   from mhsg import rule
 
 
    class rule_001(rule.rule):
@@ -68,7 +68,7 @@ Now we need to add the **analyze** method to perform the check.
 
 .. code-block:: python
 
-   from vsg import rule
+   from mhsg import rule
 
 
    class rule_001(rule.rule):
@@ -80,13 +80,13 @@ Now we need to add the **analyze** method to perform the check.
 
      def analyze(self, oFile):
 
-The built in variables in the vsg.line class can be used to build rules.
-In this case, the vsg.vhdlFile class has two attributes (**hasEntity** and **hasArchitecture**) that are exactly what we need.
+The built in variables in the mhsg.line class can be used to build rules.
+In this case, the mhsg.vhdlFile class has two attributes (**hasEntity** and **hasArchitecture**) that are exactly what we need.
 We are ready to write the body of the **analyze** method:
 
 .. code-block:: python
 
-   from vsg import rule
+   from mhsg import rule
 
 
    class rule_001(rule.rule):
@@ -106,14 +106,14 @@ This dictionary can be modified to include other information about the violation
 This method appends the dictionary to a violation list, which is processed later for reporting and fixing purposes.
 In this case, any line number will do so we picked 1.
 
-We must decide if we want to give VSG the ability to fix this rule on its own.
+We must decide if we want to give MHSG the ability to fix this rule on its own.
 If so, then we will need to write the **_fix_violations** method.
 However, for this violation we want the user to split the file.
-We will tell VSG the rule is not fixable.
+We will tell MHSG the rule is not fixable.
 
 .. code-block:: python
 
-   from vsg import rule
+   from mhsg import rule
 
 
    class rule_001(rule.rule):
@@ -132,7 +132,7 @@ We also need to provide a solution to the user so they will know how to fix the 
 
 .. code-block:: python
 
-   from vsg import rule
+   from mhsg import rule
 
 
    class rule_001(rule.rule):
@@ -154,7 +154,7 @@ Finally, we need to add a code tag check so the rule can be disabled via comment
 
 .. code-block:: python
 
-   from vsg import rule
+   from mhsg import rule
 
 
    class rule_001(rule.rule):
@@ -167,7 +167,7 @@ Finally, we need to add a code tag check so the rule can be disabled via comment
          self.solution = 'Split entity and architecture into separate files.'
 
      def analyze(self, oFile):
-         if not self.is_vsg_off(oLine):
+         if not self.is_mhsg_off(oLine):
              if oFile.hasEntity and oFile.hasArchitecture:
                  self.add_violation(utils.create_violation_dict(1))
 
@@ -186,7 +186,7 @@ When we want to run with localized rules, use the **--local_rules** option.
 
 .. code-block:: bash
 
-   $ vsg -f RAM.vhd --local_rules ~/local_rules
+   $ mhsg -f RAM.vhd --local_rules ~/local_rules
    File:  RAM.vhd
    ==============
    Phase 1... Reporting
@@ -229,7 +229,7 @@ There are a few methods to the base rule class, but we are interested in only th
 | _pre_analyze    | Code that sets up variables for _analyze. |
 +-----------------+-------------------------------------------+
 
-We will look at the rule **constant_014** to illustrate how VSG uses the methods above:
+We will look at the rule **constant_014** to illustrate how MHSG uses the methods above:
 
 .. code-block:: python
 
@@ -525,4 +525,4 @@ Keep these points in mind when creating new rules:
 #. Remember that **analyze** calls **_pre_analyze** and then **_analyze**
 #. Override **_get_solution** to return complex messages
 #. **analyze** method can be overridden if necessary
-#. If overriding **analyze**, then include a check for *vsg_off*
+#. If overriding **analyze**, then include a check for *mhsg_off*

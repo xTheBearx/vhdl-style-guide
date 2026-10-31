@@ -2,9 +2,9 @@
 import os
 import unittest
 
+from mhsg import vhdlFile
+from mhsg.rules import architecture, process
 from tests import utils
-from vsg import vhdlFile
-from vsg.rules import architecture, process
 
 # Read in test file used for all tests
 

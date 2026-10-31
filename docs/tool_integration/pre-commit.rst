@@ -1,7 +1,7 @@
 pre-commit Integration
 ----------------------
 
-VSG supports integration with pre-commit using the following ``.pre-commit-config.yaml`` file:
+MHSG supports integration with pre-commit using the following ``.pre-commit-config.yaml`` file:
 
 .. code-block:: yaml
 
@@ -9,9 +9,9 @@ VSG supports integration with pre-commit using the following ``.pre-commit-confi
     - repo: https://github.com/jeremiah-c-leary/vhdl-style-guide
       rev: 3.18.0
       hooks:
-        - id: vsg
+        - id: mhsg
 
-You may customize VSG by using the ``arg`` node, for example:
+You may customize MHSG by using the ``arg`` node, for example:
 
 .. code-block:: yaml
 
@@ -19,7 +19,7 @@ You may customize VSG by using the ``arg`` node, for example:
     - repo: https://github.com/alonbl/vhdl-style-guide
       rev: 3.18.0
       hooks:
-        - id: vsg
+        - id: mhsg
           args:
-            - --configuration=.vsg.yaml
+            - --configuration=.mhsg.yaml
             - --output_format=syntastic

@@ -8,8 +8,8 @@ import sys
 
 import yaml
 
-from vsg import config, parser
-from vsg.vhdlFile import utils as vutils
+from mhsg import config, parser
+from mhsg.vhdlFile import utils as vutils
 
 
 def debug_lines(oFile, iLineNumber, iNumberOfLines):
@@ -32,7 +32,7 @@ def print_attributes(oLine):
 
 
 def read_indent_file():
-    sFileName = os.path.join("vsg", "vhdlFile", "indent", "indent_config.yaml")
+    sFileName = os.path.join("mhsg", "vhdlFile", "indent", "indent_config.yaml")
     with open(sFileName) as yaml_file:
         dFile = yaml.full_load(yaml_file)
     return dFile
@@ -145,8 +145,8 @@ def is_user_admin():
     return ctypes.windll.shell32.IsUserAnAdmin() == 1
 
 
-def vsg_exec():
-    return [sys.executable, "bin/vsg"]
+def mhsg_exec():
+    return [sys.executable, "bin/mhsg"]
 
 
 def is_windows():

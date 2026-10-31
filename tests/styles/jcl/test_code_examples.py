@@ -3,8 +3,8 @@ import copy
 import os
 import unittest
 
+from mhsg import config, rule_list, severity, vhdlFile
 from tests import utils
-from vsg import config, rule_list, severity, vhdlFile
 
 sSourceCodeDir = os.path.join(os.path.dirname(__file__), "..", "code_examples")
 
@@ -54,7 +54,7 @@ lTokenMovement, eTokenMovementError = vhdlFile.utils.read_vhdlfile(os.path.join(
 oTokenMovement = vhdlFile.vhdlFile(lTokenMovement)
 oTokenMovement.set_indent_map(dIndentMap)
 
-oConfig = utils.read_configuration(os.path.join(os.path.dirname(__file__), "..", "..", "..", "vsg", "styles", "jcl.yaml"))
+oConfig = utils.read_configuration(os.path.join(os.path.dirname(__file__), "..", "..", "..", "mhsg", "styles", "jcl.yaml"))
 
 oSeverityList = severity.create_list({})
 

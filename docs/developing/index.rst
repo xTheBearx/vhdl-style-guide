@@ -1,7 +1,7 @@
 Developing
 ==========
 
-Before developing for VSG, familiarize yourself with the **Theory of Operation** and **Processes** sections of the documentation.
+Before developing for MHSG, familiarize yourself with the **Theory of Operation** and **Processes** sections of the documentation.
 
 .. toctree::
    :maxdepth: 2

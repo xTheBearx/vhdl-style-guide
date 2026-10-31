@@ -1,16 +1,16 @@
 Rule Directory Structure
 ------------------------
 
-Rules are located under the directory :code:`vsg/rules`.
-Each directory under :code:`vsg/rules` corresponds to a group of rules.
-For example, all architecture rules are in a directory named:  :code:`vsg/rules/architecture`.
+Rules are located under the directory :code:`mhsg/rules`.
+Each directory under :code:`mhsg/rules` corresponds to a group of rules.
+For example, all architecture rules are in a directory named:  :code:`mhsg/rules/architecture`.
 Each file under a rule group directory follows this pattern: :code:`rule_[0-9][0-9][0-9].py`.
 
 The diagram below illustrates rule directory structure given the descriptions above:
 
 .. code-block:: text
 
-   vsg
+   mhsg
    └── rules
        ├── after
        │   ├── rule_001.py
@@ -25,13 +25,13 @@ The diagram below illustrates rule directory structure given the descriptions ab
                  ...
            └── rule_601.py
 
-In addition to each rule definition, there are base rules in the :code:`vsg/rules` directory.
+In addition to each rule definition, there are base rules in the :code:`mhsg/rules` directory.
 The base rules provide a consistent implementation of a particular type of rule.
 For example all rules which address lines before keywords will use the previous_line base rule.
 
 .. code-block:: text
 
-   └── vsg
+   └── mhsg
        └── rules
                ...
            └── previous_line.py

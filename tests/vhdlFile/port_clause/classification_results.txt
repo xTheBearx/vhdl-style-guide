@@ -2,77 +2,77 @@
 0 |
 --------------------------------------------------------------------------------
 1 | entity FIFO is
-<class 'vsg.token.entity_declaration.entity_keyword'>
-<class 'vsg.token.entity_declaration.identifier'>
-<class 'vsg.token.entity_declaration.is_keyword'>
+<class 'mhsg.token.entity_declaration.entity_keyword'>
+<class 'mhsg.token.entity_declaration.identifier'>
+<class 'mhsg.token.entity_declaration.is_keyword'>
 --------------------------------------------------------------------------------
 2 | port ( a : integer );
-<class 'vsg.token.port_clause.port_keyword'>
-<class 'vsg.token.port_clause.open_parenthesis'>
-<class 'vsg.token.interface_unknown_declaration.identifier'>
-<class 'vsg.token.interface_unknown_declaration.colon'>
-<class 'vsg.token.type_mark.name'>
-<class 'vsg.token.port_clause.close_parenthesis'>
-<class 'vsg.token.port_clause.semicolon'>
+<class 'mhsg.token.port_clause.port_keyword'>
+<class 'mhsg.token.port_clause.open_parenthesis'>
+<class 'mhsg.token.interface_unknown_declaration.identifier'>
+<class 'mhsg.token.interface_unknown_declaration.colon'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.port_clause.close_parenthesis'>
+<class 'mhsg.token.port_clause.semicolon'>
 --------------------------------------------------------------------------------
 3 | end entity FIFO;
-<class 'vsg.token.entity_declaration.end_keyword'>
-<class 'vsg.token.entity_declaration.end_entity_keyword'>
-<class 'vsg.token.entity_declaration.entity_simple_name'>
-<class 'vsg.token.entity_declaration.semicolon'>
+<class 'mhsg.token.entity_declaration.end_keyword'>
+<class 'mhsg.token.entity_declaration.end_entity_keyword'>
+<class 'mhsg.token.entity_declaration.entity_simple_name'>
+<class 'mhsg.token.entity_declaration.semicolon'>
 --------------------------------------------------------------------------------
 4 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 5 | entity FIFO is
-<class 'vsg.token.entity_declaration.entity_keyword'>
-<class 'vsg.token.entity_declaration.identifier'>
-<class 'vsg.token.entity_declaration.is_keyword'>
+<class 'mhsg.token.entity_declaration.entity_keyword'>
+<class 'mhsg.token.entity_declaration.identifier'>
+<class 'mhsg.token.entity_declaration.is_keyword'>
 --------------------------------------------------------------------------------
 6 | port (
-<class 'vsg.token.port_clause.port_keyword'>
-<class 'vsg.token.port_clause.open_parenthesis'>
+<class 'mhsg.token.port_clause.port_keyword'>
+<class 'mhsg.token.port_clause.open_parenthesis'>
 --------------------------------------------------------------------------------
 7 |     a : integer
-<class 'vsg.token.interface_unknown_declaration.identifier'>
-<class 'vsg.token.interface_unknown_declaration.colon'>
-<class 'vsg.token.type_mark.name'>
+<class 'mhsg.token.interface_unknown_declaration.identifier'>
+<class 'mhsg.token.interface_unknown_declaration.colon'>
+<class 'mhsg.token.type_mark.name'>
 --------------------------------------------------------------------------------
 8 | );
-<class 'vsg.token.port_clause.close_parenthesis'>
-<class 'vsg.token.port_clause.semicolon'>
+<class 'mhsg.token.port_clause.close_parenthesis'>
+<class 'mhsg.token.port_clause.semicolon'>
 --------------------------------------------------------------------------------
 9 | end entity FIFO;
-<class 'vsg.token.entity_declaration.end_keyword'>
-<class 'vsg.token.entity_declaration.end_entity_keyword'>
-<class 'vsg.token.entity_declaration.entity_simple_name'>
-<class 'vsg.token.entity_declaration.semicolon'>
+<class 'mhsg.token.entity_declaration.end_keyword'>
+<class 'mhsg.token.entity_declaration.end_entity_keyword'>
+<class 'mhsg.token.entity_declaration.entity_simple_name'>
+<class 'mhsg.token.entity_declaration.semicolon'>
 --------------------------------------------------------------------------------
 10 |
-<class 'vsg.parser.blank_line'>
+<class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
 11 | entity FIFO is
-<class 'vsg.token.entity_declaration.entity_keyword'>
-<class 'vsg.token.entity_declaration.identifier'>
-<class 'vsg.token.entity_declaration.is_keyword'>
+<class 'mhsg.token.entity_declaration.entity_keyword'>
+<class 'mhsg.token.entity_declaration.identifier'>
+<class 'mhsg.token.entity_declaration.is_keyword'>
 --------------------------------------------------------------------------------
 12 | port
-<class 'vsg.token.port_clause.port_keyword'>
+<class 'mhsg.token.port_clause.port_keyword'>
 --------------------------------------------------------------------------------
 13 | ( a : integer
-<class 'vsg.token.port_clause.open_parenthesis'>
-<class 'vsg.token.interface_unknown_declaration.identifier'>
-<class 'vsg.token.interface_unknown_declaration.colon'>
-<class 'vsg.token.type_mark.name'>
+<class 'mhsg.token.port_clause.open_parenthesis'>
+<class 'mhsg.token.interface_unknown_declaration.identifier'>
+<class 'mhsg.token.interface_unknown_declaration.colon'>
+<class 'mhsg.token.type_mark.name'>
 --------------------------------------------------------------------------------
 14 | )
-<class 'vsg.token.port_clause.close_parenthesis'>
+<class 'mhsg.token.port_clause.close_parenthesis'>
 --------------------------------------------------------------------------------
 15 | ;
-<class 'vsg.token.port_clause.semicolon'>
+<class 'mhsg.token.port_clause.semicolon'>
 --------------------------------------------------------------------------------
 16 | end entity FIFO;
-<class 'vsg.token.entity_declaration.end_keyword'>
-<class 'vsg.token.entity_declaration.end_entity_keyword'>
-<class 'vsg.token.entity_declaration.entity_simple_name'>
-<class 'vsg.token.entity_declaration.semicolon'>
+<class 'mhsg.token.entity_declaration.end_keyword'>
+<class 'mhsg.token.entity_declaration.end_entity_keyword'>
+<class 'mhsg.token.entity_declaration.entity_simple_name'>
+<class 'mhsg.token.entity_declaration.semicolon'>

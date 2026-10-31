@@ -1,7 +1,7 @@
 Continuous Integration Servers
 ------------------------------
 
-VSG supports options to facilitate integration with continuous integration severs such as Bamboo and GitLab.
+MHSG supports options to facilitate integration with continuous integration severs such as Bamboo and GitLab.
 The following command line options are available.
 
 +-------------------------------+-----------------------------------------------------------+
@@ -15,7 +15,7 @@ The following command line options are available.
 JUnit Report
 ############
 
-VSG can generate a report of an analysis in JUnit XML format.
+MHSG can generate a report of an analysis in JUnit XML format.
 This report will include the filename along with any errors detected.
 The rule which was violated, the line number where the violation occurred, and the proposed solution are provided.
 
@@ -45,7 +45,7 @@ An example JUnit XML file is shown below:
 Code Quality Report
 ###################
 
-VSG can generate a quality report of an analysis in JSON format.
+MHSG can generate a quality report of an analysis in JSON format.
 The JSON file generated follows a subset of the `Code Climate specification <https://github.com/codeclimate/platform/blob/master/spec/analyzers/SPEC.md#data-types>`_.
 The following items in the spec are populated.
 

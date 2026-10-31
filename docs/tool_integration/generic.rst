@@ -1,7 +1,7 @@
 Generic Tool Integration
 ------------------------
 
-VSG supports integration with other tools via several command line options.
+MHSG supports integration with other tools via several command line options.
 
 +-------------------------------+-------------------------------------------------+
 | --all_phases                  | Executes all phases without stopping if a       |
@@ -15,19 +15,19 @@ VSG supports integration with other tools via several command line options.
 --all_phases
 ############
 
-VSG has a concept of phases, where violations in one phase should be addressed before moving to the next phase.
+MHSG has a concept of phases, where violations in one phase should be addressed before moving to the next phase.
 The **--all_phases** option will run an analysis over all the phases.
 It will not stop if a violation has occurred.
 
-This option can be useful when integrating VSG into an editor that supports linters.
+This option can be useful when integrating MHSG into an editor that supports linters.
 It is important to note there are dependencies between some rules.
 If violations for a later phase are fixed before violations on an earlier phase, it could lead to reoccurrences of violations until the correct order is followed.
 
 --json
 ######
 
-The violations discovered by VSG can be saved in a JSON formatted file.
-This eases the transferring information from VSG to another tool.
+The violations discovered by MHSG can be saved in a JSON formatted file.
+This eases the transferring information from MHSG to another tool.
 
 Below is the basic format of the JSON file:
 
@@ -61,7 +61,7 @@ where:
 ##########
 
 Using this option with the **--fix** option will restrict the rules fixed base on a JSON file.
-This allows tools a finer granularity in instructing VSG how to fix a file.
+This allows tools a finer granularity in instructing MHSG how to fix a file.
 
 Below is the basic format of the JSON file:
 
@@ -87,4 +87,4 @@ where:
 
 It is important to note there are rules that will modify the line number at which errors occur.
 The number reported at the command line or via the **--json** option are after all rules have been applied.
-Therefore, when using **--fix_only** option the line numbers given in the JSON file may not line up with the line number while VSG is analyzing the file while it is being modified.
+Therefore, when using **--fix_only** option the line numbers given in the JSON file may not line up with the line number while MHSG is analyzing the file while it is being modified.

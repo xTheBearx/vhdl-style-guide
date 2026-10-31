@@ -3,7 +3,7 @@
 import pathlib
 import unittest
 
-import vsg.vhdlFile as vhdlFile
+import mhsg.vhdlFile as vhdlFile
 from tests import utils
 
 sTestInputFileName = "classification_test_input.vhd"

@@ -2,7 +2,7 @@
 
 import unittest
 
-from vsg import tokens
+from mhsg import tokens
 
 
 class testTokenMethod(unittest.TestCase):
