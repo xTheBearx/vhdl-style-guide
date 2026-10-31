@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import os
 import sys
+import traceback
 
 from mhsg import exceptions, parser, token
 from mhsg.token import (
@@ -465,7 +467,7 @@ def calculate_column(iToken, lObjects):
 
 
 def print_error_message(sToken, token, iToken, lObjects):
-    sFoundToken = lObjects[iToken].get_value()
+    sFoundToken = describe_found_token(iToken, lObjects)
     iLine = calculate_line_number(iToken, lObjects)
     iColumn = calculate_column(iToken, lObjects)
     sModuleName = extract_module_name(token)
@@ -481,6 +483,41 @@ def print_error_message(sToken, token, iToken, lObjects):
     raise exceptions.ClassifyError(sErrorMessage)
 
 
+def print_unmatched_close_parenthesis_error_message(iToken, lObjects):
+    iLine = calculate_line_number(iToken, lObjects)
+    iColumn = calculate_column(iToken, lObjects)
+
+    sErrorMessage = "\n"
+    sErrorMessage += f"Error: Closing parenthesis without an opening parenthesis @ Line {iLine}, Column {iColumn} in file None"
+    sErrorMessage += "\n"
+
+    raise exceptions.ClassifyError(sErrorMessage)
+
+
+def end_of_file_error(oIndexError, lObjects):
+    """
+    Builds the error for a file which ends before the construct being parsed is complete.
+    The construct is the innermost construct being classified.
+    """
+    sModuleName = "design_file"
+    for oFrame in traceback.extract_tb(oIndexError.__traceback__):
+        sPath = oFrame.filename.replace(os.sep, "/")
+        # detect functions only look ahead to recognize a construct, so report the construct being classified
+        if "/vhdlFile/classify/" in sPath and not sPath.endswith("/utils.py") and oFrame.name.startswith("classify"):
+            sModuleName = os.path.splitext(os.path.basename(sPath))[0]
+    iLine = len([oObject for oObject in lObjects if isinstance(oObject, parser.carriage_return)])
+
+    sErrorMessage = "\n"
+    sErrorMessage += f"Error: Unexpected end of file while parsing {sModuleName} @ Line {iLine} in file None"
+    sErrorMessage += "\n"
+    sErrorMessage += "       The file ends before the statement is complete."
+    sErrorMessage += "\n"
+    sErrorMessage += "       Check for a missing semicolon, closing parenthesis or end keyword."
+    sErrorMessage += "\n"
+
+    return exceptions.ClassifyError(sErrorMessage)
+
+
 def print_missing_error_message(lTokens, iToken, lObjects):
     iLine = calculate_line_number(iToken, lObjects)
 
@@ -493,6 +530,15 @@ def print_missing_error_message(lTokens, iToken, lObjects):
     sErrorMessage += "\n"
 
     raise exceptions.ClassifyError(sErrorMessage)
+
+
+def describe_found_token(iToken, lObjects):
+    if iToken >= len(lObjects) or all(isinstance(oObject, (parser.carriage_return, parser.blank_line, parser.whitespace)) for oObject in lObjects[iToken:]):
+        return "end of file"
+    sValue = lObjects[iToken].get_value()
+    if isinstance(lObjects[iToken], parser.carriage_return):
+        return "end of line"
+    return sValue
 
 
 def extract_module_name(token):
@@ -975,6 +1021,8 @@ def skip_tokens_until_matching_closing_paren(iToken, lObjects):
         if token_is_close_parenthesis(iCurrent, lObjects) and iCounter == 0:
             return iCurrent
         iCurrent += 1
+    # The file ends before the closing parenthesis
+    raise IndexError("matching closing parenthesis not found")
 
 
 def pragma_exists_in_tokens(lTokens, iStartIndex):

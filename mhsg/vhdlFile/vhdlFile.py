@@ -149,8 +149,14 @@ class vhdlFile:
             pass
 
         try:
-            design_file.tokenize(self.lAllObjects)
+            try:
+                design_file.tokenize(self.lAllObjects)
+                check_parentheses_are_balanced(self.lAllObjects)
+            except IndexError as e:
+                # The parser read past the last token, so the file ends in the middle of a construct
+                raise utils.end_of_file_error(e, self.lAllObjects) from e
         except exceptions.ClassifyError as e:
+            e.set_filename(self.filename)
             if self.commandLineArguments.force_fix and self.commandLineArguments.fix:
                 print(e.message)
                 print("")
@@ -522,6 +528,21 @@ def split_on_carriage_return(lObjects):
     return lReturn
 
 
+def check_parentheses_are_balanced(lTokens):
+    iDepth = 0
+    for iToken, oToken in enumerate(lTokens):
+        if isinstance(oToken, (parser.comment, delimited_comment.text)):
+            continue
+        # Some parentheses are only classified later, so they are recognized by their value
+        sValue = oToken.get_value()
+        if isinstance(oToken, parser.open_parenthesis) or sValue == "(":
+            iDepth += 1
+        elif isinstance(oToken, parser.close_parenthesis) or sValue == ")":
+            if iDepth == 0:
+                utils.print_unmatched_close_parenthesis_error_message(iToken, lTokens)
+            iDepth -= 1
+
+
 def post_token_assignments(lTokens):
     iParenId = 0
     lParenId = []
@@ -559,7 +580,9 @@ def post_token_assignments(lTokens):
 
             elif sValue == ")":
                 lTokens[iToken] = parser.close_parenthesis()
-                lTokens[iToken].iId = lParenId.pop()
+                if len(lParenId) > 0:
+                    # An unmatched parenthesis is only reached with --force_fix
+                    lTokens[iToken].iId = lParenId.pop()
 
             elif sValue == "'":
                 lTokens[iToken] = parser.tic(sValue)
@@ -589,6 +612,9 @@ def post_token_assignments(lTokens):
                 lParenId.append(iParenId)
                 oToken.iId = iParenId
             elif sValue == ")":
+                if len(lParenId) == 0:
+                    # Unmatched parenthesis, only reached with --force_fix
+                    continue
                 oToken.iId = lParenId.pop()
 
 
@@ -630,6 +656,9 @@ def set_aggregate_tokens(lTokens):
         if type(oToken) == parser.open_parenthesis:
             lOpenParens.append(iToken)
         if type(oToken) == parser.close_parenthesis:
+            if len(lOpenParens) == 0:
+                # Unmatched parenthesis, only reached with --force_fix
+                continue
             iIndex = lOpenParens.pop()
             if isinstance(lTokens[iIndex], token.aggregate.open_parenthesis):
                 iId = oToken.iId

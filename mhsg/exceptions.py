@@ -12,6 +12,13 @@ class ClassifyError(Exception):
     def __str__(self):
         return self.message
 
+    def set_filename(self, sFilename):
+        """
+        Names the file in the message, which is built before the file name is known.
+        """
+        if sFilename is not None:
+            self.message = self.message.replace(" in file None", " in file " + str(sFilename))
+
 
 class ConfigurationError(Exception):
     """
