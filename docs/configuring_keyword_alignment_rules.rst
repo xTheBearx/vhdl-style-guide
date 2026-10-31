@@ -94,6 +94,9 @@ There are several options to these rules:
 .. |aggregate_parens_ends_group__no| replace::
    :code:`no` = continue when an aggregate parenthesis is encountered.
 
+.. |aggregate_parens_ends_group__per_level| replace::
+   :code:`per_level` = align each aggregate on its own and continue the enclosing group after it.
+
 .. |ignore_single_line_aggregates| replace::
    :code:`ignore_single_line_aggregates`
 
@@ -155,7 +158,7 @@ There are several options to these rules:
    :code:`yes`, :code:`no`
 
 .. |values_apeg| replace::
-   :code:`yes`, :code:`no`
+   :code:`yes`, :code:`no`, :code:`per_level`
 
 .. |values_isla| replace::
    :code:`yes`, :code:`no`
@@ -202,6 +205,7 @@ There are several options to these rules:
 +--------------------------------------+----------------+----------+------------------------------------------------+
 | |aggregate_parens_ends_group|        | |values_apeg|  | |no|     | * |aggregate_parens_ends_group__yes|           |
 |                                      |                |          | * |aggregate_parens_ends_group__no|            |
+|                                      |                |          | * |aggregate_parens_ends_group__per_level|     |
 +--------------------------------------+----------------+----------+------------------------------------------------+
 | |ignore_single_line_aggregates|      | |values_isla|  | |no|     | * |ignore_single_line_aggregates__yes|         |
 |                                      |                |          | * |ignore_single_line_aggregates__no|          |
@@ -874,6 +878,50 @@ Any aggregate parenthesis encountered in the VHDL file will not end the group of
           AA     => 1,
           BB     => 2,
           CC     => 3
+        )
+      );
+
+Example: |aggregate_parens_ends_group| set to :code:`per_level`
+###############################################################
+
+Each aggregate is aligned on its own, and the group of lines enclosing it continues after it.
+This is the default for constant_400, signal_401, variable_401, concurrent_400 and sequential_400.
+
+.. NOTE:: With :code:`no`, an alignment token before a multi-line aggregate is aligned with the tokens inside it.
+   When the lines inside the aggregate are indented relative to its opening parenthesis, every :code:`--fix` then moves both further to the right.
+   :code:`per_level` and :code:`yes` do not have this problem.
+
+    **Violation**
+
+    .. code-block:: vhdl
+
+      constant my_constant : my_type := (
+        ENUM_1   => (
+          A      => 1,
+          B      => 2,
+          C      => 3
+        ),
+        ENUM_234 => (
+          AA     => 1,
+          BB     => 2,
+          CC     => 3
+        )
+      );
+
+    **Fix**
+
+    .. code-block:: vhdl
+
+      constant my_constant : my_type := (
+        ENUM_1   => (
+          A => 1,
+          B => 2,
+          C => 3
+        ),
+        ENUM_234 => (
+          AA => 1,
+          BB => 2,
+          CC => 3
         )
       );
 

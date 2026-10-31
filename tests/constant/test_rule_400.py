@@ -3,13 +3,18 @@
 import os
 import unittest
 
-from mhsg import vhdlFile
+from mhsg import config, rule_list, severity, vhdlFile
 from mhsg.rules import constant
 from tests import utils
 
 sTestDir = os.path.dirname(__file__)
 
 lFile, eError = vhdlFile.utils.read_vhdlfile(os.path.join(sTestDir, "rule_400_test_input.vhd"))
+
+
+lFile_nested_aggregates, eError_nested_aggregates = vhdlFile.utils.read_vhdlfile(
+    os.path.join(sTestDir, "rule_400_test_input.nested_aggregates.vhd"),
+)
 
 
 class test_rule(unittest.TestCase):
@@ -275,3 +280,54 @@ class test_rule(unittest.TestCase):
 
         oRule.analyze(self.oFile)
         self.assertEqual(oRule.violations, [])
+
+    def test_rule_400_per_level_is_default(self):
+        # Issue VSG 1502: each aggregate is aligned on its own, which keeps the outer associations aligned.
+        self.assertIsNone(eError_nested_aggregates)
+        oRule = constant.rule_400()
+        self.assertEqual(oRule.aggregate_parens_ends_group, "per_level")
+
+        oFile = vhdlFile.vhdlFile(lFile_nested_aggregates)
+        oRule.analyze(oFile)
+        self.assertEqual([], utils.extract_violation_lines_from_violation_object(oRule.violations))
+
+    def test_fix_rule_400_per_level_misaligned_outer_associations(self):
+        lMisaligned = [sLine.replace("c_control_reg_idx         =>", "c_control_reg_idx =>") for sLine in lFile_nested_aggregates]
+        oFile = vhdlFile.vhdlFile(lMisaligned)
+        oRule = constant.rule_400()
+
+        oRule.analyze(oFile)
+        self.assertEqual([12], utils.extract_violation_lines_from_violation_object(oRule.violations))
+
+        oRule = constant.rule_400()
+        oRule.fix(oFile)
+        self.assertEqual([""] + lFile_nested_aggregates, oFile.get_lines())
+
+    def test_fix_all_rules_converges_with_nested_aggregates(self):
+        # With the reporter's constant_016 configuration, every --fix used to move the code further right.
+        oConfig = config.config()
+        oConfig.dConfig = {
+            "rule": {
+                "constant_016": {
+                    "first_paren_new_line": "yes",
+                    "last_paren_new_line": "yes",
+                    "assign_on_single_line": "ignore",
+                    "open_paren_new_line": "yes",
+                    "close_paren_new_line": "yes",
+                },
+            },
+        }
+        oConfig.severity_list = severity.create_list({})
+
+        lLines = lFile_nested_aggregates
+        lResults = []
+        for iRun in range(2):
+            oFile = vhdlFile.vhdlFile(lLines)
+            oFile.set_indent_map(utils.read_indent_file())
+            oRuleList = rule_list.rule_list(oFile, oConfig.severity_list)
+            oRuleList.configure(oConfig)
+            oRuleList.fix()
+            lLines = oFile.get_lines()[1:]
+            lResults.append(lLines)
+
+        self.assertEqual(lResults[0], lResults[1])

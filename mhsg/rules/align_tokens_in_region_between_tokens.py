@@ -94,6 +94,7 @@ class align_tokens_in_region_between_tokens(alignment.Rule):
             bSkip = False
             oEndSkipToken = None
             dAnalysis = {}
+            lSuspendedAnalysis = []
             iIndex = 0
 
             if rules_utils.number_of_carriage_returns(lTokens) == 0:
@@ -173,6 +174,14 @@ class align_tokens_in_region_between_tokens(alignment.Rule):
 
                 elif self.ignore_single_line_aggregates and alignment_utils.is_single_line_aggregate(iIndex, lTokens):
                     iIndex = rules_utils.get_index_of_matching_close_paren(iIndex, lTokens)
+                elif self.aggregate_parens_ends_group == "per_level":
+                    # Each aggregate is aligned on its own, and the enclosing group continues after it
+                    if isinstance(oToken, token.aggregate.open_parenthesis):
+                        lSuspendedAnalysis.append(dAnalysis)
+                        dAnalysis = {}
+                    elif isinstance(oToken, token.aggregate.close_parenthesis) and len(lSuspendedAnalysis) > 0:
+                        alignment_utils.check_for_violations(self, dAnalysis, oFile)
+                        dAnalysis = lSuspendedAnalysis.pop()
                 elif self.aggregate_parens_ends_group:
                     if alignment_utils.check_for_aggregate_parens(iIndex, lTokens):
                         if not self.ignore_single_line_aggregates or not alignment_utils.is_single_line_aggregate(iToken, lTokens):
@@ -182,6 +191,8 @@ class align_tokens_in_region_between_tokens(alignment.Rule):
                 iIndex += 1
 
             alignment_utils.check_for_violations(self, dAnalysis, oFile)
+            for dSuspended in lSuspendedAnalysis:
+                alignment_utils.check_for_violations(self, dSuspended, oFile)
             dAnalysis = {}
 
     def _fix_violation(self, oViolation):
