@@ -72,11 +72,23 @@ In the previous example, the *process_016* and *process_018* are disabled for th
 *Process_018* is disabled for the second process.
 No rules are disabled for the third process.
 
+A rule can also be named by its alias, see :ref:`configuring-rule-aliases`.
+A rule disabled by its alias can be enabled again by its identifier, and the other way around.
+
+.. code-block:: vhdl
+
+   -- mhsg_off process_label_exists process_end_label_exists
+   process (write, read, full) is
+   begin
+     a <= write;
+   end process;
+   -- mhsg_on process_016 process_018
+
 Next Line Rule Exclusions
 -------------------------
 
 Rules can be disabled for a single line using the **mhsg_disable_next_line** tag.
-Multiple identifiers can be added to a single tag..
+Multiple identifiers or aliases can be added to a single tag.
 
 .. code-block:: vhdl
 
