@@ -750,6 +750,104 @@ This rule checks the semicolon is not on its own line.
        I_WIDTH : in integer
      );
 
+port_028
+########
+
+|phase_1| |disabled| |error| |structure|
+
+Alias: :code:`port_order`
+
+This rule checks the order of port declarations.
+
+.. NOTE:: This rule is disabled by default.
+
+The order is set by these options:
+
+* :code:`order`: the sort keys, most important first.
+  The keys are :code:`clock_reset`, :code:`direction` and :code:`name`.
+  The default is :code:`[clock_reset, direction, name]`.
+* :code:`clock_patterns` and :code:`reset_patterns`: name patterns, with :code:`*` as a wildcard, for the :code:`clock_reset` key.
+  Clocks come first, then resets, then the other ports.
+* :code:`direction_order`: the order of the modes for the :code:`direction` key.
+  The default is :code:`[in, inout, out, buffer, linkage]`.
+  A port without a mode is an :code:`in` port.
+* :code:`sort_within_sections`: :code:`yes` (default) sorts each group of ports separated by a blank line or comment line on its own.
+  :code:`no` sorts the whole port list.
+
+Names are compared ignoring case.
+A declaration with several names is sorted by its first name.
+
+By default the rule only reports the expected order.
+Moving the ports of an entity changes what a direct instantiation with positional association connects to.
+With :code:`move_ports` set to :code:`when_safe`, the ports of an entity are moved if no file of the run instantiates it directly with positional association.
+A top-level entity, which is not instantiated in the run, is always moved.
+Instances in files that are not part of the run are not checked, and input from stdin is never moved.
+Ports of component declarations are only reported, because moving them changes what positional instances of the component connect to.
+Ports are only moved if each declaration is on a line of its own; comments at the end of a line move with their port.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   port (
+     data_o : out std_logic;
+     clk    : in  std_logic;
+     a_i    : in  std_logic
+   );
+
+**Fix**
+
+.. code-block:: vhdl
+
+   port (
+     clk    : in  std_logic;
+     a_i    : in  std_logic;
+     data_o : out std_logic
+   );
+
+port_029
+########
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`port_section_comment`
+
+This rule checks each group of ports has a section comment above it.
+
+.. NOTE:: This rule is disabled by default.
+
+A group of ports is separated from the next group by a blank line or a comment line.
+At least one of the comment lines directly above the first port of each group must match the :code:`section_pattern` option, a regular expression.
+The default pattern accepts any comment.
+For example, :code:`'^-- [A-Z]'` requires a comment starting with a capital letter.
+
+This rule only reports groups without a section comment, because it cannot know their names.
+port_028 sorts the ports within each section.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   port (
+     clk : in  std_logic;
+     rst : in  std_logic;
+
+     data_o : out std_logic
+   );
+
+**Fix**
+
+.. code-block:: vhdl
+
+   port (
+     -- Clocks and resets
+     clk : in  std_logic;
+     rst : in  std_logic;
+
+     -- Data
+     data_o : out std_logic
+   );
+
 port_100
 ########
 
