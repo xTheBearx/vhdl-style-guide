@@ -16,9 +16,8 @@ projects:
     url: https://github.com/OSVVM/OSVVM.git
     commit: 716d751566b4fb6479f69c38cc01790744c911b7
     known_issues:
-      # #72: VHDL-2019 generic array types
-      DynamicVectorGenericPkg.vhd: PARSE_ERROR
       # #73: record_type_definition_007 reports the protected body semicolon
+      DynamicVectorGenericPkg.vhd: NOT_IDEMPOTENT
       deprecated/DynamicVectorPkg_IntV_c.vhd: NOT_IDEMPOTENT
       deprecated/DynamicVectorPkg_slv_c.vhd: NOT_IDEMPOTENT
       # #74: continuation lines are aligned before the := moves

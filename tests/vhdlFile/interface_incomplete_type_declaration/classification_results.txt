@@ -138,3 +138,175 @@
 <class 'mhsg.token.architecture_body.end_architecture_keyword'>
 <class 'mhsg.token.architecture_body.architecture_simple_name'>
 <class 'mhsg.token.architecture_body.semicolon'>
+--------------------------------------------------------------------------------
+33 |
+<class 'mhsg.parser.blank_line'>
+--------------------------------------------------------------------------------
+34 | -- VHDL-2019 incomplete type definitions
+<class 'mhsg.parser.comment'>
+--------------------------------------------------------------------------------
+35 |
+<class 'mhsg.parser.blank_line'>
+--------------------------------------------------------------------------------
+36 | package p is
+<class 'mhsg.token.package_declaration.package_keyword'>
+<class 'mhsg.token.package_declaration.identifier'>
+<class 'mhsg.token.package_declaration.is_keyword'>
+--------------------------------------------------------------------------------
+37 |   generic (
+<class 'mhsg.token.generic_clause.generic_keyword'>
+<class 'mhsg.token.generic_clause.open_parenthesis'>
+--------------------------------------------------------------------------------
+38 |     type t_private is private;
+<class 'mhsg.token.interface_incomplete_type_declaration.type_keyword'>
+<class 'mhsg.token.interface_incomplete_type_declaration.identifier'>
+<class 'mhsg.token.interface_incomplete_type_declaration.is_keyword'>
+<class 'mhsg.token.incomplete_type_definition.private_keyword'>
+<class 'mhsg.token.interface_list.semicolon'>
+--------------------------------------------------------------------------------
+39 |     type t_scalar is <>;
+<class 'mhsg.token.interface_incomplete_type_declaration.type_keyword'>
+<class 'mhsg.token.interface_incomplete_type_declaration.identifier'>
+<class 'mhsg.token.interface_incomplete_type_declaration.is_keyword'>
+<class 'mhsg.token.incomplete_type_definition.undefined_range'>
+<class 'mhsg.token.interface_list.semicolon'>
+--------------------------------------------------------------------------------
+40 |     type t_discrete is (<>);
+<class 'mhsg.token.interface_incomplete_type_declaration.type_keyword'>
+<class 'mhsg.token.interface_incomplete_type_declaration.identifier'>
+<class 'mhsg.token.interface_incomplete_type_declaration.is_keyword'>
+<class 'mhsg.token.incomplete_type_definition.open_parenthesis'>
+<class 'mhsg.token.incomplete_type_definition.undefined_range'>
+<class 'mhsg.token.incomplete_type_definition.close_parenthesis'>
+<class 'mhsg.token.interface_list.semicolon'>
+--------------------------------------------------------------------------------
+41 |     type t_integer is range <>;
+<class 'mhsg.token.interface_incomplete_type_declaration.type_keyword'>
+<class 'mhsg.token.interface_incomplete_type_declaration.identifier'>
+<class 'mhsg.token.interface_incomplete_type_declaration.is_keyword'>
+<class 'mhsg.token.incomplete_type_definition.range_keyword'>
+<class 'mhsg.token.incomplete_type_definition.undefined_range'>
+<class 'mhsg.token.interface_list.semicolon'>
+--------------------------------------------------------------------------------
+42 |     type t_physical is units <>;
+<class 'mhsg.token.interface_incomplete_type_declaration.type_keyword'>
+<class 'mhsg.token.interface_incomplete_type_declaration.identifier'>
+<class 'mhsg.token.interface_incomplete_type_declaration.is_keyword'>
+<class 'mhsg.token.incomplete_type_definition.units_keyword'>
+<class 'mhsg.token.incomplete_type_definition.undefined_range'>
+<class 'mhsg.token.interface_list.semicolon'>
+--------------------------------------------------------------------------------
+43 |     type t_floating is range <> . <>;
+<class 'mhsg.token.interface_incomplete_type_declaration.type_keyword'>
+<class 'mhsg.token.interface_incomplete_type_declaration.identifier'>
+<class 'mhsg.token.interface_incomplete_type_declaration.is_keyword'>
+<class 'mhsg.token.incomplete_type_definition.range_keyword'>
+<class 'mhsg.token.incomplete_type_definition.undefined_range'>
+<class 'mhsg.token.incomplete_type_definition.dot'>
+<class 'mhsg.token.incomplete_type_definition.undefined_range'>
+<class 'mhsg.token.interface_list.semicolon'>
+--------------------------------------------------------------------------------
+44 |     type t_array is array (type is range <>) of type is private;
+<class 'mhsg.token.interface_incomplete_type_declaration.type_keyword'>
+<class 'mhsg.token.interface_incomplete_type_declaration.identifier'>
+<class 'mhsg.token.interface_incomplete_type_declaration.is_keyword'>
+<class 'mhsg.token.incomplete_type_definition.array_keyword'>
+<class 'mhsg.token.incomplete_type_definition.open_parenthesis'>
+<class 'mhsg.token.unspecified_type_indication.type_keyword'>
+<class 'mhsg.token.unspecified_type_indication.is_keyword'>
+<class 'mhsg.token.incomplete_type_definition.range_keyword'>
+<class 'mhsg.token.incomplete_type_definition.undefined_range'>
+<class 'mhsg.token.incomplete_type_definition.close_parenthesis'>
+<class 'mhsg.token.incomplete_type_definition.of_keyword'>
+<class 'mhsg.token.unspecified_type_indication.type_keyword'>
+<class 'mhsg.token.unspecified_type_indication.is_keyword'>
+<class 'mhsg.token.incomplete_type_definition.private_keyword'>
+<class 'mhsg.token.interface_list.semicolon'>
+--------------------------------------------------------------------------------
+45 |     type t_array2 is array (natural range <>, type is (<>)) of std_logic_vector;
+<class 'mhsg.token.interface_incomplete_type_declaration.type_keyword'>
+<class 'mhsg.token.interface_incomplete_type_declaration.identifier'>
+<class 'mhsg.token.interface_incomplete_type_declaration.is_keyword'>
+<class 'mhsg.token.incomplete_type_definition.array_keyword'>
+<class 'mhsg.token.incomplete_type_definition.open_parenthesis'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.index_subtype_definition.range_keyword'>
+<class 'mhsg.token.index_subtype_definition.undefined_range'>
+<class 'mhsg.token.incomplete_type_definition.comma'>
+<class 'mhsg.token.unspecified_type_indication.type_keyword'>
+<class 'mhsg.token.unspecified_type_indication.is_keyword'>
+<class 'mhsg.token.incomplete_type_definition.open_parenthesis'>
+<class 'mhsg.token.incomplete_type_definition.undefined_range'>
+<class 'mhsg.token.incomplete_type_definition.close_parenthesis'>
+<class 'mhsg.token.incomplete_type_definition.close_parenthesis'>
+<class 'mhsg.token.incomplete_type_definition.of_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
+--------------------------------------------------------------------------------
+46 |     type t_array3 is array (natural range 0 to 7) of integer;
+<class 'mhsg.token.interface_incomplete_type_declaration.type_keyword'>
+<class 'mhsg.token.interface_incomplete_type_declaration.identifier'>
+<class 'mhsg.token.interface_incomplete_type_declaration.is_keyword'>
+<class 'mhsg.token.incomplete_type_definition.array_keyword'>
+<class 'mhsg.token.incomplete_type_definition.open_parenthesis'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.range_constraint.range_keyword'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.direction.to'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.incomplete_type_definition.close_parenthesis'>
+<class 'mhsg.token.incomplete_type_definition.of_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
+--------------------------------------------------------------------------------
+47 |     type t_access is access type is private;
+<class 'mhsg.token.interface_incomplete_type_declaration.type_keyword'>
+<class 'mhsg.token.interface_incomplete_type_declaration.identifier'>
+<class 'mhsg.token.interface_incomplete_type_declaration.is_keyword'>
+<class 'mhsg.token.incomplete_type_definition.access_keyword'>
+<class 'mhsg.token.unspecified_type_indication.type_keyword'>
+<class 'mhsg.token.unspecified_type_indication.is_keyword'>
+<class 'mhsg.token.incomplete_type_definition.private_keyword'>
+<class 'mhsg.token.interface_list.semicolon'>
+--------------------------------------------------------------------------------
+48 |     type t_access2 is access integer;
+<class 'mhsg.token.interface_incomplete_type_declaration.type_keyword'>
+<class 'mhsg.token.interface_incomplete_type_declaration.identifier'>
+<class 'mhsg.token.interface_incomplete_type_declaration.is_keyword'>
+<class 'mhsg.token.incomplete_type_definition.access_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
+--------------------------------------------------------------------------------
+49 |     type t_file is file of type is private;
+<class 'mhsg.token.interface_incomplete_type_declaration.type_keyword'>
+<class 'mhsg.token.interface_incomplete_type_declaration.identifier'>
+<class 'mhsg.token.interface_incomplete_type_declaration.is_keyword'>
+<class 'mhsg.token.incomplete_type_definition.file_keyword'>
+<class 'mhsg.token.incomplete_type_definition.of_keyword'>
+<class 'mhsg.token.unspecified_type_indication.type_keyword'>
+<class 'mhsg.token.unspecified_type_indication.is_keyword'>
+<class 'mhsg.token.incomplete_type_definition.private_keyword'>
+<class 'mhsg.token.interface_list.semicolon'>
+--------------------------------------------------------------------------------
+50 |     type t_file2 is file of string;
+<class 'mhsg.token.interface_incomplete_type_declaration.type_keyword'>
+<class 'mhsg.token.interface_incomplete_type_declaration.identifier'>
+<class 'mhsg.token.interface_incomplete_type_declaration.is_keyword'>
+<class 'mhsg.token.incomplete_type_definition.file_keyword'>
+<class 'mhsg.token.incomplete_type_definition.of_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
+--------------------------------------------------------------------------------
+51 |     type t_plain
+<class 'mhsg.token.interface_incomplete_type_declaration.type_keyword'>
+<class 'mhsg.token.interface_incomplete_type_declaration.identifier'>
+--------------------------------------------------------------------------------
+52 |   );
+<class 'mhsg.token.generic_clause.close_parenthesis'>
+<class 'mhsg.token.generic_clause.semicolon'>
+--------------------------------------------------------------------------------
+53 | end package p;
+<class 'mhsg.token.package_declaration.end_keyword'>
+<class 'mhsg.token.package_declaration.end_package_keyword'>
+<class 'mhsg.token.package_declaration.end_package_simple_name'>
+<class 'mhsg.token.package_declaration.semicolon'>
