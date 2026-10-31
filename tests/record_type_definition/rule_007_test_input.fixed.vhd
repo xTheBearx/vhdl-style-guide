@@ -18,3 +18,19 @@ architecture rtl of fifo is
 begin
 
 end architecture rtl;
+
+package body pkg is
+
+  type t_protected is protected body
+
+    type t_record_a is record
+      a : std_logic;
+    end record t_record_a;
+
+    type t_record_b is record
+      b : std_logic;
+    end record t_record_b;
+
+  end protected body t_protected ;
+
+end package body pkg;
