@@ -4,6 +4,7 @@ import re
 
 from mhsg import violation
 from mhsg.rule_group import naming
+from mhsg.rules import package_scope
 
 
 class token_suffix(naming.Rule):
@@ -31,6 +32,8 @@ class token_suffix(naming.Rule):
         self.lTokens = lTokens
         self.suffixes = None
         self.configuration.append("suffixes")
+        # Set by the rule list when a companion rule checks names in packages, see package_scope.py
+        self.package_scope = package_scope.ALL
         self.fixable = False
         self.disable = True
         self.exceptions = []
@@ -38,7 +41,7 @@ class token_suffix(naming.Rule):
         self.regexp_exceptions = []
 
     def _get_tokens_of_interest(self, oFile):
-        return oFile.get_tokens_matching(self.lTokens)
+        return package_scope.filter_tokens_of_interest(oFile.get_tokens_matching(self.lTokens), oFile, self.package_scope)
 
     def _analyze(self, lToi):
         self.generate_regexp_exceptions()

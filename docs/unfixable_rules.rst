@@ -94,6 +94,8 @@ With multiple options available, the user is required to make the decision.
 * `block_601 <block_rules.html#block-601>`_
 * `constant_015 <constant_rules.html#constant-015>`_
 * `constant_600 <constant_rules.html#constant-600>`_
+* `constant_601 <constant_rules.html#constant-601>`_
+* `constant_602 <constant_rules.html#constant-602>`_
 * `function_600 <function_rules.html#function-600>`_
 * `function_601 <function_rules.html#function-601>`_
 * `generate_017 <generate_rules.html#generate-017>`_
@@ -136,7 +138,11 @@ With multiple options available, the user is required to make the decision.
 * `signal_600 <signal_rules.html#signal-600>`_
 * `subtype_004 <subtype_rules.html#subtype-004>`_
 * `subtype_600 <subtype_rules.html#subtype-600>`_
+* `subtype_601 <subtype_rules.html#subtype-601>`_
+* `subtype_602 <subtype_rules.html#subtype-602>`_
 * `type_015 <type_rules.html#type-015>`_
 * `type_600 <type_rules.html#type-600>`_
+* `type_601 <type_rules.html#type-601>`_
+* `type_602 <type_rules.html#type-602>`_
 * `variable_012 <variable_rules.html#variable-012>`_
 * `variable_600 <variable_rules.html#variable-600>`_

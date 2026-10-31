@@ -59,6 +59,26 @@ Exceptions to enforcing prefixes and suffixes can be given using the :code:`exce
 The exceptions option provides a list of keywords, that when matched, prevents the rule from validating the prefix or suffix.
 The keywords are treated as case insensitive and support regular expressions.
 
+Different Prefixes and Suffixes in Packages
+###########################################
+
+Constants, types and subtypes declared in packages often follow a different naming convention than local declarations.
+The rules for these elements in packages, for example constant_601 and constant_602, check names declared directly in a package or package body.
+Names declared inside a subprogram in a package body are checked by the general rules.
+
+When one of these package rules is enabled, the general rule for the same element no longer checks names in packages.
+For example, this configuration requires the prefix *pc_* for constants in packages and *c_* for all other constants:
+
+.. code-block:: yaml
+
+    rule :
+        constant_015:
+            disable: false
+            prefixes: ['c_']
+        constant_601:
+            disable: false
+            prefixes: ['pc_']
+
 Rules Enforcing Prefixes and Suffixes
 #####################################
 
@@ -68,6 +88,8 @@ Rules Enforcing Prefixes and Suffixes
 | Block Label                      | `block_601 <block_rules.html#block-601>`_                                                                                           | `block_600 <block_rules.html#block-600>`_                                                                                           |
 +----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------+
 | Constant Identifier              | `constant_015 <constant_rules.html#constant-015>`_                                                                                  | `constant_600 <constant_rules.html#constant-600>`_                                                                                  |
++----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------+
+| Constant Identifier in Package   | `constant_601 <constant_rules.html#constant-601>`_                                                                                  | `constant_602 <constant_rules.html#constant-602>`_                                                                                  |
 +----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------+
 | Function Designator              | `function_600 <function_rules.html#function-600>`_                                                                                  | `function_601 <function_rules.html#function-601>`_                                                                                  |
 +----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------+
@@ -99,7 +121,11 @@ Rules Enforcing Prefixes and Suffixes
 +----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------+
 | Subtype Identifier               | `subtype_004 <subtype_rules.html#subtype-004>`_                                                                                     | `subtype_600 <subtype_rules.html#subtype-600>`_                                                                                     |
 +----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------+
+| Subtype Identifier in Package    | `subtype_601 <subtype_rules.html#subtype-601>`_                                                                                     | `subtype_602 <subtype_rules.html#subtype-602>`_                                                                                     |
++----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------+
 | Type Identifier                  | `type_definition_015 <type_rules.html#type-015>`_                                                                                   | `type_definition_600 <type_rules.html#type-600>`_                                                                                   |
++----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------+
+| Type Identifier in Package       | `type_601 <type_rules.html#type-601>`_                                                                                              | `type_602 <type_rules.html#type-602>`_                                                                                              |
 +----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------+
 | Variable Identifier              | `variable_012 <variable_rules.html#variable-012>`_                                                                                  | `variable_600 <variable_rules.html#variable-600>`_                                                                                  |
 +----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------+

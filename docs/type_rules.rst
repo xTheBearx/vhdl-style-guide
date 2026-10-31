@@ -569,3 +569,73 @@ The default new type suffix is *_t*.
 .. code-block:: vhdl
 
    type my_type_t is range -5 to 5 ;
+
+type_601
+########
+
+|phase_7| |disabled| |error| |unfixable| |naming|
+
+This rule checks for valid prefixes on type identifiers declared in packages and package bodies.
+Types declared inside subprograms are not checked by this rule.
+The default prefix is *t_*.
+
+When this rule is enabled, rule type_015 no longer checks types declared in packages, so packages and other code can use different prefixes.
+
+|configuring_prefix_and_suffix_rules_link|
+
+**Violation**
+
+.. code-block:: vhdl
+
+   package my_pkg is
+
+     type state is (idle, run);
+
+   end package my_pkg;
+
+**Fix**
+
+With :code:`prefixes = ['pt_']`:
+
+.. code-block:: vhdl
+
+   package my_pkg is
+
+     type pt_state is (idle, run);
+
+   end package my_pkg;
+
+type_602
+########
+
+|phase_7| |disabled| |error| |unfixable| |naming|
+
+This rule checks for valid suffixes on type identifiers declared in packages and package bodies.
+Types declared inside subprograms are not checked by this rule.
+The default suffix is *_t*.
+
+When this rule is enabled, rule type_600 no longer checks types declared in packages, so packages and other code can use different suffixes.
+
+|configuring_prefix_and_suffix_rules_link|
+
+**Violation**
+
+.. code-block:: vhdl
+
+   package my_pkg is
+
+     type state is (idle, run);
+
+   end package my_pkg;
+
+**Fix**
+
+With :code:`suffixes = ['_pt']`:
+
+.. code-block:: vhdl
+
+   package my_pkg is
+
+     type state_pt is (idle, run);
+
+   end package my_pkg;
