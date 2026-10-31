@@ -21,3 +21,6 @@ release_notes.txt
 
 # Ignore external repos used for tests
 tests/external_repos/repos
+
+# Real world check
+.real_world_cache/
