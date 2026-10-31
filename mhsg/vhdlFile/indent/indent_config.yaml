@@ -531,6 +531,13 @@ indent:
             semicolon:
                 token : '-1'
                 after : '-1'
+        subprogram_kind:
+            procedure_keyword:
+                token : current
+                after : current
+            function_keyword:
+                token : current
+                after : current
         subtype_declaration:
             subtype_keyword:
                 token : current

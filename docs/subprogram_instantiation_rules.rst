@@ -208,6 +208,109 @@ This rule checks for a single space between **new** keyword and the uninstantiat
 
    procedure my_proc is new my_generic_proc
 
+subprogram_instantiation_200
+############################
+
+|phase_3| |error| |blank_line|
+
+This rule checks for blank lines or comments above the **procedure** or **function** keyword of a subprogram instantiation.
+
+|configuring_previous_line_rules_link|
+
+The default style is :code:`no_code`.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   constant c_width : integer := 8;
+   function my_func is new my_generic_func
+
+**Fix**
+
+.. code-block:: vhdl
+
+   constant c_width : integer := 8;
+
+   function my_func is new my_generic_func
+
+subprogram_instantiation_201
+############################
+
+|phase_3| |error| |blank_line|
+
+This rule checks for blank lines below the subprogram instantiation.
+
+|configuring_blank_lines_link|
+
+The default style is :code:`no_blank_line`.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   function my_func is new my_generic_func
+
+     generic map (
+
+**Fix**
+
+.. code-block:: vhdl
+
+   function my_func is new my_generic_func
+     generic map (
+
+subprogram_instantiation_202
+############################
+
+|phase_3| |error| |blank_line|
+
+This rule checks for a blank line below the end of the subprogram instantiation.
+
+|configuring_blank_lines_link|
+
+**Violation**
+
+.. code-block:: vhdl
+
+   function my_func is new my_generic_func
+     generic map (
+       test => 2
+     );
+   constant c_width : integer := 8;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   function my_func is new my_generic_func
+     generic map (
+       test => 2
+     );
+
+   constant c_width : integer := 8;
+
+subprogram_instantiation_300
+############################
+
+|phase_4| |error| |indent|
+
+This rule checks the indent of the subprogram instantiation.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   constant c_width : integer := 8;
+       function my_func is new my_generic_func
+
+**Fix**
+
+.. code-block:: vhdl
+
+   constant c_width : integer := 8;
+   function my_func is new my_generic_func
+
 subprogram_instantiation_500
 ############################
 

@@ -270,5 +270,6 @@ Rules Enforcing Previous Lines
 * `procedure_200 <procedure_rules.html#procedure-200>`_
 * `process_015 <process_rules.html#process-015>`_
 * `record_type_definition_201 <record_type_definition_rules.html#record-type-definition-201>`_
+* `subprogram_instantiation_200 <subprogram_instantiation_rules.html#subprogram-instantiation-200>`_
 * `subtype_201 <subtype_rules.html#subtype-201>`_
 * `type_010 <type_rules.html#type-010>`_
