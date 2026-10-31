@@ -17,6 +17,16 @@ lPairs.append([token.signal_declaration.colon, token.signal_declaration.semicolo
 lPairs.append([token.variable_declaration.colon, token.variable_declaration.semicolon])
 lPairs.append([token.process_statement.open_parenthesis, token.process_statement.close_parenthesis])
 lPairs.append([token.process_statement.begin_keyword, token.process_statement.end_keyword])
+lPairs.append([token.concurrent_selected_signal_assignment.with_keyword, token.concurrent_selected_signal_assignment.semicolon])
+
+lSubprogramLocalTokens = lInterfaceTokens.copy()
+lSubprogramLocalTokens.append(token.variable_declaration.identifier)
+lSubprogramLocalTokens.append(token.constant_declaration.identifier)
+lSubprogramLocalTokens.append(token.signal_declaration.identifier)
+lSubprogramLocalTokens.append(token.file_declaration.identifier)
+lSubprogramLocalTokens.append(token.alias_declaration.alias_designator)
+lSubprogramLocalTokens.append(token.function_specification.designator)
+lSubprogramLocalTokens.append(token.procedure_specification.designator)
 
 oStartToken = token.architecture_body.entity_name
 oEndToken = token.architecture_body.end_keyword
@@ -62,10 +72,17 @@ class consistent_interface_token_case(case.Rule):
             except KeyError:
                 continue
 
-            lToi = extract_token_pairs(oArchitecture, lPairs)
+            lSubprogramRegions = get_subprogram_body_regions(oArchitecture.get_tokens())
+            lToi = extract_token_pairs(oArchitecture, lPairs, lSubprogramRegions)
             lToi.extend(extract_component_instantiation_actual_parts(oArchitecture, self.map_aspect_token))
             for oToi in lToi:
                 validate_interface_name_in_token_list(self, lArchitectureInterfaces, oToi, self.interface_string)
+
+            # Names declared by a subprogram, such as parameters, shadow interfaces with the same name
+            for iStart, iEnd in lSubprogramRegions:
+                oToi = oArchitecture.extract_tokens(iStart, iEnd)
+                lLocalNames = get_subprogram_local_names(oToi)
+                validate_interface_name_in_token_list(self, lArchitectureInterfaces, oToi, self.interface_string, lLocalNames)
 
     def _fix_violation(self, oViolation):
         lTokens = oViolation.get_tokens()
@@ -131,7 +148,7 @@ def no_interfaces_detected(lInterfaces):
     return False
 
 
-def validate_interface_name_in_token_list(self, lMyInterfaces, oToi, sInterface):
+def validate_interface_name_in_token_list(self, lMyInterfaces, oToi, sInterface, lExcludedNames=None):
     lMyInterfacesLower = []
     dInterfaceMap = {}
     for sInterfaceName in lMyInterfaces:
@@ -141,6 +158,8 @@ def validate_interface_name_in_token_list(self, lMyInterfaces, oToi, sInterface)
     lTokens = oToi.get_tokens()
     for iToken, oToken in enumerate(lTokens):
         sToken = oToken.get_value()
+        if lExcludedNames is not None and sToken.lower() in lExcludedNames:
+            continue
         if interface_case_mismatch(sToken, lMyInterfaces, lMyInterfacesLower):
             oViolation = create_violation(sInterface, sToken, iToken, dInterfaceMap, oToi)
             self.add_violation(oViolation)
@@ -156,59 +175,24 @@ def create_violation(sInterface, sToken, iToken, dInterfaceMap, oToi):
     return oViolation
 
 
-def skip_code(oToken, bSkip):
-    bReturn = bSkip
-
-    if not bSkip:
-        return start_of_skip_region_found(oToken, bReturn)
-
-    return end_of_skip_region_found(oToken, bReturn)
-
-
-def end_of_skip_region_found(oToken, bReturn):
-    if isinstance(oToken, token.subprogram_body.semicolon):
-        return False
-    return True
-
-
-def start_of_skip_region_found(oToken, bReturn):
-    bReturn = function_keyword_found(oToken, bReturn)
-    bReturn = procedure_keyword_found(oToken, bReturn)
-    return bReturn
-
-
-def function_keyword_found(oToken, bReturn):
-    if isinstance(oToken, token.function_specification.function_keyword):
-        return True
-    return bReturn
-
-
-def procedure_keyword_found(oToken, bReturn):
-    if isinstance(oToken, token.procedure_specification.procedure_keyword):
-        return True
-    return bReturn
-
-
 def interface_case_mismatch(sToken, lInterfaces, lInterfacesLower):
     if sToken.lower() in lInterfacesLower and sToken not in lInterfaces:
         return True
     return False
 
 
-def extract_token_pairs(oArchitecture, lPairs):
+def extract_token_pairs(oArchitecture, lPairs, lSubprogramRegions=None):
     lReturn = []
     for lPair in lPairs:
-        lReturn.extend(extract_token_pair(oArchitecture, lPair))
+        lReturn.extend(extract_token_pair(oArchitecture, lPair, lSubprogramRegions))
     return lReturn
 
 
-def extract_token_pair(oArchitecture, lPair):
+def extract_token_pair(oArchitecture, lPair, lSubprogramRegions=None):
     lReturn = []
-    bSkip = False
     iStart = None
     for iToken, oToken in enumerate(oArchitecture.get_tokens()):
-        bSkip = skip_code(oToken, bSkip)
-        if bSkip:
+        if index_in_regions(iToken, lSubprogramRegions):
             continue
         iStart = set_start_index(iToken, oToken, lPair, iStart)
         lReturn.extend(extract_tokens_if_end_is_found(oArchitecture, iToken, oToken, lPair, iStart))
@@ -284,3 +268,41 @@ def is_token_in_token_type_list(oToken, lTokenTypes):
         if isinstance(oToken, oTokenType):
             return True
     return False
+
+
+def get_subprogram_body_regions(lTokens):
+    """
+    Returns the start and end indexes of the outermost subprogram bodies.
+    Subprogram declarations without a body are not included.
+    """
+    lReturn = []
+    lStack = []
+    for iToken, oToken in enumerate(lTokens):
+        if isinstance(oToken, (token.function_specification.function_keyword, token.procedure_specification.procedure_keyword)):
+            lStack.append(iToken)
+        elif isinstance(oToken, token.subprogram_declaration.semicolon):
+            if len(lStack) > 0:
+                lStack.pop()
+        elif isinstance(oToken, token.subprogram_body.semicolon):
+            if len(lStack) > 0:
+                iStart = lStack.pop()
+                if len(lStack) == 0:
+                    lReturn.append([iStart, iToken])
+    return lReturn
+
+
+def index_in_regions(iIndex, lRegions):
+    if lRegions is None:
+        return False
+    for iStart, iEnd in lRegions:
+        if iStart <= iIndex <= iEnd:
+            return True
+    return False
+
+
+def get_subprogram_local_names(oToi):
+    lReturn = []
+    for oToken in oToi.get_tokens():
+        if isinstance(oToken, tuple(lSubprogramLocalTokens)):
+            lReturn.append(oToken.get_value().lower())
+    return lReturn
