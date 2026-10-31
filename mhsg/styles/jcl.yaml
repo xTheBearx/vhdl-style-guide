@@ -1,5 +1,7 @@
 # The name must be a single word
 name : jcl
+# A short summary shown in the --style help
+description : Coding style preferred by Jeremiah Leary
 # Define the rules for this style
 rule :
   # Set Uppercase rules

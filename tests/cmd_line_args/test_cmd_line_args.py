@@ -96,3 +96,15 @@ class test(unittest.TestCase):
         lActual.sort()
 
         self.assertEqual(lActual, lExpected)
+
+    def test_predefined_style_descriptions(self):
+        dActual = cmd_line_args.get_predefined_style_descriptions()
+
+        self.assertEqual(sorted(dActual), ["indent_only", "jcl"])
+        for sName, sDescription in dActual.items():
+            self.assertNotEqual(sDescription, "", sName + " has no description")
+
+    def test_style_help_lists_descriptions(self):
+        sActual = cmd_line_args.get_style_help()
+
+        self.assertEqual(sActual, "Use predefined style: indent_only (Only applies indent rules), jcl (Coding style preferred by Jeremiah Leary)")

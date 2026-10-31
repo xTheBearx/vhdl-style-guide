@@ -50,7 +50,9 @@ The command line tool can be invoked with:
      -rc RULE_CONFIGURATION, --rule_configuration RULE_CONFIGURATION
                            Display configuration of a rule
      --style {indent_only,jcl}
-                           Use predefined style
+                           Use predefined style: indent_only (Only applies
+                           indent rules), jcl (Coding style preferred by
+                           Jeremiah Leary)
      -v, --version         Displays version information
      -ap, --all_phases     Do not stop when a violation is detected.
      --fix_only FIX_ONLY   Restrict fixing via JSON file.
