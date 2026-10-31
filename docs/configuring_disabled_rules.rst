@@ -67,6 +67,7 @@ Rules Disabled by Default
 * `instantiation_601 <instantiation_rules.html#instantiation-601>`_
 * `interface_incomplete_type_declaration_600 <../interface_incomplete_type_declaration_rules.html#interface-incomplete-type-declaration-600>`_
 * `interface_incomplete_type_declaration_601 <../interface_incomplete_type_declaration_rules.html#interface-incomplete-type-declaration-601>`_
+* `interface_list_001 <interface_list_rules.html#interface-list-001>`_
 * `length_004 <length_rules.html#length-004>`_
 * `library_012 <library_rules.html#library-012>`_
 * `loop_statement_006 <loop_statement_rules.html#loop-statement-006>`_
