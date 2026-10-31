@@ -31,3 +31,18 @@ length_003
 This rule checks the length of a process statement.
 
 |configuring_length_rules_link|
+
+length_004
+##########
+
+|phase_7| |disabled| |error| |unfixable| |length|
+
+This rule checks the length of the line against a second, usually longer, limit.
+
+Together with :ref:`length_001` it allows staged line lengths.
+For example, length_001 can report lines over 80 characters as warnings, while this rule reports lines over 120 characters as errors.
+
+This rule is disabled by default.
+Its default length is 120 and its default severity is Error.
+
+|configuring_length_rules_link|
