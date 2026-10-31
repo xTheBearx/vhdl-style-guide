@@ -36,3 +36,41 @@ class test_positional_entity_instantiations(unittest.TestCase):
                 oFile.write(sCode)
             lReturn = project_index.collect_positional_entity_instantiations([sFile, os.path.join(sDirectory, "missing.vhd")])
         self.assertEqual({"positional", "mixed", "bound"}, lReturn)
+
+
+sDeclarations = """
+entity sub is
+  generic (G : integer := 4);
+  port (q : out std_logic; signal clk, en : in std_logic);  -- port (x : in bit)
+end entity sub;
+
+architecture a of top is
+  component comp
+    port (z : out bit; a : in bit);
+  end component;
+begin
+  u : component comp port map (a => b, z => c);
+end architecture a;
+
+entity no_ports is
+end entity no_ports;
+"""
+
+
+class test_port_orders(unittest.TestCase):
+    def test_get_port_orders(self):
+        self.assertEqual(
+            [("entity", "sub", ("q", "clk", "en")), ("component", "comp", ("z", "a"))],
+            project_index.get_port_orders(sDeclarations),
+        )
+
+    def test_collect_port_orders_conflicting_declarations(self):
+        with tempfile.TemporaryDirectory() as sDirectory:
+            lFiles = []
+            for sName, sCode in [("a.vhd", sDeclarations), ("b.vhd", "entity sub is port (clk : in bit); end entity sub;")]:
+                lFiles.append(os.path.join(sDirectory, sName))
+                with open(lFiles[-1], "w", encoding="utf-8") as oFile:
+                    oFile.write(sCode)
+            dReturn = project_index.collect_port_orders(lFiles)
+        self.assertIsNone(dReturn["entity"]["sub"])
+        self.assertEqual(("z", "a"), dReturn["component"]["comp"])

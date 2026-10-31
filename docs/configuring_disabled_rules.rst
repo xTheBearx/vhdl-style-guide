@@ -96,6 +96,7 @@ Rules Disabled by Default
 * `port_607 <port_rules.html#port-607>`_
 * `port_608 <port_rules.html#port-608>`_
 * `port_609 <port_rules.html#port-609>`_
+* `port_map_012 <port_map_rules.html#port-map-012>`_
 * `pragma_100 <pragma_rules.html#pragma-100>`_
 * `process_029 <process_rules.html#process-029>`_
 * `process_036 <process_rules.html#process-036>`_

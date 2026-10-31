@@ -166,3 +166,51 @@ def split_top_level(sText):
             iStart = iIndex + 1
     lReturn.append(sText[iStart:])
     return [sElement for sElement in lReturn if sElement.strip()]
+
+
+reEntityOrComponent = re.compile(r"\b(entity|component)\s+([a-z][a-z0-9_]*)\s+is\b|\bcomponent\s+([a-z][a-z0-9_]*)\b(?!\s*port\s+map)", re.IGNORECASE)
+rePort = re.compile(r"\bport\s*\(", re.IGNORECASE)
+reEnd = re.compile(r"\bend\b", re.IGNORECASE)
+
+
+def collect_port_orders(lFilenames):
+    """
+    Returns {"entity": {name: ports}, "component": {name: ports}} with the lower case port
+    names of each entity and component declaration in the files, in declaration order.
+    A name declared more than once with different ports maps to None, since it is not
+    known which declaration an instance uses.
+    """
+    dReturn = {"entity": {}, "component": {}}
+    for sText in read_files(lFilenames):
+        for sKind, sName, lPorts in get_port_orders(sText):
+            dKind = dReturn[sKind]
+            if sName in dKind and dKind[sName] != lPorts:
+                dKind[sName] = None
+            else:
+                dKind[sName] = lPorts
+    return dReturn
+
+
+def get_port_orders(sText):
+    """Returns (kind, name, ports) for each entity and component declaration in the text."""
+    sText = reComment.sub(" ", sText)
+    sText = reString.sub('""', sText)
+    lReturn = []
+    for oMatch in reEntityOrComponent.finditer(sText):
+        if oMatch.group(1) is not None:
+            sKind, sName = oMatch.group(1).lower(), oMatch.group(2).lower()
+        else:
+            # "component name" without "is"; an instance "u : component name port map" is skipped above
+            sKind, sName = "component", oMatch.group(3).lower()
+        oEnd = reEnd.search(sText, oMatch.end())
+        iEnd = oEnd.start() if oEnd is not None else len(sText)
+        oPort = rePort.search(sText, oMatch.end(), iEnd)
+        if oPort is None:
+            continue
+        lPorts = []
+        for sDeclaration in get_parenthesized(sText, oPort.end()).split(";"):
+            if ":" in sDeclaration:
+                sNames = re.sub(r"^\s*signal\b", "", sDeclaration.split(":")[0], flags=re.IGNORECASE)
+                lPorts.extend(sName.strip().lower() for sName in sNames.split(",") if sName.strip())
+        lReturn.append((sKind, sName, tuple(lPorts)))
+    return lReturn
