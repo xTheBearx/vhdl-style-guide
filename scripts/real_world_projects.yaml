@@ -20,32 +20,7 @@ projects:
   - name: uvvm
     url: https://github.com/UVVM/UVVM.git
     commit: 825072572dbf2d6079c9ca07a55964271b724664
-    known_issues:
-      # #74: continuation lines are aligned before the := moves
-      bitvis_vip_avalon_mm/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
-      bitvis_vip_avalon_st/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
-      bitvis_vip_axi/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
-      bitvis_vip_axilite/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
-      bitvis_vip_axistream/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
-      bitvis_vip_gmii/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
-      bitvis_vip_gpio/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
-      bitvis_vip_i2c/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
-      bitvis_vip_rgmii/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
-      bitvis_vip_sbi/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
-      bitvis_vip_spi/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
-      bitvis_vip_uart/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
-      bitvis_vip_wishbone/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
-      external_vip_apb/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
-      uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd: NOT_IDEMPOTENT
-      # #75: constant_400 puts the padding in the wrong place
-      bitvis_vip_ethernet/tb/ethernet_sbi_gmii_demo_th.vhd: NOT_IDEMPOTENT
-      bitvis_vip_ethernet/tb/maintenance_tb/ethernet_th.vhd: NOT_IDEMPOTENT
-      bitvis_vip_scoreboard/src/generic_sb_support_pkg.vhd: NOT_IDEMPOTENT
-      bitvis_vip_scoreboard/tb/maintenance_tb/generic_sb_record_tb.vhd: NOT_IDEMPOTENT
-      bitvis_vip_scoreboard/tb/maintenance_tb/generic_sb_slv_tb.vhd: NOT_IDEMPOTENT
-      bitvis_vip_scoreboard/tb/sb_uart_sbi_demo_tb.vhd: NOT_IDEMPOTENT
-      bitvis_vip_spi/tb/maintenance_tb/spi_vvc_tb.vhd: NOT_IDEMPOTENT
-      uvvm_util/src/adaptations_pkg.vhd: NOT_IDEMPOTENT
+    known_issues: {}
 
   - name: vunit
     url: https://github.com/VUnit/vunit.git

@@ -3,7 +3,7 @@
 from mhsg.vhdlFile.extract import tokens
 
 
-def get_tokens_bounded_by_unless_between(oStart, oEnd, lUnless, lAllObjects, oTokenMap):
+def get_tokens_bounded_by_unless_between(oStart, oEnd, lUnless, lAllObjects, oTokenMap, bIncludeTillBeginningOfLine=False):
     lReturn = []
 
     lStart, lEnd = oTokenMap.get_token_pair_indexes(oStart, oEnd)
@@ -11,6 +11,9 @@ def get_tokens_bounded_by_unless_between(oStart, oEnd, lUnless, lAllObjects, oTo
     lUnlessStart, lUnlessEnd = get_unless_token_indexes(lUnless, oTokenMap)
 
     lNewStart, lNewEnd = filter_token_pairs(lStart, lEnd, lUnlessStart, lUnlessEnd)
+
+    if bIncludeTillBeginningOfLine:
+        lNewStart = [beginning_of_line(iStart, oTokenMap) for iStart in lNewStart]
 
     for iStart, iEnd, iIndex in zip(lNewStart, lNewEnd, lEnd):
         lTemp = lAllObjects[iStart : iEnd + 1]
@@ -20,6 +23,13 @@ def get_tokens_bounded_by_unless_between(oStart, oEnd, lUnless, lAllObjects, oTo
         lReturn.append(oToi)
 
     return lReturn
+
+
+def beginning_of_line(iIndex, oTokenMap):
+    iCarriageReturn = oTokenMap.get_index_of_carriage_return_before_index(iIndex)
+    if iCarriageReturn is None or iCarriageReturn >= iIndex:
+        return 0
+    return iCarriageReturn + 1
 
 
 def get_unless_token_indexes(lUnless, oTokenMap):

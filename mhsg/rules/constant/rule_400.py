@@ -43,6 +43,9 @@ class rule_400(Rule):
 
     def __init__(self):
         super().__init__(lAlign, oStartToken, oEndToken, lUnless)
+        self.bIncludeTillBeginningOfLine = True
+        # After the indent of multiline arrays (subphase 2) and continuation lines (subphase 4, earlier rule name)
+        self.subphase = 4
         self.solution = "Align => ."
         self.configuration.remove("if_control_statements_ends_group")
         self.configuration.remove("case_control_statements_ends_group")
