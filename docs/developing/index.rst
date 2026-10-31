@@ -10,3 +10,4 @@ Before developing for MHSG, familiarize yourself with the **Theory of Operation*
    helpful_tools
    adding_a_rule
    prepare_for_pull_request
+   real_world_check
