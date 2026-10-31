@@ -15,10 +15,7 @@ projects:
   - name: osvvm
     url: https://github.com/OSVVM/OSVVM.git
     commit: 716d751566b4fb6479f69c38cc01790744c911b7
-    known_issues:
-      # #74: continuation lines are aligned before the := moves
-      CoveragePkg.vhd: NOT_IDEMPOTENT
-      deprecated/CoveragePkg_xilinx.vhd: NOT_IDEMPOTENT
+    known_issues: {}
 
   - name: uvvm
     url: https://github.com/UVVM/UVVM.git
