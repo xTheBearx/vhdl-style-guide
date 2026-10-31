@@ -77,6 +77,12 @@ architecture RTL of FIFO is
     end procedure;
   end package body;
 
+  -- VHDL-2019 allows a semicolon after the last interface element
+  procedure proc (
+    a : in integer;
+    b : out integer;
+  );
+
 begin
 
 

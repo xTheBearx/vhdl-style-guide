@@ -76,3 +76,42 @@
 <class 'mhsg.token.entity_declaration.end_entity_keyword'>
 <class 'mhsg.token.entity_declaration.entity_simple_name'>
 <class 'mhsg.token.entity_declaration.semicolon'>
+--------------------------------------------------------------------------------
+17 |
+<class 'mhsg.parser.blank_line'>
+--------------------------------------------------------------------------------
+18 | -- VHDL-2019 allows a semicolon after the last interface element
+<class 'mhsg.parser.comment'>
+--------------------------------------------------------------------------------
+19 | entity FIFO is
+<class 'mhsg.token.entity_declaration.entity_keyword'>
+<class 'mhsg.token.entity_declaration.identifier'>
+<class 'mhsg.token.entity_declaration.is_keyword'>
+--------------------------------------------------------------------------------
+20 |   port (
+<class 'mhsg.token.port_clause.port_keyword'>
+<class 'mhsg.token.port_clause.open_parenthesis'>
+--------------------------------------------------------------------------------
+21 |     a : in integer;
+<class 'mhsg.token.interface_unknown_declaration.identifier'>
+<class 'mhsg.token.interface_unknown_declaration.colon'>
+<class 'mhsg.token.mode.in_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
+--------------------------------------------------------------------------------
+22 |     b : out integer;
+<class 'mhsg.token.interface_unknown_declaration.identifier'>
+<class 'mhsg.token.interface_unknown_declaration.colon'>
+<class 'mhsg.token.mode.out_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
+--------------------------------------------------------------------------------
+23 |   );
+<class 'mhsg.token.port_clause.close_parenthesis'>
+<class 'mhsg.token.port_clause.semicolon'>
+--------------------------------------------------------------------------------
+24 | end entity FIFO;
+<class 'mhsg.token.entity_declaration.end_keyword'>
+<class 'mhsg.token.entity_declaration.end_entity_keyword'>
+<class 'mhsg.token.entity_declaration.entity_simple_name'>
+<class 'mhsg.token.entity_declaration.semicolon'>

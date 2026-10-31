@@ -76,3 +76,36 @@
 <class 'mhsg.token.entity_declaration.end_entity_keyword'>
 <class 'mhsg.token.entity_declaration.entity_simple_name'>
 <class 'mhsg.token.entity_declaration.semicolon'>
+--------------------------------------------------------------------------------
+17 |
+<class 'mhsg.parser.blank_line'>
+--------------------------------------------------------------------------------
+18 | -- VHDL-2019 allows a semicolon after the last interface element
+<class 'mhsg.parser.comment'>
+--------------------------------------------------------------------------------
+19 | entity FIFO is
+<class 'mhsg.token.entity_declaration.entity_keyword'>
+<class 'mhsg.token.entity_declaration.identifier'>
+<class 'mhsg.token.entity_declaration.is_keyword'>
+--------------------------------------------------------------------------------
+20 |   generic (
+<class 'mhsg.token.generic_clause.generic_keyword'>
+<class 'mhsg.token.generic_clause.open_parenthesis'>
+--------------------------------------------------------------------------------
+21 |     G_A : integer := 1;
+<class 'mhsg.token.interface_unknown_declaration.identifier'>
+<class 'mhsg.token.interface_unknown_declaration.colon'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.simple_mode_indication.assignment'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.interface_list.semicolon'>
+--------------------------------------------------------------------------------
+22 |   );
+<class 'mhsg.token.generic_clause.close_parenthesis'>
+<class 'mhsg.token.generic_clause.semicolon'>
+--------------------------------------------------------------------------------
+23 | end entity FIFO;
+<class 'mhsg.token.entity_declaration.end_keyword'>
+<class 'mhsg.token.entity_declaration.end_entity_keyword'>
+<class 'mhsg.token.entity_declaration.entity_simple_name'>
+<class 'mhsg.token.entity_declaration.semicolon'>
