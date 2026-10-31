@@ -69,6 +69,7 @@ Rules Enforcing Alignment Rule Group
 * `protected_type_body_402 <../protected_type_body_rules.html#protected-type-body-402>`_
 * `report_statement_400 <../report_statement_rules.html#report-statement-400>`_
 * `selected_assignment_400 <../selected_assignment_rules.html#selected-assignment-400>`_
+* `selected_assignment_401 <../selected_assignment_rules.html#selected-assignment-401>`_
 * `sequential_004 <../sequential_rules.html#sequential-004>`_
 * `sequential_400 <../sequential_rules.html#sequential-400>`_
 * `sequential_401 <../sequential_rules.html#sequential-401>`_

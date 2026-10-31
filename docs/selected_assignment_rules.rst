@@ -571,6 +571,36 @@ This rule checks the alignment of multiline selected assignment statements.
      "0001" when 1,
      "1111" when others;
 
+selected_assignment_401
+#######################
+
+|phase_5| |disabled| |error| |alignment|
+
+This rule checks the **when** keywords are aligned in selected assignments.
+
+.. NOTE:: This rule conflicts with selected_assignment_106, which requires a single space before **when**.
+   Set :code:`number_of_spaces` of selected_assignment_106 to :code:`'>=1'` when enabling this rule.
+
+|configuring_keyword_alignment_rules_link|
+
+**Violation**
+
+.. code-block:: vhdl
+
+   with my_expression select my_output <=
+     c_first when 1,
+     c_second when 2,
+     (others => '0') when others;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   with my_expression select my_output <=
+     c_first         when 1,
+     c_second        when 2,
+     (others => '0') when others;
+
 selected_assignment_500
 #######################
 
