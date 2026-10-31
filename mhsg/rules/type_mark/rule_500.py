@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import consistent_case_utils as cc_utils, utils
+from mhsg.rules import utils
 from mhsg.rules.token_case_with_prefix_suffix import token_case_with_prefix_suffix
 from mhsg.vhdlFile.extract import tokens
 
@@ -35,29 +35,22 @@ class rule_500(token_case_with_prefix_suffix):
 
     def __init__(self):
         super().__init__(lTokens)
-        self.bIncludeDeclarativePartNames = True
-        self.bIncludeArchitectureBodyDeclarationsInSubprogramBody = True
-        self.bIncludeEntityDeclarations = True
         self.groups.append("case::name")
 
     def _get_tokens_of_interest(self, oFile):
+        """
+        Returns the type marks which do not refer to a type or subtype declared in the file.
+        Type marks of types declared in the file are checked by type_014 and subtype_002, which follow the declaration.
+        """
         self.case_exceptions_lower = utils.lowercase_list(self.case_exceptions)
-        lAllDicts = cc_utils.get_token_of_interest_dicts(
-            oFile,
-            lTokens,
-            lDeclarationTokens,
-            self.bIncludeDeclarativePartNames,
-            self.bIncludeArchitectureBodyDeclarationsInSubprogramBody,
-            self.bIncludeEntityDeclarations,
-        )
-        lReturn = []
+        lAllTokens = oFile.lAllObjects
+        oDeclarations = oFile.get_declarations()
         oTokenMap = oFile.get_token_map()
-        for dDict in lAllDicts:
-            lLocalDeclarationIdentifiers = [oFile.lAllObjects[iIdentifier].get_value() for iIdentifier in dDict["identifiers"]]
-            for iName in dDict["names"]:
-                iLine = oTokenMap.get_line_number_of_index(iName)
-                sName = oFile.lAllObjects[iName].get_value()
-                if sName not in lLocalDeclarationIdentifiers:
-                    lReturn.append(tokens.New(iName, iLine, [oFile.lAllObjects[iName]]))
-
+        lReturn = []
+        for iName in oTokenMap.get_token_indexes(token.type_mark.name):
+            oName = lAllTokens[iName]
+            lFound = oDeclarations.find(oName.get_value(), iName)
+            if len(lFound) > 0 and isinstance(lAllTokens[lFound[0].index], tuple(lDeclarationTokens)):
+                continue
+            lReturn.append(tokens.New(iName, oTokenMap.get_line_number_of_index(iName), [oName]))
         return lReturn

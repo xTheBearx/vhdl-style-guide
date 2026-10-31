@@ -290,6 +290,7 @@ class vhdlFile:
         self.configuration = configuration
         self.commandLineArguments = commandLineArguments
         self.sEncoding = sEncoding
+        self._oDeclarations = None
         self._processFile()
 
     def _build_objects(self, bIgnoreCodeTagOffRegions):
@@ -374,10 +375,20 @@ class vhdlFile:
     def get_declarations(self):
         """
         Returns the declarations in the file and the scopes they are visible in.
+        The list is built once and kept until the tokens change.
         """
-        return declarations.DeclarationList(self.lAllObjects)
+        if getattr(self, "_oDeclarations", None) is None:
+            self._oDeclarations = declarations.DeclarationList(self.lAllObjects)
+        return self._oDeclarations
+
+    def clear_declarations(self):
+        """
+        Discards the declaration list, for example after names were changed in place.
+        """
+        self._oDeclarations = None
 
     def update(self, lUpdates, bUpdateMap):
+        self.clear_declarations()
         if len(lUpdates) == 0:
             return
         # Updates are applied from the end of the file backwards, so earlier start indexes stay valid
@@ -425,9 +436,11 @@ class vhdlFile:
 
     def fix_blank_lines(self):
         self.lAllObjects = utils.fix_blank_lines(self.lAllObjects)
+        self.clear_declarations()
 
     def fix_trailing_whitespace(self):
         self.lAllObjects = utils.fix_trailing_whitespace(self.lAllObjects)
+        self.clear_declarations()
 
     def set_token_indent(self):
         set_token_indent(self.dIndentMap, self.lAllObjects)

@@ -78,11 +78,10 @@ class token_prefix(naming.Rule):
             return
         self.analyze(oFile)
         self._filter_out_fix_only_violations(dFixOnly)
-        lScopes = rename_local_declaration.get_scopes(oFile)
         for oViolation in self.violations:
             iIndex = oViolation.oTokens.get_start_index()
             oToken = oFile.lAllObjects[iIndex]
-            if rename_local_declaration.rename(oFile, iIndex, self._new_name(oToken), lScopes):
+            if rename_local_declaration.rename(oFile, iIndex, self._new_name(oToken)):
                 self.had_violations = True
         self.clear_violations()
 

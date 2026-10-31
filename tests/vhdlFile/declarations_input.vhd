@@ -12,6 +12,8 @@ package body pkg is
 
 end package body pkg;
 
+use work.pkg.all;
+
 entity e is
   generic (
     g_depth : integer := 4
@@ -54,3 +56,9 @@ begin
   end generate gen;
 
 end architecture rtl;
+
+package other is
+
+  constant c_other : t_state;
+
+end package other;

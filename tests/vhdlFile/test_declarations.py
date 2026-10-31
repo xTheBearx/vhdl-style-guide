@@ -35,6 +35,7 @@ class test_declarations(unittest.TestCase):
             ("process", None),
             ("loop", None),
             ("generate", None),
+            ("package", "other"),
         ]
         self.assertEqual(lActual, lExpected)
 
@@ -58,8 +59,16 @@ class test_declarations(unittest.TestCase):
     def test_package_body_sees_its_package(self):
         self.assertEqual(self.find_kinds("c_width", index_of(self.oFile, "c_width", 1)), [("constant", "package")])
 
-    def test_packages_in_the_file_are_visible(self):
+    def test_packages_in_the_file_are_visible_after_a_use_clause(self):
         self.assertEqual(self.find_kinds("t_state", index_of(self.oFile, "t_state", 1)), [("type", "package")])
+
+    def test_use_clause_applies_to_the_architecture_of_the_entity(self):
+        # The use clause comes before entity e, so architecture rtl of e sees pkg as well
+        self.assertEqual(self.find_kinds("t_state", index_of(self.oFile, "t_state", 1)), [("type", "package")])
+
+    def test_packages_in_the_file_are_not_visible_without_a_use_clause(self):
+        # The use clause of entity e does not apply to package other, which comes later
+        self.assertEqual(self.find_kinds("t_state", index_of(self.oFile, "t_state", 2)), [])
 
     def test_inner_declaration_hides_outer(self):
         # valid inside the function is the variable, outside it is the signal
