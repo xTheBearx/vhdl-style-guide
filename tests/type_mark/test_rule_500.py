@@ -23,6 +23,10 @@ lFile_block_declarations, eError_block_declarations = vhdlFile.utils.read_vhdlfi
     os.path.join(sTestDir, "rule_500_test_input.block_declarations.vhd"),
 )
 
+lFile_package, eError_package = vhdlFile.utils.read_vhdlfile(
+    os.path.join(sTestDir, "rule_500_test_input.package.vhd"),
+)
+
 lFile_indexed_name_in_range, eError_indexed_name_in_range = vhdlFile.utils.read_vhdlfile(
     os.path.join(sTestDir, "rule_500_test_input.indexed_name_in_range.vhd"),
 )
@@ -126,6 +130,15 @@ class test_rule(unittest.TestCase):
         self.oFile = vhdlFile.vhdlFile(lFile_block_declarations)
         oRule.analyze(self.oFile)
         self.assertEqual(utils.extract_violation_lines_from_violation_object(oRule.violations), [13])
+
+    def test_rule_500_package(self):
+        # Issue VSG 1384: type marks in packages and package bodies were not checked.
+        self.assertIsNone(eError_package)
+
+        oRule = type_mark.rule_500()
+        self.oFile = vhdlFile.vhdlFile(lFile_package)
+        oRule.analyze(self.oFile)
+        self.assertEqual(utils.extract_violation_lines_from_violation_object(oRule.violations), [7, 9, 16])
 
     def test_rule_500_regex_exceptions(self):
         # Issue VSG 1436: names matching a regex exception are not checked.
