@@ -57,7 +57,7 @@ def parse_command_line_arguments():
     parser.add_argument("-b", "--backup", default=False, action="store_true", help="Creates a copy of input file for comparison with fixed version.")
     parser.add_argument("-oc", "--output_configuration", default=None, action="store", help="Write configuration to file name.")
     parser.add_argument("-rc", "--rule_configuration", default=None, action="store", help="Display configuration of a rule")
-    parser.add_argument("--style", action="store", default=None, choices=get_predefined_styles(), help="Use predefined style")
+    parser.add_argument("--style", action="store", default=None, choices=get_predefined_styles(), help=get_style_help())
     parser.add_argument("-v", "--version", default=False, action="store_true", help="Displays version information")
     parser.add_argument("-ap", "--all_phases", default=False, action="store_true", help="Do not stop when a violation is detected.")
     parser.add_argument("--fix_only", action="store", help="Restrict fixing via JSON file.")
@@ -113,15 +113,40 @@ def get_predefined_styles():
 
     Returns : (list of strings)
     """
-    lReturn = []
+    return sorted(get_predefined_style_descriptions())
+
+
+def get_predefined_style_descriptions():
+    """
+    Reads all predefined styles and returns their descriptions.
+
+    Parameters : None
+
+    Returns : (dictionary of style name to description)
+    """
+    dReturn = {}
     sStylePath = os.path.join(os.path.dirname(__file__), "styles")
     lStyles = os.listdir(sStylePath)
     for sStyle in lStyles:
         if sStyle.endswith(".yaml"):
             with open(os.path.join(sStylePath, sStyle)) as yaml_file:
                 tempConfiguration = yaml.safe_load(yaml_file)
-            lReturn.append(tempConfiguration["name"])
-    return sorted(lReturn)
+            dReturn[tempConfiguration["name"]] = tempConfiguration.get("description", "")
+    return dReturn
+
+
+def get_style_help():
+    """
+    Returns the help text for the --style option, listing each predefined style with its description.
+    """
+    dDescriptions = get_predefined_style_descriptions()
+    lStyles = []
+    for sName in sorted(dDescriptions):
+        if dDescriptions[sName]:
+            lStyles.append(sName + " (" + dDescriptions[sName] + ")")
+        else:
+            lStyles.append(sName)
+    return "Use predefined style: " + ", ".join(lStyles)
 
 
 def validate_backup_argument(args_):

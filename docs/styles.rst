@@ -4,7 +4,8 @@ Styles
 MHSG supports several predefined styles.
 They can be used with the **--style** command line option.
 
-The table below lists the built in styles available
+The table below lists the built in styles available.
+The same descriptions are shown by :code:`mhsg --help` for the **--style** option.
 
 +---------------+--------------------------------------------+
 | Style         | Description                                |
