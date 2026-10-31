@@ -49,6 +49,32 @@ This rule checks for a single space after the **of** keyword.
 
    type t_u_array is array(1 downto 0) of unsigned;
 
+constrained_array_definition_102
+################################
+
+|phase_2| |error| |whitespace|
+
+Alias: :code:`constrained_array_definition_space_after_array_keyword`
+
+This rule checks for whitespace after the **array** keyword.
+The default of no whitespace matches unbounded_array_definition_100.
+
+|configuring_whitespace_rules_link|
+
+**Violation**
+
+.. code-block:: vhdl
+
+   type t_u_array is array (1 downto 0) of unsigned;
+   type t_u_array is array     (1 downto 0) of unsigned;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   type t_u_array is array(1 downto 0) of unsigned;
+   type t_u_array is array(1 downto 0) of unsigned;
+
 constrained_array_definition_500
 ################################
 
