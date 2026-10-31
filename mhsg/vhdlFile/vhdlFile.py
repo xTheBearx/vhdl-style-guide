@@ -524,8 +524,15 @@ class vhdlFile:
     def get_tokens_bounded_by_tokens_if_token_is_between_them(self, oLeft, oRight, oToken):
         return get_tokens_bounded_by_tokens_if_token_is_between_them(oLeft, oRight, oToken, self.lAllObjects, self.oTokenMap)
 
-    def get_tokens_bounded_by_unless_between(self, oLeft, oRight, lUnless):
-        return get_tokens_bounded_by_unless_between(oLeft, oRight, lUnless, self.lAllObjects, self.oTokenMap)
+    def get_tokens_bounded_by_unless_between(self, oLeft, oRight, lUnless, bIncludeTillBeginningOfLine=False):
+        return get_tokens_bounded_by_unless_between(
+            oLeft,
+            oRight,
+            lUnless,
+            self.lAllObjects,
+            self.oTokenMap,
+            bIncludeTillBeginningOfLine=bIncludeTillBeginningOfLine,
+        )
 
     def get_tokens_at_beginning_of_line_matching(self, lTokens):
         return get_tokens_at_beginning_of_line_matching(lTokens, self.lAllObjects, self.oTokenMap)

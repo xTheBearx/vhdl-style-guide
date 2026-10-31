@@ -36,4 +36,9 @@ class align_tokens_in_region_between_tokens_unless_between_tokens(Rule):
         self.lUnless = lUnless
 
     def _get_tokens_of_interest(self, oFile):
-        return oFile.get_tokens_bounded_by_unless_between(self.left_token, self.right_token, self.lUnless)
+        return oFile.get_tokens_bounded_by_unless_between(
+            self.left_token,
+            self.right_token,
+            self.lUnless,
+            bIncludeTillBeginningOfLine=self.bIncludeTillBeginningOfLine,
+        )
