@@ -166,13 +166,19 @@ def fetch_project(dProject, sCache):
     return sDirectory
 
 
-def find_vhdl_files(sDirectory):
+def relative_path(sFileName, sDirectory):
+    return os.path.relpath(sFileName, sDirectory).replace(os.sep, "/")
+
+
+def find_vhdl_files(sDirectory, lExclude=()):
+    """Returns the VHDL files below a directory, except the excluded paths."""
     lFiles = []
     for sRoot, lDirectories, lFileNames in os.walk(sDirectory):
         lDirectories[:] = sorted(s for s in lDirectories if s != ".git")
         for sFileName in sorted(lFileNames):
-            if sFileName.lower().endswith(EXTENSIONS):
-                lFiles.append(os.path.join(sRoot, sFileName))
+            sPath = os.path.join(sRoot, sFileName)
+            if sFileName.lower().endswith(EXTENSIONS) and relative_path(sPath, sDirectory) not in lExclude:
+                lFiles.append(sPath)
     return lFiles
 
 
@@ -214,13 +220,13 @@ def load_projects(sFileName, lNames):
 
 def run_project(dProject, sCache, iJobs, iTimeout, bVerbose):
     sDirectory = fetch_project(dProject, sCache)
-    lFiles = find_vhdl_files(sDirectory)
+    lFiles = find_vhdl_files(sDirectory, dProject.get("exclude") or [])
     print(f"{dProject['name']}: checking {len(lFiles)} files", flush=True)
     lResults = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=iJobs) as oPool:
         dFutures = {oPool.submit(check_file_isolated, sFile, iTimeout): sFile for sFile in lFiles}
         for oFuture in concurrent.futures.as_completed(dFutures):
-            sRelative = os.path.relpath(dFutures[oFuture], sDirectory).replace(os.sep, "/")
+            sRelative = relative_path(dFutures[oFuture], sDirectory)
             sStatus, sDetails = oFuture.result()
             lResults.append({"file": sRelative, "status": sStatus, "details": sDetails})
             if bVerbose or sStatus != OK:

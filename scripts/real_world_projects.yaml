@@ -7,6 +7,9 @@
 # it is currently expected to have.  A file listed here does not fail the run
 # while it keeps that status.  Each entry should name the fork issue that
 # tracks it.
+#
+# exclude lists files that are not checked, for example files that are not
+# complete VHDL on their own.
 
 projects:
   - name: osvvm
@@ -22,26 +25,108 @@ projects:
       # #73: record_type_definition_007 reports the protected body semicolon
       deprecated/DynamicVectorPkg_IntV_c.vhd: NOT_IDEMPOTENT
       deprecated/DynamicVectorPkg_slv_c.vhd: NOT_IDEMPOTENT
-      # #74: multiline alignment of a constant initialiser shifts again (and #73)
+      # #74: continuation lines are aligned before the := moves
       CoveragePkg.vhd: NOT_IDEMPOTENT
       deprecated/CoveragePkg_xilinx.vhd: NOT_IDEMPOTENT
 
   - name: uvvm
     url: https://github.com/UVVM/UVVM.git
     commit: 825072572dbf2d6079c9ca07a55964271b724664
-    known_issues: {}
+    known_issues:
+      # #74: continuation lines are aligned before the := moves
+      bitvis_vip_avalon_mm/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
+      bitvis_vip_avalon_st/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
+      bitvis_vip_axi/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
+      bitvis_vip_axilite/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
+      bitvis_vip_axistream/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
+      bitvis_vip_gmii/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
+      bitvis_vip_gpio/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
+      bitvis_vip_i2c/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
+      bitvis_vip_rgmii/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
+      bitvis_vip_sbi/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
+      bitvis_vip_spi/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
+      bitvis_vip_uart/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
+      bitvis_vip_wishbone/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
+      external_vip_apb/src/vvc_methods_pkg.vhd: NOT_IDEMPOTENT
+      uvvm_vvc_framework/src_target_dependent/td_vvc_framework_common_methods_pkg.vhd: NOT_IDEMPOTENT
+      # #75: constant_400 puts the padding in the wrong place
+      bitvis_vip_ethernet/tb/ethernet_sbi_gmii_demo_th.vhd: NOT_IDEMPOTENT
+      bitvis_vip_ethernet/tb/maintenance_tb/ethernet_th.vhd: NOT_IDEMPOTENT
+      bitvis_vip_scoreboard/src/generic_sb_support_pkg.vhd: NOT_IDEMPOTENT
+      bitvis_vip_scoreboard/tb/maintenance_tb/generic_sb_record_tb.vhd: NOT_IDEMPOTENT
+      bitvis_vip_scoreboard/tb/maintenance_tb/generic_sb_slv_tb.vhd: NOT_IDEMPOTENT
+      bitvis_vip_scoreboard/tb/sb_uart_sbi_demo_tb.vhd: NOT_IDEMPOTENT
+      bitvis_vip_spi/tb/maintenance_tb/spi_vvc_tb.vhd: NOT_IDEMPOTENT
+      uvvm_util/src/adaptations_pkg.vhd: NOT_IDEMPOTENT
 
   - name: vunit
     url: https://github.com/VUnit/vunit.git
     commit: 6c2f49f0ec4c4e2a84013a987901c8fce848c654
-    known_issues: {}
+    known_issues:
+      # #74: continuation lines are aligned before the := moves
+      vunit/vhdl/verification_components/src/axi_slave_pkg.vhd: NOT_IDEMPOTENT
+      vunit/vhdl/verification_components/test/tb_avalon_stream.vhd: NOT_IDEMPOTENT
+      # #75: constant_400 puts the padding in the wrong place
+      docs/data_types/src/vunit_events/event_pkg.vhd: NOT_IDEMPOTENT
+      examples/vhdl/axi_dma/src/axi_pkg.vhd: NOT_IDEMPOTENT
+      examples/vhdl/axi_dma/src/axil_pkg.vhd: NOT_IDEMPOTENT
+      examples/vhdl/axi_dma/src/test/tb_axi_dma.vhd: NOT_IDEMPOTENT
+      examples/vhdl/uart/src/test/tb_uart_tx.vhd: NOT_IDEMPOTENT
+      vunit/vhdl/verification_components/src/memory_pkg.vhd: NOT_IDEMPOTENT
+      vunit/vhdl/verification_components/test/tb_avalon_master.vhd: NOT_IDEMPOTENT
+      vunit/vhdl/verification_components/test/tb_avalon_slave.vhd: NOT_IDEMPOTENT
+      vunit/vhdl/verification_components/test/tb_axi_lite_master.vhd: NOT_IDEMPOTENT
+      vunit/vhdl/verification_components/test/tb_axi_read_slave.vhd: NOT_IDEMPOTENT
+      vunit/vhdl/verification_components/test/tb_axi_slave_private_pkg.vhd: NOT_IDEMPOTENT
+      vunit/vhdl/verification_components/test/tb_wishbone_master.vhd: NOT_IDEMPOTENT
+      vunit/vhdl/verification_components/test/tb_wishbone_slave.vhd: NOT_IDEMPOTENT
+      # #76: end keyword and designator fixes in nested subprograms
+      vunit/vhdl/com/src/com_messenger.vhd: FIX_BROKE_PARSE
+      vunit/vhdl/logging/src/common_log_pkg-body.vhd: FIX_BROKE_PARSE
+      vunit/vhdl/logging/src/file_pkg.vhd: NOT_IDEMPOTENT
+      vunit/vhdl/string_ops/src/string_ops.vhd: NOT_IDEMPOTENT
+      vunit/vhdl/verification_components/src/axi_stream_master.vhd: FIX_BROKE_PARSE
+      vunit/vhdl/verification_components/src/memory_pkg-body.vhd: NOT_IDEMPOTENT
+      # #77: alignment in nested subprograms never settles
+      docs/blog/src/vunit_phases/phases_pkg.vhd: NOT_IDEMPOTENT
+      vunit/vhdl/check/src/check.vhd: NOT_IDEMPOTENT
+      vunit/vhdl/data_types/src/id_pkg.vhd: NOT_IDEMPOTENT
+      vunit/vhdl/logging/src/logger_pkg-body.vhd: NOT_IDEMPOTENT
+      # #80: qualified expression with a character literal in a loop range
+      vunit/vhdl/verification_components/test/tb_axi_stream.vhd: PARSE_ERROR
 
   - name: poc
     url: https://github.com/VLSI-EDA/PoC.git
     commit: 8c39b2407a97ec81b8601c4b64e4d2e2141ab9cf
-    known_issues: {}
+    known_issues:
+      # #71: empty signature in alias declarations
+      src/sim/sim_simulation.v93.vhdl: PARSE_ERROR
+      # #74: continuation lines are aligned before the := moves
+      src/common/strings.vhdl: NOT_IDEMPOTENT
+      src/mem/sdram/sdram_ctrl_fsm.vhdl: NOT_IDEMPOTENT
+      # #75: constant_400 puts the padding in the wrong place
+      src/io/uart/uart.pkg.vhdl: NOT_IDEMPOTENT
+      tb/misc/stat/stat_Maximum_tb.vhdl: NOT_IDEMPOTENT
+      tb/misc/stat/stat_Minimum_tb.vhdl: NOT_IDEMPOTENT
+      # #78: translate_off/translate_on pragma rules settle on the second fix
+      src/arith/arith_addw.vhdl: NOT_IDEMPOTENT
+      src/arith/xilinx/arith_addw_xilinx.vhdl: NOT_IDEMPOTENT
+      src/common/utils.vhdl: NOT_IDEMPOTENT
+      src/fifo/fifo_cc_got.vhdl: NOT_IDEMPOTENT
+      src/fifo/fifo_cc_got_tempgot.vhdl: NOT_IDEMPOTENT
+      src/fifo/fifo_cc_got_tempput.vhdl: NOT_IDEMPOTENT
+      src/fifo/fifo_ic_got.vhdl: NOT_IDEMPOTENT
+      # #79: whitespace from a joined line is removed on the second fix
+      src/arith/arith_scaler.vhdl: NOT_IDEMPOTENT
+      src/cache/cache_replacement_policy.vhdl: NOT_IDEMPOTENT
+      tb/arith/arith_div_tb.vhdl: NOT_IDEMPOTENT
 
   - name: vhdl-extras
     url: https://github.com/kevinpt/vhdl-extras.git
     commit: b8916c4942e99d02fac04e25799cb2c996eb5870
-    known_issues: {}
+    exclude:
+      # Template that scripts/ada/smc_gen.sh completes into a package
+      - scripts/ada/strings_maps_constants.head.vhdl
+    known_issues:
+      # #74: continuation lines are aligned before the := moves
+      rtl/extras/hamming_edac.vhdl: NOT_IDEMPOTENT

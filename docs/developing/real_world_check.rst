@@ -79,8 +79,16 @@ A failure that is tracked by an issue is listed under :code:`known_issues` for i
 The file does not fail the run while it keeps that status.
 When the issue is fixed, the check reports the file as a known issue that no longer occurs, and the entry should be removed.
 
+Files that are not complete VHDL on their own, such as templates, are listed under :code:`exclude` and are not checked:
+
+.. code-block:: yaml
+
+   exclude:
+     - scripts/ada/strings_maps_constants.head.vhdl
+
 When to run it
 ==============
 
-The check takes several minutes, so it is not part of the unit tests.
+A full run takes a few hours (a single fix of a large package can take several minutes), so it is not part of the unit tests.
+Use :code:`--project` to check one project.
 Run it before a release, and after changes to the parser or to rules with fixes that move tokens between lines.
