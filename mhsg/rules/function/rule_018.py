@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
+from mhsg.rules import utils as rules_utils
 from mhsg.rules.insert_token_right_of_token_if_it_does_not_exist_between_tokens_using_value_from_token import (
     insert_token_right_of_token_if_it_does_not_exist_between_tokens_using_value_from_token as Rule,
 )
@@ -45,8 +46,5 @@ class rule_018(Rule):
         self.filter_tokens.append(token.subprogram_declaration.semicolon)
 
     def _get_add_tokens_of_interest(self, oFile):
-        lToi = oFile.get_function_subprogram_body()
-        for oToi in lToi:
-            oToken = oToi.get_first_token_matching(oValueToken)
-            oToi.set_token_value(oToken.get_value())
-        return lToi
+        # Only the end of each body is checked, so nested subprograms do not overlap
+        return rules_utils.extract_subprogram_body_ends(oFile.get_function_subprogram_body(), oValueToken)
