@@ -43,6 +43,16 @@ signal sig8 : record_type_3(
 
   signal sig9 : integer range (0) to (31) := 20;
 
+  signal sig9 : std_logic_vector(CONST(0) - 1 downto 0);
+
+  signal sig9 : std_logic_vector(CONST(0) downto 0);
+
+  signal sig9 : std_logic_vector(func1(0) to func2(1));
+
+  signal sig9 : std_logic_vector(CONST(0) - 1 downto 0, 3 downto 0);
+
+  signal sig9 : record_type_3(sub_type(blah));
+
 begin
 
 end architecture rtl;

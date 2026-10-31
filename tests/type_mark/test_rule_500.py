@@ -19,6 +19,10 @@ lExpected_upper = []
 lExpected_upper.append("")
 utils.read_file(os.path.join(sTestDir, "rule_500_test_input.fixed_upper.vhd"), lExpected_upper)
 
+lFile_indexed_name_in_range, eError_indexed_name_in_range = vhdlFile.utils.read_vhdlfile(
+    os.path.join(sTestDir, "rule_500_test_input.indexed_name_in_range.vhd"),
+)
+
 
 class test_rule(unittest.TestCase):
     def setUp(self):
@@ -92,3 +96,19 @@ class test_rule(unittest.TestCase):
 
         oRule.analyze(self.oFile)
         self.assertEqual(oRule.violations, [])
+
+    def test_rule_500_indexed_name_in_range(self):
+        # Issue #1545: an indexed name starting a range, e.g. CONST(0) - 1 downto 0,
+        # was classified as a type mark.
+        self.assertIsNone(eError_indexed_name_in_range)
+
+        oRule = type_mark.rule_500()
+        self.oFile = vhdlFile.vhdlFile(lFile_indexed_name_in_range)
+        oRule.analyze(self.oFile)
+        self.assertEqual(utils.extract_violation_lines_from_violation_object(oRule.violations), [])
+
+        oRule = type_mark.rule_500()
+        oRule.case = "upper"
+        self.oFile = vhdlFile.vhdlFile(lFile_indexed_name_in_range)
+        oRule.analyze(self.oFile)
+        self.assertEqual(utils.extract_violation_lines_from_violation_object(oRule.violations), [4, 5, 6])
