@@ -124,15 +124,27 @@
 22 |
 <class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-23 |   end process;
-<class 'mhsg.token.process_statement.end_keyword'>
-<class 'mhsg.token.process_statement.end_process_keyword'>
-<class 'mhsg.token.process_statement.semicolon'>
+23 |     next loop_label when a <= b;
+<class 'mhsg.token.next_statement.next_keyword'>
+<class 'mhsg.token.next_statement.loop_label'>
+<class 'mhsg.token.next_statement.when_keyword'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.relational_operator.less_than_or_equal'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.next_statement.semicolon'>
 --------------------------------------------------------------------------------
 24 |
 <class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-25 | end architecture RTL;
+25 |   end process;
+<class 'mhsg.token.process_statement.end_keyword'>
+<class 'mhsg.token.process_statement.end_process_keyword'>
+<class 'mhsg.token.process_statement.semicolon'>
+--------------------------------------------------------------------------------
+26 |
+<class 'mhsg.parser.blank_line'>
+--------------------------------------------------------------------------------
+27 | end architecture RTL;
 <class 'mhsg.token.architecture_body.end_keyword'>
 <class 'mhsg.token.architecture_body.end_architecture_keyword'>
 <class 'mhsg.token.architecture_body.architecture_simple_name'>

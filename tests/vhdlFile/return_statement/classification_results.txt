@@ -57,15 +57,37 @@
 12 |
 <class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-13 |   end process;
-<class 'mhsg.token.process_statement.end_keyword'>
-<class 'mhsg.token.process_statement.end_process_keyword'>
-<class 'mhsg.token.process_statement.semicolon'>
+13 |     return a <= b;
+<class 'mhsg.token.return_statement.return_keyword'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.relational_operator.less_than_or_equal'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.return_statement.semicolon'>
 --------------------------------------------------------------------------------
 14 |
 <class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-15 | end architecture RTL;
+15 |     RETURN_LABEL : return a <= b;
+<class 'mhsg.token.return_statement.label'>
+<class 'mhsg.token.return_statement.label_colon'>
+<class 'mhsg.token.return_statement.return_keyword'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.relational_operator.less_than_or_equal'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.token.return_statement.semicolon'>
+--------------------------------------------------------------------------------
+16 |
+<class 'mhsg.parser.blank_line'>
+--------------------------------------------------------------------------------
+17 |   end process;
+<class 'mhsg.token.process_statement.end_keyword'>
+<class 'mhsg.token.process_statement.end_process_keyword'>
+<class 'mhsg.token.process_statement.semicolon'>
+--------------------------------------------------------------------------------
+18 |
+<class 'mhsg.parser.blank_line'>
+--------------------------------------------------------------------------------
+19 | end architecture RTL;
 <class 'mhsg.token.architecture_body.end_keyword'>
 <class 'mhsg.token.architecture_body.end_architecture_keyword'>
 <class 'mhsg.token.architecture_body.architecture_simple_name'>

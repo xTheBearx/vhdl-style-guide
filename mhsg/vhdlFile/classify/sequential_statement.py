@@ -69,19 +69,19 @@ def detect(iToken, lObjects):
     if iReturn != iToken:
         return iReturn
 
-    iReturn = signal_assignment_statement.detect(iToken, lObjects)
-    if iReturn != iToken:
-        return iReturn
-
-    iReturn = procedure_call_statement.detect(iToken, lObjects)
-    if iReturn != iToken:
-        return iReturn
-
     iReturn = next_statement.detect(iToken, lObjects)
     if iReturn != iToken:
         return iReturn
 
     iReturn = return_statement.detect(iToken, lObjects)
+    if iReturn != iToken:
+        return iReturn
+
+    iReturn = signal_assignment_statement.detect(iToken, lObjects)
+    if iReturn != iToken:
+        return iReturn
+
+    iReturn = procedure_call_statement.detect(iToken, lObjects)
     if iReturn != iToken:
         return iReturn
 
