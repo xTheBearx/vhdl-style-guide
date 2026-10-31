@@ -17,6 +17,12 @@ lExpected = []
 lExpected.append("")
 utils.read_file(os.path.join(sTestDir, "rule_601_test_input.fixed.vhd"), lExpected)
 
+lFile_subprograms, eError_subprograms = vhdlFile.utils.read_vhdlfile(os.path.join(sTestDir, "rule_601_test_input.subprograms.vhd"))
+
+lExpected_subprograms = []
+lExpected_subprograms.append("")
+utils.read_file(os.path.join(sTestDir, "rule_601_test_input.subprograms.fixed.vhd"), lExpected_subprograms)
+
 
 class test_rule(unittest.TestCase):
     def setUp(self):
@@ -34,6 +40,7 @@ class test_rule(unittest.TestCase):
         lExpected = []
         lExpected.extend([146, 147, 148, 154, 154, 154, 157, 158, 159, 163, 164, 165, 169, 170, 171, 178, 179, 180, 188, 189, 190])
         lExpected.extend([341, 342, 343, 349, 349, 349, 352, 353, 354, 358, 359, 360, 364, 365, 366, 373, 374, 375, 383, 384, 385])
+        lExpected.extend([388, 388])
 
         oRule.analyze(self.oFile)
         self.assertEqual(lExpected, utils.extract_violation_lines_from_violation_object(oRule.violations))
@@ -48,4 +55,25 @@ class test_rule(unittest.TestCase):
         self.assertEqual(lExpected, lActual)
 
         oRule.analyze(self.oFile)
+        self.assertEqual(oRule.violations, [])
+
+    def test_rule_601_subprograms(self):
+        # Issue VSG 1448: ports used in subprogram bodies and selected assignments were not checked.
+        # Subprogram parameters with the same name as a port must be left alone.
+        self.assertIsNone(eError_subprograms)
+        oRule = architecture.rule_601()
+        oFile = vhdlFile.vhdlFile(lFile_subprograms)
+
+        oRule.analyze(oFile)
+        self.assertEqual([17, 27, 27, 29, 29, 30], utils.extract_violation_lines_from_violation_object(oRule.violations))
+
+    def test_fix_rule_601_subprograms(self):
+        oRule = architecture.rule_601()
+        oFile = vhdlFile.vhdlFile(lFile_subprograms)
+
+        oRule.fix(oFile)
+
+        self.assertEqual(lExpected_subprograms, oFile.get_lines())
+
+        oRule.analyze(oFile)
         self.assertEqual(oRule.violations, [])
