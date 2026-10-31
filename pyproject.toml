@@ -47,7 +47,6 @@ tests = [
     "pytest",
     "pytest-cov",
     "pytest-html",
-    "pytest-html-reporter",
     "pytest-xdist[psutil]",
 ]
 docs = [
