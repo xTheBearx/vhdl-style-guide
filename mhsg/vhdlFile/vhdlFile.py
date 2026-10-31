@@ -23,7 +23,7 @@ from mhsg.token import (
 )
 from mhsg.token.ieee.std_logic_1164 import function
 from mhsg.token_map import process_tokens
-from mhsg.vhdlFile import code_tags, utils
+from mhsg.vhdlFile import code_tags, declarations, utils
 from mhsg.vhdlFile.classify import (
     blank,
     comment,
@@ -370,6 +370,12 @@ class vhdlFile:
         set_aggregate_tokens(self.lAllObjects)
         set_code_tags(self.lAllObjects)
         self.oTokenMap = process_tokens(self.lAllObjects)
+
+    def get_declarations(self):
+        """
+        Returns the declarations in the file and the scopes they are visible in.
+        """
+        return declarations.DeclarationList(self.lAllObjects)
 
     def update(self, lUpdates, bUpdateMap):
         if len(lUpdates) == 0:

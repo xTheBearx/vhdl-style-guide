@@ -129,6 +129,24 @@ Save this as **~/local_rules/rule_localized_001.py**:
 **violation.New** takes the line number to report, the tokens the violation refers to and the solution.
 Code tags such as :code:`-- mhsg_off localized_001` work with local rules, because **add_violation** checks the tokens of each violation.
 
+Look up declarations
+--------------------
+
+**oFile.get_declarations()** returns the declarations in the file and the scopes they are visible in.
+It can tell a rule what a name refers to, for example whether a name followed by parentheses is a type or a function:
+
+.. code-block:: python
+
+   oDeclarations = oFile.get_declarations()
+   for oDeclaration in oDeclarations.find("data", iIndex):
+       print(oDeclaration.kind, oDeclaration.scope.kind)
+
+**find(name, index)** returns the declarations of a name which are visible at a token index, innermost first,
+so a variable in a function hides a signal with the same name in the architecture.
+An architecture also sees the declarations of its entity, a package body those of its package,
+and every unit the declarations of the packages in the same file.
+Each declaration has a **name**, a **kind**, such as signal, constant, port, generic, type or function, the **scope** it is declared in and the **index** of its token.
+
 Use the rules
 -------------
 

@@ -59,6 +59,7 @@ Rules Enforcing Case::Name Rule Group
 * `type_004 <../type_rules.html#type-004>`_
 * `type_500 <../type_rules.html#type-500>`_
 * `type_mark_500 <../type_mark_rules.html#type-mark-500>`_
+* `type_mark_501 <../type_mark_rules.html#type-mark-501>`_
 * `use_clause_500 <../use_clause_rules.html#use-clause-500>`_
 * `use_clause_501 <../use_clause_rules.html#use-clause-501>`_
 * `use_clause_502 <../use_clause_rules.html#use-clause-502>`_

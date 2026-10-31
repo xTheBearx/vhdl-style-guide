@@ -113,6 +113,7 @@ Rules Disabled by Default
 * `type_600 <type_rules.html#type-600>`_
 * `type_601 <type_rules.html#type-601>`_
 * `type_602 <type_rules.html#type-602>`_
+* `type_mark_501 <type_mark_rules.html#type-mark-501>`_
 * `use_clause_001 <use_clause_rules.html#use-clause-001>`_
 * `variable_012 <variable_rules.html#variable-012>`_
 * `variable_100 <variable_rules.html#variable-100>`_
