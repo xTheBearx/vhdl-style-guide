@@ -10,7 +10,7 @@ architecture RTL of ENTITY1 is
 
   component COMP1 is
     port (
-      SIG1 : in    STATE_MACHINE;
+      SIG1 : in    state_machine;
       SIG2 : out   std_logic;
       SIG3 : in    std_logic
     );

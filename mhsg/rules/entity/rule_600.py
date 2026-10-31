@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import parser, token
-from mhsg.rules import consistent_case_utils as cc_utils
 from mhsg.rules.consistent_token_case import consistent_token_case as Rule
 
 lTokens = []
@@ -50,26 +49,6 @@ class rule_600(Rule):
 
     def __init__(self):
         super().__init__(lTokens, lNames)
-
-    def _get_tokens_of_interest(self, oFile):
-        lNameTokens = cc_utils.get_all_name_tokens(oFile, self.lNames)
-
-        lIdentifierss = cc_utils.get_all_identifiers(oFile, self.lTokens)
-
-        lEntityDicts = cc_utils.get_entity_declaration_indexes(oFile)
-        lGenericDicts = cc_utils.get_generic_clause_indexes(oFile)
-        lPortDicts = cc_utils.get_port_clause_indexes(oFile)
-
-        lAllDicts = cc_utils.merge_dict_lists(lEntityDicts, lGenericDicts)
-        lAllDicts = cc_utils.merge_dict_lists(lAllDicts, lPortDicts)
-
-        lAllDicts = cc_utils.populate_identifiers(lAllDicts, lIdentifierss)
-        lAllDicts = cc_utils.remove_duplicate_identifiers("entity_declaration", "port_clause", lAllDicts)
-
-        lAllDicts = cc_utils.populate_declarative_part_names(lAllDicts, lNameTokens)
-        lAllDicts = cc_utils.remove_duplicate_names("entity_declaration", "generic_clause", lAllDicts)
-
-        lAllDicts = cc_utils.remove_type("generic_clause", lAllDicts)
-        lAllDicts = cc_utils.remove_type("port_clause", lAllDicts)
-
-        return cc_utils.create_tois(lAllDicts, oFile)
+        self.bNamesInDeclaringScopeOnly = True
+        self.lDeclarationKinds = ["generic"]
+        self.lDeclarationScopes = ["entity"]

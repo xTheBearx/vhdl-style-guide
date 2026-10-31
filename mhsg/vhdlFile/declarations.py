@@ -46,6 +46,7 @@ from mhsg.token import (
     subprogram_declaration,
     subprogram_instantiation_declaration,
     subtype_declaration,
+    use_clause,
     variable_declaration,
 )
 
@@ -145,6 +146,8 @@ class Scope:
         self.declarations = []
         # The name of the entity an architecture belongs to
         self.entity_name = None
+        # Whether a subprogram scope is a function or a procedure
+        self.designator_kind = None
 
     def contains(self, iIndex):
         return self.start <= iIndex <= self.end
@@ -162,6 +165,8 @@ class DeclarationList:
         self.root.end = len(lTokens)
         self.scopes = [self.root]
         self.declarations = []
+        # The token index and lower case package name of each use clause
+        self.use_clauses = []
         build(self, lTokens)
 
     def get_scope_at(self, iIndex):
@@ -199,7 +204,7 @@ class DeclarationList:
     def get_visible_scopes(self, iIndex):
         """
         Returns the scopes whose declarations are visible at the token index, innermost first.
-        An architecture also sees its entity, a package body its package, and every unit the packages in the file.
+        An architecture also sees its entity, a package body its package, and a unit the packages in the file named by its use clauses.
         """
         lReturn = []
         oScope = self.get_scope_at(iIndex)
@@ -211,10 +216,57 @@ class DeclarationList:
             elif oScope.kind == "package_body":
                 lReturn.extend(self.get_units("package", oScope.name))
             oScope = oScope.parent
-        for oPackage in self.get_units("package", None):
+        for oPackage in self.get_used_packages(iIndex):
             if oPackage not in lReturn:
                 lReturn.append(oPackage)
         return lReturn
+
+    def get_used_packages(self, iIndex):
+        """
+        Returns the packages in the file made visible at the token index by a use clause before it,
+        either in a context clause or in a scope which contains the index.
+        """
+        lReturn = []
+        oUnit = self.get_unit_at(iIndex)
+        lUnits = [oUnit] + self.get_primary_units(oUnit)
+        for iUse, sPackageName in self.use_clauses:
+            if iUse > iIndex:
+                continue
+            oUseScope = self.get_scope_at(iUse)
+            if oUseScope is self.root:
+                # A context clause applies to the design unit after it, and to the secondary units of that unit
+                if self.get_unit_after(iUse) not in lUnits:
+                    continue
+            elif not oUseScope.contains(iIndex):
+                continue
+            for oPackage in self.get_units("package", sPackageName):
+                if oPackage not in lReturn:
+                    lReturn.append(oPackage)
+        return lReturn
+
+    def get_unit_at(self, iIndex):
+        for oUnit in self.root.children:
+            if oUnit.contains(iIndex):
+                return oUnit
+        return None
+
+    def get_unit_after(self, iIndex):
+        for oUnit in self.root.children:
+            if oUnit.start > iIndex:
+                return oUnit
+        return None
+
+    def get_primary_units(self, oUnit):
+        """
+        Returns the entity of an architecture or the package of a package body, whose context clauses also apply to it.
+        """
+        if oUnit is None:
+            return []
+        if oUnit.kind == "architecture":
+            return self.get_units("entity", oUnit.entity_name)
+        if oUnit.kind == "package_body":
+            return self.get_units("package", oUnit.name)
+        return []
 
     def get_units(self, sKind, sName):
         return [oScope for oScope in self.root.children if oScope.kind == sKind and (sName is None or (oScope.name or "").lower() == sName.lower())]
@@ -262,8 +314,15 @@ def build(self, lTokens):
         elif isinstance(oToken, (generic_clause.semicolon, port_clause.semicolon)):
             sInterfaceKind = "parameter"
 
+        if isinstance(oToken, use_clause.package_name):
+            self.use_clauses.append((iIndex, oToken.get_value().lower()))
+
         if isinstance(oToken, lScopeNameTokens):
             oScope.name = oToken.get_value()
+            if isinstance(oToken, function_specification.designator):
+                oScope.designator_kind = "function"
+            elif isinstance(oToken, procedure_specification.designator):
+                oScope.designator_kind = "procedure"
             if oToken.__class__ in dScopeNameKinds and oScope.parent is not None:
                 add_declaration(self, oToken.get_value(), dScopeNameKinds[oToken.__class__], oScope.parent, iIndex)
         elif isinstance(oToken, architecture_body.entity_name):

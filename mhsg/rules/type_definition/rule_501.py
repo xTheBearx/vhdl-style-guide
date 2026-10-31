@@ -38,4 +38,3 @@ class rule_501(Rule):
     def __init__(self):
         super().__init__(lTokens, lNames)
         self.subphase = 2
-        self.bIncludeDeclarativePartNames = True

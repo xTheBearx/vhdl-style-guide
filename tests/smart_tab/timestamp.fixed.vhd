@@ -71,10 +71,10 @@ begin
 	-- debug(1) <= APUFCMDECUDIVALID;
 	-- debug(2) <= APUFCMWRITEBACKOK;
 	-- debug(3) <= wea;
-	debug(0) <= CPMFCMCLK;
-	debug(1) <= APUFCMDECODED;
-	debug(2) <= APUFCMDECUDIVALID;
-	debug(3) <= APUFCMWRITEBACKOK;
+	DEBUG(0) <= CPMFCMCLK;
+	DEBUG(1) <= APUFCMDECODED;
+	DEBUG(2) <= APUFCMDECUDIVALID;
+	DEBUG(3) <= APUFCMWRITEBACKOK;
 
 	SEQ : process () is
 	begin
