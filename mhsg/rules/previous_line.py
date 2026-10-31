@@ -29,11 +29,18 @@ class previous_line(blank_line.Rule):
         self.lHierarchyLimits = None
         self.style = "require_blank_line"
         self.configuration.append("style")
+        self.lValidStyles = ["require_blank_line", "no_blank_line", "no_code", "allow_comment", "require_comment"]
         if lAllowTokens is None:
             self.lAllowTokens = []
         else:
             self.lAllowTokens = lAllowTokens
         self.configuration_documentation_link = "configuring_previous_line_rules_link"
+
+    def configure(self, oConfig):
+        lReturn = super().configure(oConfig)
+        if self.style not in self.lValidStyles:
+            lReturn.append(f"Rule {self.unique_id} does not support style {self.style}.  Valid styles are: {', '.join(self.lValidStyles)}.")
+        return lReturn
 
     def _get_tokens_of_interest(self, oFile):
         bIncludeComments = _include_comments(self.style)

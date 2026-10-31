@@ -3,7 +3,7 @@
 import os
 import unittest
 
-from mhsg import vhdlFile
+from mhsg import config, exceptions, rule_list, severity, vhdlFile
 from mhsg.rules import procedure
 from tests import utils
 
@@ -43,3 +43,18 @@ class test_rule(unittest.TestCase):
 
         oRule.analyze(self.oFile)
         self.assertEqual(oRule.violations, [])
+
+    def test_rule_200_invalid_style_is_configuration_error(self):
+        # Issue VSG 1556: a style only valid for library_007 caused an IndexError during analysis.
+        oConfig = config.config()
+        oConfig.dConfig = {"rule": {"procedure_200": {"style": "no_blank_line_unless_different_library"}}}
+
+        oRule = procedure.rule_200()
+        lMessages = oRule.configure(oConfig)
+        self.assertEqual(1, len(lMessages))
+        self.assertIn("procedure_200", lMessages[0])
+        self.assertIn("no_blank_line_unless_different_library", lMessages[0])
+
+        oRuleList = rule_list.rule_list(self.oFile, severity.create_list({}))
+        with self.assertRaises(exceptions.ConfigurationError):
+            oRuleList.configure(oConfig)
