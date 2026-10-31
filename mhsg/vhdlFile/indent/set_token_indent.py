@@ -181,6 +181,7 @@ def set_indent_of_pragma(cParams, iToken, lTokens):
 
 def set_indent_of_comment(cParams, iToken, lTokens):
     oToken = lTokens[iToken]
+    oToken.block_comment_scope_indent = cParams.iIndent
     if cParams.bLibraryFound:
         set_indent_of_use_clause_comment(cParams, iToken, lTokens)
     elif oToken.is_block_comment:

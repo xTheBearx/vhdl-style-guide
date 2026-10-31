@@ -47,10 +47,13 @@ class Rule(structure.Rule):
         if not self.allow_indenting:
             oToken.set_indent(0)
             oToken.block_comment_indent = 0
+        elif oToken.block_comment_scope_indent is not None:
+            # Match the indent the indent pass gives a block comment, so analysis agrees with a fix run
+            oToken.set_indent(oToken.block_comment_scope_indent)
 
     def calculate_leading_whitespace(self, oToken):
         if self.allow_indenting:
-            iWhitespace = self.indent_size * oToken.get_indent()
+            iWhitespace = self.indent_size * get_block_comment_indent(oToken)
         else:
             iWhitespace = 0
         return iWhitespace
@@ -170,3 +173,12 @@ def code_tag_detected(oToken):
         if sTag in oToken.get_value():
             return True
     return False
+
+
+def get_block_comment_indent(oToken):
+    """
+    Returns the indent of a comment when it is treated as a block comment.
+    """
+    if oToken.block_comment_scope_indent is not None:
+        return oToken.block_comment_scope_indent
+    return oToken.get_indent()

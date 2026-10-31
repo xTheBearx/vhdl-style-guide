@@ -341,6 +341,7 @@ class comment(item):
         super().__init__(sString)
         self.is_block_comment = False
         self.block_comment_indent = None
+        self.block_comment_scope_indent = None
         self.has_tab = False
 
 
