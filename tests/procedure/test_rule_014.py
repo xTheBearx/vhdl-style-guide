@@ -12,6 +12,13 @@ sTestDir = os.path.dirname(__file__)
 lFile, eError = vhdlFile.utils.read_vhdlfile(os.path.join(sTestDir, "rule_014_test_input.vhd"))
 
 
+lFile_nested, eError_nested = vhdlFile.utils.read_vhdlfile(os.path.join(sTestDir, "rule_014_test_input.nested.vhd"))
+
+lExpected_nested = []
+lExpected_nested.append("")
+utils.read_file(os.path.join(sTestDir, "rule_014_test_input.nested.fixed.vhd"), lExpected_nested)
+
+
 class test_rule(unittest.TestCase):
     def setUp(self):
         self.oFile = vhdlFile.vhdlFile(lFile)
@@ -72,4 +79,16 @@ class test_rule(unittest.TestCase):
         self.assertEqual(lExpected, lActual)
 
         oRule.analyze(self.oFile)
+        self.assertEqual(oRule.violations, [])
+
+    def test_fix_rule_014_nested(self):
+        # Issue VSG 1522: designators added to nested subprograms overwrote each other and produced invalid code.
+        self.assertIsNone(eError_nested)
+        oRule = procedure.rule_014()
+        oFile = vhdlFile.vhdlFile(lFile_nested)
+
+        oRule.fix(oFile)
+        self.assertEqual(lExpected_nested, oFile.get_lines())
+
+        oRule.analyze(oFile)
         self.assertEqual(oRule.violations, [])

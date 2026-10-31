@@ -51,4 +51,11 @@ class rule_020(Rule):
                     lReturn.append(myToi)
             return lReturn
         else:
-            return oFile.get_function_subprogram_body()
+            # Only the end of each body is updated, so nested subprograms do not overlap
+            return [extract_subprogram_body_end(oToi) for oToi in oFile.get_function_subprogram_body()]
+
+
+def extract_subprogram_body_end(oToi):
+    iStart = oToi.get_index_of_last_token_matching(token.subprogram_body.end_keyword)
+    iEnd = oToi.get_index_of_last_token_matching(token.subprogram_body.semicolon)
+    return oToi.extract_tokens(iStart, iEnd)
