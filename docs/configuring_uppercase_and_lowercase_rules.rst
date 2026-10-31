@@ -574,6 +574,7 @@ Rules Enforcing Case
 * `type_500 <type_rules.html#type-500>`_
 
 * `type_mark_500 <type_mark_rules.html#type-mark-500>`_
+* `type_mark_501 <type_mark_rules.html#type-mark-501>`_
 
 * `unbounded_array_definition_500 <unbounded_array_definition_rules.html#unbounded-array-definition-500>`_
 * `unbounded_array_definition_501 <unbounded_array_definition_rules.html#unbounded-array-definition-501>`_

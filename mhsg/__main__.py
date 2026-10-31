@@ -12,6 +12,7 @@ from . import (
     cmd_line_args,
     config,
     junit,
+    project_index,
     rule_list,
     utils,
     version,
@@ -125,6 +126,8 @@ def main():
     version.print_version(commandLineArguments)
 
     oConfig = config.New(commandLineArguments)
+    if not commandLineArguments.stdin:
+        oConfig.project_type_names = project_index.collect_type_names(commandLineArguments.filename)
 
     # Add local rule path to system path so the rules can be loaded
     for sDirectory in config.get_local_rule_directories(commandLineArguments.local_rules):

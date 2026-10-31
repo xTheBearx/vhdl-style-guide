@@ -9,6 +9,9 @@ lTokens.append(token.subtype_declaration.identifier)
 lNames = []
 lNames.append(parser.todo)
 lNames.append(token.type_mark.name)
+# Type conversions, such as my_subtype(x)
+lNames.append(token.todo.name)
+lNames.append(token.association_element.actual_part)
 
 
 class rule_002(Rule):
