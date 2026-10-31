@@ -54,6 +54,8 @@ class align_tokens_in_region_between_tokens(alignment.Rule):
         self.configuration.append("loop_control_statements_ends_group")
         self.generate_statement_ends_group = "no"
         self.bIncludeTillBeginningOfLine = False
+        # A line's first matching token is only aligned if none of these tokens appear before it on the line
+        self.lStopSearchTokens = []
         self.aggregate_parens_ends_group = "no"
         self.ignore_single_line_aggregates = "no"
         self.configuration_documentation_link = "configuring_keyword_alignment_rules_link"
@@ -102,6 +104,9 @@ class align_tokens_in_region_between_tokens(alignment.Rule):
                 oToken = lTokens[iIndex]
 
                 bSkip, oEndSkipToken = alignment_utils.check_for_exclusions(oToken, bSkip, oEndSkipToken, self.lUnless)
+
+                if not bTokenFound and isinstance(oToken, tuple(self.lStopSearchTokens)):
+                    bTokenFound = True
 
                 if not bTokenFound and not bSkip:
                     for oSearch in lSearchTokens:

@@ -16,6 +16,15 @@ lExpected.append("")
 utils.read_file(os.path.join(sTestDir, "rule_401_test_input.fixed.vhd"), lExpected, False)
 
 
+lFile_association_after_aggregate, eError_association_after_aggregate = vhdlFile.utils.read_vhdlfile(
+    os.path.join(sTestDir, "rule_401_test_input.association_after_aggregate.vhd"),
+)
+
+lExpected_association_after_aggregate = []
+lExpected_association_after_aggregate.append("")
+utils.read_file(os.path.join(sTestDir, "rule_401_test_input.association_after_aggregate.fixed.vhd"), lExpected_association_after_aggregate)
+
+
 class test_rule(unittest.TestCase):
     def setUp(self):
         self.oFile = vhdlFile.vhdlFile(lFile)
@@ -44,3 +53,16 @@ class test_rule(unittest.TestCase):
 
         oRule.analyze(self.oFile)
         self.assertEqual(oRule.violations, [])
+
+    def test_fix_rule_401_association_after_aggregate(self):
+        # Issue VSG 1584: a named association following an aggregate argument on the same line was used for alignment.
+        self.assertIsNone(eError_association_after_aggregate)
+        oRule = procedure_call.rule_401()
+        oFile = vhdlFile.vhdlFile(lFile_association_after_aggregate)
+
+        oRule.analyze(oFile)
+        self.assertEqual([9, 10], utils.extract_violation_lines_from_violation_object(oRule.violations))
+
+        oRule = procedure_call.rule_401()
+        oRule.fix(oFile)
+        self.assertEqual(lExpected_association_after_aggregate, oFile.get_lines())
