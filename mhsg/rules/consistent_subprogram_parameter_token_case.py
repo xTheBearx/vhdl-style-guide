@@ -48,11 +48,12 @@ class consistent_subprogram_parameter_token_case(case.Rule):
         elif self.subprogram_token == token.function_specification:
             lSubprogram = oFile.get_function_subprogram_body()
 
+        lRecordElementNames = get_record_element_names(oFile)
         for oSubprogram in lSubprogram:
             if oSubprogram.iLine in lInterfaces.keys():
                 lSubprogramInterfaces = lInterfaces[oSubprogram.iLine]
                 oToi = extract_tokens(oSubprogram)
-                validate_interface_name_in_token_list(self, lSubprogramInterfaces, oToi)
+                validate_interface_name_in_token_list(self, lSubprogramInterfaces, oToi, lRecordElementNames)
 
     def _fix_violation(self, oViolation):
         lTokens = oViolation.get_tokens()
@@ -67,7 +68,7 @@ def no_interfaces_detected(lInterfaces):
     return False
 
 
-def validate_interface_name_in_token_list(self, lInterfaces, oToi):
+def validate_interface_name_in_token_list(self, lInterfaces, oToi, lRecordElementNames=None):
     lInterfacesLower = [sInterfaceName.lower() for sInterfaceName in lInterfaces]
     dInterfaceMap = {sInterfaceName.lower(): sInterfaceName for sInterfaceName in lInterfaces}
     iSubprogramNestingDepth = 0
@@ -86,6 +87,8 @@ def validate_interface_name_in_token_list(self, lInterfaces, oToi):
             if is_token_of_class_potentially_hiding_interface_name(oTokenClass):
                 dHiddenInterfaces[sToken.lower()] = iSubprogramNestingDepth
             elif is_token_of_class_potential_instance_of_interface_name(oTokenClass):
+                if is_record_element_choice(sToken, iToken, lTokens, lRecordElementNames):
+                    continue
                 if interface_case_mismatch(sToken, lInterfaces, lInterfacesLower):
                     oViolation = create_violation(sToken, iToken, dInterfaceMap, oToi)
                     self.add_violation(oViolation)
@@ -202,4 +205,30 @@ def is_token_in_token_type_list(oToken, lTokenTypes):
     for oTokenType in lTokenTypes:
         if isinstance(oToken, oTokenType):
             return True
+    return False
+
+
+def get_record_element_names(oFile):
+    lReturn = []
+    bInRecord = False
+    for oToken in oFile.lAllObjects:
+        if isinstance(oToken, token.record_type_definition.record_keyword):
+            bInRecord = True
+        elif isinstance(oToken, token.record_type_definition.end_keyword):
+            bInRecord = False
+        elif bInRecord and isinstance(oToken, token.identifier_list.identifier):
+            lReturn.append(oToken.get_value().lower())
+    return lReturn
+
+
+def is_record_element_choice(sToken, iToken, lTokens, lRecordElementNames):
+    """
+    Returns True if the token is the choice of a named association, as in `NAME => value`, and names a record element.
+    """
+    if lRecordElementNames is None or sToken.lower() not in lRecordElementNames:
+        return False
+    for oToken in lTokens[iToken + 1 :]:
+        if isinstance(oToken, parser.whitespace):
+            continue
+        return isinstance(oToken, token.element_association.assignment)
     return False

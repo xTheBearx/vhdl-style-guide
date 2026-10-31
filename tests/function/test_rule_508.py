@@ -18,6 +18,15 @@ lExpected.append("")
 utils.read_file(os.path.join(sTestDir, "rule_508_test_input.fixed.vhd"), lExpected)
 
 
+lFile_record_element_choice, eError_record_element_choice = vhdlFile.utils.read_vhdlfile(
+    os.path.join(sTestDir, "rule_508_test_input.record_element_choice.vhd"),
+)
+
+lExpected_record_element_choice = []
+lExpected_record_element_choice.append("")
+utils.read_file(os.path.join(sTestDir, "rule_508_test_input.record_element_choice.fixed.vhd"), lExpected_record_element_choice)
+
+
 class test_rule(unittest.TestCase):
     def setUp(self):
         self.oFile = vhdlFile.vhdlFile(lFile)
@@ -52,3 +61,16 @@ class test_rule(unittest.TestCase):
 
         oRule.analyze(self.oFile)
         self.assertEqual(oRule.violations, [])
+
+    def test_rule_508_record_element_choice(self):
+        # Issue VSG 1482: a record element choice with the same name as a parameter was changed.
+        self.assertIsNone(eError_record_element_choice)
+        oRule = function.rule_508()
+        oFile = vhdlFile.vhdlFile(lFile_record_element_choice)
+
+        oRule.analyze(oFile)
+        self.assertEqual([12, 13], utils.extract_violation_lines_from_violation_object(oRule.violations))
+
+        oRule = function.rule_508()
+        oRule.fix(oFile)
+        self.assertEqual(lExpected_record_element_choice, oFile.get_lines())
