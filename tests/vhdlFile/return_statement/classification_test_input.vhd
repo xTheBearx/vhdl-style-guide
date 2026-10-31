@@ -10,6 +10,10 @@ begin
 
     RETURN_LABEL : return std_logic_vector(3 downto 0);
 
+    return a <= b;
+
+    RETURN_LABEL : return a <= b;
+
   end process;
 
 end architecture RTL;
