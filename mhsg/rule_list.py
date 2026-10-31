@@ -7,6 +7,7 @@ import os
 import sys
 
 from mhsg import exceptions
+from mhsg.rules import package_scope
 
 from . import config, deprecated_rule, junit, report, severity, utils
 
@@ -303,6 +304,8 @@ class rule_list:
             for oRule in self.rules:
                 lDeprecatedMessages.extend(oRule.configure(oConfig))
 
+        self._apply_package_scope()
+
         if len(lDeprecatedMessages) != 0:
             sErrorMessage = f"ERROR: Invalid configuration of file {self.oVhdlFile.filename}" + "\n"
             for sMessage in lDeprecatedMessages:
@@ -315,6 +318,19 @@ class rule_list:
                     oRule.set_debug()
         except KeyError:
             pass
+
+    def _apply_package_scope(self):
+        """
+        When a rule checking names in packages is enabled, the general rule it complements skips names in packages.
+        """
+        dRules = {oRule.unique_id: oRule for oRule in self.rules}
+        for oRule in self.rules:
+            sGeneralRule = getattr(oRule, "general_rule", None)
+            if sGeneralRule in dRules:
+                if oRule.disable:
+                    dRules[sGeneralRule].package_scope = package_scope.ALL
+                else:
+                    dRules[sGeneralRule].package_scope = package_scope.EXCLUDE_PACKAGES
 
     def _validate_configuration_rule_exists(self, configurationFile):
         """

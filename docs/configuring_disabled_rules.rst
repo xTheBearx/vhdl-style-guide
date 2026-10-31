@@ -41,6 +41,8 @@ Rules Disabled by Default
 * `constant_101 <constant_rules.html#constant-101>`_
 * `constant_200 <constant_rules.html#constant-200>`_
 * `constant_600 <constant_rules.html#constant-600>`_
+* `constant_601 <constant_rules.html#constant-601>`_
+* `constant_602 <constant_rules.html#constant-602>`_
 * `context_028 <context_rules.html#context-028>`_
 * `context_ref_006 <context_ref_rules.html#context-ref-006>`_
 * `context_ref_007 <context_ref_rules.html#context-ref-007>`_
@@ -99,10 +101,14 @@ Rules Disabled by Default
 * `subtype_100 <subtype_rules.html#subtype-100>`_
 * `subtype_200 <subtype_rules.html#subtype-200>`_
 * `subtype_600 <subtype_rules.html#subtype-600>`_
+* `subtype_601 <subtype_rules.html#subtype-601>`_
+* `subtype_602 <subtype_rules.html#subtype-602>`_
 * `type_015 <type_rules.html#type-015>`_
 * `type_100 <type_rules.html#type-100>`_
 * `type_200 <type_rules.html#type-200>`_
 * `type_600 <type_rules.html#type-600>`_
+* `type_601 <type_rules.html#type-601>`_
+* `type_602 <type_rules.html#type-602>`_
 * `use_clause_001 <use_clause_rules.html#use-clause-001>`_
 * `variable_012 <variable_rules.html#variable-012>`_
 * `variable_100 <variable_rules.html#variable-100>`_

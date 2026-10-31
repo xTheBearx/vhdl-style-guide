@@ -500,3 +500,73 @@ The default constant suffix is *_c*.
 .. code-block:: vhdl
 
    constant my_const_c : integer;
+
+constant_601
+############
+
+|phase_7| |disabled| |error| |unfixable| |naming|
+
+This rule checks for valid prefixes on constant identifiers declared in packages and package bodies.
+Constants declared inside subprograms are not checked by this rule.
+The default prefix is *c_*.
+
+When this rule is enabled, rule constant_015 no longer checks constants declared in packages, so packages and other code can use different prefixes.
+
+|configuring_prefix_and_suffix_rules_link|
+
+**Violation**
+
+.. code-block:: vhdl
+
+   package my_pkg is
+
+     constant width : integer := 8;
+
+   end package my_pkg;
+
+**Fix**
+
+With :code:`prefixes = ['pc_']`:
+
+.. code-block:: vhdl
+
+   package my_pkg is
+
+     constant pc_width : integer := 8;
+
+   end package my_pkg;
+
+constant_602
+############
+
+|phase_7| |disabled| |error| |unfixable| |naming|
+
+This rule checks for valid suffixes on constant identifiers declared in packages and package bodies.
+Constants declared inside subprograms are not checked by this rule.
+The default suffix is *_c*.
+
+When this rule is enabled, rule constant_600 no longer checks constants declared in packages, so packages and other code can use different suffixes.
+
+|configuring_prefix_and_suffix_rules_link|
+
+**Violation**
+
+.. code-block:: vhdl
+
+   package my_pkg is
+
+     constant width : integer := 8;
+
+   end package my_pkg;
+
+**Fix**
+
+With :code:`suffixes = ['_pc']`:
+
+.. code-block:: vhdl
+
+   package my_pkg is
+
+     constant width_pc : integer := 8;
+
+   end package my_pkg;
