@@ -2,7 +2,11 @@
 
 from mhsg import parser, violation
 from mhsg.rule_group import blank_line
+from mhsg.rules.remove_excessive_blank_lines_above_line_starting_with_token import (
+    check_if_override_exists,
+)
 from mhsg.rules.utils import token_is_comment, token_is_whitespace
+from mhsg.vhdlFile import utils
 
 
 class previous_line(blank_line.Rule):
@@ -34,6 +38,8 @@ class previous_line(blank_line.Rule):
             self.lAllowTokens = []
         else:
             self.lAllowTokens = lAllowTokens
+        # With the no_blank_line style, one blank line is allowed below a line containing one of these tokens
+        self.lOverrides = []
         self.configuration_documentation_link = "configuring_previous_line_rules_link"
 
     def configure(self, oConfig):
@@ -56,7 +62,9 @@ class previous_line(blank_line.Rule):
                 return zip(lFirst, lSecond)
 
         elif self.style == "no_blank_line":
-            return oFile.get_blank_lines_above_line_starting_with_token(self.lTokens)
+            lToi = oFile.get_blank_lines_above_line_starting_with_token(self.lTokens)
+            _mark_overrides(oFile, lToi, self.lOverrides)
+            return lToi
         elif self.style == "no_blank_line_unless_different_library":
             lReturn = oFile.get_blank_lines_above_line_starting_with_use_clause(self.lTokens)
             for oToi in oFile.get_lines_above_use_clause_from_different_library(self.lTokens):
@@ -95,7 +103,18 @@ class previous_line(blank_line.Rule):
             lTokens.append(parser.blank_line())
             oViolation.set_tokens(lTokens)
         elif dAction["action"] == "Remove":
-            oViolation.set_tokens([])
+            oViolation.set_tokens(lTokens[0 : dAction.get("keep", 0)])
+
+
+def _mark_overrides(oFile, lToi, lOverrides):
+    if len(lOverrides) == 0:
+        return
+    for oToi in lToi:
+        iLine = 0
+        for oToken in oToi.get_tokens():
+            iLine = utils.increment_line_number(iLine, oToken)
+        bOverride = check_if_override_exists(oFile, oToi.get_line_number() - iLine, lOverrides)
+        oToi.set_meta_data("allow_one_blank_line", bOverride)
 
 
 def _include_comments(sMethod):
@@ -113,9 +132,14 @@ def _include_comments(sMethod):
 def _analyze_no_blank_line(self, lToi, lAllowTokens):
     for oToi in lToi:
         sSolution = "Remove blank lines"
-        oViolation = violation.New(oToi.get_line_number(), oToi, sSolution)
         dAction = {}
         dAction["action"] = "Remove"
+        if oToi.dMetaData.get("allow_one_blank_line", False):
+            if _count_blank_lines(oToi) <= 1:
+                continue
+            # Keep the carriage return and the first blank line
+            dAction["keep"] = 2
+        oViolation = violation.New(oToi.get_line_number(), oToi, sSolution)
         oViolation.set_action(dAction)
         self.add_violation(oViolation)
 
@@ -223,3 +247,7 @@ def _comment_starts_line(lTokens):
         if token_is_whitespace(lTokens[0]) and token_is_comment(lTokens[1]):
             return True
     return False
+
+
+def _count_blank_lines(oToi):
+    return len([oToken for oToken in oToi.get_tokens() if isinstance(oToken, parser.blank_line)])

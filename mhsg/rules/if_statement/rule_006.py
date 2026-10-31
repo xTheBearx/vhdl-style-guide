@@ -1,41 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import token
-from mhsg.rules import remove_excessive_blank_lines_below_line_ending_with_token
-
-lTokens = []
-lTokens.append(token.if_statement.then_keyword)
-
-lOverrides = []
-lOverrides.append(token.case_statement.case_label)
-lOverrides.append(token.case_statement.case_keyword)
-lOverrides.append(token.loop_statement.loop_label)
-lOverrides.append(token.loop_statement.loop_keyword)
-lOverrides.append(token.iteration_scheme.while_keyword)
-lOverrides.append(token.iteration_scheme.for_keyword)
+from mhsg import deprecated_rule
 
 
-class rule_006(remove_excessive_blank_lines_below_line_ending_with_token):
+class rule_006(deprecated_rule.Rule):
     """
-    This rule checks for blank lines after the **then** keyword.
-
-    **Violation**
-
-    .. code-block:: vhdl
-
-      if (a = '1') then
-
-
-        b <= '0'
-
-    **Fix**
-
-    .. code-block:: vhdl
-
-      if (a = '1') then
-        b <= '0'
+    This rule has been replaced by :ref:`if_200`, which supports the **style** option.
     """
 
     def __init__(self):
-        super().__init__(lTokens, iAllow=0, lOverrides=lOverrides)
-        self.configuration_documentation_link = None
+        super().__init__()
+        self.message.append("Rule " + self.unique_id + " has been replaced by rule if_200, which supports the style option.")

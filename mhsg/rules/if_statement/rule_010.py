@@ -1,38 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import token
-from mhsg.rules import remove_excessive_blank_lines_above_line_starting_with_token
-
-lTokens = []
-lTokens.append(token.if_statement.else_keyword)
-
-lOverrides = []
-lOverrides.append(token.case_statement.semicolon)
-lOverrides.append(token.loop_statement.semicolon)
+from mhsg import deprecated_rule
 
 
-class rule_010(remove_excessive_blank_lines_above_line_starting_with_token):
+class rule_010(deprecated_rule.Rule):
     """
-    This rule checks for blank lines before the **else** keyword.
-
-    **Violation**
-
-    .. code-block:: vhdl
-
-        d <= '1';
-
-
-      else
-
-    **Fix**
-
-    .. code-block:: vhdl
-
-        d <= '1';
-      else
+    This rule has been replaced by :ref:`if_202`, which supports the **style** option.
     """
 
     def __init__(self):
-        super().__init__(lTokens, iAllow=0, lOverrides=lOverrides)
-        self.solution = "Remove blank line(s) before the *else* keyword."
-        self.configuration_documentation_link = None
+        super().__init__()
+        self.message.append("Rule " + self.unique_id + " has been replaced by rule if_202, which supports the style option.")
