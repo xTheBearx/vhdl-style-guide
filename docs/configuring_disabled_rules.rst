@@ -49,6 +49,7 @@ Rules Disabled by Default
 * `context_ref_007 <context_ref_rules.html#context-ref-007>`_
 * `context_ref_008 <context_ref_rules.html#context-ref-008>`_
 * `context_ref_009 <context_ref_rules.html#context-ref-009>`_
+* `expression_001 <expression_rules.html#expression-001>`_
 * `file_100 <file_rules.html#file-100>`_
 * `function_600 <function_rules.html#function-600>`_
 * `function_601 <function_rules.html#function-601>`_
