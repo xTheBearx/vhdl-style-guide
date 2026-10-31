@@ -433,6 +433,7 @@ generic_019: generic_no_blank_lines_before_closing_parenthesis
 generic_020: generic_prefix
 generic_021: generic_semicolon_not_on_own_line
 generic_022: generic_alphabetical_order
+generic_023: generic_section_comment
 generic_600: generic_suffix
 generic_map_001: generic_map_keyword_case
 generic_map_002: generic_map_generic_name_case

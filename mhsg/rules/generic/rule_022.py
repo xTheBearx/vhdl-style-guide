@@ -2,6 +2,8 @@
 
 from mhsg import parser, token, violation
 from mhsg.rule_group import structure
+from mhsg.rules import ordered_list_utils
+from mhsg.vhdlFile import utils
 
 lNameTokens = (
     token.interface_constant_declaration.identifier,
@@ -24,6 +26,9 @@ class rule_022(structure.Rule):
     A generic may use generics declared before it, for example in its default value.
     Such a generic is expected after the generics it uses, so the expected order is alphabetical wherever the dependencies allow.
     Names are compared ignoring case.
+
+    With the :code:`sort_within_sections` option set to :code:`yes` (default), each group of generics separated by a blank line or comment line is sorted on its own.
+    :code:`no` sorts the whole generic list.
 
     .. NOTE:: This rule is disabled by default.
        It only reports the expected order, because moving generics by hand keeps their comments where they belong.
@@ -54,21 +59,36 @@ class rule_022(structure.Rule):
         self.disable = True
         self.fixable = False
         self.configuration_documentation_link = None
+        self.sort_within_sections = "yes"
+        self.configuration.append("sort_within_sections")
 
     def _get_tokens_of_interest(self, oFile):
         return oFile.get_tokens_bounded_by(token.generic_clause.open_parenthesis, token.generic_clause.close_parenthesis)
 
     def _analyze(self, lToi):
+        bWithinSections = utils.convert_yes_no_option_to_boolean(self.sort_within_sections)
         for oToi in lToi:
             lElements = get_elements(oToi)
-            lExpected = get_expected_order(lElements)
-            for dActual, dExpected in zip(lElements, lExpected):
-                if dActual is not dExpected:
-                    sOrder = ", ".join(dElement["names"][0] for dElement in lExpected)
-                    sSolution = "Order generics alphabetically: " + sOrder
-                    oViolation = violation.New(dActual["line"], oToi.extract_tokens(dActual["index"], dActual["index"]), sSolution)
-                    self.add_violation(oViolation)
-                    break
+            if bWithinSections:
+                lSections = ordered_list_utils.get_interface_elements(oToi)
+                dGroups = {}
+                for dElement in lElements:
+                    dGroups.setdefault(ordered_list_utils.get_section_of_index(lSections, dElement["index"]), []).append(dElement)
+                lGroups = [dGroups[iSection] for iSection in sorted(dGroups)]
+            else:
+                lGroups = [lElements]
+            for lGroup in lGroups:
+                self._check_order(oToi, lGroup)
+
+    def _check_order(self, oToi, lElements):
+        lExpected = get_expected_order(lElements)
+        for dActual, dExpected in zip(lElements, lExpected):
+            if dActual is not dExpected:
+                sOrder = ", ".join(dElement["names"][0] for dElement in lExpected)
+                sSolution = "Order generics alphabetically: " + sOrder
+                oViolation = violation.New(dActual["line"], oToi.extract_tokens(dActual["index"], dActual["index"]), sSolution)
+                self.add_violation(oViolation)
+                break
 
 
 def get_elements(oToi):

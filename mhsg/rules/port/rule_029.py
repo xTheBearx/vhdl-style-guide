@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import re
-
-from mhsg import violation
-from mhsg.rule_group import structure
 from mhsg.rules import ordered_list_utils
+from mhsg.rules.section_comment import Rule
 
 
-class rule_029(structure.Rule):
+class rule_029(Rule):
     """
     This rule checks each group of ports has a section comment above it.
 
@@ -47,31 +44,4 @@ class rule_029(structure.Rule):
     """
 
     def __init__(self):
-        super().__init__()
-        self.solution = "Add a section comment above this group of ports"
-        self.phase = 1
-        self.disable = True
-        self.fixable = False
-        self.section_pattern = "^--"
-        self.configuration.append("section_pattern")
-        self.configuration_documentation_link = None
-
-    def _get_tokens_of_interest(self, oFile):
-        lReturn = []
-        for oToi in ordered_list_utils.get_port_clauses(oFile):
-            for lSection in ordered_list_utils.get_sections(ordered_list_utils.get_elements(oToi)):
-                dFirst = lSection[0]
-                oSection = oToi.extract_tokens(dFirst["start"], dFirst["start"])
-                # extract_tokens shares the meta data of oToi, and each section needs its own
-                oSection.dMetaData = {}
-                oSection.set_meta_data("line", dFirst["line"])
-                oSection.set_meta_data("header", dFirst["header"])
-                lReturn.append(oSection)
-        return lReturn
-
-    def _analyze(self, lToi):
-        oPattern = re.compile(self.section_pattern)
-        for oToi in lToi:
-            if any(oPattern.search(sComment) for sComment in oToi.get_meta_data("header")):
-                continue
-            self.add_violation(violation.New(oToi.get_meta_data("line"), oToi, self.solution))
+        super().__init__(ordered_list_utils.get_port_clauses, "ports")

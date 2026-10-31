@@ -432,6 +432,9 @@ A generic may use generics declared before it, for example in its default value.
 Such a generic is expected after the generics it uses, so the expected order is alphabetical wherever the dependencies allow.
 Names are compared ignoring case.
 
+With the :code:`sort_within_sections` option set to :code:`yes` (default), each group of generics separated by a blank line or comment line is sorted on its own.
+:code:`no` sorts the whole generic list.
+
 .. NOTE:: This rule is disabled by default.
    It only reports the expected order, because moving generics by hand keeps their comments where they belong.
 
@@ -453,6 +456,49 @@ Names are compared ignoring case.
      G_DEPTH : integer := 16;
      G_ADDR_WIDTH : integer := G_DEPTH / 4;
      G_WIDTH : integer := 8
+   );
+
+generic_023
+###########
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`generic_section_comment`
+
+This rule checks each group of generics has a section comment above it.
+
+.. NOTE:: This rule is disabled by default.
+
+A group of generics is separated from the next group by a blank line or a comment line.
+At least one of the comment lines directly above the first generic of each group must match the :code:`section_pattern` option, a regular expression.
+The default pattern accepts any comment.
+For example, :code:`'^-- [A-Z]'` requires a comment starting with a capital letter.
+
+This rule only reports groups without a section comment, because it cannot know their names.
+generic_022 checks the order of the generics within each section.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   generic (
+     G_ADDR_WIDTH : integer := 8;
+     G_DATA_WIDTH : integer := 32;
+
+     G_DEBUG : boolean := false
+   );
+
+**Fix**
+
+.. code-block:: vhdl
+
+   generic (
+     -- Bus widths
+     G_ADDR_WIDTH : integer := 8;
+     G_DATA_WIDTH : integer := 32;
+
+     -- Simulation
+     G_DEBUG : boolean := false
    );
 
 generic_600
