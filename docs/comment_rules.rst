@@ -115,6 +115,37 @@ This rule checks for user defined keywords in comments.
 
 This is a reporting only rule.
 
+comment_013
+###########
+
+|phase_1| |disabled| |warning| |unfixable| |structure|
+
+This rule checks for comments which contain commented out code.
+
+A comment on a line of its own is reported if it ends like a statement or declaration, with a semicolon or one of the keywords **then**, **else**, **begin**, **is**, **loop** or **generate**, and its words are VHDL reserved words, common names from the standard and IEEE packages, or names used in the code of the file.
+If the comment contains a symbol used in code, such as **<=**, **:=**, **=** or **(**, half of its words are enough, because commented out code can name things which were removed from the code.
+Comments written as sentences are not reported, because they contain words which are not in the code.
+
+.. NOTE:: This rule is disabled by default.
+   It only reports the comments, because deciding whether to delete them is left to the user.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   -- use ieee.numeric_std.all;
+
+   -- Wait for the FIFO to empty
+   -- if rd_en = '1' then
+   if empty = '1' then
+
+**Fix**
+
+.. code-block:: vhdl
+
+   -- Wait for the FIFO to empty
+   if empty = '1' then
+
 comment_100
 ###########
 

@@ -37,6 +37,7 @@ Rules Disabled by Default
 * `case_generate_statement_400 <case_generate_statement_rules.html#case-generate-statement-400>`_
 * `comment_011 <comment_rules.html#comment-011>`_
 * `comment_012 <comment_rules.html#comment-012>`_
+* `comment_013 <comment_rules.html#comment-013>`_
 * `constant_015 <constant_rules.html#constant-015>`_
 * `constant_101 <constant_rules.html#constant-101>`_
 * `constant_200 <constant_rules.html#constant-200>`_

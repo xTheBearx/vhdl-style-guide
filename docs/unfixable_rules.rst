@@ -19,6 +19,7 @@ The existence and formatting of comments is left to the user as MHSG can not hav
 * `block_comment_002 <block_comment_rules.html#block-002>`_
 * `block_comment_003 <block_comment_rules.html#block-003>`_
 * `comment_012 <comment_rules.html#comment-012>`_
+* `comment_013 <comment_rules.html#comment-013>`_
 * `sequential_006 <sequential_rules.html#sequential-006>`_
 * `variable_assignment_006 <variable_assignment_rules.html#variable-assignment-006>`_
 
