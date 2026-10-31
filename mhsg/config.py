@@ -95,7 +95,7 @@ def read_configuration_files(dStyle, commandLineArguments):
 def process_config_file(dConfiguration, tempConfiguration, sConfigFilename):
     dReturn = dConfiguration
     for sKey in tempConfiguration.keys():
-        if sKey == "file_list" or sKey == "file_rules":
+        if sKey in ("file_list", "file_rules", "index_file_list"):
             dReturn = process_file_list_key(dReturn, tempConfiguration, sKey, sConfigFilename)
         elif sKey == "rule":
             for sRule in tempConfiguration[sKey]:
@@ -408,6 +408,13 @@ def update_command_line_arguments(commandLineArguments, configuration):
             except TypeError:
                 # No files were given on the command line
                 commandLineArguments.filename = glob_filenames(sFilename)
+
+    if "index_file_list" in configuration:
+        lIndexFiles = getattr(commandLineArguments, "index_files", None) or []
+        for sFilename in configuration["index_file_list"]:
+            if sFilename not in lIndexFiles:
+                lIndexFiles.append(sFilename)
+        commandLineArguments.index_files = lIndexFiles
 
     if "local_rules" in configuration:
         commandLineArguments.local_rules = [utils.expand_filename(sDirectory) for sDirectory in get_local_rule_directories(configuration["local_rules"])]

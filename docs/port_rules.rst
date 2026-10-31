@@ -781,7 +781,8 @@ By default the rule only reports the expected order.
 Moving the ports of an entity changes what a direct instantiation with positional association connects to.
 With :code:`move_ports` set to :code:`when_safe`, the ports of an entity are moved if no file of the run instantiates it directly with positional association.
 A top-level entity, which is not instantiated in the run, is always moved.
-Instances in files that are not part of the run are not checked, and input from stdin is never moved.
+Instances in files that are not part of the run are not checked, unless the files are listed in index_file_list or given with --index_files.
+Input from stdin is never moved.
 Ports of component declarations are only reported, because moving them changes what positional instances of the component connect to.
 Ports are only moved if each declaration is on a line of its own; comments at the end of a line move with their port.
 

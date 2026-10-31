@@ -116,6 +116,19 @@ def validate_files_exist_to_analyze(sName, stdin):
         sys.exit(1)
 
 
+def get_index_files(commandLineArguments):
+    """
+    Returns the files read for the project index: the analyzed files, and the
+    files given with --index_files or index_file_list, which are not analyzed.
+    """
+    lReturn = list(commandLineArguments.filename or [])
+    for sPattern in getattr(commandLineArguments, "index_files", None) or []:
+        for sFilename in config.glob_filenames(sPattern) or [sPattern]:
+            if sFilename not in lReturn:
+                lReturn.append(sFilename)
+    return lReturn
+
+
 def main():
     """Main routine of the Multiple HDL Style Guide (MHSG) program."""
 
@@ -127,10 +140,11 @@ def main():
 
     oConfig = config.New(commandLineArguments)
     if not commandLineArguments.stdin:
-        oConfig.project_type_names = project_index.collect_type_names(commandLineArguments.filename)
-        oConfig.project_positional_entities = project_index.collect_positional_entity_instantiations(commandLineArguments.filename)
-        oConfig.project_port_orders = project_index.collect_port_orders(commandLineArguments.filename)
-        oConfig.project_positional_generic_entities = project_index.collect_positional_entity_instantiations(commandLineArguments.filename, "generic")
+        lIndexFiles = get_index_files(commandLineArguments)
+        oConfig.project_type_names = project_index.collect_type_names(lIndexFiles)
+        oConfig.project_positional_entities = project_index.collect_positional_entity_instantiations(lIndexFiles)
+        oConfig.project_port_orders = project_index.collect_port_orders(lIndexFiles)
+        oConfig.project_positional_generic_entities = project_index.collect_positional_entity_instantiations(lIndexFiles, "generic")
 
     # Add local rule path to system path so the rules can be loaded
     for sDirectory in config.get_local_rule_directories(commandLineArguments.local_rules):

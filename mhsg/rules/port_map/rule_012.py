@@ -25,7 +25,7 @@ class rule_012(structure.Rule):
     * :code:`sort_within_sections`: :code:`yes` (default) sorts each group of associations separated by a blank line or comment line on its own.
       :code:`no` sorts the whole port map.
 
-    The declaration is looked up in the file and in the other files of the run.
+    The declaration is looked up in the file, in the other files of the run, and in the files listed in index_file_list or given with --index_files.
     A component instance uses the component declaration, or the entity of the same name if there is none.
     Port maps are not checked if the declaration is not known, if it is declared differently in several places, if a formal part is not one of its ports, or if they use positional association.
     Associations of the same port, such as :code:`data(0)` and :code:`data(1)`, keep their order.

@@ -440,7 +440,8 @@ With the :code:`sort_within_sections` option set to :code:`yes` (default), each 
 By default the rule only reports the expected order.
 Moving the generics of an entity changes what a direct instantiation with positional generic association connects to.
 With :code:`move_generics` set to :code:`when_safe`, the generics of an entity are moved if no file of the run instantiates it directly with a positional generic association.
-Instances in files that are not part of the run are not checked, and input from stdin is never moved.
+Instances in files that are not part of the run are not checked, unless the files are listed in index_file_list or given with --index_files.
+Input from stdin is never moved.
 Generics of components, packages and subprograms are only reported.
 Generics are only moved if each declaration is on a line of its own; comments at the end of a line move with their generic.
 

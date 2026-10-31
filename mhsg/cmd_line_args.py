@@ -43,6 +43,12 @@ def parse_command_line_arguments():
     )
 
     parser.add_argument("-f", "--filename", type=__is_valid_file, nargs="+", default=[], help="File to analyze")
+    parser.add_argument(
+        "--index_files",
+        nargs="+",
+        default=[],
+        help="Files which are only read to find declarations and instantiations, for example for port_028, and are not analyzed",
+    )
     parser.add_argument("-lr", "--local_rules", nargs="+", help="Path(s) to local rule directories")
     parser.add_argument("-c", "--configuration", type=__is_valid_file, nargs="+", help="JSON or YAML configuration file(s)")
     parser.add_argument("--fix", default=False, action="store_true", help="Fix issues found")
