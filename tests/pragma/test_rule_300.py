@@ -10,6 +10,7 @@ from tests import utils
 sTestDir = os.path.dirname(__file__)
 
 lFile, eError = vhdlFile.utils.read_vhdlfile(os.path.join(sTestDir, "rule_300_test_input.vhd"))
+lFile_closing_pragma, eError_closing_pragma = vhdlFile.utils.read_vhdlfile(os.path.join(sTestDir, "rule_300_test_input.closing_pragma.vhd"))
 
 dIndentMap = utils.read_indent_file()
 
@@ -72,3 +73,13 @@ class test_rule(unittest.TestCase):
 
         oRule.analyze(self.oFile)
         self.assertEqual(oRule.violations, [])
+
+    def test_closing_pragma_matches_opening_pragma(self):
+        # Issue VSG 1520: a closing pragma before begin, when or end was indented to the following statement.
+        self.assertIsNone(eError_closing_pragma)
+        oFile = vhdlFile.vhdlFile(lFile_closing_pragma)
+        oFile.set_indent_map(dIndentMap)
+        oRule = pragma.rule_300()
+
+        oRule.analyze(oFile)
+        self.assertEqual([], utils.extract_violation_lines_from_violation_object(oRule.violations))

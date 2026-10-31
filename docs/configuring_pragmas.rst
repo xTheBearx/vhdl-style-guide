@@ -38,23 +38,23 @@ The default expressions are defined as:
    pragma:
        patterns:
            open:
-               - '^\\s*--\\s+synthesis\\s+translate_off\\s*$'
-               - '^\\s*--\\s+RTL_SYNTHESIS\\s+OFF\\s*$'
-               - '^\\s*--vhdl_comp_off]\\s*$'
+               - '^\s*--\s+synthesis\s+translate_off\s*$'
+               - '^\s*--vhdl_comp_off\s*$'
+               - '^\s*--\s+RTL_SYNTHESIS\s+OFF\s*$'
            close:
-               - '^\\s*--\\s+synthesis\\s+translate_on\\s*$'
-               - '^\\s*--\\s+RTL_SYNTHESIS\\s+ON\\s*$'
-               - '^\\s*--vhdl_comp_on]\\s*$'
+               - '^\s*--\s+synthesis\s+translate_on\s*$'
+               - '^\s*--vhdl_comp_on\s*$'
+               - '^\s*--\s+RTL_SYNTHESIS\s+ON\s*$'
            single:
-               - '^\\s*--\\s+synthesis\\s+\\w+\\s*$'
-               - '^\\s*--\\s+synthesis\\s+\\w+\\s+\\w+\\s*$'
-               - '^\\s*--\\s+pragma\\s+\\w+\\s*$'
-               - '^\\s*--\\s+pragma\\s+\\w+\\s+\\w+\\s*$'
-               - '^\\s*--\\s+altera\\s+\\w+\\s*$'
-               - '^\\s*--\\s+synopsys\\s+\\w+\\s*$'
-               - '^\\s*--\\s+synopsys\\s+\\w+\\s+\\w+\\s*$'
-               - '^\\s*--\\s+xilinx\\s+\\w+\\s*$'
-               - "^\\s*--\\s+xilinx\\s+\\w+\\s+\\w+\\s*$"
+               - '^\s*--\s+synthesis\s+\w+\s*$'
+               - '^\s*--\s+synthesis\s+\w+\s+\w+\s*$'
+               - '^\s*--\s+pragma\s+\w+\s*$'
+               - '^\s*--\s+pragma\s+\w+\s+\w+\s*$'
+               - '^\s*--\s+altera\s+\w+\s*$'
+               - '^\s*--\s+synopsys\s+\w+\s*$'
+               - '^\s*--\s+synopsys\s+\w+\s+\w+\s*$'
+               - '^\s*--\s+xilinx\s+\w+\s*$'
+               - '^\s*--\s+xilinx\s+\w+\s+\w+\s*$'
 
 Each pattern will be applied to a line in the source file.
 If a match is detected, the comment will be converted into a pragma.

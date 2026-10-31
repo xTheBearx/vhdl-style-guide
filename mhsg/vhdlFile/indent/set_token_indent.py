@@ -89,14 +89,14 @@ def set_token_indent(dIndentMap, lTokens):
             cParams.bLibraryFound = False
             continue
 
+        ### Pragmas are comments, so they must be checked before comments
+        if isinstance(oToken, token.pragma.pragma):
+            set_indent_of_pragma(cParams, iToken, lTokens)
+            continue
+
         ### Comments
         if isinstance(oToken, parser.comment):
             set_indent_of_comment(cParams, iToken, lTokens)
-            continue
-
-        ### Pragmas
-        if isinstance(oToken, token.pragma.pragma):
-            set_indent_of_pragma(cParams, iToken, lTokens)
             continue
 
         ### Concurrent signal assignment
@@ -170,7 +170,13 @@ def is_use_clause_use_keyword_next(iIndex, lTokens):
 
 def set_indent_of_pragma(cParams, iToken, lTokens):
     oToken = lTokens[iToken]
-    set_indent_of_normal_comment(cParams, iToken, lTokens)
+    # A closing pragma is indented to match its opening pragma
+    if isinstance(oToken, token.pragma.close) and len(cParams.lOpenPragmaIndents) > 0:
+        oToken.set_indent(cParams.lOpenPragmaIndents.pop())
+        return
+    set_indent_of_comment(cParams, iToken, lTokens)
+    if isinstance(oToken, token.pragma.open):
+        cParams.lOpenPragmaIndents.append(oToken.get_indent())
 
 
 def set_indent_of_comment(cParams, iToken, lTokens):
@@ -254,6 +260,7 @@ class parameters:
         self.bLibraryFound = False
         self.bArchitectureFound = False
         self.insideConcurrentSignalAssignment = False
+        self.lOpenPragmaIndents = []
         self.dOptions = {}
         self.iIndent = 0
 
