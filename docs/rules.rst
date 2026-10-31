@@ -54,6 +54,7 @@ The rules are divided into categories depending on the part of the VHDL code bei
    ieee_rules.rst
    if_rules.rst
    if_generate_statement_rules.rst
+   incomplete_type_definition_rules.rst
    index_constraint_rules.rst
    index_subtype_definition_rules.rst
    instantiation_rules.rst
@@ -97,6 +98,7 @@ The rules are divided into categories depending on the part of the VHDL code bei
    type_mark_rules.rst
    unfixable_rules.rst
    unbounded_array_definition_rules.rst
+   unspecified_type_indication_rules.rst
    use_clause_rules.rst
    variable_rules.rst
    variable_assignment_rules.rst

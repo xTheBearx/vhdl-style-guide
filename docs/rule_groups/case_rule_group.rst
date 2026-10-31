@@ -138,6 +138,13 @@ Rules Enforcing Case Rule Group
 * `if_028 <../if_rules.html#if-028>`_
 * `if_029 <../if_rules.html#if-029>`_
 * `if_034 <../if_rules.html#if-034>`_
+* `incomplete_type_definition_500 <../incomplete_type_definition_rules.html#incomplete-type-definition-500>`_
+* `incomplete_type_definition_501 <../incomplete_type_definition_rules.html#incomplete-type-definition-501>`_
+* `incomplete_type_definition_502 <../incomplete_type_definition_rules.html#incomplete-type-definition-502>`_
+* `incomplete_type_definition_503 <../incomplete_type_definition_rules.html#incomplete-type-definition-503>`_
+* `incomplete_type_definition_504 <../incomplete_type_definition_rules.html#incomplete-type-definition-504>`_
+* `incomplete_type_definition_505 <../incomplete_type_definition_rules.html#incomplete-type-definition-505>`_
+* `incomplete_type_definition_506 <../incomplete_type_definition_rules.html#incomplete-type-definition-506>`_
 * `index_subtype_definition_500 <../index_subtype_definition_rules.html#index-subtype-definition-500>`_
 * `instantiation_008 <../instantiation_rules.html#instantiation-008>`_
 * `instantiation_009 <../instantiation_rules.html#instantiation-009>`_
@@ -149,6 +156,7 @@ Rules Enforcing Case Rule Group
 * `interface_incomplete_type_declaration_500 <../interface_incomplete_type_declaration_rules.html#interface-incomplete-type-declaration-500>`_
 * `interface_incomplete_type_declaration_501 <../interface_incomplete_type_declaration_rules.html#interface-incomplete-type-declaration-501>`_
 
+* `interface_incomplete_type_declaration_502 <../interface_incomplete_type_declaration_rules.html#interface-incomplete-type-declaration-502>`_
 * `iteration_scheme_500 <../iteration_scheme_rules.html#iteration-scheme-500>`_
 * `iteration_scheme_501 <../iteration_scheme_rules.html#iteration-scheme-501>`_
 * `library_004 <../library_rules.html#library-004>`_
@@ -257,6 +265,8 @@ Rules Enforcing Case Rule Group
 * `type_mark_501 <../type_mark_rules.html#type-mark-501>`_
 * `unbounded_array_definition_500 <../unbounded_array_definition_rules.html#unbounded-array-definition-500>`_
 * `unbounded_array_definition_501 <../unbounded_array_definition_rules.html#unbounded-array-definition-501>`_
+* `unspecified_type_indication_500 <../unspecified_type_indication_rules.html#unspecified-type-indication-500>`_
+* `unspecified_type_indication_501 <../unspecified_type_indication_rules.html#unspecified-type-indication-501>`_
 * `use_clause_500 <../use_clause_rules.html#use-clause-500>`_
 * `use_clause_501 <../use_clause_rules.html#use-clause-501>`_
 * `use_clause_502 <../use_clause_rules.html#use-clause-502>`_
