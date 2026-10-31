@@ -173,11 +173,13 @@ Here are a list of attributes that can be altered for each rule:
 | fixable      | Boolean | If set to False, the violation will not be fixed |
 +--------------+---------+--------------------------------------------------+
 
+.. _configuring-rule-aliases:
+
 Rule Aliases
 ############
 
 Every rule also has a descriptive alias, shown in the documentation of the rule and by the **-rc** option.
-The alias can be used instead of the rule identifier wherever a rule is configured, including under **file_list** and **file_rules**.
+The alias can be used instead of the rule identifier wherever a rule is configured, including under **file_list** and **file_rules**, and in code tags such as **mhsg_off**.
 These two configurations are equivalent:
 
 .. code-block:: yaml

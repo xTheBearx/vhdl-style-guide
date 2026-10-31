@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import parser
+from mhsg import parser, rule_aliases
 
 
 class New:
@@ -86,7 +86,7 @@ def remove_code_tags(self, oToken):
         self.clear()
     else:
         for sCodeTag in lValues[2:]:
-            self.remove(sCodeTag)
+            self.remove(rule_aliases.get_rule_id(sCodeTag))
 
 
 def add_code_tags(self, oToken):
@@ -97,7 +97,7 @@ def add_code_tags(self, oToken):
         self.add("all")
     else:
         for sCodeTag in lValues[2:]:
-            self.add(sCodeTag)
+            self.add(rule_aliases.get_rule_id(sCodeTag))
 
 
 def remove_code_tag_comment(oToken):
@@ -109,6 +109,7 @@ def add_next_line_code_tags(self, oToken):
     sValue = remove_code_tag_comment(oToken)
     lValues = sValue.split()
     for sCodeTag in lValues[2:]:
+        sCodeTag = rule_aliases.get_rule_id(sCodeTag)
         if sCodeTag not in self.next_line_code_tags:
             self.next_line_code_tags.append(sCodeTag)
 

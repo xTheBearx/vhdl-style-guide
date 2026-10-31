@@ -156,7 +156,8 @@ class Rule:
         """
         Adds a linenumber to a violations list.
         """
-        if not violation.has_code_tag(self.unique_id):
+        # Code tags name the rule by its identifier or, for local rules, by an alias of their own
+        if not violation.has_code_tag(self.unique_id) and not (self.alias is not None and violation.has_code_tag(self.alias)):
             if self.user_error_message != "":
                 violation.sSolution = violation.sSolution + " [user_error_message: " + self.user_error_message + "]"
             self.violations.append(violation)
