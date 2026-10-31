@@ -1,41 +1,20 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import token
-from mhsg.rules.whitespace_between_token_pairs import Rule
-
-lTokens = []
-lTokens.append([token.procedure_specification.procedure_keyword, token.procedure_specification.designator])
-lTokens.append([token.procedure_specification.designator, token.subprogram_body.is_keyword])
-lTokens.append([token.procedure_specification.designator, token.procedure_specification.open_parenthesis])
-lTokens.append([token.procedure_specification.close_parenthesis, token.subprogram_body.is_keyword])
+from mhsg import deprecated_rule
 
 
-class rule_100(Rule):
+class rule_100(deprecated_rule.Rule):
     """
-    This rule checks for a single space between the following procedure elements:  **procedure** keyword, procedure designator, open parenthesis, close parenthesis, and **is** keywords.
+    This rule has been split into the following rules:
 
-    |configuring_whitespace_rules_link|
-
-    **Violation**
-
-    .. code-block:: vhdl
-
-       procedure    average_samples    (
-           constant a : in integer;
-           signal d : out std_logic
-         )    is
-       procedure    average_samples      is
-
-    **Fix**
-
-    .. code-block:: vhdl
-
-       procedure average_samples (
-           constant a : in integer;
-           signal d : out std_logic
-         ) is
-       procedure average_samples is
+    * :ref:`procedure_102`
+    * :ref:`procedure_103`
+    * :ref:`procedure_104`
     """
 
     def __init__(self):
-        super().__init__(lTokens)
+        super().__init__()
+        self.message.append("Rule " + self.unique_id + " has been split into the following rules:")
+        self.message.append("  procedure_102")
+        self.message.append("  procedure_103")
+        self.message.append("  procedure_104")

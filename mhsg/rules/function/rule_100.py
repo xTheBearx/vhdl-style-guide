@@ -1,39 +1,26 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import parser, token
-from mhsg.rules.whitespace_between_token_pairs import Rule
-
-lTokens = []
-lTokens.append([token.function_specification.pure_keyword, token.function_specification.function_keyword])
-lTokens.append([token.function_specification.impure_keyword, token.function_specification.function_keyword])
-lTokens.append([token.function_specification.function_keyword, token.function_specification.designator])
-lTokens.append([token.function_specification.designator, token.function_specification.return_keyword])
-lTokens.append([token.function_specification.designator, token.function_specification.open_parenthesis])
-lTokens.append([token.function_specification.close_parenthesis, token.function_specification.return_keyword])
-lTokens.append([token.function_specification.return_keyword, token.type_mark.name])
-lTokens.append([token.function_specification.return_keyword, parser.type])
-lTokens.append([parser.type, token.subprogram_body.is_keyword])
-lTokens.append([token.type_mark.name, token.subprogram_body.is_keyword])
+from mhsg import deprecated_rule
 
 
-class rule_100(Rule):
+class rule_100(deprecated_rule.Rule):
     """
-    This rule checks for a single space between the following function elements:  **function** keyword, function designator, open parenthesis, close parenthesis, **return** keyword, return type and **is** keyword.
+    This rule has been split into the following rules:
 
-    |configuring_whitespace_rules_link|
-
-    **Violation**
-
-    .. code-block:: vhdl
-
-       function     overflow    (a: integer)     return     integer    is
-
-    **Fix**
-
-    .. code-block:: vhdl
-
-       function overflow (a: integer) return integer is
+    * :ref:`function_102`
+    * :ref:`function_103`
+    * :ref:`function_104`
+    * :ref:`function_105`
+    * :ref:`function_106`
+    * :ref:`function_107`
     """
 
     def __init__(self):
-        super().__init__(lTokens)
+        super().__init__()
+        self.message.append("Rule " + self.unique_id + " has been split into the following rules:")
+        self.message.append("  function_102")
+        self.message.append("  function_103")
+        self.message.append("  function_104")
+        self.message.append("  function_105")
+        self.message.append("  function_106")
+        self.message.append("  function_107")

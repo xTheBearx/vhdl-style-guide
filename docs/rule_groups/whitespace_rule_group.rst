@@ -94,8 +94,13 @@ Rules Enforcing Whitespace Rule Group
 * `file_open_information_103 <../file_open_information_rules.html#file-open-information-103>`_
 * `file_100 <../file_rules.html#file-100>`_
 * `file_101 <../file_rules.html#file-101>`_
-* `function_100 <../function_rules.html#function-100>`_
 * `function_101 <../function_rules.html#function-101>`_
+* `function_102 <../function_rules.html#function-102>`_
+* `function_103 <../function_rules.html#function-103>`_
+* `function_104 <../function_rules.html#function-104>`_
+* `function_105 <../function_rules.html#function-105>`_
+* `function_106 <../function_rules.html#function-106>`_
+* `function_107 <../function_rules.html#function-107>`_
 * `generate_002 <../generate_rules.html#generate-002>`_
 * `generate_008 <../generate_rules.html#generate-008>`_
 * `generate_013 <../generate_rules.html#generate-013>`_
@@ -146,8 +151,10 @@ Rules Enforcing Whitespace Rule Group
 * `port_map_007 <../port_map_rules.html#port-map-007>`_
 * `port_map_100 <../port_map_rules.html#port-map-100>`_
 * `port_map_101 <../port_map_rules.html#port-map-101>`_
-* `procedure_100 <../procedure_rules.html#procedure-100>`_
 * `procedure_101 <../procedure_rules.html#procedure-101>`_
+* `procedure_102 <../procedure_rules.html#procedure-102>`_
+* `procedure_103 <../procedure_rules.html#procedure-103>`_
+* `procedure_104 <../procedure_rules.html#procedure-104>`_
 * `procedure_call_100 <../procedure_call_rules.html#procedure-call-100>`_
 * `procedure_call_101 <../procedure_call_rules.html#procedure-call-101>`_
 * `process_002 <../process_rules.html#process-002>`_

@@ -363,31 +363,11 @@ This rule checks the procedure designator exists in the closing of the procedure
 procedure_100
 #############
 
-|phase_2| |error| |whitespace|
+This rule has been split into the following rules:
 
-This rule checks for a single space between the following procedure elements:  **procedure** keyword, procedure designator, open parenthesis, close parenthesis, and **is** keywords.
-
-|configuring_whitespace_rules_link|
-
-**Violation**
-
-.. code-block:: vhdl
-
-   procedure    average_samples    (
-       constant a : in integer;
-       signal d : out std_logic
-     )    is
-   procedure    average_samples      is
-
-**Fix**
-
-.. code-block:: vhdl
-
-   procedure average_samples (
-       constant a : in integer;
-       signal d : out std_logic
-     ) is
-   procedure average_samples is
+* :ref:`procedure_102`
+* :ref:`procedure_103`
+* :ref:`procedure_104`
 
 procedure_101
 #############
@@ -413,6 +393,69 @@ This rule checks for a single space between the **end** and **procedure** keywor
    end procedure average_samples;
    end procedure;
    end average_samples;
+
+procedure_102
+#############
+
+|phase_2| |error| |whitespace|
+
+This rule checks for a single space after the **procedure** keyword.
+
+|configuring_whitespace_rules_link|
+
+**Violation**
+
+.. code-block:: vhdl
+
+   procedure    average_samples (
+
+**Fix**
+
+.. code-block:: vhdl
+
+   procedure average_samples (
+
+procedure_103
+#############
+
+|phase_2| |error| |whitespace|
+
+This rule checks for a single space between the procedure designator and the open parenthesis.
+
+|configuring_whitespace_rules_link|
+
+**Violation**
+
+.. code-block:: vhdl
+
+   procedure average_samples    (
+
+**Fix**
+
+.. code-block:: vhdl
+
+   procedure average_samples (
+
+procedure_104
+#############
+
+|phase_2| |error| |whitespace|
+
+This rule checks for a single space before the **is** keyword.
+
+|configuring_whitespace_rules_link|
+
+**Violation**
+
+.. code-block:: vhdl
+
+   )    is
+
+**Fix**
+
+.. code-block:: vhdl
+
+   ) is
 
 procedure_200
 #############

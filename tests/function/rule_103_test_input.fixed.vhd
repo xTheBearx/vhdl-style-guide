@@ -31,23 +31,19 @@ architecture RTL of FIFO is
   begin
   end;
 
-  function func1 return integer is
+  function func1    return integer is
   begin
   end;
 
-  function func1 return integer is
+  function func1 return     integer is
   begin
   end;
 
-  function func1 return integer is
+  function func1 return integer      is
   begin
   end;
 
-  pure function func1 return integer is
-  begin
-  end;
-
-  pure function func1 return integer is
+  pure    function func1 return integer is
   begin
   end;
 
@@ -55,23 +51,19 @@ architecture RTL of FIFO is
   begin
   end;
 
-  pure function func1 return integer is
+  pure function func1     return integer is
   begin
   end;
 
-  pure function func1 return integer is
+  pure function func1 return      integer is
   begin
   end;
 
-  impure function func1 return integer is
+  pure function func1 return integer     is
   begin
   end;
 
-  impure function func1 return integer is
-  begin
-  end;
-
-  impure function func1 return integer is
+  impure    function func1 return integer is
   begin
   end;
 
@@ -79,7 +71,15 @@ architecture RTL of FIFO is
   begin
   end;
 
-  impure function func1 return integer is
+  impure function func1     return integer is
+  begin
+  end;
+
+  impure function func1 return      integer is
+  begin
+  end;
+
+  impure function func1 return integer     is
   begin
   end;
 
@@ -87,19 +87,19 @@ architecture RTL of FIFO is
   begin
   end;
 
-  function func1 (a : integer) return integer is
+  function func1    (a : integer) return integer is
   begin
   end;
 
-  function func1 (a : integer) return integer is
+  function func1 (a : integer)    return integer is
   begin
   end;
 
-  function func1 (a : integer) return integer is
+  function func1 (a : integer) return    integer is
   begin
   end;
 
-  function func1 (a : integer) return integer is
+  function func1 (a : integer) return integer    is
   begin
   end;
 
