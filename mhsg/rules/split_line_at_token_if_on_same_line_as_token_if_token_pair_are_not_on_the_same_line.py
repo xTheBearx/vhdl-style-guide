@@ -45,6 +45,8 @@ class split_line_at_token_if_on_same_line_as_token_if_token_pair_are_not_on_the_
         return lToi
 
     def _analyze(self, lToi):
+        # Statements can nest, such as types in a protected type body, so a token can be in several ranges
+        lReported = set()
         for oToi in lToi:
             lTokens = oToi.get_tokens()
             iLine = oToi.get_line_number()
@@ -57,17 +59,17 @@ class split_line_at_token_if_on_same_line_as_token_if_token_pair_are_not_on_the_
                         iToken + 1,
                         lTokens,
                     ):
-                        sSolution = self.solution
-                        oViolation = violation.New(iLine, oToi, sSolution)
-                        dAction = {}
-                        dAction["insert_index"] = iToken + 1
-                        oViolation.set_action(dAction)
+                        # The violation covers only the token to split after, so violations in the same
+                        # statement, such as several enumerated types in a protected type body, do not overlap
+                        if oToi.get_start_index() + iToken in lReported:
+                            continue
+                        lReported.add(oToi.get_start_index() + iToken)
+                        oViolation = violation.New(iLine, oToi.extract_tokens(iToken, iToken), self.solution)
                         self.add_violation(oViolation)
 
     def _fix_violation(self, oViolation):
         lTokens = oViolation.get_tokens()
-        dAction = oViolation.get_action()
-        rules_utils.insert_carriage_return(lTokens, dAction["insert_index"])
+        rules_utils.insert_carriage_return(lTokens, len(lTokens))
         oViolation.set_tokens(lTokens)
 
 

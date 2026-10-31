@@ -44,3 +44,31 @@ class test_rule(unittest.TestCase):
 
         oRule.analyze(self.oFile)
         self.assertEqual(oRule.violations, [])
+
+
+lFileProtected, eErrorProtected = vhdlFile.utils.read_vhdlfile(os.path.join(sTestDir, "rule_009_test_input.protected.vhd"))
+
+lExpectedProtected = []
+lExpectedProtected.append("")
+utils.read_file(os.path.join(sTestDir, "rule_009_test_input.protected.fixed.vhd"), lExpectedProtected)
+
+
+class test_rule_protected(unittest.TestCase):
+    """
+    Enumerated types in a protected type body: the violations used to cover the whole protected type,
+    so fixing several of them overlapped and duplicated the closing semicolon.
+    """
+
+    def setUp(self):
+        self.assertIsNone(eErrorProtected)
+        self.oFile = vhdlFile.vhdlFile(lFileProtected)
+
+    def test_rule_009_protected(self):
+        oRule = type_definition.rule_009()
+        oRule.analyze(self.oFile)
+        self.assertEqual(utils.extract_violation_lines_from_violation_object(oRule.violations), [6, 9])
+
+    def test_fix_rule_009_protected(self):
+        oRule = type_definition.rule_009()
+        oRule.fix(self.oFile)
+        self.assertEqual(lExpectedProtected, self.oFile.get_lines())
