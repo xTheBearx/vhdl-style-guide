@@ -19,6 +19,10 @@ lExpected_upper = []
 lExpected_upper.append("")
 utils.read_file(os.path.join(sTestDir, "rule_500_test_input.fixed_upper.vhd"), lExpected_upper)
 
+lFile_block_declarations, eError_block_declarations = vhdlFile.utils.read_vhdlfile(
+    os.path.join(sTestDir, "rule_500_test_input.block_declarations.vhd"),
+)
+
 lFile_indexed_name_in_range, eError_indexed_name_in_range = vhdlFile.utils.read_vhdlfile(
     os.path.join(sTestDir, "rule_500_test_input.indexed_name_in_range.vhd"),
 )
@@ -112,3 +116,13 @@ class test_rule(unittest.TestCase):
         self.oFile = vhdlFile.vhdlFile(lFile_indexed_name_in_range)
         oRule.analyze(self.oFile)
         self.assertEqual(utils.extract_violation_lines_from_violation_object(oRule.violations), [4, 5, 6])
+
+    def test_rule_500_block_declarations(self):
+        # Issue VSG 1587: types declared in a block, or in the enclosing architecture, were treated as undeclared
+        # when used inside the block.
+        self.assertIsNone(eError_block_declarations)
+
+        oRule = type_mark.rule_500()
+        self.oFile = vhdlFile.vhdlFile(lFile_block_declarations)
+        oRule.analyze(self.oFile)
+        self.assertEqual(utils.extract_violation_lines_from_violation_object(oRule.violations), [13])

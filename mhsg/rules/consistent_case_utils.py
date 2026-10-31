@@ -145,6 +145,9 @@ def get_token_of_interest_dicts(
 
     lAllDicts = remove_duplicate_names("architecture_body", "component_declaration", lAllDicts)
 
+    lAllDicts = remove_duplicate_identifiers("architecture_body", "block_statement", lAllDicts)
+    lAllDicts = remove_duplicate_names("architecture_body", "block_statement", lAllDicts)
+
     lAllDicts = remove_duplicate_identifiers("process", "subprogram_body", lAllDicts)
     lAllDicts = remove_duplicate_names("process", "subprogram_body", lAllDicts)
 
@@ -154,6 +157,7 @@ def get_token_of_interest_dicts(
     lAllDicts = remove_duplicate_identifiers("block_statement", "process", lAllDicts)
     lAllDicts = remove_duplicate_names("block_statement", "process", lAllDicts)
 
+    lAllDicts = add_identifiers_from_to("architecture_body", "block_statement", lAllDicts)
     lAllDicts = add_identifiers_from_to("block_statement", "process", lAllDicts)
     lAllDicts = add_identifiers_from_to("architecture_body", "process", lAllDicts)
 
