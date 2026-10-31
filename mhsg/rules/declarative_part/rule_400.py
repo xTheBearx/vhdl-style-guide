@@ -11,7 +11,6 @@ lAlign.append(token.signal_declaration.assignment_operator)
 lAlign.append(token.variable_declaration.assignment_operator)
 
 lUnless = []
-lUnless.append([token.subprogram_body.is_keyword, token.subprogram_body.begin_keyword])
 lUnless.append([token.protected_type_body.body_keyword, token.protected_type_body.end_keyword])
 
 
@@ -42,6 +41,9 @@ class rule_400(Rule):
 
     def __init__(self):
         super().__init__(lAlign, None, None, lUnless)
+        # Declarations of nested subprograms are aligned by their own subprogram
+        self.oNestedStartToken = token.subprogram_body.is_keyword
+        self.oNestedEndToken = token.subprogram_body.semicolon
         self.solution = "Align :="
         self.prerequisites.append(prerequisite.New("procedure_401"))
         self.prerequisites.append(prerequisite.New("architecture_026"))

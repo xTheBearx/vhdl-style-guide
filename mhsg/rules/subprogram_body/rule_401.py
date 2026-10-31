@@ -39,5 +39,8 @@ class rule_401(Rule):
 
     def __init__(self):
         super().__init__(lAlign, oStart, oEnd, lUnless)
+        # Declarations of nested subprograms are aligned by their own subprogram
+        self.oNestedStartToken = token.subprogram_body.is_keyword
+        self.oNestedEndToken = token.subprogram_body.semicolon
         self.solution = "Align colon."
         self.configuration.remove("separate_generic_port_alignment")

@@ -56,6 +56,10 @@ class align_tokens_in_region_between_tokens(alignment.Rule):
         self.bIncludeTillBeginningOfLine = False
         # A line's first matching token is only aligned if none of these tokens appear before it on the line
         self.lStopSearchTokens = []
+        # Tokens between a nested start and its matching end token are not aligned, for example
+        # the declarations of a subprogram declared inside the subprogram being aligned
+        self.oNestedStartToken = None
+        self.oNestedEndToken = None
         self.aggregate_parens_ends_group = "no"
         self.ignore_single_line_aggregates = "no"
         self.configuration_documentation_link = "configuring_keyword_alignment_rules_link"
@@ -96,6 +100,7 @@ class align_tokens_in_region_between_tokens(alignment.Rule):
             dAnalysis = {}
             lSuspendedAnalysis = []
             iIndex = 0
+            iNestedDepth = 0
 
             if rules_utils.number_of_carriage_returns(lTokens) == 0:
                 continue
@@ -105,11 +110,12 @@ class align_tokens_in_region_between_tokens(alignment.Rule):
                 oToken = lTokens[iIndex]
 
                 bSkip, oEndSkipToken = alignment_utils.check_for_exclusions(oToken, bSkip, oEndSkipToken, self.lUnless)
+                iNestedDepth, bNested = self._update_nested_depth(oToken, iIndex, iNestedDepth)
 
                 if not bTokenFound and isinstance(oToken, tuple(self.lStopSearchTokens)):
                     bTokenFound = True
 
-                if not bTokenFound and not bSkip:
+                if not bTokenFound and not bSkip and not bNested:
                     for oSearch in lSearchTokens:
                         if isinstance(oToken, oSearch):
                             bTokenFound = True
@@ -194,6 +200,20 @@ class align_tokens_in_region_between_tokens(alignment.Rule):
             for dSuspended in lSuspendedAnalysis:
                 alignment_utils.check_for_violations(self, dSuspended, oFile)
             dAnalysis = {}
+
+    def _update_nested_depth(self, oToken, iIndex, iDepth):
+        """
+        Returns the nesting depth after oToken, and whether oToken is inside a nested region.
+        The first token of the region is the region's own start token, not a nested one.
+        """
+        if self.oNestedStartToken is None or iIndex == 0:
+            return iDepth, False
+        # pylint: disable=isinstance-second-argument-not-valid-type  # token classes, set by the rules that use them
+        if isinstance(oToken, self.oNestedStartToken):
+            return iDepth + 1, True
+        if iDepth > 0 and isinstance(oToken, self.oNestedEndToken):
+            return iDepth - 1, True
+        return iDepth, iDepth > 0
 
     def _fix_violation(self, oViolation):
         lTokens = oViolation.get_tokens()

@@ -517,3 +517,22 @@ def get_index_of_matching_close_paren(iToken, lTokens):
             if lTokens[iIndex].iId == lTokens[iToken].iId:
                 return iIndex
     return None
+
+
+def extract_subprogram_body_ends(lToi, oValueToken):
+    """
+    Returns the tokens from the end keyword to the semicolon of each
+    subprogram body, with the value of the first oValueToken of the body
+    stored as the token value.
+
+    Only the end of each body is returned, so the tokens of a subprogram
+    declared inside another subprogram do not overlap with the tokens of the
+    enclosing subprogram.
+    """
+    lReturn = []
+    for oToi in lToi:
+        oToi.set_token_value(oToi.get_first_token_matching(oValueToken).get_value())
+        iStart = oToi.get_index_of_last_token_matching(token.subprogram_body.end_keyword)
+        iEnd = oToi.get_index_of_last_token_matching(token.subprogram_body.semicolon)
+        lReturn.append(oToi.extract_tokens(iStart, iEnd))
+    return lReturn
