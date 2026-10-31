@@ -30,3 +30,4 @@ class rule_501(Rule):
         super().__init__(lTokens)
         self.groups.append("case::name")
         self.configuration.append("case_exceptions")
+        self.configuration.append("regex_exceptions")

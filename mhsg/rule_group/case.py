@@ -23,3 +23,4 @@ class Rule(rule.Rule):
         self.groups.append("case")
         self.configuration_documentation_link = "configuring_uppercase_and_lowercase_rules_link"
         self.remap = False
+        self.regex_exceptions = []

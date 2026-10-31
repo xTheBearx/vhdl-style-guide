@@ -119,6 +119,18 @@ There are several options to these rules:
 .. |regex_description| replace::
    Enforce case based on regex string
 
+.. |regex_exceptions_option| replace::
+   :code:`regex_exceptions`
+
+.. |re_values| replace::
+   List of strings
+
+.. |re_default_value| replace::
+   Empty list
+
+.. |re_description| replace::
+   Do not check items matching a regex.
+
 +----------------------------+---------------------------+-----------------------+------------------------------------+
 | Option                     | Values                    | Default Value         | Description                        |
 +============================+===========================+=======================+====================================+
@@ -140,6 +152,8 @@ There are several options to these rules:
 +----------------------------+---------------------------+-----------------------+------------------------------------+
 | |regex_option|             | |regex_values|            | |regex_default_value| | |regex_description|                |
 +----------------------------+---------------------------+-----------------------+------------------------------------+
+| |regex_exceptions_option|  | |re_values|               | |re_default_value|    | |re_description|                   |
++----------------------------+---------------------------+-----------------------+------------------------------------+
 
 This is an example of how to configure these options.
 
@@ -155,6 +169,8 @@ This is an example of how to configure these options.
         case_exceptions:
           - 'IEEE'
         regex: ''
+        regex_exceptions:
+          - 'osvvm_'
 
 The following code snippet is used in the following examples:
 
@@ -224,6 +240,19 @@ The following constant identifiers would pass with the defined regular expressio
 
    constant SPIAccess : std_logic;
    constant ADCRegisters : std_logic;
+
+Example: |regex_exceptions_option| set to :code:`osvvm_`
+########################################################
+
+Items matching any regular expression in |regex_exceptions_option| are not checked.
+Each expression is matched from the start of the item, ignoring case.
+This is useful for names from external libraries, such as OSVVM, which follow a different style.
+With :code:`case` set to :code:`lower`, the following code would pass:
+
+.. code-block:: vhdl
+
+   signal scoreboard : OSVVM_ScoreboardIdType;
+   signal data       : std_logic_vector(7 downto 0);
 
 Example: Changing Multiple Case Rules
 #####################################
