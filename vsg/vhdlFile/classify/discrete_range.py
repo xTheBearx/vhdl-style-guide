@@ -11,7 +11,7 @@ def detect(iToken, lObjects):
     discrete_range ::=
         *discrete*_subtype_indication | range
     """
-    if utils.are_next_consecutive_tokens([None, "(", None, ")"], iToken, lObjects):
+    if subtype_indication_with_constraint_ends_discrete_range(iToken, lObjects):
         return subtype_indication.classify(iToken, lObjects)
     return range.detect(iToken, lObjects)
 
@@ -61,3 +61,11 @@ def classify_until(lUntils, iToken, lObjects):
         iPrevious = iCurrent
 
     return iCurrent
+
+
+def subtype_indication_with_constraint_ends_discrete_range(iToken, lObjects):
+    # An indexed name followed by more of an expression, e.g. CONST(0) - 1 downto 0, is a range
+    for sEnd in [")", ","]:
+        if utils.are_next_consecutive_tokens([None, "(", None, ")", sEnd], iToken, lObjects):
+            return True
+    return False
