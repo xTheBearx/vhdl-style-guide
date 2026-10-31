@@ -15,7 +15,7 @@ The command line tool can be invoked with:
                                  [-oc OUTPUT_CONFIGURATION]
                                  [-rc RULE_CONFIGURATION]
                                  [--style {indent_only,jcl}] [-v] [-ap]
-                                 [--fix_only FIX_ONLY] [--stdin]
+                                 [--fix_only FIX_ONLY] [--stdin] [--stdout]
                                  [--quality_report QUALITY_REPORT] [-p JOBS]
                                  [--debug]
                                  [FILENAME ...]
@@ -56,6 +56,9 @@ The command line tool can be invoked with:
      --fix_only FIX_ONLY   Restrict fixing via JSON file.
      --stdin               Read VHDL input from stdin, disables all other file
                            selections, disables multiprocessing
+     --stdout              With --fix, write the fixed code to stdout instead of
+                           the file and the report to stderr. Requires a single
+                           input.
      --quality_report QUALITY_REPORT
                            Create code quality report for GitLab
      -p JOBS, --jobs JOBS  number of parallel jobs to use, default is the number
@@ -78,6 +81,12 @@ The command line tool can be invoked with:
 |                               | useful for using with other tools such as       |
 |                               | editors that can interact through stdin/stdout  |
 |                               | for diagnostics                                 |
++-------------------------------+-------------------------------------------------+
+| --stdout                      | Used with --fix. Writes the fixed code to       |
+|                               | standard out instead of back to the file, and   |
+|                               | the report to standard error. The exit status   |
+|                               | is 0 unless the code could not be processed.    |
+|                               | Allows MHSG to be used as an editor formatter.  |
 +-------------------------------+-------------------------------------------------+
 | --local_rules LOCAL_RULES     | Directories of additional rules not in the base |
 |                               | set.                                            |
@@ -225,6 +234,15 @@ Checking a single file over standard input
 .. code-block:: text
 
    $ mhsg --stdin
+
+Formatting code from standard input to standard output
+------------------------------------------------------
+
+This is how an editor can use MHSG as a formatter.
+
+.. code-block:: text
+
+   $ mhsg --stdin --fix --stdout < fifo.vhd > fifo.formatted.vhd
 
 Checking multiple files using globbing
 --------------------------------------

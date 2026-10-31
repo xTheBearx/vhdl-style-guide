@@ -93,6 +93,20 @@ def display_rule_configuration(commandLineArguments, oConfig):
         sys.exit(fExitStatus)
 
 
+def validate_stdout_option(commandLineArguments):
+    if not commandLineArguments.stdout:
+        return
+    if not commandLineArguments.fix:
+        print("ERROR: --stdout requires --fix", file=sys.stderr)
+        sys.exit(1)
+    iInputs = int(commandLineArguments.stdin) + (
+        0 if commandLineArguments.stdin or commandLineArguments.filename is None else len(commandLineArguments.filename)
+    )
+    if iInputs != 1:
+        print("ERROR: --stdout requires a single input file or --stdin", file=sys.stderr)
+        sys.exit(1)
+
+
 def validate_files_exist_to_analyze(sName, stdin):
     if sName is None and not stdin:
         print("ERROR: No file defined by the -f command line option or filename given in configuration file.")
@@ -127,7 +141,8 @@ def main():
     f = functools.partial(apply_rules.apply_rules, commandLineArguments, oConfig)
     # It's easier to debug when not using multiprocessing.Pool()
     lReturn = []
-    if commandLineArguments.jobs == 1 or commandLineArguments.stdin:
+    validate_stdout_option(commandLineArguments)
+    if commandLineArguments.jobs == 1 or commandLineArguments.stdin or commandLineArguments.stdout:
         validate_files_exist_to_analyze(commandLineArguments.filename, commandLineArguments.stdin)
         if commandLineArguments.stdin:
             fStatus, testCase, dJsonEntry, sOutputStd, sOutputErr, bKeepProcessingFiles = f((0, "stdin"))
