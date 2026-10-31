@@ -51,7 +51,7 @@ class test_rule(unittest.TestCase):
         oRule = library.rule_007()
         oRule.style = "no_blank_line_unless_different_library"
 
-        lExpected = [12, 17, 23, 28, 107]
+        lExpected = [12, 17, 23, 28, 107, 123, 125]
 
         oRule.analyze(self.oFile)
         self.assertEqual(lExpected, utils.extract_violation_lines_from_violation_object(oRule.violations))

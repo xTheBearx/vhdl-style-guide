@@ -58,7 +58,11 @@ class previous_line(blank_line.Rule):
         elif self.style == "no_blank_line":
             return oFile.get_blank_lines_above_line_starting_with_token(self.lTokens)
         elif self.style == "no_blank_line_unless_different_library":
-            return oFile.get_blank_lines_above_line_starting_with_use_clause(self.lTokens)
+            lReturn = oFile.get_blank_lines_above_line_starting_with_use_clause(self.lTokens)
+            for oToi in oFile.get_lines_above_use_clause_from_different_library(self.lTokens):
+                oToi.set_meta_data("insert_blank_line", True)
+                lReturn.append(oToi)
+            return lReturn
         else:
             if self.lHierarchyLimits is None:
                 return oFile.get_line_above_line_starting_with_token(self.lTokens, bIncludeComments)
@@ -118,7 +122,13 @@ def _analyze_no_blank_line(self, lToi, lAllowTokens):
 
 def _analyze_no_blank_line_unless_different_library(self, lToi, lAllowTokens):
     for oToi in lToi:
-        if oToi.get_meta_data("previous_library_is_different"):
+        if "insert_blank_line" in oToi.dMetaData:
+            oViolation = violation.New(oToi.get_line_number(), oToi, self.solution)
+            dAction = {}
+            dAction["action"] = "Insert"
+            oViolation.set_action(dAction)
+            self.add_violation(oViolation)
+        elif oToi.get_meta_data("previous_library_is_different"):
             sSolution = "Remove blank lines"
             oViolation = violation.New(oToi.get_line_number(), oToi, sSolution)
             dAction = {}

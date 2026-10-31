@@ -107,3 +107,11 @@ library ieee;
 -- comment
 -- comment
   use work.all;
+
+library ieee;
+use ieee.std_logic_1164.all;
+
+use work.a_pkg.all;
+library ieee;
+
+use work.b_pkg.all;
