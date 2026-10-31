@@ -33,6 +33,9 @@ comment_010
 
 This rule checks the indent lines starting with comments.
 
+Comments inside multiline conditional assignments are not checked by this rule.
+They are aligned with the code around them by rules :ref:`concurrent_009`, :ref:`sequential_401` and :ref:`variable_assignment_400`.
+
 |configuring_comment_indenting_link|
 
 **Violation**
