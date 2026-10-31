@@ -31,5 +31,6 @@ class rule_009(multiline_alignment_between_tokens):
 
     def __init__(self):
         super().__init__(lTokenPairs)
+        self.bAlignEndTokenWithFirstLine = True
         self.phase = 4
         self.subphase = 2

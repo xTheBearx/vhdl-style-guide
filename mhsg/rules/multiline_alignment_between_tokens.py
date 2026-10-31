@@ -35,6 +35,8 @@ class multiline_alignment_between_tokens(alignment.Rule):
         self.bIgnoreStartParen = False
         self.bConstraint = False
         self.iIndentAfterParen = 1
+        # Indent a line starting with the closing token, such as then, like the first line
+        self.bAlignEndTokenWithFirstLine = False
         self.override = False
         self.configuration_documentation_link = "configuring_multiline_indent_rules_link"
         self.skip_array = True
@@ -177,6 +179,9 @@ class multiline_alignment_between_tokens(alignment.Rule):
                     iAssignColumn,
                     self.bIgnoreStartParen,
                 )
+
+            if self.bAlignEndTokenWithFirstLine and utils.does_token_start_line(len(lTokens) - 1, lTokens):
+                dExpectedIndent[iLastLine] = " " * iFirstLineIndent
 
             #            print(f'dExpectedIndent = {dExpectedIndent}')
 
@@ -368,10 +373,11 @@ def _analyze_align_left_no_align_paren_yes(
                     iActualIndent = len(mhsg_utils.convert_tabs_to_spaces(dActualIndent[iLine], iIndentStep))
                     if bIgnoreStartParen:
                         iColumn = dTemp["column"] + iTemp - iActualIndent
+                        if iParens == 1:
+                            iColumn -= iIndentAfterParen
                     else:
-                        iColumn = dTemp["column"] + iTemp - iActualIndent + iIndentStep - 1
-                    if iParens == 1:
-                        iColumn -= iIndentAfterParen
+                        # The indent after a parenthesis applies at every nesting depth
+                        iColumn = dTemp["column"] + iTemp - iActualIndent + iIndentStep - 1 - iIndentAfterParen
                 lColumn.append(iColumn)
                 dExpectedIndent[iLine + 1] = iColumn
             else:
