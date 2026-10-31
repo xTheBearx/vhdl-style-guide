@@ -730,7 +730,6 @@ procedure_500: procedure_keyword_case
 procedure_501: procedure_designator_case
 procedure_502: procedure_is_keyword_case
 procedure_503: procedure_begin_keyword_case
-procedure_504: procedure_end_keyword_case_duplicate
 procedure_506: procedure_end_designator_case
 procedure_507: procedure_names_consistent_case
 procedure_508: procedure_parameter_names_case

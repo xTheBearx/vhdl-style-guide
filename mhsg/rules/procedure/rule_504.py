@@ -1,34 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import token
-from mhsg.rules import token_case_in_range_bounded_by_tokens
-
-lTokens = []
-lTokens.append(token.subprogram_body.end_keyword)
-
-oStartToken = token.procedure_specification.procedure_keyword
-oEndToken = token.subprogram_body.semicolon
+from mhsg import deprecated_rule
 
 
-class rule_504(token_case_in_range_bounded_by_tokens):
+class rule_504(deprecated_rule.Rule):
     """
-    This rule checks the **end** keyword has proper case.
-
-    |configuring_uppercase_and_lowercase_rules_link|
-
-    **Violation**
-
-    .. code-block:: vhdl
-
-       END procedure average_samples;
-
-    **Fix**
-
-    .. code-block:: vhdl
-
-       end procedure average_samples;
+    This rule duplicated :ref:`procedure_008`, which checks the case of the **end** keyword in procedure bodies.
     """
 
     def __init__(self):
-        super().__init__(lTokens, oStartToken, oEndToken)
-        self.groups.append("case::keyword")
+        super().__init__()
+        self.message.append("Rule " + self.unique_id + " duplicated rule procedure_008, which checks the case of the end keyword in procedure bodies.")
+        self.message.append("Configure procedure_008 instead.")

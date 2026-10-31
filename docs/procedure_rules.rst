@@ -728,25 +728,7 @@ This rule checks the **begin** keyword has proper case.
 procedure_504
 #############
 
-|phase_6| |error| |case| |case_keyword|
-
-Alias: :code:`procedure_end_keyword_case_duplicate`
-
-This rule checks the **end** keyword has proper case.
-
-|configuring_uppercase_and_lowercase_rules_link|
-
-**Violation**
-
-.. code-block:: vhdl
-
-   END procedure average_samples;
-
-**Fix**
-
-.. code-block:: vhdl
-
-   end procedure average_samples;
+This rule duplicated :ref:`procedure_008`, which checks the case of the **end** keyword in procedure bodies.
 
 procedure_505
 #############
