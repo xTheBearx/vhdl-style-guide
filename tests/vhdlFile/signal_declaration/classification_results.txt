@@ -138,13 +138,66 @@
 21 |
 <class 'vsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-22 | begin
-<class 'vsg.token.architecture_body.begin_keyword'>
+22 |   signal sig_inst : record_array_type(index).record_element'subtype;
+<class 'vsg.token.signal_declaration.signal_keyword'>
+<class 'vsg.token.signal_declaration.identifier'>
+<class 'vsg.token.signal_declaration.colon'>
+<class 'vsg.token.attribute_name.name'>
+<class 'vsg.parser.open_parenthesis'>
+<class 'vsg.parser.todo'>
+<class 'vsg.parser.close_parenthesis'>
+<class 'vsg.parser.todo'>
+<class 'vsg.token.attribute_name.tic'>
+<class 'vsg.token.attribute_name.attribute'>
+<class 'vsg.token.signal_declaration.semicolon'>
 --------------------------------------------------------------------------------
 23 |
 <class 'vsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-24 | end architecture RTL;
+24 |   signal sig_inst : array_type(1)(2)'subtype;
+<class 'vsg.token.signal_declaration.signal_keyword'>
+<class 'vsg.token.signal_declaration.identifier'>
+<class 'vsg.token.signal_declaration.colon'>
+<class 'vsg.token.attribute_name.name'>
+<class 'vsg.parser.open_parenthesis'>
+<class 'vsg.parser.todo'>
+<class 'vsg.parser.close_parenthesis'>
+<class 'vsg.parser.open_parenthesis'>
+<class 'vsg.parser.todo'>
+<class 'vsg.parser.close_parenthesis'>
+<class 'vsg.token.attribute_name.tic'>
+<class 'vsg.token.attribute_name.attribute'>
+<class 'vsg.token.signal_declaration.semicolon'>
+--------------------------------------------------------------------------------
+25 |
+<class 'vsg.parser.blank_line'>
+--------------------------------------------------------------------------------
+26 |   signal sig_inst : record_array_type(index).record_element(3)'element;
+<class 'vsg.token.signal_declaration.signal_keyword'>
+<class 'vsg.token.signal_declaration.identifier'>
+<class 'vsg.token.signal_declaration.colon'>
+<class 'vsg.token.attribute_name.name'>
+<class 'vsg.parser.open_parenthesis'>
+<class 'vsg.parser.todo'>
+<class 'vsg.parser.close_parenthesis'>
+<class 'vsg.token.todo.name'>
+<class 'vsg.token.todo.open_parenthesis'>
+<class 'vsg.parser.todo'>
+<class 'vsg.token.todo.close_parenthesis'>
+<class 'vsg.token.attribute_name.tic'>
+<class 'vsg.token.attribute_name.attribute'>
+<class 'vsg.token.signal_declaration.semicolon'>
+--------------------------------------------------------------------------------
+27 |
+<class 'vsg.parser.blank_line'>
+--------------------------------------------------------------------------------
+28 | begin
+<class 'vsg.token.architecture_body.begin_keyword'>
+--------------------------------------------------------------------------------
+29 |
+<class 'vsg.parser.blank_line'>
+--------------------------------------------------------------------------------
+30 | end architecture RTL;
 <class 'vsg.token.architecture_body.end_keyword'>
 <class 'vsg.token.architecture_body.end_architecture_keyword'>
 <class 'vsg.token.architecture_body.architecture_simple_name'>
