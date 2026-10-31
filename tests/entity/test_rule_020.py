@@ -11,6 +11,10 @@ sTestDir = os.path.dirname(__file__)
 
 lFile, eError = vhdlFile.utils.read_vhdlfile(os.path.join(sTestDir, "rule_020_test_input.vhd"))
 
+lFile_comment_after_generic_close, eError_comment_after_generic_close = vhdlFile.utils.read_vhdlfile(
+    os.path.join(sTestDir, "rule_020_test_input.comment_after_generic_close.vhd"),
+)
+
 
 class test_rule(unittest.TestCase):
     def setUp(self):
@@ -240,6 +244,38 @@ class test_rule(unittest.TestCase):
         lExpected = []
         lExpected.append("")
         utils.read_file(os.path.join(sTestDir, "rule_020_test_input.fixed_no_yes_yes_yes_yes.vhd"), lExpected)
+
+        lActual = self.oFile.get_lines()
+
+        self.assertEqual(lExpected, lActual)
+
+        oRule.analyze(self.oFile)
+        self.assertEqual(oRule.violations, [])
+
+    def test_rule_020_comment_after_generic_close(self):
+        # Issue #1572: a comment on the line ending the generic clause was
+        # grouped with the port comments instead of the generic comments.
+        self.assertIsNone(eError_comment_after_generic_close)
+
+        oRule = entity.rule_020()
+        oRule.separate_generic_port_alignment = "yes"
+        self.oFile = vhdlFile.vhdlFile(lFile_comment_after_generic_close)
+
+        lExpected = [4, 5, 8, 9]
+
+        oRule.analyze(self.oFile)
+        self.assertEqual(lExpected, utils.extract_violation_lines_from_violation_object(oRule.violations))
+
+    def test_fix_rule_020_comment_after_generic_close(self):
+        oRule = entity.rule_020()
+        oRule.separate_generic_port_alignment = "yes"
+        self.oFile = vhdlFile.vhdlFile(lFile_comment_after_generic_close)
+
+        oRule.fix(self.oFile)
+
+        lExpected = []
+        lExpected.append("")
+        utils.read_file(os.path.join(sTestDir, "rule_020_test_input.fixed_comment_after_generic_close.vhd"), lExpected)
 
         lActual = self.oFile.get_lines()
 
