@@ -387,6 +387,40 @@ This rule checks the semicolon is not on its own line.
        G_WIDTH : integer
      );
 
+generic_022
+###########
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+This rule checks generics are declared in alphabetical order.
+
+A generic may use generics declared before it, for example in its default value.
+Such a generic is expected after the generics it uses, so the expected order is alphabetical wherever the dependencies allow.
+Names are compared ignoring case.
+
+.. NOTE:: This rule is disabled by default.
+   It only reports the expected order, because moving generics by hand keeps their comments where they belong.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   generic (
+     G_WIDTH : integer := 8;
+     G_DEPTH : integer := 16;
+     G_ADDR_WIDTH : integer := G_DEPTH / 4
+   );
+
+**Fix**
+
+.. code-block:: vhdl
+
+   generic (
+     G_DEPTH : integer := 16;
+     G_ADDR_WIDTH : integer := G_DEPTH / 4;
+     G_WIDTH : integer := 8
+   );
+
 generic_600
 ###########
 

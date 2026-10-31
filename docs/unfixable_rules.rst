@@ -43,6 +43,7 @@ Formatting Options
 
 There are some formatting decisions that are best left to the user.
 
+* `generic_022 <generic_rules.html#generic-022>`_
 * `instantiation_034 <instantiation_rules.html#instantiation-034>`_
 * `port_023 <port_rules.html#port-023>`_
 * `process_030 <process_rules.html#process-030>`_
