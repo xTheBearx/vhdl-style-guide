@@ -49,6 +49,7 @@ class rule_400(Rule):
         self.configuration.remove("if_control_statements_ends_group")
         self.configuration.remove("loop_control_statements_ends_group")
         self.configuration.remove("separate_generic_port_alignment")
+        self.aggregate_parens_ends_group = "per_level"
         self.configuration.append("aggregate_parens_ends_group")
         self.configuration.append("ignore_single_line_aggregates")
         self.bIncludeTillBeginningOfLine = True
