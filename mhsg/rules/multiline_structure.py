@@ -332,6 +332,7 @@ def _check_new_line_after_comma(self, oToi):
     iToken = _find_assignment_operator(self, lTokens) + 1
     iStopIndex = len(lTokens)
     bFirstParenFound = False
+    lParenIsAggregate = []
     while iToken < iStopIndex:
         if bFirstParenFound:
             iToken, bOthersClause = _classify_others(iToken, lTokens)
@@ -349,6 +350,14 @@ def _check_new_line_after_comma(self, oToi):
 
         if isinstance(oToken, parser.open_parenthesis):
             bFirstParenFound = True
+            lParenIsAggregate.append(isinstance(oToken, token.aggregate.open_parenthesis))
+        elif isinstance(oToken, parser.close_parenthesis) and len(lParenIsAggregate) > 0:
+            lParenIsAggregate.pop()
+
+        # Commas separating the arguments of a function call or the indexes of a name are not checked
+        if isinstance(oToken, parser.comma) and len(lParenIsAggregate) > 0 and not lParenIsAggregate[-1]:
+            iToken += 1
+            continue
 
         if isinstance(oToken, parser.comma):
             if bPositionalFound and self.new_line_after_comma == "ignore_positional":

@@ -88,6 +88,13 @@ lExpected_positional.append("")
 utils.read_file(os.path.join(sTestDir, "rule_016_test_input_positional.fixed.vhd"), lExpected_positional)
 
 
+lFile_function_call, eError_function_call = vhdlFile.utils.read_vhdlfile(os.path.join(sTestDir, "rule_016_test_input.function_call.vhd"))
+
+lExpected_function_call = []
+lExpected_function_call.append("")
+utils.read_file(os.path.join(sTestDir, "rule_016_test_input.function_call.fixed.vhd"), lExpected_function_call)
+
+
 class test_rule(unittest.TestCase):
     def setUp(self):
         self.oFile = vhdlFile.vhdlFile(lFile)
@@ -673,3 +680,16 @@ class test_rule(unittest.TestCase):
 
         oRule.analyze(oFilePositional)
         self.assertEqual(oRule.violations, [])
+
+    def test_fix_rule_016_function_call(self):
+        # Issue VSG 1428: commas separating function call arguments inside an aggregate were split onto new lines.
+        self.assertIsNone(eError_function_call)
+        oRule = constant.rule_016()
+        oFile = vhdlFile.vhdlFile(lFile_function_call)
+
+        oRule.analyze(oFile)
+        self.assertEqual([8], utils.extract_violation_lines_from_violation_object(oRule.violations))
+
+        oRule = constant.rule_016()
+        oRule.fix(oFile)
+        self.assertEqual(lExpected_function_call, oFile.get_lines())
