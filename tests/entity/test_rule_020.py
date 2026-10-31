@@ -16,6 +16,11 @@ lFile_comment_after_generic_close, eError_comment_after_generic_close = vhdlFile
 )
 
 
+lFile_delimited_comment, eError_delimited_comment = vhdlFile.utils.read_vhdlfile(
+    os.path.join(sTestDir, "rule_020_test_input.delimited_comment.vhd"),
+)
+
+
 class test_rule(unittest.TestCase):
     def setUp(self):
         self.oFile = vhdlFile.vhdlFile(lFile)
@@ -283,3 +288,14 @@ class test_rule(unittest.TestCase):
 
         oRule.analyze(self.oFile)
         self.assertEqual(oRule.violations, [])
+
+    def test_rule_020_delimited_comment(self):
+        # Issue VSG 1573: the closing line of a multi-line delimited comment was aligned with inline comments,
+        # moving the comments one column further on every fix.
+        self.assertIsNone(eError_delimited_comment)
+        oRule = entity.rule_020()
+        oRule.separate_generic_port_alignment = "yes"
+        oFile = vhdlFile.vhdlFile(lFile_delimited_comment)
+
+        oRule.analyze(oFile)
+        self.assertEqual([], utils.extract_violation_lines_from_violation_object(oRule.violations))
