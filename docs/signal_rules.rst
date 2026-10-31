@@ -173,6 +173,10 @@ Alias: :code:`signal_prefix`
 This rule checks for valid prefixes on signal identifiers.
 Default signal prefix is *s_*.
 
+.. NOTE:: With :code:`fixable` set to :code:`true`, the fix renames signals declared in an architecture, process, block, subprogram body or package body, and every reference to them in the same region.
+   The first of the prefixes is added. Names starting with one of :code:`remove_prefixes` lose it first (for example const_width becomes c_width).
+   Signals which other files can see, in entities and package declarations, are never renamed.
+
 |configuring_prefix_and_suffix_rules_link|
 
 **Violation**
@@ -620,6 +624,10 @@ Alias: :code:`signal_suffix`
 
 This rule checks for valid suffixes on signal identifiers.
 Default signal suffix is *_s*.
+
+.. NOTE:: With :code:`fixable` set to :code:`true`, the fix renames signals declared in an architecture, process, block, subprogram body or package body, and every reference to them in the same region.
+   The first of the suffixes is added. Names starting with one of :code:`remove_suffixes` lose it first (for example width_const becomes width_c).
+   Signals which other files can see, in entities and package declarations, are never renamed.
 
 |configuring_prefix_and_suffix_rules_link|
 

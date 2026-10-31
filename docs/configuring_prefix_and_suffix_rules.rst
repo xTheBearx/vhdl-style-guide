@@ -59,6 +59,34 @@ Exceptions to enforcing prefixes and suffixes can be given using the :code:`exce
 The exceptions option provides a list of keywords, that when matched, prevents the rule from validating the prefix or suffix.
 The keywords are treated as case insensitive and support regular expressions.
 
+Fixing Prefixes and Suffixes
+############################
+
+The prefix and suffix rules for signals, variables, constants, types and subtypes can rename local declarations.
+A declaration is local if it is in an architecture, process, block, subprogram body or package body.
+Declarations which other files can see, in entities, package declarations, ports and generics, are never renamed.
+
+Renaming is disabled unless :code:`fixable` is set to :code:`true` for the rule.
+The fix adds the first prefix or suffix of the rule to the declaration and to every reference to it in the same region.
+Names in the :code:`remove_prefixes` or :code:`remove_suffixes` option lose that prefix or suffix first:
+
+.. code-block:: yaml
+
+    rule :
+        constant_015:
+            disable: false
+            fixable: true
+            prefixes: ['c_']
+            remove_prefixes: ['const_', 'k_']
+
+With this configuration :code:`constant const_depth` becomes :code:`constant c_depth`, and every use of :code:`const_depth` in the architecture is changed.
+
+A declaration is not renamed if the new name is already used in the file.
+A nested region which declares an object with the same name, such as a function variable with the same name as a signal, keeps its own name.
+Port map formals and record element names are not changed.
+
+.. NOTE:: Renaming changes the length of names, so alignment rules which run in an earlier phase may need a second run of :code:`--fix`.
+
 Different Prefixes and Suffixes in Packages
 ###########################################
 

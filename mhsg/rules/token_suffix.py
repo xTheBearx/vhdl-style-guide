@@ -4,7 +4,7 @@ import re
 
 from mhsg import violation
 from mhsg.rule_group import naming
-from mhsg.rules import package_scope
+from mhsg.rules import package_scope, rename_local_declaration
 
 
 class token_suffix(naming.Rule):
@@ -32,6 +32,9 @@ class token_suffix(naming.Rule):
         self.lTokens = lTokens
         self.suffixes = []
         self.configuration.append("suffixes")
+        # Rules for local declarations can rename them when fixable is enabled
+        self.bRenameLocalDeclarations = False
+        self.remove_suffixes = []
         # Set by the rule list when a companion rule checks names in packages, see package_scope.py
         self.package_scope = package_scope.ALL
         self.fixable = False
@@ -65,6 +68,31 @@ class token_suffix(naming.Rule):
                 sSolution = "Suffix " + lTokens[0].get_value() + " with one of the following: " + ", ".join(self.suffixes)
                 oViolation = violation.New(oToi.get_line_number(), oToi, sSolution)
                 self.add_violation(oViolation)
+
+    def fix(self, oFile, dFixOnly=None):
+        """
+        Renames local declarations which violate the rule, and every reference to them.
+        Only rules which set bRenameLocalDeclarations support this, and only when fixable is enabled.
+        """
+        if not self.fixable or not self.bRenameLocalDeclarations or len(self.suffixes) == 0:
+            return
+        self.analyze(oFile)
+        self._filter_out_fix_only_violations(dFixOnly)
+        lScopes = rename_local_declaration.get_scopes(oFile)
+        for oViolation in self.violations:
+            iIndex = oViolation.oTokens.get_start_index()
+            oToken = oFile.lAllObjects[iIndex]
+            if rename_local_declaration.rename(oFile, iIndex, self._new_name(oToken), lScopes):
+                self.had_violations = True
+        self.clear_violations()
+
+    def _new_name(self, oToken):
+        sName = oToken.get_value()
+        for sRemove in self.remove_suffixes:
+            if sName.lower().endswith(sRemove.lower()):
+                sName = sName[: len(sName) - len(sRemove)]
+                break
+        return sName + self.suffixes[0]
 
     def generate_regexp_exceptions(self):
         for exception in self.exceptions:

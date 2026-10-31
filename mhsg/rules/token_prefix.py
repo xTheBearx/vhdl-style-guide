@@ -4,7 +4,7 @@ import re
 
 from mhsg import violation
 from mhsg.rule_group import naming
-from mhsg.rules import package_scope, utils as rules_utils
+from mhsg.rules import package_scope, rename_local_declaration
 
 
 class token_prefix(naming.Rule):
@@ -32,6 +32,9 @@ class token_prefix(naming.Rule):
         self.lTokens = lTokens
         self.prefixes = []
         self.configuration.append("prefixes")
+        # Rules for local declarations can rename them when fixable is enabled
+        self.bRenameLocalDeclarations = False
+        self.remove_prefixes = []
         # Set by the rule list when a companion rule checks names in packages, see package_scope.py
         self.package_scope = package_scope.ALL
         self.fixable = False
@@ -66,16 +69,30 @@ class token_prefix(naming.Rule):
                 oViolation = violation.New(oToi.get_line_number(), oToi, sSolution)
                 self.add_violation(oViolation)
 
-    def _fix_violation(self, oViolation):
-        lTokens = oViolation.get_tokens()
-        if oViolation.get_action() == "remove_whitespace":
-            oViolation.set_tokens([lTokens[1]])
-        elif oViolation.get_action() == "adjust_whitespace":
-            lTokens[0].set_value(lTokens[1].get_indent() * self.indent_size * " ")
-            oViolation.set_tokens(lTokens)
-        elif oViolation.get_action() == "add_whitespace":
-            rules_utils.insert_whitespace(lTokens, 0, lTokens[0].get_indent() * self.indent_size)
-            oViolation.set_tokens(lTokens)
+    def fix(self, oFile, dFixOnly=None):
+        """
+        Renames local declarations which violate the rule, and every reference to them.
+        Only rules which set bRenameLocalDeclarations support this, and only when fixable is enabled.
+        """
+        if not self.fixable or not self.bRenameLocalDeclarations or len(self.prefixes) == 0:
+            return
+        self.analyze(oFile)
+        self._filter_out_fix_only_violations(dFixOnly)
+        lScopes = rename_local_declaration.get_scopes(oFile)
+        for oViolation in self.violations:
+            iIndex = oViolation.oTokens.get_start_index()
+            oToken = oFile.lAllObjects[iIndex]
+            if rename_local_declaration.rename(oFile, iIndex, self._new_name(oToken), lScopes):
+                self.had_violations = True
+        self.clear_violations()
+
+    def _new_name(self, oToken):
+        sName = oToken.get_value()
+        for sRemove in self.remove_prefixes:
+            if sName.lower().startswith(sRemove.lower()):
+                sName = sName[len(sRemove) :]
+                break
+        return self.prefixes[0] + sName
 
     def generate_regexp_exceptions(self):
         self.regexp_exceptions = []
