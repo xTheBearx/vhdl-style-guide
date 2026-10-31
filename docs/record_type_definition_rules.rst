@@ -457,3 +457,40 @@ This rule checks the proper case of the end **record** keyword.
      a : std_logic;
      b : std_logic;
    end record t_record;
+
+record_type_definition_503
+##########################
+
+|phase_6| |error| |case| |case_name|
+
+Alias: :code:`record_type_definition_element_names_consistent_case`
+
+This rule checks record element names are used with the same capitalization as in the record type declaration.
+
+Element names are checked in selected names, such as **rec.element**, whose prefix is declared in the file,
+and in the choices of aggregates, such as **(element => value)**.
+Element names declared with different capitalizations in different records, or which also name another declaration, are not checked.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   type t_rec is record
+     sl_Valid : std_logic;
+   end record t_rec;
+
+   constant c_rec : t_rec := (sl_valid => '0');
+
+   rec.SL_VALID <= '1';
+
+**Fix**
+
+.. code-block:: vhdl
+
+   type t_rec is record
+     sl_Valid : std_logic;
+   end record t_rec;
+
+   constant c_rec : t_rec := (sl_Valid => '0');
+
+   rec.sl_Valid <= '1';
