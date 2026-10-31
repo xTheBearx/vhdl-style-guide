@@ -48,6 +48,12 @@ begin
     for i in 0 to G_GENERIC-1 loop
     end loop;
 
+    for i in policy_t'('0') to policy_t'('1') loop
+    end loop;
+
+    for i in policy_t'('0') to policy_t'high loop
+    end loop;
+
   end process;
 
 end architecture RTL;

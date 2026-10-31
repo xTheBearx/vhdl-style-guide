@@ -53,8 +53,11 @@ def classify_until(lUntils, iToken, lObjects):
             elif utils.is_next_token("'", iToken, lObjects):
                 # Ensure that range attributes are not misidentified as range keywords.
                 utils.assign_token(lObjects, iCurrent, parser.todo)
-                iCurrent = utils.find_next_token(iCurrent, lObjects)
-                utils.assign_token(lObjects, iCurrent, parser.todo)
+                # A parenthesis after the tick starts a qualified expression, such as t'('0'),
+                # and is counted in the next iteration.
+                if not utils.is_next_token("(", iCurrent, lObjects):
+                    iCurrent = utils.find_next_token(iCurrent, lObjects)
+                    utils.assign_token(lObjects, iCurrent, parser.todo)
             elif utils.is_next_token("range", iToken, lObjects):
                 utils.assign_token(lObjects, iCurrent, range_constraint.range_keyword)
             else:

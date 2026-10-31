@@ -212,15 +212,63 @@
 50 |
 <class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-51 |   end process;
+51 |     for i in policy_t'('0') to policy_t'('1') loop
+<class 'mhsg.token.iteration_scheme.for_keyword'>
+<class 'mhsg.token.parameter_specification.identifier'>
+<class 'mhsg.token.parameter_specification.in_keyword'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.parser.tic'>
+<class 'mhsg.parser.open_parenthesis'>
+<class 'mhsg.parser.character_literal'>
+<class 'mhsg.parser.close_parenthesis'>
+<class 'mhsg.token.direction.to'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.parser.tic'>
+<class 'mhsg.parser.open_parenthesis'>
+<class 'mhsg.parser.character_literal'>
+<class 'mhsg.parser.close_parenthesis'>
+<class 'mhsg.token.loop_statement.loop_keyword'>
+--------------------------------------------------------------------------------
+52 |     end loop;
+<class 'mhsg.token.loop_statement.end_keyword'>
+<class 'mhsg.token.loop_statement.end_loop_keyword'>
+<class 'mhsg.token.loop_statement.semicolon'>
+--------------------------------------------------------------------------------
+53 |
+<class 'mhsg.parser.blank_line'>
+--------------------------------------------------------------------------------
+54 |     for i in policy_t'('0') to policy_t'high loop
+<class 'mhsg.token.iteration_scheme.for_keyword'>
+<class 'mhsg.token.parameter_specification.identifier'>
+<class 'mhsg.token.parameter_specification.in_keyword'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.parser.tic'>
+<class 'mhsg.parser.open_parenthesis'>
+<class 'mhsg.parser.character_literal'>
+<class 'mhsg.parser.close_parenthesis'>
+<class 'mhsg.token.direction.to'>
+<class 'mhsg.parser.todo'>
+<class 'mhsg.parser.tic'>
+<class 'mhsg.token.predefined_attribute.keyword'>
+<class 'mhsg.token.loop_statement.loop_keyword'>
+--------------------------------------------------------------------------------
+55 |     end loop;
+<class 'mhsg.token.loop_statement.end_keyword'>
+<class 'mhsg.token.loop_statement.end_loop_keyword'>
+<class 'mhsg.token.loop_statement.semicolon'>
+--------------------------------------------------------------------------------
+56 |
+<class 'mhsg.parser.blank_line'>
+--------------------------------------------------------------------------------
+57 |   end process;
 <class 'mhsg.token.process_statement.end_keyword'>
 <class 'mhsg.token.process_statement.end_process_keyword'>
 <class 'mhsg.token.process_statement.semicolon'>
 --------------------------------------------------------------------------------
-52 |
+58 |
 <class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-53 | end architecture RTL;
+59 | end architecture RTL;
 <class 'mhsg.token.architecture_body.end_keyword'>
 <class 'mhsg.token.architecture_body.end_architecture_keyword'>
 <class 'mhsg.token.architecture_body.architecture_simple_name'>
