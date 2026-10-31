@@ -57,6 +57,29 @@ MHSG was developed using a Test Driven Development (TDD) process.
 There are over 1000 tests which cover individual rules and other features of MHSG.
 For each pull request, an accompanying test to validate the pull request would be appreciated.
 
+AI-Assisted Contributions
+#########################
+
+Contributions written with the help of AI tools, such as large language models, are accepted on the same terms as any other contribution.
+MHSG itself is developed with AI assistance.
+Because generated code can look correct while hiding mistakes, the following apply:
+
+* **Disclose it.**
+  Say in the pull request which parts were AI-assisted and which tool was used, or add a trailer such as :code:`Co-Authored-By:` to the commits.
+* **Own it.**
+  You are responsible for every line you submit.
+  Read and understand the change before submitting it, and be ready to explain why it is correct.
+  Do not submit generated code, tests or documentation you have not reviewed.
+* **Prove it.**
+  Bug fixes must include a test that fails without the fix and passes with it.
+  New features must include tests covering their behavior.
+  Run :code:`tox` before submitting, so the style checks and the full test suite pass.
+* **Expect review.**
+  A maintainer reviews every pull request before it is merged, and may ask questions about the change or decline it if it cannot be explained.
+
+The same applies to issues and comments.
+Report what you observed, with the actual code, configuration and output, rather than generated text you have not checked.
+
 Quality Control
 ###############
 

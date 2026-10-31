@@ -230,3 +230,4 @@ There are several ways to contribute:
 
 Please open an issue or pull request at https://github.com/xTheBearx/vhdl-style-guide.
 See ``docs/contributing.rst`` for more details on contributing.
+AI-assisted contributions are welcome when they are disclosed, understood by the submitter and backed by tests; see the AI-Assisted Contributions section there.
