@@ -249,6 +249,8 @@ Rules Enforcing Previous Lines
 * `entity_003 <entity_rules.html#entity-003>`_
 * `function_006 <function_rules.html#function-006>`_
 * `generate_004 <generate_rules.html#generate-004>`_
+* `generic_map_202 <generic_map_rules.html#generic-map-202>`_
+* `generic_map_203 <generic_map_rules.html#generic-map-203>`_
 * `if_031 <if_rules.html#if-031>`_
 * `if_201 <if_rules.html#if-201>`_
 * `if_202 <if_rules.html#if-202>`_
@@ -261,6 +263,8 @@ Rules Enforcing Previous Lines
 * `package_003 <package_rules.html#package-003>`_
 * `package_body_200 <package_body_rules.html#package-body-200>`_
 * `package_instantiation_200 <package_instantiation_rules.html#package-instantiation-200>`_
+* `port_map_202 <port_map_rules.html#port-map-202>`_
+* `port_map_203 <port_map_rules.html#port-map-203>`_
 * `pragma_400 <pragma_rules.html#pragma-400>`_
 * `pragma_402 <pragma_rules.html#pragma-402>`_
 * `procedure_200 <procedure_rules.html#procedure-200>`_

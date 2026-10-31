@@ -244,6 +244,35 @@ Use explicit port mapping.
      DEPTH => 512
    )
 
+generic_map_010
+###############
+
+|phase_1| |disabled| |error| |structure|
+
+This rule checks multiple generic assignments on the same line.
+
+.. NOTE:: This rule is disabled by default, because short generic maps such as :code:`generic map (A => 1, B => 2)` are common.
+   It can be enabled to match port_map_009.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   generic map (
+     G_WIDTH => 8, G_DEPTH => 16,
+     G_RESET => '0'
+   )
+
+**Fix**
+
+.. code-block:: vhdl
+
+   generic map (
+     G_WIDTH => 8,
+     G_DEPTH => 16,
+     G_RESET => '0'
+   )
+
 generic_map_100
 ###############
 
@@ -292,6 +321,36 @@ This rule checks for a single space between the **generic** keyword and the **ma
 
    generic map (
 
+generic_map_200
+###############
+
+|phase_3| |error| |blank_line|
+
+This rule checks for a blank line below the open parenthesis in a generic map.
+
+|configuring_blank_lines_link|
+
+The default style is :code:`no_blank_line`.
+
+**Violation**
+
+.. code-block:: vhdl
+
+  generic map (
+
+    G_WIDTH => 8,
+    G_DEPTH => 16
+  )
+
+**Fix**
+
+.. code-block:: vhdl
+
+  generic map (
+    G_WIDTH => 8,
+    G_DEPTH => 16
+  )
+
 generic_map_201
 ###############
 
@@ -331,6 +390,66 @@ This rule checks for blank lines in a generic map.
     PORT_2 => w_port_2,
     PORT_3 => w_port_3
   );
+
+generic_map_202
+###############
+
+|phase_3| |error| |blank_line|
+
+This rule checks for blank lines or comments above the closing parenthesis in a generic map.
+
+|configuring_previous_line_rules_link|
+
+The default style is :code:`no_blank_line`.
+
+**Violation**
+
+.. code-block:: vhdl
+
+  generic map (
+    G_WIDTH => 8,
+    G_DEPTH => 16
+
+  )
+
+**Fix**
+
+.. code-block:: vhdl
+
+  generic map (
+    G_WIDTH => 8,
+    G_DEPTH => 16
+  )
+
+generic_map_203
+###############
+
+|phase_3| |error| |blank_line|
+
+This rule checks for blank lines or comments above the **generic map** keywords.
+
+|configuring_previous_line_rules_link|
+
+The default style is :code:`no_blank_line`.
+
+**Violation**
+
+.. code-block:: vhdl
+
+  U_FIFO : FIFO
+
+    generic map (
+      G_WIDTH => 8
+    )
+
+**Fix**
+
+.. code-block:: vhdl
+
+  U_FIFO : FIFO
+    generic map (
+      G_WIDTH => 8
+    )
 
 generic_map_300
 ###############
