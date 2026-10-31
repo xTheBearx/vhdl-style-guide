@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules.whitespace_between_token_pairs_bounded_by_tokens import Rule
+from mhsg.rules.whitespace_after_tokens_in_between_tokens import Rule
 
 lTokens = []
-lTokens.append([token.association_element.assignment, token.association_element.actual_part])
+lTokens.append(token.association_element.assignment)
 
 lStart = token.generic_map_aspect.open_parenthesis
 lEnd = token.generic_map_aspect.close_parenthesis

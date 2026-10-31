@@ -31,6 +31,14 @@ def convert_expected_indent_to_smart_tab(dExpectedIndent, indent_size, iFirstLin
 #    print('--> convert_expected_indent_to_smart_tab')
 
 
+def convert_expected_indent_to_tabs(dExpectedIndent, indent_size):
+    iFirstLine = get_first_line(dExpectedIndent)
+    iLastLine = get_last_line(dExpectedIndent)
+    for iLine in range(iFirstLine + 1, iLastLine + 1):
+        iSpaces = len(dExpectedIndent[iLine])
+        dExpectedIndent[iLine] = ("\t" * (iSpaces // indent_size)) + (" " * (iSpaces % indent_size))
+
+
 def get_first_line(dActualIndent):
     lLines = list(dActualIndent.keys())
     lLines.sort()

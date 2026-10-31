@@ -37,6 +37,8 @@ class multiline_alignment_between_tokens(alignment.Rule):
         self.iIndentAfterParen = 1
         # Indent a line starting with the closing token, such as then, like the first line
         self.bAlignEndTokenWithFirstLine = False
+        # With smart tabs, use tabs for whole indent levels when lines are only indented, not aligned
+        self.bSmartTabsIndentWithTabs = False
         self.override = False
         self.configuration_documentation_link = "configuring_multiline_indent_rules_link"
         self.skip_array = True
@@ -186,7 +188,10 @@ class multiline_alignment_between_tokens(alignment.Rule):
             #            print(f'dExpectedIndent = {dExpectedIndent}')
 
             if self.indent_style == "smart_tabs":
-                alignment_utils.convert_expected_indent_to_smart_tab(dExpectedIndent, self.indent_size, iFirstLineIndent)
+                if self.bSmartTabsIndentWithTabs and align_left(self) and not align_paren(self):
+                    alignment_utils.convert_expected_indent_to_tabs(dExpectedIndent, self.indent_size)
+                else:
+                    alignment_utils.convert_expected_indent_to_smart_tab(dExpectedIndent, self.indent_size, iFirstLineIndent)
 
             #            print(f'dExpectedIndent = {dExpectedIndent}')
 

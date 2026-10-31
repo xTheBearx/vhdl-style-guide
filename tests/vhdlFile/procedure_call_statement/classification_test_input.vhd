@@ -12,7 +12,11 @@ begin
 
     proc(a, b, c);
 
+    proc(x"1", d"5", o"X");
+
     proc;
+
+    foo(c(bar(0)) & c(aBCD(0)));
 
   end process;
 

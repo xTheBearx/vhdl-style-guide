@@ -32,4 +32,6 @@ class rule_400(Rule):
 
     def __init__(self):
         super().__init__(lTokenPairs)
+        self.skip_array = False
+        self.bSmartTabsIndentWithTabs = True
         self.phase = 5
