@@ -138,7 +138,6 @@ Rules Enforcing Case::Keyword Rule Group
 * `procedure_500 <../procedure_rules.html#procedure-500>`_
 * `procedure_502 <../procedure_rules.html#procedure-502>`_
 * `procedure_503 <../procedure_rules.html#procedure-503>`_
-* `procedure_504 <../procedure_rules.html#procedure-504>`_
 * `procedure_510 <../procedure_rules.html#procedure-510>`_
 * `procedure_511 <../procedure_rules.html#procedure-511>`_
 * `procedure_call_501 <../procedure_call_rules.html#procedure-call-501>`_

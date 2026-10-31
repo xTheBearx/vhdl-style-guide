@@ -195,7 +195,6 @@ Rules Enforcing Case Rule Group
 * `procedure_501 <../procedure_rules.html#procedure-501>`_
 * `procedure_502 <../procedure_rules.html#procedure-502>`_
 * `procedure_503 <../procedure_rules.html#procedure-503>`_
-* `procedure_504 <../procedure_rules.html#procedure-504>`_
 * `procedure_506 <../procedure_rules.html#procedure-506>`_
 * `procedure_507 <../procedure_rules.html#procedure-507>`_
 * `procedure_508 <../procedure_rules.html#procedure-508>`_
