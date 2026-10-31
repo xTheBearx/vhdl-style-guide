@@ -34,7 +34,7 @@ class rule_014(Rule):
 
     def __init__(self):
         super().__init__(lTokenPairs)
-        self.subphase = 3
+        self.subphase = 4
         self.phase = 5
         self.iIndentAfterParen = 0
 

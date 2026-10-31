@@ -50,6 +50,6 @@ class rule_034(align_tokens_in_region_between_tokens_skipping_lines_starting_wit
     def __init__(self):
         super().__init__(lAlign, oStart, oEnd, lSkip)
         self.solution = "Align comment."
-        self.subphase = 4
+        self.subphase = 5
         self.blank_line_ends_group = "no"
         self.comment_line_ends_group = "no"
