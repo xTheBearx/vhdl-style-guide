@@ -19,6 +19,12 @@ architecture RTL of FIFO is
 
   signal slv : std_logic_vector(open) register;
 
+  signal sig_inst : record_array_type(index).record_element'subtype;
+
+  signal sig_inst : array_type(1)(2)'subtype;
+
+  signal sig_inst : record_array_type(index).record_element(3)'element;
+
 begin
 
 end architecture RTL;
