@@ -81,6 +81,7 @@ Rules Enforcing Structure Rule Group
 * `generic_map_005 <../generic_map_rules.html#generic-map-005>`_
 * `generic_map_008 <../generic_map_rules.html#generic-map-008>`_
 * `generic_map_009 <../generic_map_rules.html#generic-map-009>`_
+* `generic_map_010 <../generic_map_rules.html#generic-map-010>`_
 * `if_002 <../if_rules.html#if-002>`_
 * `if_020 <../if_rules.html#if-020>`_
 * `if_021 <../if_rules.html#if-021>`_

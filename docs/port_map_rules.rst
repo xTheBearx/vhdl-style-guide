@@ -424,6 +424,72 @@ This rule checks for blank lines in a port map.
   );
 
 
+port_map_202
+############
+
+|phase_3| |error| |blank_line|
+
+This rule checks for blank lines or comments above the closing parenthesis in a port map.
+
+|configuring_previous_line_rules_link|
+
+The default style is :code:`no_blank_line`.
+
+**Violation**
+
+.. code-block:: vhdl
+
+  port map (
+    WR_EN => w_wr_en,
+    RD_EN => w_rd_en
+
+  );
+
+**Fix**
+
+.. code-block:: vhdl
+
+  port map (
+    WR_EN => w_wr_en,
+    RD_EN => w_rd_en
+  );
+
+port_map_203
+############
+
+|phase_3| |error| |blank_line|
+
+This rule checks for blank lines or comments above the **port map** keywords.
+
+|configuring_previous_line_rules_link|
+
+The default style is :code:`no_blank_line`.
+
+**Violation**
+
+.. code-block:: vhdl
+
+  U_FIFO : FIFO
+    generic map (
+      G_WIDTH => 8
+    )
+
+    port map (
+      WR_EN => w_wr_en
+    );
+
+**Fix**
+
+.. code-block:: vhdl
+
+  U_FIFO : FIFO
+    generic map (
+      G_WIDTH => 8
+    )
+    port map (
+      WR_EN => w_wr_en
+    );
+
 port_map_300
 ############
 
