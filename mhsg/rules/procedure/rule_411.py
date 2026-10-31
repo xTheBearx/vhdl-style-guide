@@ -42,6 +42,7 @@ class rule_411(align_tokens_in_region_between_tokens):
             token.procedure_specification.close_parenthesis,
         )
         self.solution = "Align :."
+        self.bIncludeTillBeginningOfLine = True
         self.configuration.remove("case_control_statements_ends_group")
         self.configuration.remove("if_control_statements_ends_group")
         self.configuration.remove("loop_control_statements_ends_group")
