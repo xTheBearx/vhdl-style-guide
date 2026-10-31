@@ -84,6 +84,8 @@ Rules Disabled by Default
 * `package_instantiation_601 <package_instantiation_rules.html#package-instantiation-601>`_
 * `port_011 <port_rules.html#port-011>`_
 * `port_025 <port_rules.html#port-025>`_
+* `port_028 <port_rules.html#port-028>`_
+* `port_029 <port_rules.html#port-029>`_
 * `port_600 <port_rules.html#port-600>`_
 * `port_601 <port_rules.html#port-601>`_
 * `port_602 <port_rules.html#port-602>`_

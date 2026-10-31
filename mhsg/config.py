@@ -503,6 +503,8 @@ class config:
         self.severity_list = None
         # Types and subtypes declared in the files of the run, see project_index.py
         self.project_type_names = set()
+        # Entities instantiated with positional port associations in the files of the run, or None if unknown
+        self.project_positional_entities = None
 
 
 def get_local_rule_directories(local_rules):

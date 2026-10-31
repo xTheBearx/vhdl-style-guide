@@ -128,6 +128,7 @@ def main():
     oConfig = config.New(commandLineArguments)
     if not commandLineArguments.stdin:
         oConfig.project_type_names = project_index.collect_type_names(commandLineArguments.filename)
+        oConfig.project_positional_entities = project_index.collect_positional_entity_instantiations(commandLineArguments.filename)
 
     # Add local rule path to system path so the rules can be loaded
     for sDirectory in config.get_local_rule_directories(commandLineArguments.local_rules):

@@ -127,6 +127,8 @@ Rules Enforcing Structure Rule Group
 * `port_023 <../port_rules.html#port-023>`_
 * `port_026 <../port_rules.html#port-026>`_
 * `port_027 <../port_rules.html#port-027>`_
+* `port_028 <../port_rules.html#port-028>`_
+* `port_029 <../port_rules.html#port-029>`_
 * `port_map_003 <../port_map_rules.html#port-map-003>`_
 * `port_map_004 <../port_map_rules.html#port-map-004>`_
 * `port_map_005 <../port_map_rules.html#port-map-005>`_

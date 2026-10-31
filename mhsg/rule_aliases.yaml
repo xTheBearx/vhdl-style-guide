@@ -691,6 +691,8 @@ port_024: port_no_blank_lines_before_closing_parenthesis
 port_025: port_suffix
 port_026: port_one_identifier_per_declaration
 port_027: port_semicolon_not_on_own_line
+port_028: port_order
+port_029: port_section_comment
 port_100: port_space_before_assignment
 port_101: port_space_after_assignment
 port_600: port_identifiers_input_ports_prefix
