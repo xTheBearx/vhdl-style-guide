@@ -8,6 +8,8 @@ concurrent_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`concurrent_assignments_indent`
+
 This rule checks the indent of concurrent assignments.
 
 **Violation**
@@ -35,6 +37,8 @@ concurrent_002
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`concurrent_space_after_assignment_operator`
+
 This rule checks for a single space after the **<=** operator.
 
 |configuring_whitespace_rules_link|
@@ -57,6 +61,8 @@ concurrent_003
 ##############
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`concurrent_simple_assignment_multiline_alignment`
 
 This rule checks alignment of multiline concurrent simple signal assignments.
 Successive lines should align to the space after the assignment operator.
@@ -91,6 +97,8 @@ concurrent_004
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`concurrent_space_before_assignment_operator`
+
 This rule checks for at least a single space before the **<=** operator.
 
 |configuring_whitespace_rules_link|
@@ -111,6 +119,8 @@ concurrent_005
 ##############
 
 |phase_1| |error| |structure|
+
+Alias: :code:`concurrent_assignment_no_label`
 
 This rule checks for labels on concurrent assignments.
 Labels on concurrents are optional and do not provide additional information.
@@ -133,6 +143,8 @@ concurrent_006
 ##############
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`concurrent_assignment_operator_alignment`
 
 This rule checks the alignment of the **<=** operator over multiple consecutive lines.
 |configuring_keyword_alignment_rules_link|
@@ -163,6 +175,8 @@ concurrent_008
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`concurrent_inline_comment_alignment`
+
 This rule checks the alignment of inline comments in consecutive concurrent statements.
 |configuring_keyword_alignment_rules_link|
 
@@ -186,6 +200,8 @@ concurrent_009
 ##############
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`concurrent_conditional_assignment_multiline_alignment`
 
 This rule checks alignment of multiline concurrent conditional signal statements.
 
@@ -218,6 +234,8 @@ concurrent_010
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`concurrent_no_blank_lines_in_assignments`
+
 This rule removes blank lines within concurrent signal assignments.
 
 **Violation**
@@ -249,6 +267,8 @@ concurrent_011
 ##############
 
 |phase_1| |error| |structure|
+
+Alias: :code:`concurrent_assignment_structure`
 
 This rule checks the structure of simple and conditional concurrent statements.
 
@@ -283,6 +303,8 @@ concurrent_012
 
 |phase_1| |error| |structure|
 
+Alias: :code:`concurrent_simple_assignment_array_structure`
+
 This rule checks the structure of multiline concurrent simple signal assignments that contain arrays.
 
 |configuring_array_multiline_structure_rules_link|
@@ -308,6 +330,8 @@ concurrent_400
 ##############
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`concurrent_record_aggregate_arrow_alignment`
 
 This rule checks the alignment the => operator in record aggregates.
 
@@ -337,6 +361,8 @@ concurrent_401
 ##############
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`concurrent_simple_assignment_array_alignment`
 
 This rule checks the alignment of multiline concurrent simple signal assignments that contain arrays.
 

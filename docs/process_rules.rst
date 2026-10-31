@@ -8,6 +8,8 @@ process_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`process_indent`
+
 This rule checks the indent of the process declaration.
 
 **Violation**
@@ -35,6 +37,8 @@ process_002
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`process_space_after_process_keyword`
+
 This rule checks for a single space after the **process** keyword.
 
 |configuring_whitespace_rules_link|
@@ -60,6 +64,8 @@ process_003
 
 |phase_4| |error| |indent|
 
+Alias: :code:`process_begin_keyword_indent`
+
 This rule checks the indent of the **begin** keyword.
 
 **Violation**
@@ -84,6 +90,8 @@ process_004
 ###########
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`process_begin_keyword_case`
 
 This rule checks the **begin** keyword has proper case.
 
@@ -112,6 +120,8 @@ process_005
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`process_keyword_case`
+
 This rule checks the **process** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -132,6 +142,8 @@ process_006
 ###########
 
 |phase_4| |error| |indent|
+
+Alias: :code:`process_end_process_indent`
 
 This rule checks the indent of the **end process** keywords.
 
@@ -162,6 +174,8 @@ process_007
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`process_space_after_end_keyword`
+
 This rule checks for a single space after the **end** keyword.
 
 |configuring_whitespace_rules_link|
@@ -182,6 +196,8 @@ process_008
 ###########
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`process_end_keyword_case`
 
 This rule checks the **end** keyword has proper case.
 
@@ -204,6 +220,8 @@ process_009
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`process_end_process_keyword_case`
+
 This rule checks the **process** keyword has proper case in the **end process** line.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -224,6 +242,8 @@ process_010
 ###########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`process_begin_keyword_on_own_line`
 
 This rule checks the **begin** keyword is on its own line.
 
@@ -249,6 +269,8 @@ process_011
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`process_blank_line_below_end_process`
+
 This rule checks for a blank line below the **end process** keyword.
 
 |configuring_blank_lines_link|
@@ -272,6 +294,8 @@ process_012
 ###########
 
 |phase_1| |error| |structure| |structure_optional|
+
+Alias: :code:`process_is_keyword_exists`
 
 This rule checks for the existence of the **is** keyword.
 
@@ -312,6 +336,8 @@ process_013
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`process_is_keyword_case`
+
 This rule checks the **is** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -339,6 +365,8 @@ process_014
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`process_space_before_is_keyword`
+
 This rule checks for a single space before the **is** keyword.
 
 |configuring_whitespace_rules_link|
@@ -365,6 +393,8 @@ process_015
 ###########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`process_lines_above`
 
 This rule checks for blank lines or comments above the **process** declaration.
 
@@ -398,6 +428,8 @@ process_016
 
 |phase_1| |error| |unfixable| |structure|
 
+Alias: :code:`process_label_exists`
+
 This rule checks the process has a label.
 
 **Violation**
@@ -422,6 +454,8 @@ process_017
 ###########
 
 |phase_6| |error| |case| |case_label|
+
+Alias: :code:`process_label_case`
 
 This rule checks the process label has proper case.
 
@@ -450,6 +484,8 @@ process_018
 
 |phase_1| |error| |structure| |structure_optional|
 
+Alias: :code:`process_end_label_exists`
+
 This rule checks the **end process** line has a label.
 The closing label will be added if the opening process label exists.
 
@@ -472,6 +508,8 @@ process_019
 
 |phase_6| |error| |case| |case_label|
 
+Alias: :code:`process_end_label_case`
+
 This rule checks the **end process** label has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -492,6 +530,8 @@ process_020
 ###########
 
 |phase_4| |error| |alignment|
+
+Alias: :code:`process_sensitivity_list_indent`
 
 This rule checks the indentation of multiline sensitivity lists.
 
@@ -520,6 +560,8 @@ process_021
 ###########
 
 |phase_1| |error| |blank_line|
+
+Alias: :code:`process_blank_line_above_begin_without_declarations`
 
 This rule checks for blank lines above the **begin** keyword if there are no process declarative items.
 
@@ -569,6 +611,8 @@ process_022
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`process_blank_line_below_begin_keyword`
+
 This rule checks for a blank line below the **begin** keyword.
 
 |configuring_blank_lines_link|
@@ -599,6 +643,8 @@ process_023
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`process_blank_line_above_end_process`
+
 This rule checks for a blank line above the **end process** keyword.
 
 |configuring_blank_lines_link|
@@ -622,6 +668,8 @@ process_024
 ###########
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`process_space_after_process_label`
 
 This rule checks for a single space after the process label.
 
@@ -650,6 +698,8 @@ process_025
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`process_space_before_process_keyword`
+
 This rule checks for a single space after the colon and before the **process** keyword.
 
 |configuring_whitespace_rules_link|
@@ -675,6 +725,8 @@ process_026
 ###########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`process_blank_line_above_first_declaration`
 
 This rule checks for blank lines above the first declarative line, if it exists.
 
@@ -707,6 +759,8 @@ process_027
 ###########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`process_blank_line_above_begin_with_declarations`
 
 This rule checks for blank lines above the **begin** keyword if a declarative item exists.
 
@@ -742,6 +796,8 @@ process_028
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`process_sensitivity_list_closing_parenthesis_alignment`
+
 This rule checks the alignment of the closing parenthesis of a sensitivity list.
 Parenthesis on multiple lines should be in the same column.
 
@@ -767,6 +823,8 @@ process_029
 ###########
 
 |phase_1| |disabled| |error| |structure|
+
+Alias: :code:`process_clock_definition_format`
 
 This rule checks for the format of clock definitions in clock processes.
 The rule can be set to enforce **event** definition:
@@ -838,6 +896,8 @@ process_030
 
 |phase_1| |error| |unfixable| |structure|
 
+Alias: :code:`process_one_signal_per_sensitivity_list_line`
+
 This rule checks for a single signal per line in a sensitivity list that is not the last one.
 The sensitivity list is required by the compiler, but provides no useful information to the reader.
 Therefore, the vertical spacing of the sensitivity list should be minimized.
@@ -869,6 +929,8 @@ process_031
 ###########
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`process_declarative_part_identifier_alignment`
 
 This rule checks for alignment of identifiers in the process declarative region.
 
@@ -915,6 +977,8 @@ process_033
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`process_declarative_part_colon_alignment`
+
 This rule checks the colons are in the same column for all declarations in the process declarative part.
 
 |configuring_keyword_alignment_rules_link|
@@ -941,6 +1005,8 @@ process_034
 ###########
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`process_inline_comment_alignment_before_begin`
 
 This rule aligns inline comments between the end of the process sensitivity list and the process **begin** keyword.
 |configuring_keyword_alignment_rules_link|
@@ -976,6 +1042,8 @@ process_035
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`process_inline_comment_alignment_in_body`
+
 This rule checks the alignment of inline comments between the process begin and end process lines.
 |configuring_keyword_alignment_rules_link|
 
@@ -1010,6 +1078,8 @@ process_036
 
 |phase_7| |disabled| |error| |unfixable| |naming|
 
+Alias: :code:`process_label_prefix`
+
 This rule checks for valid prefixes on process labels.
 The default prefix is *proc_*.
 
@@ -1032,6 +1102,8 @@ process_037
 
 |phase_1| |error| |structure|
 
+Alias: :code:`process_label_colon_on_same_line`
+
 This rule checks a label and the colon are on the same line.
 
 **Violation**
@@ -1051,6 +1123,8 @@ process_038
 ###########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`process_label_colon_on_same_line_as_process_keyword`
 
 This rule checks a label colon is on the same line as the **process** or **postponed** keyword.
 
@@ -1073,6 +1147,8 @@ process_039
 
 |phase_1| |error| |structure|
 
+Alias: :code:`process_postponed_keyword_on_same_line_as_process`
+
 This rule checks a **postponed** keyword is on the same line at the **process** keyword.
 
 **Violation**
@@ -1093,6 +1169,8 @@ process_400
 ###########
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`process_assignment_operator_alignment`
 
 This rule checks the alignment of the **<=** and **:=** operators over consecutive sequential assignments in the process_statement_part.
 
@@ -1126,6 +1204,8 @@ process_401
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`process_attribute_specification_colon_alignment`
+
 This rule checks the colons are in the same column for all attribute specifications.
 
 |configuring_keyword_alignment_rules_link|
@@ -1150,6 +1230,8 @@ process_600
 ###########
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`process_label_suffix`
 
 This rule checks for valid suffixes on process labels.
 The default suffix is *_proc*.

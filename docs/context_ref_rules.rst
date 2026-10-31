@@ -8,6 +8,8 @@ context_ref_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`context_ref_context_keyword_indent`
+
 This rule checks the indent of the **context** keyword.
 
 **Violation**
@@ -29,6 +31,8 @@ context_ref_002
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`context_ref_space_after_context_keyword`
+
 This rule checks for a single space between the **context** keyword and the context selected name.
 
 |configuring_whitespace_rules_link|
@@ -49,6 +53,8 @@ context_ref_003
 ###############
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`context_ref_context_keyword_case`
 
 This rule checks the **context** keyword has proper case.
 
@@ -78,6 +84,8 @@ context_ref_005
 ###############
 
 |phase_1| |error| |structure|
+
+Alias: :code:`context_ref_context_keyword_on_own_line`
 
 This rule checks the **context** keyword is on its own line.
 
@@ -205,6 +213,8 @@ context_ref_500
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`context_ref_library_name_case`
+
 This rule checks the library name called out in the selected name has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -225,6 +235,8 @@ context_ref_501
 ###############
 
 |phase_6| |error| |case| |case_name|
+
+Alias: :code:`context_ref_context_name_case`
 
 This rule checks the context name called out in the selected name has proper case.
 

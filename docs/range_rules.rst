@@ -10,6 +10,8 @@ range_001
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`range_downto_keyword_case`
+
 This rule checks the case of the **downto** keyword.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -32,6 +34,8 @@ range_002
 #########
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`range_to_keyword_case`
 
 This rule checks the case of the **to** keyword.
 

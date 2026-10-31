@@ -8,6 +8,8 @@ loop_statement_001
 
 |phase_1| |error| |structure|
 
+Alias: :code:`loop_statement_no_code_after_loop_keyword`
+
 This rule checks for code after the **loop** keyword.
 
 **Violation**
@@ -27,6 +29,8 @@ loop_statement_002
 ##################
 
 |phase_1| |error| |structure|
+
+Alias: :code:`loop_statement_end_keyword_on_own_line`
 
 This rule checks the **end** keyword is on its own line.
 
@@ -50,6 +54,8 @@ loop_statement_003
 
 |phase_1| |error| |structure|
 
+Alias: :code:`loop_statement_end_loop_keywords_on_same_line`
+
 This rule checks the **end** keyword is on the same line as the **end loop** keyword.
 
 **Violation**
@@ -69,6 +75,8 @@ loop_statement_004
 ##################
 
 |phase_1| |error| |structure|
+
+Alias: :code:`loop_statement_semicolon_on_same_line_as_end_loop`
 
 This rule checks the semicolon is on the same line as the **end loop** keyword.
 
@@ -94,6 +102,8 @@ loop_statement_005
 ##################
 
 |phase_1| |error| |structure|
+
+Alias: :code:`loop_statement_label_on_same_line_as_keyword`
 
 This rule checks the loop label and the **while**, **for** or **loop** keywords are on the same line.
 
@@ -125,6 +135,8 @@ loop_statement_006
 
 |phase_1| |disabled| |error| |unfixable| |structure|
 
+Alias: :code:`loop_statement_label_exists`
+
 This rule checks that loop statements have a label.
 
 **Violation**
@@ -152,6 +164,8 @@ loop_statement_007
 
 |phase_1| |disabled| |error| |structure| |structure_optional|
 
+Alias: :code:`loop_statement_end_label_exists`
+
 This rule checks the **end loop_statement** line has a label.
 The closing label will be added if the opening loop_statement label exists.
 
@@ -173,6 +187,8 @@ loop_statement_100
 ##################
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`loop_statement_space_between_end_and_loop`
 
 This rule checks that a single space exists between the **end** and **loop** keywords
 
@@ -197,6 +213,8 @@ loop_statement_101
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`loop_statement_space_before_end_label`
+
 This rule checks for a single space before the ending loop label if it exists.
 
 |configuring_whitespace_rules_link|
@@ -217,6 +235,8 @@ loop_statement_102
 ##################
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`loop_statement_space_before_loop_keyword`
 
 This rule checks for a single space before the **loop** keyword.
 
@@ -241,6 +261,8 @@ loop_statement_103
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`loop_statement_space_between_label_and_colon`
+
 This rule checks if a label exists that a single space exists between the label and the colon.
 
 |configuring_whitespace_rules_link|
@@ -264,6 +286,8 @@ loop_statement_104
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`loop_statement_space_after_label_colon`
+
 This rule checks if a label exists that a single space exists after the colon.
 
 |configuring_whitespace_rules_link|
@@ -286,6 +310,8 @@ loop_statement_200
 ##################
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`loop_statement_lines_above_loop`
 
 This rule checks for blank lines or comments above loop statements.
 
@@ -319,6 +345,8 @@ loop_statement_201
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`loop_statement_blank_line_below_loop_keyword`
+
 This rule checks for blank lines below the **loop** keyword.
 
 |configuring_blank_lines_link|
@@ -342,6 +370,8 @@ loop_statement_202
 ##################
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`loop_statement_lines_above_end_keyword`
 
 This rule checks for blank lines or comments above the **end** keyword.
 
@@ -369,6 +399,8 @@ loop_statement_203
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`loop_statement_blank_line_below_end_loop_keyword`
+
 This rule checks for blank lines below the **end loop** keywords.
 
 |configuring_blank_lines_link|
@@ -392,6 +424,8 @@ loop_statement_300
 ##################
 
 |phase_4| |error| |indent|
+
+Alias: :code:`loop_statement_loop_keyword_indent`
 
 This rule checks the indentation of the **loop** keyword.
 
@@ -426,6 +460,8 @@ loop_statement_301
 
 |phase_4| |error| |indent|
 
+Alias: :code:`loop_statement_label_indent`
+
 This rule checks the indentation of the loop label if it exists.
 
 **Violation**
@@ -458,6 +494,8 @@ loop_statement_302
 ##################
 
 |phase_4| |error| |indent|
+
+Alias: :code:`loop_statement_end_keyword_indent`
 
 This rule checks the indentation of the **end** keyword.
 
@@ -492,6 +530,8 @@ loop_statement_500
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`loop_statement_loop_keyword_case`
+
 This rule checks the **loop** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -512,6 +552,8 @@ loop_statement_501
 ##################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`loop_statement_end_keyword_case`
 
 This rule checks the **end** keyword has proper case.
 
@@ -538,6 +580,8 @@ loop_statement_502
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`loop_statement_end_loop_keyword_case`
+
 This rule checks the **loop** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -563,6 +607,8 @@ loop_statement_503
 
 |phase_6| |error| |case| |case_label|
 
+Alias: :code:`loop_statement_label_case`
+
 This rule checks the proper case of the label on a loop statement.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -585,6 +631,8 @@ loop_statement_504
 ##################
 
 |phase_6| |error| |case| |case_label|
+
+Alias: :code:`loop_statement_end_label_case`
 
 This rule checks the proper case of the end label on a loop statement.
 
@@ -609,6 +657,8 @@ loop_statement_600
 
 |phase_7| |disabled| |error| |unfixable| |naming|
 
+Alias: :code:`loop_statement_label_prefix`
+
 This rule checks for valid prefixes on loop labels.
 The default prefix is *loop_*.
 
@@ -630,6 +680,8 @@ loop_statement_601
 ##################
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`loop_statement_label_suffix`
 
 This rule checks for valid suffixes on loop labels.
 The default prefix is *_loop*.
@@ -653,6 +705,8 @@ loop_statement_602
 
 |phase_7| |disabled| |error| |unfixable| |naming|
 
+Alias: :code:`loop_statement_parameter_prefix`
+
 This rule checks for valid prefixes on loop parameter identifiers.
 The default loop prefix is *lv_*.
 
@@ -674,6 +728,8 @@ loop_statement_603
 ##################
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`loop_statement_parameter_suffix`
 
 This rule checks for valid suffixes on loop parameter identifiers.
 The default loop suffix is *_lv*.

@@ -8,6 +8,8 @@ package_body_001
 
 |phase_1| |error| |structure|
 
+Alias: :code:`package_body_is_keyword_on_same_line_as_package`
+
 This rule checks the **is** keyword is on the same line as the **package** keyword.
 
 **Violation**
@@ -27,6 +29,8 @@ package_body_002
 ################
 
 |phase_1| |error| |structure| |structure_optional|
+
+Alias: :code:`package_body_end_package_body_keywords_exist`
 
 This rule checks for the optional **package body** keywords on the end package body declaration.
 
@@ -49,6 +53,8 @@ package_body_003
 
 |phase_1| |error| |structure| |structure_optional|
 
+Alias: :code:`package_body_end_package_name_exists`
+
 This rule checks the package name exists in the closing of the package body declaration.
 
 |configuring_optional_items_link|
@@ -69,6 +75,8 @@ package_body_100
 ################
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`package_body_space_before_is_keyword`
 
 This rule checks for a single space between **package**, **body** and **is** keywords.
 
@@ -91,6 +99,8 @@ package_body_101
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`package_body_space_between_end_package_body_and_name`
+
 This rule checks for a single space between the **end**, **package** and **body** keywords and package name.
 
 |configuring_whitespace_rules_link|
@@ -111,6 +121,8 @@ package_body_200
 ################
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`package_body_lines_above_package_keyword`
 
 This rule checks for blank lines or comments above the **package** keyword.
 
@@ -136,6 +148,8 @@ package_body_201
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`package_body_blank_line_below_package_keyword`
+
 This rule checks for a blank line below the **package** keyword.
 
 |configuring_blank_lines_link|
@@ -159,6 +173,8 @@ package_body_202
 ################
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`package_body_lines_above_end_keyword`
 
 This rule checks for blank lines or comments above the **end** keyword.
 
@@ -184,6 +200,8 @@ package_body_203
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`package_body_blank_line_below_end`
+
 This rule checks for a blank line below the **end package** keyword.
 
 |configuring_blank_lines_link|
@@ -208,6 +226,8 @@ package_body_300
 
 |phase_4| |error| |indent|
 
+Alias: :code:`package_body_package_keyword_indent`
+
 This rule checks the indent of the **package body** keyword.
 
 **Violation**
@@ -230,6 +250,8 @@ package_body_301
 ################
 
 |phase_4| |error| |indent|
+
+Alias: :code:`package_body_end_indent`
 
 This rule checks the indent of the end package declaration.
 
@@ -254,6 +276,8 @@ package_body_400
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`package_body_declarative_part_identifier_alignment`
+
 This rule checks the identifiers for all declarations are aligned in the package body declarative region.
 
 |configuring_identifier_alignment_rules_link|
@@ -276,6 +300,8 @@ package_body_401
 ################
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`package_body_declarative_part_colon_alignment`
 
 This rule checks the colons are in the same column for all declarations in the package body declarative part.
 
@@ -310,6 +336,8 @@ package_body_402
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`package_body_attribute_specification_colon_alignment`
+
 This rule checks the colons are in the same column for all attribute specifications.
 
 |configuring_keyword_alignment_rules_link|
@@ -335,6 +363,8 @@ package_body_500
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`package_body_package_keyword_case`
+
 This rule checks the **package** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -355,6 +385,8 @@ package_body_501
 ################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`package_body_body_keyword_case`
 
 This rule checks the **body** keyword has proper case.
 
@@ -377,6 +409,8 @@ package_body_502
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`package_body_name_case`
+
 This rule checks the package name has proper case in the package body declaration.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -397,6 +431,8 @@ package_body_503
 ################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`package_body_is_keyword_case`
 
 This rule checks the **is** keyword has proper case.
 
@@ -419,6 +455,8 @@ package_body_504
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`package_body_end_keyword_case`
+
 This rule checks the **end** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -439,6 +477,8 @@ package_body_505
 ################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`package_body_end_package_keyword_case`
 
 This rule checks the **package** keyword in the **end package body** has proper case.
 
@@ -461,6 +501,8 @@ package_body_506
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`package_body_end_body_keyword_case`
+
 This rule checks the **body** keyword in the **end package body** has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -481,6 +523,8 @@ package_body_507
 ################
 
 |phase_6| |error| |case| |case_name|
+
+Alias: :code:`package_body_end_package_name_case`
 
 This rule checks the package name has proper case on the end package body declaration.
 
@@ -503,6 +547,8 @@ package_body_600
 
 |phase_7| |disabled| |error| |unfixable| |naming|
 
+Alias: :code:`package_body_suffix`
+
 This rule checks for valid suffixes on package body identifiers.
 The default package suffix is *_pkg*.
 
@@ -524,6 +570,8 @@ package_body_601
 ################
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`package_body_prefix`
 
 This rule checks for valid prefixes on package body identifiers.
 The default package prefix is *pkg_*.

@@ -42,6 +42,8 @@ procedure_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`procedure_keyword_indent`
+
 This rule checks the indent of the **procedure** keyword.
 
 **Violation**
@@ -72,6 +74,8 @@ procedure_002
 #############
 
 |phase_4| |error| |indent|
+
+Alias: :code:`procedure_begin_keyword_indent`
 
 This rule checks the indent of the **begin** keyword.
 
@@ -104,6 +108,8 @@ procedure_003
 
 |phase_4| |error| |indent|
 
+Alias: :code:`procedure_end_keyword_indent`
+
 This rule checks the indent of the **end** keyword.
 
 **Violation**
@@ -135,6 +141,8 @@ procedure_004
 
 |phase_4| |error| |indent|
 
+Alias: :code:`procedure_parameters_indent`
+
 This rule checks the indent of parameters.
 
 **Violation**
@@ -165,6 +173,8 @@ procedure_005
 #############
 
 |phase_4| |error| |indent|
+
+Alias: :code:`procedure_declarative_part_indent`
 
 This rule checks the indent of lines between the **is** and **begin** keywords
 
@@ -200,6 +210,8 @@ procedure_006
 
 |phase_4| |error| |indent|
 
+Alias: :code:`procedure_closing_parenthesis_indent`
+
 This rule checks the indent of the closing parenthesis if it is on its own line.
 
 **Violation**
@@ -231,6 +243,8 @@ procedure_008
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`procedure_end_keyword_case`
+
 This rule checks the **end** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -260,6 +274,8 @@ procedure_010
 #############
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`procedure_declarative_part_identifier_alignment`
 
 This rule checks the identifiers for all declarations are aligned in the procedure declarative part.
 
@@ -291,6 +307,8 @@ procedure_012
 
 |phase_1| |error| |structure| |structure_optional|
 
+Alias: :code:`procedure_end_procedure_keyword_exists`
+
 This rule checks the **procedure** keyword exists in the closing of the procedure specification.
 
 |configuring_optional_items_link|
@@ -316,6 +334,8 @@ procedure_013
 
 |phase_1| |error| |structure|
 
+Alias: :code:`procedure_specification_structure`
+
 This rule checks the structure of procedure specifications.
 
 |configuring_subprogram_specification_statement_rules_link|
@@ -339,6 +359,8 @@ procedure_014
 #############
 
 |phase_1| |error| |structure| |structure_optional|
+
+Alias: :code:`procedure_end_designator_exists`
 
 This rule checks the procedure designator exists in the closing of the procedure specification.
 
@@ -374,6 +396,8 @@ procedure_101
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`procedure_space_between_end_procedure_and_designator`
+
 This rule checks for a single space between the **end** and **procedure** keywords and procedure designator.
 
 |configuring_whitespace_rules_link|
@@ -399,6 +423,8 @@ procedure_102
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`procedure_space_after_procedure_keyword`
+
 This rule checks for a single space after the **procedure** keyword.
 
 |configuring_whitespace_rules_link|
@@ -419,6 +445,8 @@ procedure_103
 #############
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`procedure_space_between_designator_and_open_parenthesis`
 
 This rule checks for a single space between the procedure designator and the open parenthesis.
 
@@ -441,6 +469,8 @@ procedure_104
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`procedure_space_before_is_keyword`
+
 This rule checks for a single space before the **is** keyword.
 
 |configuring_whitespace_rules_link|
@@ -461,6 +491,8 @@ procedure_200
 #############
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`procedure_lines_above_procedure_keyword`
 
 This rule checks for blank lines or comments above the **procedure** keyword.
 
@@ -512,6 +544,8 @@ procedure_401
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`procedure_declarative_part_colon_alignment`
+
 This rule checks the colons are in the same column for all declarations in the procedure declarative part.
 
 |configuring_keyword_alignment_rules_link|
@@ -539,6 +573,8 @@ procedure_410
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`procedure_parameter_colon_alignment`
+
 This rule checks the alignment of the colon for each parameter in the procedure declaration.
 
 |configuring_keyword_alignment_rules_link|
@@ -565,6 +601,8 @@ procedure_411
 #############
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`procedure_parameter_assignment_alignment`
 
 This rule checks the alignment of **:=** operator for each parameter in the procedure declaration.
 
@@ -598,6 +636,8 @@ procedure_500
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`procedure_keyword_case`
+
 This rule checks the **procedure** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -618,6 +658,8 @@ procedure_501
 #############
 
 |phase_6| |error| |case| |case_name|
+
+Alias: :code:`procedure_designator_case`
 
 This rule checks the procedure designator has proper case.
 
@@ -640,6 +682,8 @@ procedure_502
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`procedure_is_keyword_case`
+
 This rule checks the **is** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -660,6 +704,8 @@ procedure_503
 #############
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`procedure_begin_keyword_case`
 
 This rule checks the **begin** keyword has proper case.
 
@@ -683,6 +729,8 @@ procedure_504
 #############
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`procedure_end_keyword_case_duplicate`
 
 This rule checks the **end** keyword has proper case.
 
@@ -710,6 +758,8 @@ procedure_506
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`procedure_end_designator_case`
+
 This rule checks the procedure designator has proper case on the end procedure declaration.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -730,6 +780,8 @@ procedure_507
 #############
 
 |phase_6| |error| |case|
+
+Alias: :code:`procedure_names_consistent_case`
 
 This rule checks for consistent capitalization of procedure names.
 
@@ -784,6 +836,8 @@ procedure_508
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`procedure_parameter_names_case`
+
 This rule checks that the parameter names have proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -810,6 +864,8 @@ procedure_509
 #############
 
 |phase_6| |error| |case| |case_name|
+
+Alias: :code:`procedure_parameter_names_consistent_case`
 
 This rule checks for consistent capitalization of parameter names within the subprogram body.
 
@@ -846,6 +902,8 @@ procedure_510
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`procedure_parameter_direction_case`
+
 This rule checks the parameter direction has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -872,6 +930,8 @@ procedure_511
 #############
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`procedure_parameter_class_case`
 
 This rule checks the parameter class has proper case.
 

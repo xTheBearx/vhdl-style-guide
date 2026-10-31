@@ -8,6 +8,8 @@ library_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`library_keyword_indent`
+
 This rule checks the indent of the **library** keyword.
 Indenting helps in comprehending the code.
 
@@ -31,6 +33,8 @@ library_002
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`library_space_after_library_keyword`
+
 This rule checks for excessive spaces after the **library** keyword.
 
 |configuring_whitespace_rules_link|
@@ -51,6 +55,8 @@ library_003
 ###########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`library_lines_above_library_keyword`
 
 This rule checks for blank lines or comments above the **library** keyword.
 
@@ -88,6 +94,8 @@ library_004
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`library_keyword_case`
+
 This rule checks the **library** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -112,6 +120,8 @@ library_005
 ###########
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`library_use_keyword_case`
 
 This rule checks the **use** keyword has proper case.
 
@@ -138,6 +148,8 @@ library_006
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`library_space_after_use_keyword`
+
 This rule checks for excessive spaces after the **use** keyword.
 
 |configuring_whitespace_rules_link|
@@ -162,6 +174,8 @@ library_007
 ###########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`library_lines_above_use_clause`
 
 This rule checks for blank lines or comments above the **use** declaration.
 
@@ -192,6 +206,8 @@ library_008
 
 |phase_4| |error| |indent|
 
+Alias: :code:`library_use_keyword_indent`
+
 This rule checks the indent of the **use** keyword.
 
 |configuring_use_clause_indenting_link|
@@ -217,6 +233,8 @@ library_009
 
 |phase_4| |error| |alignment|
 
+Alias: :code:`library_comment_alignment`
+
 This rule checks alignment of comments above library use statements.
 
 **Violation**
@@ -240,6 +258,8 @@ library_010
 
 |phase_1| |error| |structure|
 
+Alias: :code:`library_keyword_on_own_line`
+
 This rule checks the **library** keyword is on its own line.
 
 **Violation**
@@ -259,6 +279,8 @@ library_011
 ###########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`library_use_keyword_on_own_line`
 
 This rule checks the **use** keyword is on its own line.
 
@@ -280,6 +302,8 @@ library_012
 
 |phase_7| |disabled| |error| |unfixable| |naming|
 
+Alias: :code:`library_allowed_libraries`
+
 This rule checks for libraries that have been restricted by the user.
 
 |configuring_library_and_package_name_restriction_rules_link|
@@ -296,6 +320,8 @@ library_500
 ###########
 
 |phase_6| |error| |case| |case_name|
+
+Alias: :code:`library_logical_name_case`
 
 This rule checks the logical_name in a library_clause has proper case.
 

@@ -153,6 +153,7 @@ Any attribute of any rule can be configured.
 Using **global** will set the attribute for every rule.
 Using **group** will set attributes for groups of rules.
 Each rule is addressable by using its unique **ruleId** and **ruleNumber** combination.  For example, whitespace_006 or port_010.
+Each rule can also be addressed by its alias, see `Rule Aliases`_.
 
 .. NOTE::
    If **global** and unique attributes are set at the same time, the unique attribute will take precedence.
@@ -172,6 +173,28 @@ Here are a list of attributes that can be altered for each rule:
 | fixable      | Boolean | If set to False, the violation will not be fixed |
 +--------------+---------+--------------------------------------------------+
 
+Rule Aliases
+############
+
+Every rule also has a descriptive alias, shown in the documentation of the rule and by the **-rc** option.
+The alias can be used instead of the rule identifier wherever a rule is configured, including under **file_list** and **file_rules**.
+These two configurations are equivalent:
+
+.. code-block:: yaml
+
+   rule:
+     if_025:
+       case: upper
+
+.. code-block:: yaml
+
+   rule:
+     if_keyword_case:
+       case: upper
+
+Violations are still reported with the rule identifier.
+Configuring the same rule with both its identifier and its alias in one configuration file is an error.
+
 .. _reporting-single-rule-configuration:
 
 Reporting Single Rule Configuration
@@ -185,6 +208,7 @@ The configuration for a single rule can be reported using the **-rc** option:
    {
      "rule": {
        "entity_001": {
+         "alias": "entity_keyword_indent",
          "indent_size": 2,
          "phase": 4,
          "disable": false,
@@ -195,6 +219,7 @@ The configuration for a single rule can be reported using the **-rc** option:
 
 MHSG will print the configuration for the rule given in a JSON format.
 This configuration can be altered and added to a configuration file.
+The rule can also be given by its alias, for example :code:`mhsg -rc entity_keyword_indent`.
 
 Reporting Configuration for All Rules
 -------------------------------------

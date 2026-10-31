@@ -8,6 +8,8 @@ iteration_scheme_100
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`iteration_scheme_space_after_while_keyword`
+
 This rule checks that a single space exists after the **while** keyword.
 
 |configuring_whitespace_rules_link|
@@ -33,6 +35,8 @@ iteration_scheme_101
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`iteration_scheme_space_after_for_keyword`
+
 This rule checks that a single space exists after the **for** keyword.
 
 |configuring_whitespace_rules_link|
@@ -53,6 +57,8 @@ iteration_scheme_300
 ####################
 
 |phase_4| |error| |indent|
+
+Alias: :code:`iteration_scheme_while_keyword_indent`
 
 This rule checks for indentation of the **while** keyword.
 Proper indentation enhances comprehension.
@@ -81,6 +87,8 @@ iteration_scheme_301
 ####################
 
 |phase_4| |error| |indent|
+
+Alias: :code:`iteration_scheme_for_keyword_indent`
 
 This rule checks the indentation of the **for** keyword.
 
@@ -115,6 +123,8 @@ iteration_scheme_500
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`iteration_scheme_while_keyword_case`
+
 This rule checks the **while** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -135,6 +145,8 @@ iteration_scheme_501
 ####################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`iteration_scheme_for_keyword_case`
 
 This rule checks the **for** keyword has proper case.
 

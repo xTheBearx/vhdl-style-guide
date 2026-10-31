@@ -8,6 +8,8 @@ whitespace_001
 
 |phase_1| |error| |whitespace|
 
+Alias: :code:`whitespace_trailing_spaces`
+
 This rule check for trailing spaces.
 
 **Violation**
@@ -29,6 +31,8 @@ whitespace_002
 
 |phase_1| |error| |whitespace|
 
+Alias: :code:`whitespace_no_tabs`
+
 This rule will check for the existence of tabs in the middle of a line.
 
 **Violation**
@@ -48,6 +52,8 @@ whitespace_003
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`whitespace_space_before_semicolon`
+
 This rule checks for spaces before semicolons.
 
 **Violation**
@@ -66,6 +72,8 @@ whitespace_004
 ##############
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`whitespace_space_before_comma`
 
 This rule checks for spaces before commas.
 
@@ -87,6 +95,8 @@ whitespace_005
 ##############
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`whitespace_space_after_open_parenthesis`
 
 This rule checks for spaces after an open parenthesis.
 
@@ -115,6 +125,8 @@ whitespace_006
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`whitespace_space_before_close_parenthesis`
+
 This rule checks for spaces before a close parenthesis.
 
 **Violation**
@@ -137,6 +149,8 @@ whitespace_007
 ##############
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`whitespace_space_after_comma`
 
 This rule checks for spaces after a comma.
 
@@ -164,6 +178,8 @@ whitespace_010
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`whitespace_space_around_concatenate`
+
 This rule checks for spaces before and after the concatenate (&) operator.
 
 **Violation**
@@ -182,6 +198,8 @@ whitespace_011
 ##############
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`whitespace_space_around_math_operators`
 
 This rule checks for at least a single space before and after math operators +, -, /, * and **.
 
@@ -217,6 +235,8 @@ whitespace_013
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`whitespace_space_around_logical_operators`
+
 This rule checks for at least a single space before and after logical operators.
 
 **Violation**
@@ -237,6 +257,8 @@ whitespace_100
 ##############
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`whitespace_space_around_relational_operators`
 
 This rule checks for at least a single space before and after relational operators.
 
@@ -259,6 +281,8 @@ whitespace_101
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`whitespace_space_around_shift_operators`
+
 This rule checks for at least a single space before and after logical operators.
 
 **Violation**
@@ -279,6 +303,8 @@ whitespace_102
 ##############
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`whitespace_space_before_direction_keyword`
 
 This rule checks for a single space before direction keywords.
 
@@ -303,6 +329,8 @@ whitespace_103
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`whitespace_space_after_direction_keyword`
+
 This rule checks for a single space after direction keywords.
 
 |configuring_whitespace_rules_link|
@@ -325,6 +353,8 @@ whitespace_200
 ##############
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`whitespace_consecutive_blank_lines`
 
 This rule enforces a maximum number of consecutive blank lines.
 

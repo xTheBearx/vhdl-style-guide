@@ -8,6 +8,8 @@ if_generate_statement_300
 
 |phase_4| |error| |indent|
 
+Alias: :code:`if_generate_statement_elsif_keyword_indent`
+
 This rule checks the indent of the **elsif** keyword.
 
 **Violation**
@@ -30,6 +32,8 @@ if_generate_statement_301
 #########################
 
 |phase_4| |error| |indent|
+
+Alias: :code:`if_generate_statement_else_keyword_indent`
 
 This rule checks the indent of the **else** keyword.
 
@@ -54,6 +58,8 @@ if_generate_statement_500
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`if_generate_statement_if_keyword_case`
+
 This rule checks the **if** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -74,6 +80,8 @@ if_generate_statement_501
 #########################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`if_generate_statement_generate_keyword_case`
 
 This rule checks the **generate** keyword has proper case.
 
@@ -100,6 +108,8 @@ if_generate_statement_502
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`if_generate_statement_elsif_keyword_case`
+
 This rule checks the **elsif** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -120,6 +130,8 @@ if_generate_statement_503
 #########################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`if_generate_statement_else_keyword_case`
 
 This rule checks the **else** keyword has proper case.
 

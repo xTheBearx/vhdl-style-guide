@@ -8,6 +8,8 @@ function_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`function_keyword_indent`
+
 This rule checks the indentation of the **function** keyword.
 
 **Violation**
@@ -50,6 +52,8 @@ function_004
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`function_begin_keyword_case`
+
 This rule checks the **begin** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -73,6 +77,8 @@ function_005
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`function_keyword_case`
+
 This rule checks the **function** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -93,6 +99,8 @@ function_006
 ############
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`function_lines_above_function_keyword`
 
 This rule checks for blank lines or comments above the **function** keyword.
 
@@ -123,6 +131,8 @@ function_008
 ############
 
 |phase_4| |error| |indent|
+
+Alias: :code:`function_parameters_on_multiple_lines_indent`
 
 This rule checks the indent of function parameters on multiple lines.
 
@@ -159,6 +169,8 @@ function_010
 ############
 
 |phase_6| |error| |case|
+
+Alias: :code:`function_names_consistent_case`
 
 This rule checks for consistent capitalization of function names.
 
@@ -209,6 +221,8 @@ function_012
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`function_declarative_part_colon_alignment`
+
 This rule checks the colons are in the same column for all declarations in the function declarative part.
 
 |configuring_keyword_alignment_rules_link|
@@ -233,6 +247,8 @@ function_013
 ############
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`function_end_keyword_case`
 
 This rule checks the **end** keyword has proper case.
 
@@ -264,6 +280,8 @@ function_015
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`function_declarative_part_identifier_alignment`
+
 This rule checks the identifiers for all declarations are aligned in the function declarative part.
 
 |configuring_identifier_alignment_rules_link|
@@ -288,6 +306,8 @@ function_016
 ############
 
 |phase_4| |error| |indent|
+
+Alias: :code:`function_return_indent`
 
 This rule checks the indent of return statements in function bodies.
 
@@ -316,6 +336,8 @@ function_017
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`function_designator_case`
+
 This rule checks the function designator has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -336,6 +358,8 @@ function_018
 ############
 
 |phase_1| |error| |structure| |structure_optional|
+
+Alias: :code:`function_end_function_keyword_exists`
 
 This rule checks the **function** keyword exists in the closing of the function specification.
 
@@ -362,6 +386,8 @@ function_019
 
 |phase_1| |error| |structure|
 
+Alias: :code:`function_specification_structure`
+
 This rule checks the structure of function specifications.
 
 |configuring_subprogram_specification_statement_rules_link|
@@ -385,6 +411,8 @@ function_020
 ############
 
 |phase_1| |error| |structure| |structure_optional|
+
+Alias: :code:`function_end_designator_exists`
 
 This rule checks the function designator exists in the closing of the function specification.
 
@@ -423,6 +451,8 @@ function_101
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`function_space_between_end_function_and_designator`
+
 This rule checks for a single space between the **end** and **function** keywords and function designator.
 
 |configuring_whitespace_rules_link|
@@ -448,6 +478,8 @@ function_102
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`function_space_after_pure_impure_keyword`
+
 This rule checks for a single space between the **pure** or **impure** keyword and the **function** keyword.
 
 |configuring_whitespace_rules_link|
@@ -468,6 +500,8 @@ function_103
 ############
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`function_space_after_function_keyword`
 
 This rule checks for a single space after the **function** keyword.
 
@@ -490,6 +524,8 @@ function_104
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`function_space_between_designator_and_open_parenthesis`
+
 This rule checks for a single space between the function designator and the open parenthesis.
 
 |configuring_whitespace_rules_link|
@@ -510,6 +546,8 @@ function_105
 ############
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`function_space_before_return_keyword`
 
 This rule checks for a single space before the **return** keyword.
 
@@ -532,6 +570,8 @@ function_106
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`function_space_after_return_keyword`
+
 This rule checks for a single space after the **return** keyword.
 
 |configuring_whitespace_rules_link|
@@ -552,6 +592,8 @@ function_107
 ############
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`function_space_before_is_keyword`
 
 This rule checks for a single space before the **is** keyword.
 
@@ -594,6 +636,8 @@ function_300
 
 |phase_4| |error| |indent|
 
+Alias: :code:`function_closing_parenthesis_indent`
+
 This rule checks the indent of the closing parenthesis if it is on its own line.
 
 **Violation**
@@ -622,6 +666,8 @@ function_501
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`function_return_keyword_case`
+
 This rule checks the **return** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -642,6 +688,8 @@ function_502
 ############
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`function_is_keyword_case`
 
 This rule checks the **is** keyword has proper case.
 
@@ -664,6 +712,8 @@ function_506
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`function_end_designator_case`
+
 This rule checks the function designator has proper case on the end function declaration.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -684,6 +734,8 @@ function_507
 ############
 
 |phase_6| |error| |case| |case_name|
+
+Alias: :code:`function_parameter_names_case`
 
 This rule checks that the parameter names have proper case.
 
@@ -711,6 +763,8 @@ function_508
 ############
 
 |phase_6| |error| |case| |case_name|
+
+Alias: :code:`function_parameter_names_consistent_case`
 
 This rule checks for consistent capitalization of parameter names within the subprogram body.
 
@@ -749,6 +803,8 @@ function_509
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`function_pure_keyword_case`
+
 This rule checks the **pure** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -769,6 +825,8 @@ function_510
 ############
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`function_parameter_direction_case`
 
 This rule checks the parameter direction has proper case.
 
@@ -796,6 +854,8 @@ function_511
 ############
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`function_parameter_class_case`
 
 This rule checks the parameter class has proper case.
 
@@ -830,6 +890,8 @@ function_512
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`function_impure_keyword_case`
+
 This rule checks the **impure** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -850,6 +912,8 @@ function_600
 ############
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`function_designator_prefix`
 
 This rule checks for valid prefixes on function designators.
 Default signal prefix is *f_*.
@@ -872,6 +936,8 @@ function_601
 ############
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`function_designator_suffix`
 
 This rule checks for valid suffixes on function designators.
 Default signal suffix is *_f*.

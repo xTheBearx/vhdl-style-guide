@@ -8,6 +8,8 @@ comment_004
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`comment_space_before_inline_comments`
+
 This rule checks for at least a single space before inline comments.
 
 |configuring_whitespace_rules_link|
@@ -30,6 +32,8 @@ comment_010
 ###########
 
 |phase_4| |error| |indent|
+
+Alias: :code:`comment_indent`
 
 This rule checks the indent lines starting with comments.
 
@@ -75,6 +79,8 @@ comment_011
 
 |phase_1| |disabled| |error| |structure|
 
+Alias: :code:`comment_inline_comment_moved_above`
+
 This rule checks for in-line comments and moves them to the line above.
 The indent of the comment will be set to the indent of the current line.
 
@@ -98,6 +104,8 @@ comment_012
 
 |phase_1| |disabled| |warning| |unfixable| |structure|
 
+Alias: :code:`comment_keywords`
+
 This rule checks for user defined keywords in comments.
 
 .. NOTE:: This rule is disabled by default.
@@ -119,6 +127,8 @@ comment_013
 ###########
 
 |phase_1| |disabled| |warning| |unfixable| |structure|
+
+Alias: :code:`comment_commented_out_code`
 
 This rule checks for comments which contain commented out code.
 
@@ -150,6 +160,8 @@ comment_100
 ###########
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`comment_space_after_dashes`
 
 This rule checks for a single space after the **--**.
 

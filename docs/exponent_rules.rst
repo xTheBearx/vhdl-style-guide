@@ -8,6 +8,8 @@ exponent_500
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`exponent_e_keyword_case`
+
 This rule checks the **e** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|

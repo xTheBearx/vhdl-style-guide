@@ -13,6 +13,8 @@ generic_002
 
 |phase_4| |error| |indent|
 
+Alias: :code:`generic_keyword_indent`
+
 This rule checks the indent of the **generic** keyword.
 
 **Violation**
@@ -40,6 +42,8 @@ generic_003
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`generic_space_after_generic_keyword`
+
 This rule checks for a single space between the **generic** keyword and the (.
 
 |configuring_whitespace_rules_link|
@@ -64,6 +68,8 @@ generic_004
 ###########
 
 |phase_4| |error| |indent|
+
+Alias: :code:`generic_declarations_indent`
 
 This rule checks the indent of generic declarations.
 
@@ -90,6 +96,8 @@ generic_005
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`generic_space_after_colon`
+
 This rule checks for a single space after the colon in a generic declaration.
 
 |configuring_whitespace_rules_link|
@@ -110,6 +118,8 @@ generic_006
 ###########
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`generic_space_after_default_assignment`
 
 This rule checks for a single space after the default assignment.
 
@@ -134,6 +144,8 @@ generic_007
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`generic_name_case`
+
 This rule checks the generic names have proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -154,6 +166,8 @@ generic_008
 ###########
 
 |phase_4| |error| |indent|
+
+Alias: :code:`generic_closing_parenthesis_indent`
 
 This rule checks the indent of the closing parenthesis.
 
@@ -176,6 +190,8 @@ generic_009
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`generic_keyword_case`
+
 This rule checks the **generic** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -196,6 +212,8 @@ generic_010
 ###########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`generic_closing_parenthesis_location`
 
 This rule checks the location of the closing ")" character for the generic clause.
 
@@ -221,6 +239,8 @@ generic_013
 
 |phase_1| |error| |structure|
 
+Alias: :code:`generic_no_declaration_on_generic_keyword_line`
+
 This rule checks for the **generic** keyword on the same line as a generic declaration.
 
 **Violation**
@@ -240,6 +260,8 @@ generic_014
 ###########
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`generic_space_before_colon`
 
 This rule checks for at least a single space before the colon.
 
@@ -265,6 +287,8 @@ generic_016
 ###########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`generic_one_generic_per_line`
 
 This rule checks for multiple generics defined on a single line.
 
@@ -297,6 +321,8 @@ generic_018
 
 |phase_1| |error| |structure|
 
+Alias: :code:`generic_open_parenthesis_on_same_line_as_keyword`
+
 This rule checks the **generic** keyword is on the same line as the (.
 
 **Violation**
@@ -316,6 +342,8 @@ generic_019
 ###########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`generic_no_blank_lines_before_closing_parenthesis`
 
 This rule checks for blank lines before the ); of the generic declaration.
 
@@ -344,6 +372,8 @@ generic_020
 
 |phase_7| |disabled| |error| |unfixable| |naming|
 
+Alias: :code:`generic_prefix`
+
 This rule checks for valid prefixes on generic identifiers.
 The default generic prefix is *g_*.
 
@@ -365,6 +395,8 @@ generic_021
 ###########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`generic_semicolon_not_on_own_line`
 
 This rule checks the semicolon is not on its own line.
 
@@ -391,6 +423,8 @@ generic_022
 ###########
 
 |phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`generic_alphabetical_order`
 
 This rule checks generics are declared in alphabetical order.
 
@@ -425,6 +459,8 @@ generic_600
 ###########
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`generic_suffix`
 
 This rule checks for valid suffixes on generic identifiers.
 The default generic suffix is *_g*.

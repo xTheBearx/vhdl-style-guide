@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from mhsg import severity, utils
+from mhsg import rule_aliases, severity, utils
 
 
 class Rule:
@@ -69,6 +69,20 @@ class Rule:
         dViolation["lineNumber"] = str(violation.get_line_number())
         dViolation["solution"] = violation.get_solution()
         return dViolation
+
+    @property
+    def alias(self):
+        """
+        Returns the descriptive alias of the rule, which can be used instead of its identifier in configurations.
+        Local rules can set their own alias.
+        """
+        if getattr(self, "_alias", None) is not None:
+            return self._alias
+        return rule_aliases.get_alias(self.unique_id)
+
+    @alias.setter
+    def alias(self, sAlias):
+        self._alias = sAlias
 
     @property
     def unique_id(self):

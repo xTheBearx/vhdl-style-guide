@@ -493,3 +493,10 @@ def rule_prerequisites_met(oRule, lTestsRan):
         if oPrerequisite.unique_id in lTestsRan:
             return True
     return False
+
+
+def get_rule_alias(oRules, sRuleId):
+    for oRule in oRules.rules:
+        if oRule.unique_id == sRuleId:
+            return oRule.alias
+    return None

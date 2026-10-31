@@ -8,6 +8,8 @@ entity_specification_100
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`entity_specification_space_after_colon`
+
 This rule checks for a single space after the colon.
 
 |configuring_whitespace_rules_link|
@@ -30,6 +32,8 @@ entity_specification_101
 ########################
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`entity_specification_space_before_colon`
 
 This rule checks for at least a single space before the colon.
 
@@ -56,6 +60,8 @@ entity_specification_500
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`entity_specification_others_keyword_case`
+
 This rule checks the **others** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -76,6 +82,8 @@ entity_specification_501
 ########################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`entity_specification_all_keyword_case`
 
 This rule checks the **all** keyword has proper case.
 
@@ -102,6 +110,8 @@ entity_specification_503
 ########################
 
 |phase_6| |error| |case| |case_name|
+
+Alias: :code:`entity_specification_entity_class_case`
 
 This rule checks the *entity_class* has proper case.
 

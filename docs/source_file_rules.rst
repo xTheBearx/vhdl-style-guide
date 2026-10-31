@@ -8,6 +8,8 @@ source_file_001
 
 |phase_1| |error| |unfixable| |structure|
 
+Alias: :code:`source_file_exists`
+
 This rule checks for the existence of the source file passed to MHSG.
 
 **Violation**

@@ -8,6 +8,8 @@ protected_type_300
 
 |phase_4| |error| |indent|
 
+Alias: :code:`protected_type_end_indent`
+
 This rule checks the indent of the end protected type declaration.
 
 **Violation**
@@ -28,6 +30,8 @@ protected_type_500
 ##################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`protected_type_protected_keyword_case`
 
 This rule checks the **protected** keyword has proper case.
 
@@ -50,6 +54,8 @@ protected_type_501
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`protected_type_end_keyword_case`
+
 This rule checks the **end** keyword in **end protected** has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -70,6 +76,8 @@ protected_type_502
 ##################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`protected_type_end_protected_keyword_case`
 
 This rule checks the **protected** keyword in **end protected** has proper case.
 

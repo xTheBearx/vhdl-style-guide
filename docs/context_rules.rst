@@ -8,6 +8,8 @@ context_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`context_keyword_indent`
+
 This rule checks the indent of the **context** keyword.
 
 **Violation**
@@ -31,6 +33,8 @@ context_002
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`context_space_after_context_keyword`
+
 This rule checks for a single space between the **context** keyword and the context identifier.
 
 |configuring_whitespace_rules_link|
@@ -51,6 +55,8 @@ context_003
 ###########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`context_lines_above_context_keyword`
 
 This rule checks for blank lines or comments above the **context** keyword.
 
@@ -84,6 +90,8 @@ context_004
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`context_keyword_case`
+
 This rule checks the **context** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -104,6 +112,8 @@ context_005
 ###########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`context_identifier_on_same_line_as_context_keyword`
 
 This rule checks the context identifier is on the same line as the **context** keyword.
 
@@ -127,6 +137,8 @@ context_006
 
 |phase_1| |error| |structure|
 
+Alias: :code:`context_is_keyword_on_same_line_as_context_identifier`
+
 This rule checks the **is** keyword is on the same line as the context identifier.
 
 **Violation**
@@ -146,6 +158,8 @@ context_007
 ###########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`context_no_code_after_is_keyword`
 
 This rule checks for code after the **is** keyword.
 
@@ -170,6 +184,8 @@ context_008
 ###########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`context_end_keyword_on_own_line`
 
 This rule checks the **end** keyword is on its own line.
 
@@ -196,6 +212,8 @@ context_009
 
 |phase_1| |error| |structure|
 
+Alias: :code:`context_end_context_keywords_on_same_line`
+
 This rule checks the **context** keyword is on the same line as the **end** context keyword.
 
 **Violation**
@@ -217,6 +235,8 @@ context_010
 
 |phase_1| |error| |structure|
 
+Alias: :code:`context_identifier_on_same_line_as_end_context_keyword`
+
 This rule checks the context identifier is on the same line as the **end** context keyword.
 
 **Violation**
@@ -236,6 +256,8 @@ context_011
 ###########
 
 |phase_1| |error| |structure|
+
+Alias: :code:`context_semicolon_on_same_line_as_end_keyword`
 
 This rule checks the semicolon is on the same line as the **end** keyword.
 
@@ -268,6 +290,8 @@ context_012
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`context_identifier_case`
+
 This rule checks the context identifier has proper case in the context declaration.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -289,6 +313,8 @@ context_013
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`context_is_keyword_case`
+
 This rule checks the **is** keyword has proper case in the context declaration.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -309,6 +335,8 @@ context_014
 ###########
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`context_end_keyword_case`
 
 This rule checks the **end** keyword has proper case.
 
@@ -335,6 +363,8 @@ context_015
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`context_end_context_keyword_case`
+
 This rule checks the **context** keyword has proper case in the end context declaration.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -355,6 +385,8 @@ context_016
 ###########
 
 |phase_6| |error| |case| |case_name|
+
+Alias: :code:`context_end_identifier_case`
 
 This rule checks the context identifier has proper case in the end context declaration.
 
@@ -377,6 +409,8 @@ context_017
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`context_space_before_is_keyword`
+
 This rule checks for a single space between the context identifier and the **is** keyword.
 
 |configuring_whitespace_rules_link|
@@ -397,6 +431,8 @@ context_018
 ###########
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`context_space_between_end_and_context`
 
 This rule checks for a single space between the **end** keyword and the **context** keyword.
 
@@ -423,6 +459,8 @@ context_019
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`context_space_after_end_context_keyword`
+
 This rule checks for a single space between the **context** keyword and the context identifier.
 
 |configuring_whitespace_rules_link|
@@ -448,6 +486,8 @@ context_020
 
 |phase_4| |error| |indent|
 
+Alias: :code:`context_end_keyword_indent`
+
 This rule checks the indent of the **end** keyword.
 
 **Violation**
@@ -468,6 +508,8 @@ context_021
 ###########
 
 |phase_1| |error| |structure| |structure_optional|
+
+Alias: :code:`context_end_context_keyword_exists`
 
 This rule checks for the keyword **context** in the **end context** statement.
 
@@ -494,6 +536,8 @@ context_022
 
 |phase_1| |error| |structure| |structure_optional|
 
+Alias: :code:`context_end_name_exists`
+
 This rule checks for the context name in the **end context** statement.
 
 |configuring_optional_items_link|
@@ -514,6 +558,8 @@ context_023
 ###########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`context_blank_line_below_is_keyword`
 
 This rule adds a blank line below the **is** keyword.
 
@@ -538,6 +584,8 @@ context_024
 ###########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`context_lines_above_end_keyword`
 
 This rule checks for blank lines or comments above the **end** keyword.
 
@@ -564,6 +612,8 @@ context_025
 ###########
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`context_blank_line_below_semicolon`
 
 This rule adds a blank line below the context semicolon.
 

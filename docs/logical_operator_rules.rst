@@ -8,6 +8,8 @@ logical_operator_500
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`logical_operator_case`
+
 This rule checks logical operators have proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|

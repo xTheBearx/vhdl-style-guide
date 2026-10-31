@@ -8,6 +8,8 @@ declarative_part_400
 
 |phase_5| |error| |alignment|
 
+Alias: :code:`declarative_part_assignment_operator_alignment`
+
 This rule checks the alignment of **:=** operator for signal, constant and variable declarations.
 
 |configuring_keyword_alignment_rules_link|

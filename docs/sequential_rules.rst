@@ -8,6 +8,8 @@ sequential_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`sequential_indent`
+
 This rule checks the indent of sequential statements.
 
 **Violation**
@@ -33,6 +35,8 @@ sequential_002
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`sequential_space_after_assignment_operator`
+
 This rule checks for a single space after the **<=** operator.
 
 |configuring_whitespace_rules_link|
@@ -56,6 +60,8 @@ sequential_003
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`sequential_space_before_assignment_operator`
+
 This rule checks for at least a single space before the **<=** operator.
 
 |configuring_whitespace_rules_link|
@@ -78,6 +84,8 @@ sequential_004
 ##############
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`sequential_multiline_alignment`
 
 This rule checks the alignment of multiline sequential statements.
 
@@ -107,6 +115,8 @@ sequential_006
 
 |phase_2| |error| |unfixable| |structure|
 
+Alias: :code:`sequential_no_comments_in_multiline_assignment`
+
 This rule checks for comments within multiline sequential statements.
 
 **Violation**
@@ -129,6 +139,8 @@ sequential_007
 
 |phase_1| |error| |structure|
 
+Alias: :code:`sequential_no_code_after_assignment`
+
 This rule checks for code after a sequential assignment.
 
 **Violation**
@@ -149,6 +161,8 @@ sequential_008
 ##############
 
 |phase_1| |error| |structure|
+
+Alias: :code:`sequential_signal_assignment_structure`
 
 This rule checks the structure of simple and conditional sequential signal assignments.
 
@@ -183,6 +197,8 @@ sequential_009
 
 |phase_1| |error| |structure|
 
+Alias: :code:`sequential_signal_assignment_array_structure`
+
 This rule checks the structure of multiline simple sequential signal assignments that contain arrays.
 
 |configuring_array_multiline_structure_rules_link|
@@ -208,6 +224,8 @@ sequential_400
 ##############
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`sequential_record_aggregate_arrow_alignment`
 
 This rule checks the alignment the => operator in record aggregates.
 
@@ -237,6 +255,8 @@ sequential_401
 ##############
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`sequential_conditional_assignment_multiline_alignment`
 
 This rule checks alignment of multiline sequential conditional signal assignments.
 
@@ -268,6 +288,8 @@ sequential_402
 ##############
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`sequential_signal_assignment_array_alignment`
 
 This rule checks the alignment of multiline simple sequential signal assignments that contain arrays.
 

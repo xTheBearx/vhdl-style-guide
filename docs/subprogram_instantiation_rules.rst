@@ -8,6 +8,8 @@ subprogram_instantiation_001
 
 |phase_1| |error| |structure|
 
+Alias: :code:`subprogram_instantiation_identifier_on_same_line_as_procedure`
+
 This rule checks the new subprogram identifier is on the same line as the **procedure** keyword.
 
 **Violation**
@@ -27,6 +29,8 @@ subprogram_instantiation_002
 ############################
 
 |phase_1| |error| |structure|
+
+Alias: :code:`subprogram_instantiation_identifier_on_same_line_as_function`
 
 This rule checks the new subprogram identifier is on the same line as the **function** keyword.
 
@@ -48,6 +52,8 @@ subprogram_instantiation_003
 
 |phase_1| |error| |structure|
 
+Alias: :code:`subprogram_instantiation_is_keyword_on_same_line_as_identifier`
+
 This rule checks the **is** keyword is on the same line as the new subprogram identifier.
 
 **Violation**
@@ -67,6 +73,8 @@ subprogram_instantiation_004
 ############################
 
 |phase_1| |error| |structure|
+
+Alias: :code:`subprogram_instantiation_new_keyword_on_same_line_as_is`
 
 This rule checks the **new** keyword is on the same line as the **is** keyword.
 
@@ -88,6 +96,8 @@ subprogram_instantiation_005
 
 |phase_1| |error| |structure|
 
+Alias: :code:`subprogram_instantiation_uninstantiated_name_on_same_line_as_new`
+
 This rule checks the uninstantiated subprogram name is on the same line as the **new** keyword.
 
 **Violation**
@@ -107,6 +117,8 @@ subprogram_instantiation_100
 ############################
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`subprogram_instantiation_space_after_procedure_keyword`
 
 This rule checks for a single space between the **procedure** keyword and the new subprogram identifier.
 
@@ -129,6 +141,8 @@ subprogram_instantiation_101
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`subprogram_instantiation_space_after_function_keyword`
+
 This rule checks for a single space between the **function** keyword and the new subprogram identifier.
 
 |configuring_whitespace_rules_link|
@@ -149,6 +163,8 @@ subprogram_instantiation_102
 ############################
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`subprogram_instantiation_space_before_is_keyword`
 
 This rule checks for a single space between the new subprogram identifier and the **is** keyword.
 
@@ -171,6 +187,8 @@ subprogram_instantiation_103
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`subprogram_instantiation_space_between_is_and_new`
+
 This rule checks for a single space between the **is** keyword and the **new** keyword.
 
 |configuring_whitespace_rules_link|
@@ -192,6 +210,8 @@ subprogram_instantiation_104
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`subprogram_instantiation_space_after_new_keyword`
+
 This rule checks for a single space between **new** keyword and the uninstantiated subprogram name.
 
 |configuring_whitespace_rules_link|
@@ -212,6 +232,8 @@ subprogram_instantiation_200
 ############################
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`subprogram_instantiation_lines_above`
 
 This rule checks for blank lines or comments above the **procedure** or **function** keyword of a subprogram instantiation.
 
@@ -239,6 +261,8 @@ subprogram_instantiation_201
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`subprogram_instantiation_blank_line_below_first_line`
+
 This rule checks for blank lines below the subprogram instantiation.
 
 |configuring_blank_lines_link|
@@ -264,6 +288,8 @@ subprogram_instantiation_202
 ############################
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`subprogram_instantiation_blank_line_below`
 
 This rule checks for a blank line below the end of the subprogram instantiation.
 
@@ -295,6 +321,8 @@ subprogram_instantiation_300
 
 |phase_4| |error| |indent|
 
+Alias: :code:`subprogram_instantiation_indent`
+
 This rule checks the indent of the subprogram instantiation.
 
 **Violation**
@@ -315,6 +343,8 @@ subprogram_instantiation_500
 ############################
 
 |phase_6| |error| |case| |case_name|
+
+Alias: :code:`subprogram_instantiation_name_case`
 
 This rule checks the instantiated package name has proper case.
 
@@ -337,6 +367,8 @@ subprogram_instantiation_501
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`subprogram_instantiation_is_keyword_case`
+
 This rule checks the **is** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -358,6 +390,8 @@ subprogram_instantiation_502
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`subprogram_instantiation_new_keyword_case`
+
 This rule checks the **new** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -378,6 +412,8 @@ subprogram_instantiation_503
 ############################
 
 |phase_6| |error| |case| |case_name|
+
+Alias: :code:`subprogram_instantiation_uninstantiated_name_case`
 
 This rule checks the uninstantiated subprogram name has proper case.
 

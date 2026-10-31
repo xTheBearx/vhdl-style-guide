@@ -8,6 +8,8 @@ for_generate_statement_500
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`for_generate_statement_for_keyword_case`
+
 This rule checks the **for** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -28,6 +30,8 @@ for_generate_statement_501
 ##########################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`for_generate_statement_generate_keyword_case`
 
 This rule checks the **generate** keyword has proper case.
 

@@ -8,6 +8,8 @@ case_generate_alternative_100
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`case_generate_alternative_space_after_when_keyword`
+
 This rule checks for a single space after the **when** keyword.
 
 |configuring_whitespace_rules_link|
@@ -32,6 +34,8 @@ case_generate_alternative_101
 #############################
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`case_generate_alternative_space_before_arrow`
 
 This rule checks for a single space before the **=>** operator.
 
@@ -58,6 +62,8 @@ case_generate_alternative_200
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`case_generate_alternative_blank_line_below_arrow`
+
 This rule checks for a blank line below the **=>** keyword.
 
 |configuring_blank_lines_link|
@@ -81,6 +87,8 @@ case_generate_alternative_201
 #############################
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`case_generate_alternative_lines_above_when_keyword`
 
 This rule checks for blank lines or comments above the **when** keyword.
 
@@ -117,6 +125,8 @@ case_generate_alternative_500
 #############################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`case_generate_alternative_when_keyword_case`
 
 This rule checks the **when** keyword has proper case.
 

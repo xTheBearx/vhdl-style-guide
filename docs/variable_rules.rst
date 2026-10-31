@@ -8,6 +8,8 @@ variable_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`variable_indent`
+
 This rule checks the indent of variable declarations.
 
 **Violation**
@@ -36,6 +38,8 @@ variable_002
 ############
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`variable_keyword_case`
 
 This rule checks the **variable** keyword has proper case.
 
@@ -68,6 +72,8 @@ variable_004
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`variable_name_case`
+
 This rule checks the variable name has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -88,6 +94,8 @@ variable_005
 ############
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`variable_space_after_colon`
 
 This rule checks there is a single space after the colon.
 
@@ -112,6 +120,8 @@ variable_006
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`variable_space_before_colon`
+
 This rule checks for at least a single space before the colon.
 
 |configuring_whitespace_rules_link|
@@ -134,6 +144,8 @@ variable_007
 ############
 
 |phase_1| |error| |unfixable| |structure|
+
+Alias: :code:`variable_no_default_assignment`
 
 This rule checks for default assignments in variable declarations.
 
@@ -162,6 +174,8 @@ variable_011
 ############
 
 |phase_6| |error| |case|
+
+Alias: :code:`variable_names_consistent_case`
 
 This rule checks for consistent capitalization of variable names.
 
@@ -223,6 +237,8 @@ variable_012
 
 |phase_7| |disabled| |error| |unfixable| |naming|
 
+Alias: :code:`variable_prefix`
+
 This rule checks for valid prefixes on variable identifiers.
 The default variable prefix is *v_*.
 
@@ -244,6 +260,8 @@ variable_015
 ############
 
 |phase_1| |error| |structure|
+
+Alias: :code:`variable_one_name_per_declaration`
 
 This rule checks for multiple (shared) variable names defined in a single (shared) variable declaration.
 By default, this rule will only flag more than two (shared) variable declarations.
@@ -280,6 +298,8 @@ variable_017
 
 |phase_1| |error| |structure|
 
+Alias: :code:`variable_constraint_structure`
+
 This rule checks the structure of variable constraints.
 
 |configuring_multiline_constraint_rules_link|
@@ -306,6 +326,8 @@ variable_018
 
 |phase_1| |error| |structure|
 
+Alias: :code:`variable_assignment_on_same_line_as_variable_keyword`
+
 This rule checks the **:=** is on the same line as the **variable** keyword.
 
 **Violation**
@@ -331,6 +353,8 @@ variable_100
 
 |phase_2| |disabled| |error| |whitespace|
 
+Alias: :code:`variable_space_before_identifier`
+
 This rule checks for a single space before the identifier.
 
 |configuring_whitespace_rules_link|
@@ -354,6 +378,8 @@ variable_101
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`variable_space_after_shared_keyword`
+
 This rule checks for a single space after the **shared** keyword.
 
 |configuring_whitespace_rules_link|
@@ -374,6 +400,8 @@ variable_102
 ############
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`variable_space_before_default_assignment`
 
 This rule checks for a single space before the assignment.
 
@@ -398,6 +426,8 @@ variable_103
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`variable_space_after_default_assignment`
+
 This rule checks for a single space after the assignment.
 
 |configuring_whitespace_rules_link|
@@ -420,6 +450,8 @@ variable_400
 ############
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`variable_multiline_constraint_alignment`
 
 This rule checks alignment of multiline constraints in variable declarations.
 
@@ -447,6 +479,8 @@ variable_401
 ############
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`variable_assignment_operator_alignment`
 
 This rule checks the alignment of assignment keywords in variable declarations.
 
@@ -476,6 +510,8 @@ variable_402
 ############
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`variable_initialization_array_alignment`
 
 This rule checks the alignment of multiline variable initializations that contain arrays.
 
@@ -510,6 +546,8 @@ variable_403
 
 |phase_5| |error| |structure|
 
+Alias: :code:`variable_initialization_array_structure`
+
 This rule checks the structure of multiline variable initializations that contain arrays.
 
 |configuring_array_multiline_structure_rules_link|
@@ -538,6 +576,8 @@ variable_500
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`variable_shared_keyword_case`
+
 This rule checks that the keyword **shared** has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -558,6 +598,8 @@ variable_600
 ############
 
 |phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`variable_suffix`
 
 This rule checks for valid suffix on variable identifiers.
 The default variable suffix is *_v*.

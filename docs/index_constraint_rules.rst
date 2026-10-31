@@ -8,6 +8,8 @@ index_constraint_100
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`index_constraint_space_before_open_parenthesis`
+
 This rule checks for whitespace before the opening parenthesis.
 
 |configuring_whitespace_rules_link|

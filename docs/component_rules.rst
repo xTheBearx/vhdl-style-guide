@@ -8,6 +8,8 @@ component_001
 
 |phase_4| |error| |indent|
 
+Alias: :code:`component_keyword_indent`
+
 This rule checks the indentation of the **component** keyword.
 
 **Violation**
@@ -37,6 +39,8 @@ component_002
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`component_space_after_component_keyword`
+
 This rule checks for a single space after the **component** keyword.
 
 |configuring_whitespace_rules_link|
@@ -57,6 +61,8 @@ component_003
 #############
 
 |phase_3| |error| |blank_line|
+
+Alias: :code:`component_lines_above_component_declaration`
 
 This rule checks for blank lines or comments above the **component** declaration.
 
@@ -84,6 +90,8 @@ component_004
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`component_keyword_case`
+
 This rule checks the **component** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -109,6 +117,8 @@ component_005
 
 |phase_1| |error| |structure|
 
+Alias: :code:`component_is_keyword_on_same_line_as_component_keyword`
+
 This rule checks the **is** keyword is on the same line as the **component** keyword.
 
 **Violation**
@@ -132,6 +142,8 @@ component_006
 #############
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`component_is_keyword_case`
 
 This rule checks the **is** keyword has proper case.
 
@@ -158,6 +170,8 @@ component_007
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`component_space_before_is_keyword`
+
 This rule checks for a single space before the **is** keyword.
 
 |configuring_whitespace_rules_link|
@@ -179,6 +193,8 @@ component_008
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`component_name_case`
+
 This rule checks the component name has proper case in the component declaration.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -199,6 +215,8 @@ component_009
 #############
 
 |phase_4| |error| |indent|
+
+Alias: :code:`component_end_component_keyword_indent`
 
 This rule checks the indent of the **end component** keywords.
 
@@ -223,6 +241,8 @@ component_010
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`component_end_keyword_case`
+
 This rule checks the **end** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -243,6 +263,8 @@ component_011
 #############
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`component_space_after_end_keyword`
 
 This rule checks for single space after the **end** keyword.
 
@@ -265,6 +287,8 @@ component_012
 
 |phase_6| |error| |case| |case_name|
 
+Alias: :code:`component_end_name_case`
+
 This rule checks the proper case of the component name in the **end component** line.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -286,6 +310,8 @@ component_013
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`component_space_before_end_name`
+
 This rule checks for a single space after the **component** keyword in the **end component** line.
 
 |configuring_whitespace_rules_link|
@@ -306,6 +332,8 @@ component_014
 #############
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`component_end_component_keyword_case`
 
 This rule checks the **component** keyword in the **end component** line has proper case.
 
@@ -334,6 +362,8 @@ component_016
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`component_blank_line_above_end_component`
+
 This rule checks for blank lines above the **end component** line.
 
 |configuring_blank_lines_link|
@@ -361,6 +391,8 @@ component_017
 #############
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`component_port_and_generic_colon_alignment`
 
 This rule checks the alignment of the colon for each generic and port in the component declaration.
 
@@ -407,6 +439,8 @@ component_018
 
 |phase_3| |error| |blank_line|
 
+Alias: :code:`component_blank_line_below_end_component`
+
 This rule checks for a blank line below the **end component** line.
 
 |configuring_blank_lines_link|
@@ -432,6 +466,8 @@ component_019
 
 |phase_1| |error| |structure|
 
+Alias: :code:`component_port_and_generic_comment_alignment`
+
 This rule checks for comments at the end of the port and generic clauses in component declarations.
 These comments represent additional maintenance.
 They will be out of sync with the entity at some point.
@@ -455,6 +491,8 @@ component_020
 #############
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`component_inline_comment_alignment`
 
 This rule checks for alignment of inline comments in the component declaration.
 
@@ -501,6 +539,8 @@ component_021
 
 |phase_1| |error| |structure| |structure_optional|
 
+Alias: :code:`component_is_keyword_exists`
+
 This rule inserts the optional **is** keyword if it does not exist.
 
 |configuring_optional_items_link|
@@ -525,6 +565,8 @@ component_022
 #############
 
 |phase_1| |error| |structure| |structure_optional|
+
+Alias: :code:`component_end_name_exists`
 
 This rule inserts the optional **component_simple_name** if it does not exist.
 

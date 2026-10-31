@@ -10,6 +10,8 @@ length_001
 
 |phase_7| |warning| |unfixable| |length|
 
+Alias: :code:`length_line`
+
 This rule checks the length of the line.
 
 |configuring_length_rules_link|
@@ -18,6 +20,8 @@ length_002
 ##########
 
 |phase_7| |warning| |unfixable| |length|
+
+Alias: :code:`length_file`
 
 This rule checks the length of a file.
 
@@ -28,6 +32,8 @@ length_003
 
 |phase_7| |warning| |unfixable| |length|
 
+Alias: :code:`length_process`
+
 This rule checks the length of a process statement.
 
 |configuring_length_rules_link|
@@ -36,6 +42,8 @@ length_004
 ##########
 
 |phase_7| |disabled| |error| |unfixable| |length|
+
+Alias: :code:`length_line_second_limit`
 
 This rule checks the length of the line against a second, usually longer, limit.
 

@@ -82,9 +82,16 @@ def display_rule_configuration(commandLineArguments, oConfig):
         if commandLineArguments.local_rules:
             dOutputConfiguration["local_rules"] = commandLineArguments.local_rules
         dFullConfiguration = oRules.get_configuration()
-        if commandLineArguments.rule_configuration in dFullConfiguration:
+        # The rule can be given by its identifier or its alias
+        dAliases = {oRule.alias: oRule.unique_id for oRule in oRules.rules if oRule.alias is not None}
+        sRuleId = dAliases.get(commandLineArguments.rule_configuration, commandLineArguments.rule_configuration)
+        if sRuleId in dFullConfiguration:
             dOutputConfiguration["rule"] = {}
-            dOutputConfiguration["rule"][commandLineArguments.rule_configuration] = dFullConfiguration[commandLineArguments.rule_configuration]
+            dOutputConfiguration["rule"][sRuleId] = {}
+            sAlias = rule_list.get_rule_alias(oRules, sRuleId)
+            if sAlias is not None:
+                dOutputConfiguration["rule"][sRuleId]["alias"] = sAlias
+            dOutputConfiguration["rule"][sRuleId].update(dFullConfiguration[sRuleId])
             # Format the data for displaying
             print(json.dumps(dOutputConfiguration, indent=2))
         else:

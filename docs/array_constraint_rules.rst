@@ -8,6 +8,8 @@ array_constraint_100
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`array_constraint_space_before_open_parenthesis`
+
 This rule checks for whitespace before the opening parenthesis.
 
 |configuring_whitespace_rules_link|
@@ -28,6 +30,8 @@ array_constraint_500
 ####################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`array_constraint_open_keyword_case`
 
 This rule checks the **open** keyword in array constraints has the proper case.
 

@@ -8,6 +8,8 @@ bit_string_literal_500
 
 |phase_6| |error| |case|
 
+Alias: :code:`bit_string_literal_base_specifier_case`
+
 This rule checks the base specifier has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -29,6 +31,8 @@ bit_string_literal_501
 ######################
 
 |phase_6| |error| |case|
+
+Alias: :code:`bit_string_literal_bit_value_case`
 
 This rule checks the bit value has proper case.
 

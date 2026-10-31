@@ -12,6 +12,8 @@ procedure_call_001
 
 |phase_1| |error| |structure|
 
+Alias: :code:`procedure_call_no_label`
+
 This rule checks for labels on procedure call statements.
 Labels on procedure calls are optional and do not provide additional information.
 
@@ -32,6 +34,8 @@ procedure_call_002
 
 |phase_1| |error| |structure|
 
+Alias: :code:`procedure_call_concurrent_no_label`
+
 This rule checks for labels on concurrent procedure call statements.
 Labels on procedure calls are optional and do not provide additional information.
 
@@ -51,6 +55,8 @@ procedure_call_003
 ##################
 
 |phase_1| |error| |structure|
+
+Alias: :code:`procedure_call_structure`
 
 This rule checks the structure of procedure calls.
 
@@ -80,6 +86,8 @@ procedure_call_100
 
 |phase_2| |error| |whitespace|
 
+Alias: :code:`procedure_call_space_between_label_and_name`
+
 This rule checks for a single space between the following block elements:  label, label colon, **postponed** keyword and the *procedure* name.
 
 |configuring_whitespace_rules_link|
@@ -100,6 +108,8 @@ procedure_call_101
 ##################
 
 |phase_2| |error| |whitespace|
+
+Alias: :code:`procedure_call_space_after_arrow`
 
 This rule checks for a single space after the **=>** operator in procedure calls.
 
@@ -132,6 +142,8 @@ procedure_call_300
 
 |phase_4| |error| |indent|
 
+Alias: :code:`procedure_call_label_indent`
+
 This rule checks the indent of the procedure_call label.
 
 **Violation**
@@ -154,6 +166,8 @@ procedure_call_301
 ##################
 
 |phase_4| |error| |indent|
+
+Alias: :code:`procedure_call_postponed_keyword_indent`
 
 This rule checks the indent of the **postponed** keyword if it exists..
 
@@ -178,6 +192,8 @@ procedure_call_302
 
 |phase_4| |error| |indent|
 
+Alias: :code:`procedure_call_name_indent`
+
 This rule checks the indent of the *procedure* name.
 
 **Violation**
@@ -200,6 +216,8 @@ procedure_call_400
 ##################
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`procedure_call_multiline_alignment`
 
 This rule checks the alignment of multiline procedure calls.
 
@@ -225,6 +243,8 @@ procedure_call_401
 ##################
 
 |phase_5| |error| |alignment|
+
+Alias: :code:`procedure_call_arrow_alignment`
 
 This rule checks the alignment of :code:`=>` keywords in procedure calls.
 
@@ -257,6 +277,8 @@ procedure_call_500
 
 |phase_6| |error| |case| |case_label|
 
+Alias: :code:`procedure_call_label_case`
+
 This rule checks the label has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -278,6 +300,8 @@ procedure_call_501
 
 |phase_6| |error| |case| |case_keyword|
 
+Alias: :code:`procedure_call_postponed_keyword_case`
+
 This rule checks the **postponed** keyword has proper case.
 
 |configuring_uppercase_and_lowercase_rules_link|
@@ -298,6 +322,8 @@ procedure_call_502
 ##################
 
 |phase_6| |error| |case| |case_name|
+
+Alias: :code:`procedure_call_parameter_names_case`
 
 This rule checks that the parameter names have proper case.
 

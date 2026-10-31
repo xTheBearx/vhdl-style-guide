@@ -8,6 +8,8 @@ null_statement_300
 
 |phase_4| |error| |indent|
 
+Alias: :code:`null_statement_null_keyword_indent`
+
 This rule checks the indentation of the **null** keyword.
 
 **Violation**
@@ -29,6 +31,8 @@ null_statement_301
 
 |phase_4| |error| |indent|
 
+Alias: :code:`null_statement_label_indent`
+
 This rule checks the indentation of the label.
 
 **Violation**
@@ -49,6 +53,8 @@ null_statement_500
 ##################
 
 |phase_6| |error| |case| |case_keyword|
+
+Alias: :code:`null_statement_null_keyword_case`
 
 This rule checks the **null** keyword has proper case.
 
