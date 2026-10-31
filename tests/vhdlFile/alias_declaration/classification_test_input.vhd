@@ -22,6 +22,10 @@ architecture RTL of FIFO is
 
   alias opposite_view is some_view'converse;
 
+  alias alias_sop : std_logic is << signal .tb_top.submodule.i_rx_data : t_mac_interface >> .sop;
+
+  alias alias_sop : std_logic is <<signal .tb_top.submodule.i_rx_data : t_mac_interface>>.sop;
+
 begin
 
 end architecture RTL;
