@@ -3,6 +3,39 @@
 Pragma Rules
 ------------
 
+pragma_100
+##########
+
+|phase_2| |disabled| |error| |whitespace|
+
+Alias: :code:`pragma_space_after_dashes`
+
+This rule checks the space after the **--** of a pragma.
+
+.. NOTE:: This rule is disabled by default.
+
+The rule has an :code:`action` option:
+
+* :code:`add` (default): a single space after the **--**
+* :code:`remove`: no space after the **--**
+
+A pragma is only changed if the result still matches a pragma pattern of the same kind (open, close or single).
+For example, :code:`--vhdl_comp_off` is never changed by the default patterns, because they do not match :code:`-- vhdl_comp_off`.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   --synthesis translate_off
+   --   synthesis translate_on
+
+**Fix**
+
+.. code-block:: vhdl
+
+   -- synthesis translate_off
+   -- synthesis translate_on
+
 pragma_300
 ##########
 
