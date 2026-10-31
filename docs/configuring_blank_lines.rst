@@ -161,6 +161,8 @@ Rules Enforcing Blank Lines
 * `generate_003 <generate_rules.html#generate-003>`_
 * `generic_map_201 <generic_map_rules.html#generic-map-201>`_
 * `if_030 <if_rules.html#if-030>`_
+* `if_200 <if_rules.html#if-200>`_
+* `if_203 <if_rules.html#if-203>`_
 * `instantiation_019 <instantiation_rules.html#instantiation-019>`_
 * `loop_statement_201 <loop_statement_rules.html#loop-statement-201>`_
 * `loop_statement_203 <loop_statement_rules.html#loop-statement-203>`_

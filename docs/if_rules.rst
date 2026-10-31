@@ -155,72 +155,17 @@ This rule checks for a single space after the **elsif** keyword.
 if_006
 ######
 
-|phase_3| |error| |blank_line|
-
-This rule checks for blank lines after the **then** keyword.
-
-**Violation**
-
-.. code-block:: vhdl
-
-  if (a = '1') then
-
-
-    b <= '0'
-
-**Fix**
-
-.. code-block:: vhdl
-
-  if (a = '1') then
-    b <= '0'
+This rule has been replaced by :ref:`if_200`, which supports the **style** option.
 
 if_007
 ######
 
-|phase_3| |error| |blank_line|
-
-This rule checks for blank lines before the **elsif** keyword.
-
-**Violation**
-
-.. code-block:: vhdl
-
-    b <= '0'
-
-
-
-  elsif (c = '1') then
-
-**Fix**
-
-.. code-block:: vhdl
-
-    b <= '0'
-  elsif (c = '1') then
+This rule has been replaced by :ref:`if_201`, which supports the **style** option.
 
 if_008
 ######
 
-|phase_3| |error| |blank_line|
-
-This rule checks for blank lines before the **end if** keywords.
-
-**Violation**
-
-.. code-block:: vhdl
-
-    e <= '0';
-
-
-  end if;
-
-**Fix**
-
-.. code-block:: vhdl
-
-    e <= '0';
-  end if;
+This rule has been replaced by :ref:`if_204`, which supports the **style** option.
 
 if_009
 ######
@@ -248,48 +193,12 @@ This rule checks the alignment of multiline boolean expressions.
 if_010
 ######
 
-|phase_3| |error| |blank_line|
-
-This rule checks for blank lines before the **else** keyword.
-
-**Violation**
-
-.. code-block:: vhdl
-
-    d <= '1';
-
-
-  else
-
-**Fix**
-
-.. code-block:: vhdl
-
-    d <= '1';
-  else
+This rule has been replaced by :ref:`if_202`, which supports the **style** option.
 
 if_011
 ######
 
-|phase_3| |error| |blank_line|
-
-This rule checks for blank lines after the **else** keyword.
-
-**Violation**
-
-.. code-block:: vhdl
-
-  else
-
-
-    e <= '0';
-
-**Fix**
-
-.. code-block:: vhdl
-
-  else
-    e <= '0';
+This rule has been replaced by :ref:`if_203`, which supports the **style** option.
 
 if_012
 ######
@@ -763,3 +672,143 @@ This rule checks the **then** keyword is not on a line by itself.
 .. code-block:: vhdl
 
    if a = '1' then
+
+if_200
+######
+
+|phase_3| |error| |blank_line|
+
+This rule checks for blank lines below the **then** keyword.
+
+|configuring_blank_lines_link|
+
+The default style is :code:`no_blank_line`.
+With this style, one blank line is allowed if the next line starts a **case** or **loop** statement.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   if (a = '1') then
+
+
+     b <= '0';
+
+**Fix**
+
+.. code-block:: vhdl
+
+   if (a = '1') then
+     b <= '0';
+
+if_201
+######
+
+|phase_3| |error| |blank_line|
+
+This rule checks for blank lines or comments above the **elsif** keyword.
+
+|configuring_previous_line_rules_link|
+
+The default style is :code:`no_blank_line`.
+With this style, one blank line is allowed if the previous line ends a **case** or **loop** statement.
+
+**Violation**
+
+.. code-block:: vhdl
+
+     b <= '0';
+
+
+   elsif (c = '1') then
+
+**Fix**
+
+.. code-block:: vhdl
+
+     b <= '0';
+   elsif (c = '1') then
+
+if_202
+######
+
+|phase_3| |error| |blank_line|
+
+This rule checks for blank lines or comments above the **else** keyword.
+
+|configuring_previous_line_rules_link|
+
+The default style is :code:`no_blank_line`.
+With this style, one blank line is allowed if the previous line ends a **case** or **loop** statement.
+
+**Violation**
+
+.. code-block:: vhdl
+
+     b <= '0';
+
+
+   else
+
+**Fix**
+
+.. code-block:: vhdl
+
+     b <= '0';
+   else
+
+if_203
+######
+
+|phase_3| |error| |blank_line|
+
+This rule checks for blank lines below the **else** keyword.
+
+|configuring_blank_lines_link|
+
+The default style is :code:`no_blank_line`.
+With this style, one blank line is allowed if the next line starts a **case** or **loop** statement.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   else
+
+
+     e <= '0';
+
+**Fix**
+
+.. code-block:: vhdl
+
+   else
+     e <= '0';
+
+if_204
+######
+
+|phase_3| |error| |blank_line|
+
+This rule checks for blank lines or comments above the **end if** keywords.
+
+|configuring_previous_line_rules_link|
+
+The default style is :code:`no_blank_line`.
+With this style, one blank line is allowed if the previous line ends a **case** or **loop** statement.
+
+**Violation**
+
+.. code-block:: vhdl
+
+     e <= '0';
+
+
+   end if;
+
+**Fix**
+
+.. code-block:: vhdl
+
+     e <= '0';
+   end if;

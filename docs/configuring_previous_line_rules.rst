@@ -250,6 +250,9 @@ Rules Enforcing Previous Lines
 * `function_006 <function_rules.html#function-006>`_
 * `generate_004 <generate_rules.html#generate-004>`_
 * `if_031 <if_rules.html#if-031>`_
+* `if_201 <if_rules.html#if-201>`_
+* `if_202 <if_rules.html#if-202>`_
+* `if_204 <if_rules.html#if-204>`_
 * `instantiation_004 <instantiation_rules.html#instantiation-004>`_
 * `library_003 <library_rules.html#library-003>`_
 * `library_007 <library_rules.html#library-007>`_
