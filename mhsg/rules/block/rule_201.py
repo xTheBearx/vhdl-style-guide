@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import blank_line_below_line_ending_with_several_possible_tokens
+from mhsg.rules.blank_line_below_line_ending_with_several_possible_tokens import (
+    blank_line_below_line_ending_with_several_possible_tokens,
+)
 
 lTokens = []
 lTokens.append(token.block_statement.block_keyword)

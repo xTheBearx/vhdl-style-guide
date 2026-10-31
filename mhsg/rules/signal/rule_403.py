@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import multiline_structure as Rule
+from mhsg.rules.multiline_structure import multiline_structure as Rule
 from mhsg.token import signal_declaration as token
 
 lTokenPairs = []

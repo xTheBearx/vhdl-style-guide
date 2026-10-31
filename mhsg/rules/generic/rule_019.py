@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import remove_excessive_blank_lines_above_line_starting_with_token
+from mhsg.rules.remove_excessive_blank_lines_above_line_starting_with_token import (
+    remove_excessive_blank_lines_above_line_starting_with_token,
+)
 from mhsg.token import generic_clause as token
 
 lTokens = []

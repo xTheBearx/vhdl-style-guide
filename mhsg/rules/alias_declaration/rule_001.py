@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import split_line_at_token as Rule
+from mhsg.rules.split_line_at_token import split_line_at_token as Rule
 
 lTokens = []
 lTokens.append(token.alias_declaration.alias_keyword)

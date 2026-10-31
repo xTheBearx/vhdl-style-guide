@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import token_case
+from mhsg.rules.token_case import token_case
 
 lTokens = []
 lTokens.append(token.protected_type_body.end_keyword)

@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import token_indent_between_tokens_unless_between_tokens as Rule
+from mhsg.rules.token_indent_between_tokens_unless_between_tokens import (
+    token_indent_between_tokens_unless_between_tokens as Rule,
+)
 
 lTokens = []
 lTokens.append(token.interface_constant_declaration.constant_keyword)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import n_spaces_before_and_after_tokens
+from mhsg.rules.n_spaces_before_and_after_tokens import n_spaces_before_and_after_tokens
 
 lTokens = []
 lTokens.append(token.logical_operator.logical_operator)

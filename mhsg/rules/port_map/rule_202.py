@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import previous_line as Rule
+from mhsg.rules.previous_line import previous_line as Rule
 
 lTokens = []
 lTokens.append(token.port_map_aspect.close_parenthesis)

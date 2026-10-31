@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import previous_line
+from mhsg.rules.previous_line import previous_line
 from mhsg.token import package_instantiation_declaration as token
 
 lTokens = []

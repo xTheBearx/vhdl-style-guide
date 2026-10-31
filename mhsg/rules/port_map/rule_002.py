@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import (
+from mhsg.rules.token_case_formal_part_of_association_element_in_map_between_tokens import (
     token_case_formal_part_of_association_element_in_map_between_tokens,
 )
 

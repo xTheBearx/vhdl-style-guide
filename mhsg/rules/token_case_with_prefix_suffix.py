@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import rules
+from mhsg.rules.token_case import token_case
 
 
-class token_case_with_prefix_suffix(rules.token_case):
+class token_case_with_prefix_suffix(token_case):
     """
     Checks the case for words.
 

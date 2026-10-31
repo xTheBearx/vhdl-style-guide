@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import token_case_with_prefix_suffix
+from mhsg.rules.token_case_with_prefix_suffix import token_case_with_prefix_suffix
 from mhsg.token import architecture_body as token
 
 lTokens = []

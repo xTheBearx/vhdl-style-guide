@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import (
+from mhsg.rules.align_consecutive_lines_after_line_starting_with_token_and_stopping_with_token import (
     align_consecutive_lines_after_line_starting_with_token_and_stopping_with_token as Rule,
 )
 from mhsg.token import report_statement

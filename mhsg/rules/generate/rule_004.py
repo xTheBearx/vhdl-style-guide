@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import previous_line
+from mhsg.rules.previous_line import previous_line
 
 lTokens = []
 lTokens.append(token.case_generate_statement.generate_label)

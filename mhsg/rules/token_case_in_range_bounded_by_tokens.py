@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import rules
 from mhsg.rules import utils
+from mhsg.rules.token_case import token_case
 
 
-class token_case_in_range_bounded_by_tokens(rules.token_case):
+class token_case_in_range_bounded_by_tokens(token_case):
     """
     Checks the case for words.
 

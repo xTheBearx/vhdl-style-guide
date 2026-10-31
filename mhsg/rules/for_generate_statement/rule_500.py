@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import token_case as Rule
+from mhsg.rules.token_case import token_case as Rule
 
 lTokens = []
 lTokens.append(token.for_generate_statement.for_keyword)

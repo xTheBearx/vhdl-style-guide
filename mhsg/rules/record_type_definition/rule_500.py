@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import token_case as Rule
+from mhsg.rules.token_case import token_case as Rule
 from mhsg.token import record_type_definition as token
 
 

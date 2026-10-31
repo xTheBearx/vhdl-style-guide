@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import remove_excessive_blank_lines_below_line_ending_with_token as Rule
+from mhsg.rules.remove_excessive_blank_lines_below_line_ending_with_token import (
+    remove_excessive_blank_lines_below_line_ending_with_token as Rule,
+)
 from mhsg.token import entity_declaration as token
 
 

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import blank_line_above_line_starting_with_token
+from mhsg.rules.blank_line_above_line_starting_with_token import (
+    blank_line_above_line_starting_with_token,
+)
 from mhsg.token import port_clause as token
 
 lTokens = []

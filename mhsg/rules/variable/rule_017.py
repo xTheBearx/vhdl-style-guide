@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import multiline_constraint_structure as Rule
+from mhsg.rules.multiline_constraint_structure import (
+    multiline_constraint_structure as Rule,
+)
 
 lTokenPairs = []
 lTokenPairs.append([token.variable_declaration.variable_keyword, token.variable_declaration.semicolon])

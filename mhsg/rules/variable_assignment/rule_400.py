@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import multiline_conditional_alignment as Rule
+from mhsg.rules.multiline_conditional_alignment import (
+    multiline_conditional_alignment as Rule,
+)
 
 lTokenPairs = []
 lTokenPairs.append([token.conditional_variable_assignment.assignment, token.conditional_variable_assignment.semicolon])

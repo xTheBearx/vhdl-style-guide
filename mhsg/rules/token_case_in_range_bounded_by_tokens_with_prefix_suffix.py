@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import rules
 from mhsg.rules import utils
+from mhsg.rules.token_case_with_prefix_suffix import token_case_with_prefix_suffix
 
 
-class token_case_in_range_bounded_by_tokens_with_prefix_suffix(rules.token_case_with_prefix_suffix):
+class token_case_in_range_bounded_by_tokens_with_prefix_suffix(token_case_with_prefix_suffix):
     """
     Checks the case for words.
 

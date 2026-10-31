@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import token_case_in_range_bounded_by_tokens
+from mhsg.rules.token_case_in_range_bounded_by_tokens import (
+    token_case_in_range_bounded_by_tokens,
+)
 
 lTokens = []
 lTokens.append(token.port_map_aspect.port_keyword)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import blank_lines_between_token_pairs
+from mhsg.rules.blank_lines_between_token_pairs import blank_lines_between_token_pairs
 
 lTokenPairs = []
 lTokenPairs.append([token.concurrent_simple_signal_assignment.target, token.concurrent_simple_signal_assignment.semicolon])

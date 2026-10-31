@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import does_token_value_match_one_of
+from mhsg.rules.does_token_value_match_one_of import does_token_value_match_one_of
 from mhsg.token import architecture_body as token
 
 

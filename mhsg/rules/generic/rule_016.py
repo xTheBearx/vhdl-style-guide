@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import (
+from mhsg.rules.insert_carriage_return_after_token_if_it_is_not_followed_by_a_comment_when_between_tokens_unless_between_tokens import (
     insert_carriage_return_after_token_if_it_is_not_followed_by_a_comment_when_between_tokens_unless_between_tokens as Rule,
 )
 

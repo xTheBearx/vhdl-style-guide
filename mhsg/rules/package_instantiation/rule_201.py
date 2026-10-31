@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import blank_line_below_line_ending_with_token
+from mhsg.rules.blank_line_below_line_ending_with_token import (
+    blank_line_below_line_ending_with_token,
+)
 from mhsg.token import package_instantiation_declaration as token
 
 lTokens = []

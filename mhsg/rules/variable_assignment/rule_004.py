@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import multiline_alignment_between_tokens
+from mhsg.rules.multiline_alignment_between_tokens import (
+    multiline_alignment_between_tokens,
+)
 
 lTokenPairs = []
 lTokenPairs.append([token.simple_variable_assignment.assignment, token.simple_variable_assignment.semicolon])

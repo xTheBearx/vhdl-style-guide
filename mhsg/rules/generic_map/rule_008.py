@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import formal_part_in_association_element_between_tokens
+from mhsg.rules.formal_part_in_association_element_between_tokens import (
+    formal_part_in_association_element_between_tokens,
+)
 
 lStart = token.generic_map_aspect.open_parenthesis
 lEnd = token.generic_map_aspect.close_parenthesis

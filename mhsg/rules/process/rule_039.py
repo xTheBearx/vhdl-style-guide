@@ -2,7 +2,9 @@
 
 
 from mhsg import token
-from mhsg.rules import move_token_right_to_next_non_whitespace_token as Rule
+from mhsg.rules.move_token_right_to_next_non_whitespace_token import (
+    move_token_right_to_next_non_whitespace_token as Rule,
+)
 
 lTokens = []
 lTokens.append(token.process_statement.postponed_keyword)

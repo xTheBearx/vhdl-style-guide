@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import package_scope, token_prefix
+from mhsg.rules import package_scope
+from mhsg.rules.token_prefix import token_prefix
 
 lTokens = []
 lTokens.append(token.incomplete_type_declaration.identifier)

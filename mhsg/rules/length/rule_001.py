@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import line_length
+from mhsg.rules.line_length import line_length
 
 
 class rule_001(line_length):

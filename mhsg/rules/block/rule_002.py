@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import (
+from mhsg.rules.insert_token_right_of_possible_tokens_if_it_does_not_exist_before_token import (
     insert_token_right_of_possible_tokens_if_it_does_not_exist_before_token,
 )
 from mhsg.token import block_statement as token

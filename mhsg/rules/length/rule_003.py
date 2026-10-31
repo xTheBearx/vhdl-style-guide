@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import number_of_lines_between_tokens
+from mhsg.rules.number_of_lines_between_tokens import number_of_lines_between_tokens
 
 oLeftToken = token.process_statement.process_keyword
 oRightToken = token.process_statement.semicolon

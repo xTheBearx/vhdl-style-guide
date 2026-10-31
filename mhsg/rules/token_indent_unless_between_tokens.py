@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import token_indent as Rule
+from mhsg.rules.token_indent import token_indent as Rule
 
 
 class token_indent_unless_between_tokens(Rule):

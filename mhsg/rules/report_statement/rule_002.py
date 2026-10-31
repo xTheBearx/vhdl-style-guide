@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import split_line_at_token_when_between_tokens
+from mhsg.rules.split_line_at_token_when_between_tokens import (
+    split_line_at_token_when_between_tokens,
+)
 
 lTokens = []
 lTokens.append(token.report_statement.severity_keyword)

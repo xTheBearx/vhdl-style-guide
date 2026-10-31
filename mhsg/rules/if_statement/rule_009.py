@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import multiline_alignment_between_tokens
+from mhsg.rules.multiline_alignment_between_tokens import (
+    multiline_alignment_between_tokens,
+)
 
 lTokenPairs = []
 lTokenPairs.append([token.if_statement.if_keyword, token.if_statement.then_keyword])

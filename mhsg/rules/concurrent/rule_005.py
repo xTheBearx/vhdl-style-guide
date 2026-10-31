@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import remove_tokens_bounded_by_tokens_and_remove_trailing_whitespace
+from mhsg.rules.remove_tokens_bounded_by_tokens_and_remove_trailing_whitespace import (
+    remove_tokens_bounded_by_tokens_and_remove_trailing_whitespace,
+)
 from mhsg.token import concurrent_signal_assignment_statement as token
 
 

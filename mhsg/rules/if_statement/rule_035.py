@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import remove_carriage_return_after_token
+from mhsg.rules.remove_carriage_return_after_token import (
+    remove_carriage_return_after_token,
+)
 
 lTokens = []
 lTokens.append(token.if_statement.if_keyword)

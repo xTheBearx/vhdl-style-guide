@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import consistent_subprogram_parameter_token_case as Rule
+from mhsg.rules.consistent_subprogram_parameter_token_case import (
+    consistent_subprogram_parameter_token_case as Rule,
+)
 
 
 class rule_509(Rule):

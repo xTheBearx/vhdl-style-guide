@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import insert_token_right_of_token_if_it_does_not_exist_before_token
+from mhsg.rules.insert_token_right_of_token_if_it_does_not_exist_before_token import (
+    insert_token_right_of_token_if_it_does_not_exist_before_token,
+)
 from mhsg.token import architecture_body as token
 
 

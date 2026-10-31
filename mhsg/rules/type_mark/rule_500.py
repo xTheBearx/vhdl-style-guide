@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import (
-    consistent_case_utils as cc_utils,
-    token_case_with_prefix_suffix,
-    utils,
-)
+from mhsg.rules import consistent_case_utils as cc_utils, utils
+from mhsg.rules.token_case_with_prefix_suffix import token_case_with_prefix_suffix
 from mhsg.vhdlFile.extract import tokens
 
 lTokens = []

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import parser
-from mhsg.rules import remove_spaces_before_token_rule
+from mhsg.rules.remove_spaces_before_token_rule import remove_spaces_before_token_rule
 
 
 class rule_003(remove_spaces_before_token_rule):

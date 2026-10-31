@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import (
+from mhsg.rules.token_case_in_range_bounded_by_tokens_unless_between_tokens import (
     token_case_in_range_bounded_by_tokens_unless_between_tokens as Rule,
 )
 

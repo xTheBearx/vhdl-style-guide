@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import (
+from mhsg.rules.split_line_at_token_if_on_same_line_as_token_if_token_pair_are_not_on_the_same_line import (
     split_line_at_token_if_on_same_line_as_token_if_token_pair_are_not_on_the_same_line,
 )
 

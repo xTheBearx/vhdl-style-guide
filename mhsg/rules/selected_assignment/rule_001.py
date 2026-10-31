@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import remove_carriage_return_after_token as Rule
+from mhsg.rules.remove_carriage_return_after_token import (
+    remove_carriage_return_after_token as Rule,
+)
 
 lTokens = []
 lTokens.append(token.concurrent_selected_signal_assignment.with_keyword)

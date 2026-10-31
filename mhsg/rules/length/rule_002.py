@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules import file_length
+from mhsg.rules.file_length import file_length
 
 
 class rule_002(file_length):

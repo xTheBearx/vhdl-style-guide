@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import token
-from mhsg.rules import existence_of_tokens_which_should_not_occur
+from mhsg.rules.existence_of_tokens_which_should_not_occur import (
+    existence_of_tokens_which_should_not_occur,
+)
 
 lTokens = []
 lTokens.append(token.variable_declaration.assignment_operator)
