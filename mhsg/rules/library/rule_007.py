@@ -37,3 +37,4 @@ class rule_007(previous_line):
     def __init__(self):
         super().__init__(lTokens)
         self.style = "no_blank_line"
+        self.lValidStyles.append("no_blank_line_unless_different_library")

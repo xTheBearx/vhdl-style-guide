@@ -3,7 +3,7 @@
 import os
 import unittest
 
-from mhsg import vhdlFile
+from mhsg import config, vhdlFile
 from mhsg.rules import library
 from tests import utils
 
@@ -72,3 +72,10 @@ class test_rule(unittest.TestCase):
 
         oRule.analyze(self.oFile)
         self.assertEqual(oRule.violations, [])
+
+    def test_rule_007_accepts_library_style(self):
+        oConfig = config.config()
+        oConfig.dConfig = {"rule": {"library_007": {"style": "no_blank_line_unless_different_library"}}}
+
+        oRule = library.rule_007()
+        self.assertEqual([], oRule.configure(oConfig))

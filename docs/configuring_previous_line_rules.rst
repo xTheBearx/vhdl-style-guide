@@ -31,7 +31,7 @@ There are several options to these rules, which can be selected by using the :co
    :code:`no_blank_line_unless_different_library`
 
 .. |style_values| replace::
-   |no_blank_line|, |require_blank_line|, |no_code|, |allow_comment|, |require_comment|, |require_blank_line|
+   |no_blank_line|, |require_blank_line|, |no_code|, |allow_comment|, |require_comment|, |no_blank_line_unless_different_library|
 
 .. |style__no_blank_line| replace::
    |no_blank_line| = Removes blank lines on the line above.
@@ -66,6 +66,9 @@ There are several options to these rules, which can be selected by using the :co
 +----------------------+----------------+-------------------+---------------------------------------------------+
 
 .. NOTE:: Unless stated in the rule description, the default style is :code:`require_blank_line`.
+
+.. NOTE:: The :code:`no_blank_line_unless_different_library` style only applies to use clauses and is only supported by rule library_007.
+  Configuring a style a rule does not support is reported as a configuration error.
 
 .. WARNING:: It is important to be aware these rules may conflict with rules that enforce blank lines below keywords.
   This can occur when a below rule is applied and then on the next line a previous rule applies.
