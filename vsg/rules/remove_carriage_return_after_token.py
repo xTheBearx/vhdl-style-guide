@@ -33,7 +33,8 @@ class remove_carriage_return_after_token(structure.Rule):
         self.configuration_documentation_link = None
 
     def _get_tokens_of_interest(self, oFile):
-        return oFile.get_n_tokens_after_token(4, self.lTokens)
+        lToi = oFile.get_n_tokens_after_token(4, self.lTokens)
+        return [oToi for oToi in lToi if not comment_exists_before_next_code_token(oToi.get_start_index(), oFile.lAllObjects)]
 
     def _analyze(self, lToi):
         for oToi in lToi:
@@ -55,3 +56,13 @@ class remove_carriage_return_after_token(structure.Rule):
                 rules_utils.insert_whitespace(lTokens, 1)
 
         oViolation.set_tokens(lTokens)
+
+
+def comment_exists_before_next_code_token(iToken, lAllObjects):
+    for iIndex in range(iToken + 1, len(lAllObjects)):
+        oToken = lAllObjects[iIndex]
+        if isinstance(oToken, parser.comment):
+            return True
+        if not isinstance(oToken, (parser.whitespace, parser.carriage_return, parser.blank_line)):
+            return False
+    return False

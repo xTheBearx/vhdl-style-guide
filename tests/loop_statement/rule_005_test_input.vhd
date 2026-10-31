@@ -22,6 +22,12 @@ begin
     LOOP_LABEL:
       for x in range(15 downto 0) loop end loop;
 
+    -- Comments between label and loop should not be merged (issue 1585)
+    LOOP_LABEL:
+      -- first comment
+      -- second comment
+      loop end loop;
+
   end process;
 
 end;
