@@ -208,6 +208,7 @@ class align_tokens_in_region_between_tokens(alignment.Rule):
         """
         if self.oNestedStartToken is None or iIndex == 0:
             return iDepth, False
+        # pylint: disable=isinstance-second-argument-not-valid-type  # token classes, set by the rules that use them
         if isinstance(oToken, self.oNestedStartToken):
             return iDepth + 1, True
         if iDepth > 0 and isinstance(oToken, self.oNestedEndToken):
