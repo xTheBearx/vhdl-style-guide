@@ -97,3 +97,19 @@ Subphase 2
 ##########
 
 Execute on code prepared in subphase 1.
+
+Subphase 3
+##########
+
+Align tokens across lines, such as the colons and assignment operators in declarative parts.
+
+Subphase 4
+##########
+
+Align the continuation lines of multiline declarations.
+These rules depend on the final position of the assignment operator, which is set in subphase 3.
+
+Subphase 5
+##########
+
+Align inline comments, after every other token on the line has reached its final position.
