@@ -25,6 +25,11 @@ Entire portions of a file can be ignored using the **mhsg_off** and **mhsg_on** 
 The **mhsg_off** tag disables all rule checking.
 The **mhsg_on** tag enables all rule checking, except those disabled by a configuration.
 
+If MHSG cannot parse a file, but the code it cannot parse is between a bare **mhsg_off** and **mhsg_on** tag,
+the file is parsed again with that code hidden, so the rest of the file is still checked.
+This can be used to exclude code which uses a construct MHSG does not support yet.
+Tags which name rules, such as :code:`-- mhsg_off process_016`, do not hide code from the parser.
+
 Individual Rule Exclusions
 --------------------------
 

@@ -11,6 +11,7 @@ from mhsg.token import (
     logical_operator,
     miscellaneous_operator,
     multiplying_operator,
+    pragma as pragma_token,
     predefined_attribute,
     relational_operator,
     resolution_indication,
@@ -291,8 +292,14 @@ class vhdlFile:
         self.sEncoding = sEncoding
         self._processFile()
 
-    def _processFile(self):
+    def _build_objects(self, bIgnoreCodeTagOffRegions):
+        """
+        Splits each line into objects. When bIgnoreCodeTagOffRegions is set, the lines between a bare mhsg_off
+        and mhsg_on code tag are hidden from the parser, like the lines between vhdl_comp_off and vhdl_comp_on pragmas.
+        """
         oOptions = options()
+        self.dVars["pragma"] = False
+        bInsideOffRegion = False
         self.lAllObjects = []
         for sLine in self.filecontent:
             self.dVars["line"] = sLine
@@ -305,6 +312,14 @@ class vhdlFile:
             preprocessor.classify(lTokens, lObjects)
             pragma.classify(lObjects, self.lOpenPragmas, self.lClosePragmas, self.dVars, self.configuration)
 
+            if bIgnoreCodeTagOffRegions:
+                if code_tags.line_has_bare_on_code_tag(sLine):
+                    bInsideOffRegion = False
+                elif bInsideOffRegion:
+                    hide_objects_from_parser(lObjects)
+                elif code_tags.line_has_bare_off_code_tag(sLine):
+                    bInsideOffRegion = True
+
             self.lAllObjects.extend(lObjects)
             self.lAllObjects.append(parser.carriage_return())
 
@@ -313,13 +328,30 @@ class vhdlFile:
         except IndexError:
             pass
 
+    def _tokenize(self):
+        try:
+            design_file.tokenize(self.lAllObjects)
+            check_parentheses_are_balanced(self.lAllObjects)
+        except IndexError as e:
+            # The parser read past the last token, so the file ends in the middle of a construct
+            raise utils.end_of_file_error(e, self.lAllObjects) from e
+
+    def _processFile(self):
+        self._build_objects(False)
+
         try:
             try:
-                design_file.tokenize(self.lAllObjects)
-                check_parentheses_are_balanced(self.lAllObjects)
-            except IndexError as e:
-                # The parser read past the last token, so the file ends in the middle of a construct
-                raise utils.end_of_file_error(e, self.lAllObjects) from e
+                self._tokenize()
+            except exceptions.ClassifyError as e:
+                # Code the parser cannot handle can be excluded with mhsg_off and mhsg_on code tags.
+                # The file is parsed again with those regions hidden, so files which parse are not affected.
+                if not code_tags.file_has_bare_off_code_tag(self.filecontent):
+                    raise e
+                self._build_objects(True)
+                try:
+                    self._tokenize()
+                except exceptions.ClassifyError:
+                    raise e from None
         except exceptions.ClassifyError as e:
             e.set_filename(self.filename)
             if self.commandLineArguments.force_fix and self.commandLineArguments.fix:
@@ -688,6 +720,12 @@ def split_on_carriage_return(lObjects):
     if len(lMyObjects) > 0:
         lReturn.append(lMyObjects)
     return lReturn
+
+
+def hide_objects_from_parser(lObjects):
+    for iObject, oObject in enumerate(lObjects):
+        if not isinstance(oObject, (parser.whitespace, parser.blank_line)):
+            lObjects[iObject] = pragma_token.ignore(oObject.get_value())
 
 
 def check_parentheses_are_balanced(lTokens):
