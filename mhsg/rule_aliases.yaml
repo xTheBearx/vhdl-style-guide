@@ -719,6 +719,7 @@ port_map_203: port_map_lines_above_keyword
 port_map_300: port_map_port_keyword_indent
 port_map_301: port_map_association_indent
 port_map_302: port_map_closing_parenthesis_indent
+pragma_100: pragma_space_after_dashes
 pragma_300: pragma_indent
 pragma_400: pragma_lines_above_opening_pragma
 pragma_401: pragma_blank_line_below_opening_pragma

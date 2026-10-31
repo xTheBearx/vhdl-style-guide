@@ -159,6 +159,7 @@ Rules Enforcing Whitespace Rule Group
 * `port_map_007 <../port_map_rules.html#port-map-007>`_
 * `port_map_100 <../port_map_rules.html#port-map-100>`_
 * `port_map_101 <../port_map_rules.html#port-map-101>`_
+* `pragma_100 <../pragma_rules.html#pragma-100>`_
 * `procedure_101 <../procedure_rules.html#procedure-101>`_
 * `procedure_102 <../procedure_rules.html#procedure-102>`_
 * `procedure_103 <../procedure_rules.html#procedure-103>`_

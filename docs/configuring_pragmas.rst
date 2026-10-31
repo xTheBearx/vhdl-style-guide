@@ -63,6 +63,7 @@ Otherwise the comment will be left as a comment.
 Rules Using Pragmas
 ###################
 
+* `pragma_100 <pragma_rules.html#pragma-100>`_
 * `pragma_300 <pragma_rules.html#pragma-300>`_
 * `pragma_400 <pragma_rules.html#pragma-400>`_
 * `pragma_401 <pragma_rules.html#pragma-401>`_
