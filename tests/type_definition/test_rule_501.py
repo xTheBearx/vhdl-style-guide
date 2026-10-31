@@ -16,6 +16,11 @@ lExpected.append("")
 utils.read_file(os.path.join(sTestDir, "rule_501_test_input.fixed.vhd"), lExpected)
 
 
+lFile_record_element_choice, eError_record_element_choice = vhdlFile.utils.read_vhdlfile(
+    os.path.join(sTestDir, "rule_501_test_input.record_element_choice.vhd"),
+)
+
+
 class test_rule(unittest.TestCase):
     def setUp(self):
         self.oFile = vhdlFile.vhdlFile(lFile)
@@ -43,3 +48,13 @@ class test_rule(unittest.TestCase):
 
         oRule.analyze(self.oFile)
         self.assertEqual(oRule.violations, [])
+
+    def test_rule_501_record_element_choice(self):
+        # Issue VSG 1187: a record element choice with the same name as an enumeration literal was reported.
+        # The enumeration literal used as a case choice is still checked.
+        self.assertIsNone(eError_record_element_choice)
+        oRule = type_definition.rule_501()
+        oFile = vhdlFile.vhdlFile(lFile_record_element_choice)
+
+        oRule.analyze(oFile)
+        self.assertEqual([21], utils.extract_violation_lines_from_violation_object(oRule.violations))
