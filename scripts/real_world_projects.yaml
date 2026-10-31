@@ -30,26 +30,7 @@ projects:
   - name: poc
     url: https://github.com/VLSI-EDA/PoC.git
     commit: 8c39b2407a97ec81b8601c4b64e4d2e2141ab9cf
-    known_issues:
-      # #74: continuation lines are aligned before the := moves
-      src/common/strings.vhdl: NOT_IDEMPOTENT
-      src/mem/sdram/sdram_ctrl_fsm.vhdl: NOT_IDEMPOTENT
-      # #75: constant_400 puts the padding in the wrong place
-      src/io/uart/uart.pkg.vhdl: NOT_IDEMPOTENT
-      tb/misc/stat/stat_Maximum_tb.vhdl: NOT_IDEMPOTENT
-      tb/misc/stat/stat_Minimum_tb.vhdl: NOT_IDEMPOTENT
-      # #78: translate_off/translate_on pragma rules settle on the second fix
-      src/arith/arith_addw.vhdl: NOT_IDEMPOTENT
-      src/arith/xilinx/arith_addw_xilinx.vhdl: NOT_IDEMPOTENT
-      src/common/utils.vhdl: NOT_IDEMPOTENT
-      src/fifo/fifo_cc_got.vhdl: NOT_IDEMPOTENT
-      src/fifo/fifo_cc_got_tempgot.vhdl: NOT_IDEMPOTENT
-      src/fifo/fifo_cc_got_tempput.vhdl: NOT_IDEMPOTENT
-      src/fifo/fifo_ic_got.vhdl: NOT_IDEMPOTENT
-      # #79: whitespace from a joined line is removed on the second fix
-      src/arith/arith_scaler.vhdl: NOT_IDEMPOTENT
-      src/cache/cache_replacement_policy.vhdl: NOT_IDEMPOTENT
-      tb/arith/arith_div_tb.vhdl: NOT_IDEMPOTENT
+    known_issues: {}
 
   - name: vhdl-extras
     url: https://github.com/kevinpt/vhdl-extras.git
@@ -57,6 +38,4 @@ projects:
     exclude:
       # Template that scripts/ada/smc_gen.sh completes into a package
       - scripts/ada/strings_maps_constants.head.vhdl
-    known_issues:
-      # #74: continuation lines are aligned before the := moves
-      rtl/extras/hamming_edac.vhdl: NOT_IDEMPOTENT
+    known_issues: {}

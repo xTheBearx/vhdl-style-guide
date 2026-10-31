@@ -100,7 +100,8 @@ class multiline_alignment_between_tokens(alignment.Rule):
                         dIndex[iLine] = iToken + 1
                     continue
 
-                iColumn += len(oToken.get_value())
+                # Tabs are counted as in the actual indent, which converts them to spaces
+                iColumn += len(mhsg_utils.convert_tabs_to_spaces(oToken.get_value(), self.indent_size))
 
                 if isinstance(oToken, parser.close_parenthesis):
                     dLastParen = lParens[-1]

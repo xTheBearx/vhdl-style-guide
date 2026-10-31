@@ -40,6 +40,9 @@ class multiline_array_alignment(alignment.Rule):
     def __init__(self, lTokenPairs):
         super().__init__()
         self.subphase = 2
+        # The alignment of => in subphase 4 can move the parenthesis of a nested aggregate,
+        # so the lines inside it are indented again afterwards
+        self.fix_again_in_subphase = 5
         self.lTokenPairs = lTokenPairs
         self.align_left = "no"
         self.configuration.append("align_left")

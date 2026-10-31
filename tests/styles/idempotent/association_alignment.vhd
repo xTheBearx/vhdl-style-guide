@@ -26,3 +26,21 @@ begin
   end process;
 
 end architecture a;
+
+-- A nested aggregate is indented after the => before it has been aligned.
+
+package p is
+
+  constant C_BOARD_INFO_LIST : T_BOARD_INFO_VECTOR := (
+    (
+      BoardName => conf("GENERIC"),
+      UART => c_board_uart_dte_921600_none,
+      Ethernet => (
+        0 => c_board_eth_hard_gmii_88e1111,
+        others => c_board_eth_empty
+      ),
+      EthernetCount => 1
+    )
+  );
+
+end package p;

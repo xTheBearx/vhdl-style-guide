@@ -106,10 +106,16 @@ Align tokens across lines, such as the colons and assignment operators in declar
 Subphase 4
 ##########
 
-Align the continuation lines of multiline declarations.
+Align the continuation lines of multiline declarations, and then the **=>** of their associations.
 These rules depend on the final position of the assignment operator, which is set in subphase 3.
 
 Subphase 5
+##########
+
+Indent the lines of multiline arrays again.
+Aligning the **=>** in subphase 4 can move the parenthesis of a nested aggregate, which the lines inside it are indented to.
+
+Subphase 6
 ##########
 
 Align inline comments, after every other token on the line has reached its final position.

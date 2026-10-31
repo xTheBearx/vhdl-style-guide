@@ -398,6 +398,10 @@ class vhdlFile:
             iEnd = oUpdate.oTokens.iEndIndex
             lMyTokens = remove_beginning_of_file_tokens(lTokens)
             self.lAllObjects[iStart:iEnd] = lMyTokens
+            # A fix can leave whitespace next to whitespace outside of its tokens, for
+            # example the indent of a line after the first token of the line is moved.
+            merge_whitespace_at(self.lAllObjects, iStart + len(lMyTokens) - 1)
+            merge_whitespace_at(self.lAllObjects, iStart - 1)
         if bUpdateMap:
             self.oTokenMap = process_tokens(self.lAllObjects)
 
@@ -730,6 +734,20 @@ class vhdlFile:
 
     def get_tokens_from_non_whitespace_token_until_tokens(self, lTokens):
         return get_tokens_from_non_whitespace_token_until_tokens(lTokens, self.lAllObjects, self.oTokenMap)
+
+
+def merge_whitespace_at(lObjects, iIndex):
+    """
+    Merges the whitespace token at iIndex with the whitespace token after it.
+    Only indexes from iIndex onwards change.
+    """
+    if iIndex < 0 or iIndex + 1 >= len(lObjects):
+        return
+    oToken = lObjects[iIndex]
+    oNext = lObjects[iIndex + 1]
+    if type(oToken) is parser.whitespace and type(oNext) is parser.whitespace:
+        oToken.set_value(oToken.get_value() + oNext.get_value())
+        del lObjects[iIndex + 1]
 
 
 def split_on_carriage_return(lObjects):
