@@ -747,16 +747,45 @@
 79 |
 <class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-80 | begin
+80 |   -- VHDL-2019 allows a semicolon after the last interface element
+<class 'mhsg.parser.comment'>
+--------------------------------------------------------------------------------
+81 |   procedure proc (
+<class 'mhsg.token.procedure_specification.procedure_keyword'>
+<class 'mhsg.token.procedure_specification.designator'>
+<class 'mhsg.token.procedure_specification.open_parenthesis'>
+--------------------------------------------------------------------------------
+82 |     a : in integer;
+<class 'mhsg.token.interface_unknown_declaration.identifier'>
+<class 'mhsg.token.interface_unknown_declaration.colon'>
+<class 'mhsg.token.mode.in_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
+--------------------------------------------------------------------------------
+83 |     b : out integer;
+<class 'mhsg.token.interface_unknown_declaration.identifier'>
+<class 'mhsg.token.interface_unknown_declaration.colon'>
+<class 'mhsg.token.mode.out_keyword'>
+<class 'mhsg.token.type_mark.name'>
+<class 'mhsg.token.interface_list.semicolon'>
+--------------------------------------------------------------------------------
+84 |   );
+<class 'mhsg.token.procedure_specification.close_parenthesis'>
+<class 'mhsg.token.subprogram_declaration.semicolon'>
+--------------------------------------------------------------------------------
+85 |
+<class 'mhsg.parser.blank_line'>
+--------------------------------------------------------------------------------
+86 | begin
 <class 'mhsg.token.architecture_body.begin_keyword'>
 --------------------------------------------------------------------------------
-81 |
+87 |
 <class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-82 |
+88 |
 <class 'mhsg.parser.blank_line'>
 --------------------------------------------------------------------------------
-83 | end architecture RTL;
+89 | end architecture RTL;
 <class 'mhsg.token.architecture_body.end_keyword'>
 <class 'mhsg.token.architecture_body.end_architecture_keyword'>
 <class 'mhsg.token.architecture_body.architecture_simple_name'>
