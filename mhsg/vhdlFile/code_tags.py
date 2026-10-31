@@ -130,3 +130,25 @@ def token_has_mhsg_off_code_tag(oToken):
 
 def token_has_next_line_code_tag(oToken):
     return next_line_code_tag_detected(oToken)
+
+
+def line_has_bare_off_code_tag(sLine):
+    return _line_has_bare_code_tag(sLine, ("-- mhsg_off", "-- vsg_off"))
+
+
+def line_has_bare_on_code_tag(sLine):
+    return _line_has_bare_code_tag(sLine, ("-- mhsg_on", "-- vsg_on"))
+
+
+def file_has_bare_off_code_tag(lLines):
+    return any(line_has_bare_off_code_tag(sLine) for sLine in lLines)
+
+
+def _line_has_bare_code_tag(sLine, tTags):
+    """
+    A bare code tag names no rules, so it turns every rule off or on. Text after a colon is a comment.
+    """
+    sValue = sLine.strip()
+    if not sValue.startswith(tTags):
+        return False
+    return len(sValue.split(":")[0].split()) == 2
