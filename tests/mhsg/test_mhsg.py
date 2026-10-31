@@ -626,6 +626,22 @@ class testMhsg(unittest.TestCase):
 
         self.assertEqual(lActual, lExpected)
 
+    def test_configuration_with_file_rules_and_dot_slash_path(self):
+        # VSG issue 593: the file is given as ./tests/... while the configuration names tests/...
+        lExpected = []
+
+        lActual = []
+
+        try:
+            subprocess.check_output(
+                [*utils.mhsg_exec(), "--configuration", "tests/mhsg/config_file_rules.yaml", "-f", "./tests/mhsg/entity1.vhd", "--output_format", "syntastic"],
+            )
+        except subprocess.CalledProcessError as e:
+            lActual = str(e.output.decode("utf-8")).splitlines()
+            iExitStatus = e.returncode
+
+        self.assertEqual(lActual, lExpected)
+
     def test_configuration_with_globbing_in_file_rules(self):
         lExpected = []
 

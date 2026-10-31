@@ -34,35 +34,30 @@ def configure_rules_per_file_rules_option(oRules, configuration, iIndex, sFileNa
 
 
 def configure_rules_per_option(oRules, configuration, iIndex, sFileName, section):
-    if is_filename_in_option(configuration, section, sFileName):
-        iMyIndex = get_index_of_filename_in_file_list(configuration, section, sFileName)
-        if does_file_have_rule_configuration(configuration, section, iMyIndex, sFileName):
-            oRuleConfig = config.config()
-            oRuleConfig.dConfig = configuration[section][iMyIndex][sFileName]
-            oRules.configure(oRuleConfig)
+    for dRuleConfiguration in get_rule_configurations_for_file(configuration, section, sFileName):
+        oRuleConfig = config.config()
+        oRuleConfig.dConfig = dRuleConfiguration
+        oRules.configure(oRuleConfig)
 
 
-def is_filename_in_option(configuration, section, sFileName):
-    try:
-        lFileNames = utils.extract_file_names_from_file_list(configuration[section])
-        if sFileName in lFileNames:
-            return True
-        return False
-    except KeyError:
-        return False
+def get_rule_configurations_for_file(configuration, section, sFileName):
+    """
+    Returns the rule configurations, in order, of every entry in the section which names the file.
+    Paths are compared after normalization, so ./a.vhd, a.vhd and the absolute path all match.
+    """
+    lReturn = []
+    sPath = normalize_path(sFileName)
+    for dEntry in configuration.get(section, []):
+        if not isinstance(dEntry, dict):
+            continue
+        for sEntryFileName, dRuleConfiguration in dEntry.items():
+            if dRuleConfiguration is not None and normalize_path(sEntryFileName) == sPath:
+                lReturn.append(dRuleConfiguration)
+    return lReturn
 
 
-def get_index_of_filename_in_file_list(configuration, section, sFileName):
-    lFileNames = utils.extract_file_names_from_file_list(configuration[section])
-    return lFileNames.index(sFileName)
-
-
-def does_file_have_rule_configuration(configuration, section, iMyIndex, sFileName):
-    try:
-        sTemp = configuration[section][iMyIndex][sFileName]
-        return True
-    except:
-        return False
+def normalize_path(sFileName):
+    return os.path.normcase(os.path.abspath(sFileName)).replace(os.sep, "/")
 
 
 bStopProcessingFiles = True
