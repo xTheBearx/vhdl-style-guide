@@ -123,6 +123,9 @@ Rules Enforcing Whitespace Rule Group
 * `incomplete_type_definition_103 <../incomplete_type_definition_rules.html#incomplete-type-definition-103>`_
 * `incomplete_type_definition_104 <../incomplete_type_definition_rules.html#incomplete-type-definition-104>`_
 * `incomplete_type_definition_105 <../incomplete_type_definition_rules.html#incomplete-type-definition-105>`_
+* `incomplete_type_definition_106 <../incomplete_type_definition_rules.html#incomplete-type-definition-106>`_
+* `incomplete_type_definition_107 <../incomplete_type_definition_rules.html#incomplete-type-definition-107>`_
+* `incomplete_type_definition_108 <../incomplete_type_definition_rules.html#incomplete-type-definition-108>`_
 * `index_constraint_100 <../index_constraint_rules.html#index-constraint-100>`_
 * `index_subtype_definition_100 <../index_subtype_definition_rules.html#index-subtype-definition-100>`_
 * `index_subtype_definition_101 <../index_subtype_definition_rules.html#index-subtype-definition-101>`_

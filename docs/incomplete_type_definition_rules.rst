@@ -141,6 +141,84 @@ This rule checks for a single space after the **units** keyword.
 
    type t_data is units <>;
 
+incomplete_type_definition_106
+##############################
+
+|phase_2| |error| |whitespace|
+
+Alias: :code:`incomplete_type_definition_space_after_array_keyword`
+
+This rule checks for whitespace after the **array** keyword.
+The default of no whitespace matches unbounded_array_definition_100.
+
+|configuring_whitespace_rules_link|
+
+**Violation**
+
+.. code-block:: vhdl
+
+   type t_data is array (type is range <>) of type is private;
+   type t_data is array     (type is range <>) of type is private;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   type t_data is array(type is range <>) of type is private;
+   type t_data is array(type is range <>) of type is private;
+
+incomplete_type_definition_107
+##############################
+
+|phase_2| |error| |whitespace|
+
+Alias: :code:`incomplete_type_definition_space_before_dot`
+
+This rule checks for whitespace before the **.** of a floating incomplete type definition.
+The default of a single space matches the form :code:`range <> . <>` used in the LRM.
+
+|configuring_whitespace_rules_link|
+
+**Violation**
+
+.. code-block:: vhdl
+
+   type t_data is range <>. <>;
+   type t_data is range <>    . <>;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   type t_data is range <> . <>;
+   type t_data is range <> . <>;
+
+incomplete_type_definition_108
+##############################
+
+|phase_2| |error| |whitespace|
+
+Alias: :code:`incomplete_type_definition_space_after_dot`
+
+This rule checks for whitespace after the **.** of a floating incomplete type definition.
+The default of a single space matches the form :code:`range <> . <>` used in the LRM.
+
+|configuring_whitespace_rules_link|
+
+**Violation**
+
+.. code-block:: vhdl
+
+   type t_data is range <> .<>;
+   type t_data is range <> .    <>;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   type t_data is range <> . <>;
+   type t_data is range <> . <>;
+
 incomplete_type_definition_500
 ##############################
 
