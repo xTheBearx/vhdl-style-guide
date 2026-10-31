@@ -208,6 +208,26 @@ class testMhsg(unittest.TestCase):
 
         self.assertEqual(lActual, lExpected)
 
+    def test_fix_to_stdout(self):
+        # Issue VSG 1481: --stdout writes only the fixed code to stdout, for use as an editor formatter.
+        oResult = subprocess.run(
+            [*utils.mhsg_exec(), "--stdin", "--fix", "--stdout"],
+            input="ENTITY e IS\nEND ENTITY e;\n",
+            capture_output=True,
+            text=True,
+        )
+
+        self.assertEqual(oResult.returncode, 0)
+        self.assertEqual(oResult.stdout, "entity e is\nend entity e;\n")
+        self.assertIn("File:  stdin", oResult.stderr)
+
+    def test_fix_to_stdout_requires_fix(self):
+        oResult = subprocess.run([*utils.mhsg_exec(), "--stdin", "--stdout"], input="", capture_output=True, text=True)
+
+        self.assertEqual(oResult.returncode, 1)
+        self.assertEqual(oResult.stdout, "")
+        self.assertIn("--stdout requires --fix", oResult.stderr)
+
     def test_invalid_local_rule_directory(self):
         lExpected = [
             "ERROR: encountered FileNotFoundError, No such file or directory tests/mhsg/invalid_local_rule_directory when trying to open local rules file.",

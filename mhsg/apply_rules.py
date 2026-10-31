@@ -119,7 +119,9 @@ def apply_rules(commandLineArguments, oConfig, tIndexFileName):
             create_backup_file(sFileName)
         oRules.fix(commandLineArguments.fix_phase, commandLineArguments.skip_phase, fix_only)
 
-        if oRules.had_violations:
+        if commandLineArguments.stdout:
+            pass
+        elif oRules.had_violations:
             write_vhdl_file(oVhdlFile, oConfig.dConfig)
 
     oRules.clear_violations()
@@ -129,6 +131,12 @@ def apply_rules(commandLineArguments, oConfig, tIndexFileName):
     )
     sOutputStd, sOutputErr = oRules.report_violations(commandLineArguments.output_format)
     fExitStatus = oRules.violations
+
+    if commandLineArguments.fix and commandLineArguments.stdout:
+        # The fixed code is the only output on stdout, so editors can use it as a formatter
+        sOutputErr = "\n".join([sOutput for sOutput in [sOutputStd, sOutputErr] if sOutput])
+        sOutputStd = get_fixed_code(oVhdlFile, oConfig.dConfig)
+        fExitStatus = False
 
     if commandLineArguments.junit:
         testCase = oRules.extract_junit_testcase(sFileName)
@@ -140,6 +148,14 @@ def apply_rules(commandLineArguments, oConfig, tIndexFileName):
         dJsonEntry["violations"] = oRules.extract_violation_dictionary()["violations"]
 
     return fExitStatus, testCase, dJsonEntry, sOutputStd, sOutputErr, bKeepProcessingFiles
+
+
+def get_fixed_code(oVhdlFile, dConfig):
+    sCode = "\n".join(oVhdlFile.get_lines()[1:])
+    sLineSeparator = dConfig.get("linesep") if dConfig is not None else None
+    if sLineSeparator:
+        sCode = sCode.replace("\n", sLineSeparator)
+    return sCode
 
 
 def write_vhdl_file(oVhdlFile, dConfig):
