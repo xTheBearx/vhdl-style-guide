@@ -31,6 +31,7 @@ Rules Enforcing Structure Rule Group
 * `case_020 <../case_rules.html#case-020>`_
 * `comment_011 <../comment_rules.html#comment-011>`_
 * `comment_012 <../comment_rules.html#comment-012>`_
+* `comment_013 <../comment_rules.html#comment-013>`_
 * `component_005 <../component_rules.html#component-005>`_
 * `component_019 <../component_rules.html#component-019>`_
 * `component_021 <../component_rules.html#component-021>`_
