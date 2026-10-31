@@ -13,6 +13,9 @@ from mhsg.rules import package_scope
 from . import config, deprecated_rule, junit, report, severity, utils
 
 
+NUMBER_OF_SUBPHASES = 7
+
+
 def get_python_modules_from_directory(sDirectoryName, lModules):
     """
     Returns a list of files with an extension of py from a directory.
@@ -167,9 +170,9 @@ class rule_list:
             if phase == 4:
                 self.oVhdlFile.set_token_indent()
 
-            for subphase in range(0, 6):
+            for subphase in range(0, NUMBER_OF_SUBPHASES):
                 lRules = self.get_rules_in_phase(phase)
-                lRules = self.get_rules_in_subphase(lRules, subphase)
+                lRules = self.get_rules_in_subphase(lRules, subphase, bFix=True)
                 lRules = filter_out_disabled_rules(lRules)
                 lRules = enforce_prerequisites(lRules)
                 for oRule in lRules:
@@ -202,7 +205,7 @@ class rule_list:
                 lReturn.append(oRule)
         return lReturn
 
-    def get_rules_in_subphase(self, lRules, iSubPhase):
+    def get_rules_in_subphase(self, lRules, iSubPhase, bFix=False):
         """
         Returns a list of rules in a given subphase.
 
@@ -212,11 +215,15 @@ class rule_list:
 
           iSubPhase : (integer)
 
+          bFix : (boolean) also return the rules whose fix runs again in this subphase
+
         Returns: (list of rule objects)
         """
         lReturn = []
         for oRule in lRules:
             if oRule.subphase == iSubPhase:
+                lReturn.append(oRule)
+            elif bFix and oRule.fix_again_in_subphase == iSubPhase:
                 lReturn.append(oRule)
         return lReturn
 
@@ -239,7 +246,7 @@ class rule_list:
             if phase in lSkipPhase:
                 continue
 
-            for subphase in range(0, 6):
+            for subphase in range(0, NUMBER_OF_SUBPHASES):
                 lRules = self.get_rules_in_phase(phase)
                 lRules = self.get_rules_in_subphase(lRules, subphase)
                 lRules = filter_out_disabled_rules(lRules)

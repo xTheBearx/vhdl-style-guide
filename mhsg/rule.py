@@ -15,6 +15,8 @@ class Rule:
         self.indent_size = 2
         self.phase = None
         self.subphase = 1
+        # If set, the fix also runs in this later subphase of the same phase
+        self.fix_again_in_subphase = None
         self.disable = False
         self.fixable = True
         self.severity = severity.error("Error")
