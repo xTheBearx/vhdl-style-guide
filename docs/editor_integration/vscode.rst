@@ -175,3 +175,24 @@ The violations are shown in the Problems tab:
 The violations can be fixed manually, or by using `ctrl+f`...
 
 .. image:: vscode_file_fixed.png
+
+Formatting with Format Document
+-------------------------------
+
+MHSG can also be used as the formatter for **Format Document** and format on save.
+This uses the `Custom Local Formatters <https://marketplace.visualstudio.com/items?itemName=jkillian.custom-local-formatters>`_ extension, which runs a command with the document on standard input and replaces the document with the command's standard output.
+
+Install the extension and add the following to your ``settings.json``:
+
+.. code-block:: json
+
+   {
+     "customLocalFormatters.formatters": [
+       {
+         "command": "mhsg --stdin --fix --stdout -c ${workspaceFolder}/mhsg_config.yaml",
+         "languages": ["vhdl"]
+       }
+     ]
+   }
+
+Remove the ``-c`` option if you do not use a configuration file.
