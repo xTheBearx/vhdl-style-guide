@@ -137,3 +137,25 @@ This works by taking the current buffer's contents and passing it into the stand
         diagnostics_format = "[#{c}] #{m} (#{s})",
         sources = { mhsg_lint, mhsg_format }
     })
+
+Conform Plugin
+^^^^^^^^^^^^^^
+
+Formatting can also be done with `conform.nvim <https://github.com/stevearc/conform.nvim>`_, which passes the buffer to MHSG on standard input and replaces it with the fixed code from standard output.
+
+.. code-block:: lua
+
+    require("conform").setup({
+        formatters_by_ft = {
+            vhdl = { "mhsg" },
+        },
+        formatters = {
+            mhsg = {
+                command = "mhsg",
+                args = { "--stdin", "--fix", "--stdout" },
+                stdin = true,
+            },
+        },
+    })
+
+Add ``"-c", "mhsg_config.yaml"`` to ``args`` to use a configuration file.
