@@ -422,7 +422,7 @@ This rule checks the semicolon is not on its own line.
 generic_022
 ###########
 
-|phase_1| |disabled| |error| |unfixable| |structure|
+|phase_1| |disabled| |error| |structure|
 
 Alias: :code:`generic_alphabetical_order`
 
@@ -436,7 +436,13 @@ With the :code:`sort_within_sections` option set to :code:`yes` (default), each 
 :code:`no` sorts the whole generic list.
 
 .. NOTE:: This rule is disabled by default.
-   It only reports the expected order, because moving generics by hand keeps their comments where they belong.
+
+By default the rule only reports the expected order.
+Moving the generics of an entity changes what a direct instantiation with positional generic association connects to.
+With :code:`move_generics` set to :code:`when_safe`, the generics of an entity are moved if no file of the run instantiates it directly with a positional generic association.
+Instances in files that are not part of the run are not checked, and input from stdin is never moved.
+Generics of components, packages and subprograms are only reported.
+Generics are only moved if each declaration is on a line of its own; comments at the end of a line move with their generic.
 
 **Violation**
 

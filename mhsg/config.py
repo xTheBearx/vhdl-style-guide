@@ -505,6 +505,8 @@ class config:
         self.project_type_names = set()
         # Entities instantiated with positional port associations in the files of the run, or None if unknown
         self.project_positional_entities = None
+        # Entities instantiated with positional generic associations in the files of the run, or None if unknown
+        self.project_positional_generic_entities = None
         # Port names of the entities and components declared in the files of the run, or None if unknown
         self.project_port_orders = None
 
