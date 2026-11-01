@@ -47,7 +47,9 @@ class test_options_description(unittest.TestCase):
     def test_every_rule_option_has_metadata(self):
         dCatalog = options_description.read_catalog()
         oRules = rule_list.rule_list(vhdlFile.vhdlFile([""]), severity.create_list({}))
-        lMissing = sorted({(oRule.get_unique_id(), sOption) for oRule in oRules.rules if not oRule.deprecated for sOption in oRule.configuration if sOption not in dCatalog})
+        lMissing = sorted(
+            {(oRule.get_unique_id(), sOption) for oRule in oRules.rules if not oRule.deprecated for sOption in oRule.configuration if sOption not in dCatalog},
+        )
         self.assertEqual([], lMissing)
 
     def test_every_definition_is_complete(self):
@@ -108,7 +110,10 @@ class test_options_description(unittest.TestCase):
                 dWritten = json.load(oFile)
         dRule = {d["id"]: d for d in dWritten["rules"]}["localized_001"]
         self.assertIsNone(dRule["documentation"])
-        self.assertEqual(["disable", "fixable", "indent_size", "indent_style", "phase", "severity", "user_error_message"], sorted(d["name"] for d in dRule["options"]))
+        self.assertEqual(
+            ["disable", "fixable", "indent_size", "indent_style", "phase", "severity", "user_error_message"],
+            sorted(d["name"] for d in dRule["options"]),
+        )
         self.assertEqual(len(dDescription["rules"]) + 1, len(dWritten["rules"]))
 
     def test_option_of_local_rule_without_metadata(self):
