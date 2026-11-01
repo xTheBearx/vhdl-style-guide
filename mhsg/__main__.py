@@ -12,6 +12,7 @@ from . import (
     cmd_line_args,
     config,
     junit,
+    options_description,
     project_index,
     rule_list,
     utils,
@@ -54,6 +55,15 @@ def generate_output_configuration(commandLineArguments, oConfig):
         with open(commandLineArguments.output_configuration, "w", encoding="utf-8") as json_file:
             json.dump(dOutputConfiguration, json_file, sort_keys=True, indent=2)
         sys.exit(fExitStatus)
+
+
+def generate_options_description(commandLineArguments):
+    """
+    Writes a description of every option to the file given with --output_options and exits.
+    """
+    if commandLineArguments.output_options:
+        options_description.write(commandLineArguments.output_options, commandLineArguments.local_rules)
+        sys.exit(0)
 
 
 def display_rule_configuration(commandLineArguments, oConfig):
@@ -155,6 +165,8 @@ def main():
         oJunitTestsuite = junit.testsuite("vhdl-style-guide", str(0))
 
     generate_output_configuration(commandLineArguments, oConfig)
+
+    generate_options_description(commandLineArguments)
 
     display_rule_configuration(commandLineArguments, oConfig)
 
