@@ -142,7 +142,7 @@ tRelevantTokens = tuple(
         use_clause.package_name,
         architecture_body.entity_name,
         identifier_list.identifier,
-    ]
+    ],
 )
 
 # Whether a token class is a subclass of one in tRelevantTokens, filled in as classes are seen
