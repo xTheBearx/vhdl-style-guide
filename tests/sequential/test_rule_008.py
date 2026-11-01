@@ -91,3 +91,43 @@ class test_rule(unittest.TestCase):
 
         oRule.analyze(self.oFile)
         self.assertEqual(oRule.violations, [])
+
+
+lSingleLine = [
+    "",
+    "architecture RTL of FIFO is",
+    "",
+    "begin",
+    "",
+    "  process",
+    "  begin",
+    "",
+    "    a <= b or d;",
+    "",
+    "  end process;",
+    "",
+    "end architecture RTL;",
+]
+
+
+class test_rule_ignore_single_line(unittest.TestCase):
+    """ignore_single_line: no used to have no effect (issue #85)."""
+
+    def check(self, oIgnoreSingleLine, lExpected):
+        oRule = sequential.rule_008()
+        oRule.new_line_after_assign = "yes"
+        oRule.ignore_single_line = oIgnoreSingleLine
+        oRule.analyze(vhdlFile.vhdlFile(lSingleLine))
+        self.assertEqual(lExpected, utils.extract_violation_lines_from_violation_object(oRule.violations))
+
+    def test_yes(self):
+        self.check("yes", [])
+
+    def test_true(self):
+        self.check(True, [])
+
+    def test_no(self):
+        self.check("no", [9])
+
+    def test_false(self):
+        self.check(False, [9])

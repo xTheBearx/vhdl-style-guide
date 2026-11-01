@@ -65,7 +65,7 @@ class multiline_simple_structure(structure.Rule):
         self.ignore_single_line = utils.convert_boolean_to_yes_no(self.ignore_single_line)
 
         for oToi in lToi:
-            if rules_utils.is_single_line(oToi) and self.ignore_single_line:
+            if rules_utils.is_single_line(oToi) and self.ignore_single_line == "yes":
                 continue
 
             _check_new_line_after_assign(self, oToi)
