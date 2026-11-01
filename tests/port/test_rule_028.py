@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 
 import copy
+import importlib
 import os
 import unittest
 
 from mhsg import vhdlFile
 from mhsg.rules import port
 from tests import utils
+
+# The module, since mhsg.rules.port.rule_028 is the rule class
+rule_028_module = importlib.import_module("mhsg.rules.port.rule_028")
 
 sTestDir = os.path.dirname(__file__)
 
@@ -136,3 +140,28 @@ class test_clock_reset_words(unittest.TestCase):
         self.assert_rank(0, ["ck", "sys_ck"])
         self.assert_rank(2, ["clk"])
         self.assert_rank(1, ["rst_done"])
+
+
+class test_differential_pairs(unittest.TestCase):
+    def sort(self, oRule, lNames):
+        lElements = [{"names": [sName], "mode": "in"} for sName in lNames]
+        oRule._dPairs = rule_028_module.get_differential_pairs(lElements, oRule.differential_suffixes)
+        return [dElement["names"][0] for dElement in sorted(lElements, key=oRule._sort_key)]
+
+    def test_transceiver_reference_clocks(self):
+        oRule = port.rule_028()
+        for sName in ["mgtrefclk0_p", "gt_refclk1_n"]:
+            with self.subTest(sName):
+                self.assertEqual(0, oRule._clock_reset_rank(sName))
+
+    def test_positive_before_negative(self):
+        oRule = port.rule_028()
+        self.assertEqual(
+            ["sys_clk_p", "sys_clk_n", "rst_n", "data", "rx_p", "rx_n"],
+            self.sort(oRule, ["rx_n", "sys_clk_n", "data", "rst_n", "rx_p", "sys_clk_p"]),
+        )
+
+    def test_custom_suffixes(self):
+        oRule = port.rule_028()
+        oRule.differential_suffixes = [["_pos", "_neg"]]
+        self.assertEqual(["lvds_pos", "lvds_neg", "rx_n", "rx_p"], self.sort(oRule, ["rx_p", "lvds_neg", "rx_n", "lvds_pos"]))

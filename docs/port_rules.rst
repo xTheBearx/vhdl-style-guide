@@ -773,6 +773,9 @@ The order is set by these options:
   Clocks come first, then resets, then the other ports.
   With the defaults, :code:`clk_i`, :code:`sys_clk`, :code:`s_axi_aclk` and :code:`clk_100mhz` are clocks, and :code:`rst_n` and :code:`s_axi_aresetn` are resets,
   but :code:`clk_en`, :code:`clk_sel`, :code:`rst_done` and :code:`reset_req` are neither.
+* :code:`differential_suffixes`: pairs of suffixes of differential ports, default :code:`[[_p, _n]]`.
+  When both ports of a pair, such as :code:`sys_clk_p` and :code:`sys_clk_n`, are in the port list, the :code:`name` key sorts them by their shared name with the positive port first.
+  A port without its other half, such as the active low reset :code:`rst_n`, is sorted by its own name.
 * :code:`direction_order`: the order of the modes for the :code:`direction` key.
   The default is :code:`[in, inout, out, buffer, linkage]`.
   A port without a mode is an :code:`in` port.

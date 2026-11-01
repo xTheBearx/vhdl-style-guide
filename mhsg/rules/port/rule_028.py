@@ -28,6 +28,9 @@ class rule_028(structure.Rule):
       Clocks come first, then resets, then the other ports.
       With the defaults, :code:`clk_i`, :code:`sys_clk`, :code:`s_axi_aclk` and :code:`clk_100mhz` are clocks, and :code:`rst_n` and :code:`s_axi_aresetn` are resets,
       but :code:`clk_en`, :code:`clk_sel`, :code:`rst_done` and :code:`reset_req` are neither.
+    * :code:`differential_suffixes`: pairs of suffixes of differential ports, default :code:`[[_p, _n]]`.
+      When both ports of a pair, such as :code:`sys_clk_p` and :code:`sys_clk_n`, are in the port list, the :code:`name` key sorts them by their shared name with the positive port first.
+      A port without its other half, such as the active low reset :code:`rst_n`, is sorted by its own name.
     * :code:`direction_order`: the order of the modes for the :code:`direction` key.
       The default is :code:`[in, inout, out, buffer, linkage]`.
       A port without a mode is an :code:`in` port.
@@ -77,7 +80,7 @@ class rule_028(structure.Rule):
         self.configuration.append("order")
         self.direction_order = ["in", "inout", "out", "buffer", "linkage"]
         self.configuration.append("direction_order")
-        self.clock_words = ["clk", "clock", "*clk", "clk[0-9]*", "clock[0-9]*", "clkin", "clkout", "clockin", "clockout"]
+        self.clock_words = ["clk", "clock", "*clk", "clk[0-9]*", "*clk[0-9]*", "clock[0-9]*", "clkin", "clkout", "clockin", "clockout"]
         self.configuration.append("clock_words")
         # Listed instead of *rst and *reset, which would also match words such as first, burst and preset
         self.reset_words = [
@@ -102,6 +105,9 @@ class rule_028(structure.Rule):
         self.configuration.append("reset_words")
         self.qualifier_words = ["en", "ena", "enable", "sel", "div", "cnt", "count", "gate", "locked", "stable", "valid", "req", "ack", "done"]
         self.configuration.append("qualifier_words")
+        self.differential_suffixes = [["_p", "_n"]]
+        self.configuration.append("differential_suffixes")
+        self._dPairs = {}
         self.sort_within_sections = "yes"
         self.configuration.append("sort_within_sections")
         self.move_ports = "never"
@@ -114,6 +120,7 @@ class rule_028(structure.Rule):
         lReturn = []
         for oToi in ordered_list_utils.get_port_clauses(oFile):
             lElements = ordered_list_utils.get_elements(oToi)
+            self._dPairs = get_differential_pairs(lElements, self.differential_suffixes)
             sKind, sName = ordered_list_utils.get_context(oFile, oToi)
             if bWithinSections:
                 lGroups = ordered_list_utils.get_sections(lElements)
@@ -135,7 +142,8 @@ class rule_028(structure.Rule):
             elif sKey == "direction":
                 lReturn.append(direction_rank(dElement["mode"], self.direction_order))
             elif sKey == "name":
-                lReturn.append(dElement["names"][0].lower())
+                sName = dElement["names"][0].lower()
+                lReturn.append(self._dPairs.get(sName, (sName, 0)))
         return lReturn
 
     def _clock_reset_rank(self, sName):
@@ -188,6 +196,27 @@ def direction_rank(sMode, lDirectionOrder):
     if sMode in lOrder:
         return lOrder.index(sMode)
     return len(lOrder)
+
+
+def get_differential_pairs(lElements, lSuffixes):
+    """
+    Returns {name: (shared name, 0 or 1)} for the ports which form a differential pair, such as
+    clk_p and clk_n, so the positive port sorts directly before the negative one.
+    A port is only part of a pair if the other port of the pair is in the same port list,
+    so an active low reset such as rst_n is not.
+    """
+    setNames = {dElement["names"][0].lower() for dElement in lElements}
+    dReturn = {}
+    for lPair in lSuffixes:
+        sPositive, sNegative = (sSuffix.lower() for sSuffix in lPair)
+        for sName in setNames:
+            if not sName.endswith(sPositive) or len(sName) == len(sPositive):
+                continue
+            sBase = sName[: -len(sPositive)]
+            if sBase + sNegative in setNames:
+                dReturn[sName] = (sBase, 0)
+                dReturn[sBase + sNegative] = (sBase, 1)
+    return dReturn
 
 
 def any_word_matches(lWords, lPatterns):
