@@ -1,0 +1,664 @@
+# Metadata for the options of mhsg rules, used to build scripts/... options file.
+# Each option names its type, allowed values, label and description.
+# by_doc_link and by_rule override fields for some rules; by_rule wins over by_doc_link.
+options:
+  action:
+    type: enum
+    label: Action
+    description: What the rule does with the token or item it checks.
+    by_doc_link:
+      configuring_move_token_rules_link:
+        values: [new_line, move_left]
+        description: new_line moves the token to the next line; move_left moves it left next to the previous non-whitespace token. Any value other than new_line moves the token left.
+      configuring_optional_items_link:
+        values: [add, remove]
+        description: add inserts the optional VHDL item if it is missing; remove deletes it if present.
+    by_rule:
+      pragma_100:
+        values: [add, remove]
+        description: add requires one space after the -- of a pragma; remove requires none. A pragma is only changed if the result still matches a pragma pattern.
+      record_type_definition_001:
+        values: [new_line, same_line, move_left]
+        description: new_line moves the record keyword to its own line; same_line (default) and move_left keep it on the line of the type declaration. Any value other than new_line moves it left.
+  after_generic_map_aspect:
+    type: enum
+    values: [add_new_line, remove_new_line]
+    label: New line after generic map
+    description: "Whether the port map keyword starts a new line after a generic map aspect: add_new_line requires a line break, remove_new_line removes it."
+  after_instantiated_unit:
+    type: enum
+    values: [add_new_line, remove_new_line]
+    label: New line after instantiated unit
+    description: "Whether the port map keyword starts a new line after the instantiated unit: add_new_line requires a line break, remove_new_line removes it."
+  aggregate_parens_ends_group:
+    type: enum
+    values: ["yes", "no", per_level]
+    label: Aggregate parenthesis ends group
+    description: "yes ends the alignment group at an aggregate parenthesis, no continues through it, per_level aligns each aggregate on its own and continues the enclosing group after it. Booleans true/false are also accepted."
+  align_else_keywords:
+    type: enum
+    values: ["yes", "no"]
+    label: Align else keywords
+    description: yes column-aligns the else keywords of a conditional assignment; no leaves them. Booleans true/false are also accepted.
+  align_left:
+    type: enum
+    values: ["yes", "no", on_new_line_after_assign]
+    label: Align left
+    description: yes indents continuation lines from the left; no aligns them to the assignment operator; on_new_line_after_assign aligns left only when a line break follows the assignment. Booleans true/false are also accepted.
+    by_rule:
+      concurrent_401:
+        values: ["yes", "no"]
+        description: yes indents continuation lines from the left; no aligns them to the assignment operator. Booleans true/false are also accepted.
+      constant_012:
+        values: ["yes", "no"]
+        description: yes indents continuation lines from the left; no aligns them to the assignment operator. Booleans true/false are also accepted.
+      sequential_402:
+        values: ["yes", "no"]
+        description: yes indents continuation lines from the left; no aligns them to the assignment operator. Booleans true/false are also accepted.
+      signal_402:
+        values: ["yes", "no"]
+        description: yes indents continuation lines from the left; no aligns them to the assignment operator. Booleans true/false are also accepted.
+      variable_402:
+        values: ["yes", "no"]
+        description: yes indents continuation lines from the left; no aligns them to the assignment operator. Booleans true/false are also accepted.
+      variable_assignment_401:
+        values: ["yes", "no"]
+        description: yes indents continuation lines from the left; no aligns them to the assignment operator. Booleans true/false are also accepted.
+  align_paren:
+    type: enum
+    values: ["yes", "no"]
+    label: Align parenthesis
+    description: yes aligns continuation lines to the unbalanced open parenthesis; no adds one indent per unbalanced open parenthesis. Booleans true/false are also accepted.
+  align_to:
+    type: enum
+    values: [keyword, current_indent]
+    label: Align to
+    description: keyword aligns to the keyword named by the rule; current_indent aligns to the current indent level.
+  align_when_keywords:
+    type: enum
+    values: ["yes", "no"]
+    label: Align when keywords
+    description: yes column-aligns the when keywords of a conditional assignment; no leaves them. Booleans true/false are also accepted.
+  alignment:
+    type: enum
+    values: [report, left]
+    label: Alignment
+    description: report aligns continuation lines after the first keyword (report or when); left indents them by a fixed amount from the statement indent.
+  allow_indenting:
+    type: enum
+    values: ["yes", "no"]
+    label: Allow indenting
+    description: yes also detects indented block comments; no only detects block comments starting in column 0. Booleans true/false are also accepted.
+  allow_library_clause:
+    type: enum
+    values: ["yes", "no"]
+    label: Allow library clause
+    description: yes allows a library clause directly above another library clause without a blank line; no applies the style normally. Booleans true/false are also accepted.
+  allow_single_line:
+    type: enum
+    values: ["yes", "no"]
+    label: Allow single line
+    description: yes allows a conditional signal assignment with a single else to stay on one line; no requires a line break after every else. Booleans true/false are also accepted.
+  array_constraint:
+    type: enum
+    values: [all_in_one_line, one_line_per_dimension, ignore]
+    label: Array constraint
+    description: all_in_one_line puts all dimensions of an array constraint on one line; one_line_per_dimension puts each dimension on its own line; ignore skips the check.
+  assign_on_single_line:
+    type: enum
+    values: ["yes", ignore]
+    label: Assign on single line
+    description: yes forces each element association (choice => value) onto a single line; ignore allows it to span lines. Booleans true/false are also accepted.
+  association_element:
+    type: enum
+    values: [add_new_line, remove_new_line, ignore]
+    label: Association element
+    description: "Line break before each association element of a procedure call. add_new_line forces a line break, remove_new_line removes it, ignore skips the check."
+  association_list_comma:
+    type: enum
+    values: [add_new_line, remove_new_line, ignore]
+    label: Association list comma
+    description: "Line break before each comma of the association list. remove_new_line keeps commas at line ends, ignore skips the check; add_new_line (accepted, not documented) moves commas to the start of the next line."
+  blank_line_ends_group:
+    type: enum
+    values: ["yes", "no"]
+    label: Blank line ends group
+    description: yes starts a new alignment group at a blank line; no aligns across blank lines. Booleans true/false are also accepted.
+  blank_lines_allowed:
+    type: integer
+    minimum: 0
+    label: Blank lines allowed
+    description: Maximum number of consecutive blank lines allowed; extra blank lines are removed.
+  case:
+    type: enum
+    values: [lower, upper, upper_or_lower, camelCase, relaxedCamelCase, PascalCase, RelaxedPascalCase, Pascal_Snake_Case, regex]
+    label: Case
+    description: "Case to enforce. camelCase and PascalCase allow at most two uppercase letters in a row, the relaxed forms any number; regex requires a full match of the regex option."
+  case_control_statements_ends_group:
+    type: enum
+    values: ["yes", "no", break_on_case_or_end_case]
+    label: Case control statements end group
+    description: "yes starts a new alignment group at case, when and end case; no aligns across them; break_on_case_or_end_case only breaks at case and end case. Booleans true/false are also accepted."
+  case_exceptions:
+    type: list
+    item_type: string
+    label: Case exceptions
+    description: "Words that are accepted when written exactly as listed, regardless of the case option."
+  clock:
+    type: enum
+    values: [event, edge]
+    label: Clock style
+    description: event requires clk'event and clk = '1' style clock checks; edge requires rising_edge(clk) and falling_edge(clk).
+  clock_words:
+    type: list
+    item_type: string
+    label: Clock words
+    description: Word patterns (file-name style * and [0-9]) that mark a port as a clock; port names are split into words at underscores.
+  close_paren_new_line:
+    type: enum
+    values: ["yes", "no", ignore]
+    label: Close parenthesis new line
+    description: "yes adds a line break before each close parenthesis of the array, no removes it, ignore skips the check. Booleans true/false are also accepted."
+  comment_left:
+    type: string
+    nullable: true
+    label: Comment left
+    description: "String that must follow the -- of every line inside a block comment, e.g. |. None (empty) disables the check."
+  comment_line_ends_group:
+    type: enum
+    values: ["yes", "no"]
+    label: Comment line ends group
+    description: yes starts a new alignment group at a comment line; no aligns across comment lines. Booleans true/false are also accepted.
+  compact_alignment:
+    type: enum
+    values: ["yes", "no"]
+    label: Compact alignment
+    description: yes aligns to the left-most possible column (one space after the longest line part); no aligns to the right-most existing position. Booleans true/false are also accepted.
+  consecutive:
+    type: integer
+    minimum: 1
+    label: Names per declaration
+    description: Maximum number of identifiers allowed in a single declaration.
+    by_doc_link:
+      configuring_number_of_signals_in_signal_declaration_link:
+        description: Maximum number of signals allowed in a single signal declaration.
+      configuring_number_of_variables_in_variable_declaration_link:
+        description: Maximum number of variables allowed in a single variable declaration.
+  differential_suffixes:
+    type: list
+    item_type: list_of_strings
+    label: Differential suffixes
+    description: "Pairs [positive, negative] of suffixes of differential ports; both ports of a pair are sorted together by their shared name, positive first."
+  direction_order:
+    type: list
+    values: [in, inout, out, buffer, linkage]
+    item_type: enum
+    label: Direction order
+    description: Order of the port modes for the direction sort key. A port without a mode counts as in.
+  disable:
+    type: boolean
+    label: Disable
+    description: Turns the rule off when true. Rules that are disabled by default must be set to false to run.
+  exceptions:
+    type: list
+    item_type: string
+    label: Exceptions
+    description: Exceptions to the rule.
+    by_doc_link:
+      configuring_multiline_constraint_rules_link:
+        values: [keep_record_constraint_with_single_element_on_one_line]
+        item_type: enum
+        description: Named exceptions to enable. keep_record_constraint_with_single_element_on_one_line keeps a record constraint with a single element on one line.
+      configuring_prefix_and_suffix_rules_link:
+        format: regex
+        description: "Regular expressions matched from the start of the name, ignoring case; matching names are not checked for the prefix or suffix."
+    by_rule:
+      comment_100:
+        description: "Comment starts (exactly three characters, beginning with --) after which no space is required, e.g. --! or ---."
+  first_open_paren:
+    type: enum
+    values: [add_new_line, remove_new_line, ignore]
+    label: First open parenthesis
+    description: "Line break before the opening parenthesis of the parameter list. add_new_line forces a line break, remove_new_line removes it, ignore skips the check."
+  first_paren_new_line:
+    type: enum
+    values: ["yes", "no", ignore]
+    label: First parenthesis new line
+    description: "yes adds a line break before the first parenthesis of the array, no removes it, ignore skips the check. Booleans true/false are also accepted."
+  fixable:
+    type: boolean
+    label: Fixable
+    description: "When false, the rule still reports violations but --fix does not change the code."
+  footer_alignment:
+    type: enum
+    values: [left, center, right]
+    label: Footer alignment
+    description: Horizontal position of footer_string within the footer line.
+  footer_left:
+    type: string
+    nullable: true
+    label: Footer left
+    description: String placed directly after the -- of the footer line. None means nothing.
+  footer_left_repeat:
+    type: string
+    label: Footer left repeat
+    description: Character repeated between footer_left and footer_string (or to the end of the line when there is no footer_string).
+  footer_right_repeat:
+    type: string
+    nullable: true
+    label: Footer right repeat
+    description: Character repeated after footer_string up to max_footer_column. Required when footer_string is set.
+  footer_string:
+    type: string
+    nullable: true
+    label: Footer string
+    description: "Text placed in the footer line, positioned by footer_alignment. None means no text."
+  generate_statement_ends_group:
+    type: enum
+    values: ["yes", "no"]
+    label: Generate statement ends group
+    description: yes starts a new alignment group at generate statement keywords; no aligns across them. Booleans true/false are also accepted.
+  header_alignment:
+    type: enum
+    values: [left, center, right]
+    label: Header alignment
+    description: Horizontal position of header_string within the header line.
+  header_left:
+    type: string
+    nullable: true
+    label: Header left
+    description: String placed directly after the -- of the header line. None means nothing.
+  header_left_repeat:
+    type: string
+    label: Header left repeat
+    description: Character repeated between header_left and header_string (or to the end of the line when there is no header_string).
+  header_right_repeat:
+    type: string
+    nullable: true
+    label: Header right repeat
+    description: Character repeated after header_string up to max_header_column. Required when header_string is set.
+  header_string:
+    type: string
+    nullable: true
+    label: Header string
+    description: "Text placed in the header line, positioned by header_alignment. None means no text."
+  if_control_statements_ends_group:
+    type: enum
+    values: ["yes", "no"]
+    label: If control statements end group
+    description: "yes starts a new alignment group at if, elsif, else and end if; no aligns across them. Booleans true/false are also accepted."
+  ignore_single_line:
+    type: enum
+    values: ["yes", "no"]
+    label: Ignore single line
+    description: yes skips statements that fit on a single line; no checks them as well. Booleans true/false are also accepted.
+  ignore_single_line_aggregates:
+    type: enum
+    values: ["yes", "no"]
+    label: Ignore single line aggregates
+    description: yes skips aggregates that fit on a single line when aligning; no includes them. Booleans true/false are also accepted.
+  ignore_spaces_before_numbers:
+    type: boolean
+    label: Ignore spaces before numbers
+    description: "When true, spaces between an open parenthesis and a following number are allowed."
+  include_lines_without_comments:
+    type: enum
+    values: ["yes", "no"]
+    label: Include lines without comments
+    description: "yes also counts code lines without a trailing comment when choosing the comment column, so comments line up right of all code in the group; no ignores those lines. Booleans true/false are also accepted."
+  include_type_is_keyword:
+    type: enum
+    values: ["yes", "no"]
+    label: Include type is keyword
+    description: yes aligns the is keyword of type declarations with the colons; no ignores it. Booleans true/false are also accepted.
+  indent_size:
+    type: integer
+    minimum: 0
+    label: Indent size
+    description: Number of spaces per indent level used by the rule.
+  indent_style:
+    type: enum
+    values: [spaces, smart_tabs]
+    label: Indent style
+    description: spaces indents with spaces only; smart_tabs indents with tabs and aligns with spaces.
+  interface_element:
+    type: enum
+    values: [add_new_line, remove_new_line, ignore]
+    label: Interface element
+    description: "Line break before each interface element (parameter) of the subprogram specification. add_new_line forces a line break, remove_new_line removes it, ignore skips the check."
+  interface_list_semicolon:
+    type: enum
+    values: [add_new_line, remove_new_line, ignore]
+    label: Interface list semicolon
+    description: "Line break before each semicolon of the parameter list. remove_new_line keeps semicolons at line ends, ignore skips the check; add_new_line (accepted, not documented) moves them to the start of the next line."
+  keywords:
+    type: list
+    item_type: string
+    label: Keywords
+    description: "Keywords (case sensitive, whole words) that are reported when found in a comment, such as TODO or FIXME."
+  last_close_paren:
+    type: enum
+    values: [add_new_line, remove_new_line, ignore]
+    label: Last close parenthesis
+    description: "Line break before the closing parenthesis of the parameter list. add_new_line forces a line break, remove_new_line removes it, ignore skips the check."
+  last_paren_new_line:
+    type: enum
+    values: ["yes", "no", ignore]
+    label: Last parenthesis new line
+    description: "yes adds a line break before the last parenthesis of the array, no removes it, ignore skips the check. Booleans true/false are also accepted."
+  length:
+    type: integer
+    minimum: 1
+    label: Length
+    description: Maximum allowed length.
+    by_rule:
+      length_001:
+        description: Maximum line length in characters.
+      length_002:
+        description: Maximum number of lines in a file.
+      length_003:
+        description: Maximum number of lines in a process.
+      length_004:
+        description: "Second, usually larger, line length limit in characters with its own severity."
+  loop_control_statements_ends_group:
+    type: enum
+    values: ["yes", "no"]
+    label: Loop control statements end group
+    description: yes starts a new alignment group at loop statement keywords (including for and while loops); no aligns across them. Booleans true/false are also accepted.
+  magnitude:
+    type: integer
+    minimum: 0
+    label: Delay magnitude
+    description: "Number of time units used in the after clause added to signal assignments, e.g. 1 for after 1 ns."
+  max_footer_column:
+    type: integer
+    minimum: 1
+    label: Max footer column
+    description: "Total length of the footer line, including its indent."
+  max_header_column:
+    type: integer
+    minimum: 1
+    label: Max header column
+    description: "Total length of the header line, including its indent."
+  method:
+    type: enum
+    values: [component, entity]
+    label: Instantiation method
+    description: component requires component instantiations; entity requires direct entity instantiations.
+  min_height:
+    type: integer
+    minimum: 1
+    label: Minimum height
+    description: Minimum number of consecutive comment lines before they are treated as a block comment.
+  move_generics:
+    type: enum
+    values: [never, when_safe]
+    label: Move generics
+    description: never only reports the expected order; when_safe also moves the generics of an entity if no file of the run instantiates it with positional generic association.
+  move_ports:
+    type: enum
+    values: [never, when_safe]
+    label: Move ports
+    description: never only reports the expected order; when_safe also moves the ports of an entity if no file of the run instantiates it with positional association.
+  names:
+    type: list
+    item_type: string
+    format: regex
+    label: Names
+    description: "Regular expressions matched against the whole name, ignoring case."
+    by_rule:
+      architecture_025:
+        description: "Allowed architecture names as regular expressions (full match, ignoring case); other names are reported."
+      library_012:
+        description: "Forbidden library names as regular expressions (full match, ignoring case)."
+      use_clause_001:
+        description: "Forbidden package names as regular expressions (full match, ignoring case)."
+  new_line_after_assign:
+    type: enum
+    values: ["yes", "no", ignore]
+    label: New line after assignment
+    description: "yes adds a line break after the assignment operator, no removes it, ignore skips the check. Booleans true/false are also accepted."
+  new_line_after_comma:
+    type: enum
+    values: ["yes", "no", ignore, ignore_positional]
+    label: New line after comma
+    description: "yes adds a line break after each comma, no removes it, ignore skips the check, ignore_positional adds it unless the elements are positional. Booleans true/false are also accepted."
+  number_of_spaces:
+    type: integer_or_string
+    label: Number of spaces
+    description: "Spaces required: an integer for an exact count, or a string >N, >=N or N+ for a minimum, <N or <=N for a maximum."
+  open_paren_new_line:
+    type: enum
+    values: ["yes", "no", ignore]
+    label: Open parenthesis new line
+    description: "yes adds a line break after each open parenthesis of the array, no removes it, ignore skips the check. Booleans true/false are also accepted."
+  order:
+    type: list
+    values: [clock_reset, direction, name]
+    item_type: enum
+    label: Order
+    description: "Sort keys for the ports, most important first."
+    by_rule:
+      port_028:
+        description: "Sort keys for the ports, most important first: clock_reset (clocks, then resets, then others), direction (see direction_order) and name."
+      port_map_012:
+        type: enum
+        values: [declaration, name]
+        item_type: null
+        description: declaration follows the port order of the entity or component declaration; name sorts the associations by formal name.
+  parenthesis:
+    type: enum
+    values: [insert, remove]
+    label: Parenthesis
+    description: insert requires the if condition to be enclosed in parentheses; remove removes the enclosing parentheses.
+  patterns:
+    type: list
+    item_type: string
+    label: Patterns
+    description: "Comment starts (beginning with --) after which a space is inserted, e.g. --! becomes --! text."
+  phase:
+    type: integer
+    minimum: 1
+    maximum: 7
+    label: Phase
+    description: Phase (1 to 7) in which the rule runs; rules run in increasing phase order. Changing it is rarely needed and can break the ordering between rules.
+  prefix_exceptions:
+    type: list
+    item_type: string
+    label: Prefix exceptions
+    description: Prefixes (found ignoring case) that must be written as listed; the case option is applied to the rest of the word.
+  prefixes:
+    type: list
+    item_type: string
+    label: Prefixes
+    description: "Allowed prefixes, compared ignoring case. The fix uses the first one."
+  qualifier_words:
+    type: list
+    item_type: string
+    label: Qualifier words
+    description: "Word patterns that stop a port from counting as a clock or reset, e.g. en in clk_en."
+  record_constraint_close_paren:
+    type: enum
+    values: [add_new_line, remove_new_line, ignore]
+    label: Record constraint close parenthesis
+    description: "Line break before the closing parenthesis of a record constraint. add_new_line forces a line break, remove_new_line removes it, ignore skips the check."
+  record_constraint_comma:
+    type: enum
+    values: [add_new_line, remove_new_line, ignore]
+    label: Record constraint comma
+    description: "Line break before each comma of a record constraint. remove_new_line keeps commas at line ends, ignore skips the check; add_new_line (accepted, not documented) moves them to the next line."
+  record_constraint_element:
+    type: enum
+    values: [add_new_line, remove_new_line, ignore]
+    label: Record constraint element
+    description: "Line break before each element of a record constraint. add_new_line forces a line break, remove_new_line removes it, ignore skips the check."
+  record_constraint_open_paren:
+    type: enum
+    values: [add_new_line, remove_new_line, ignore]
+    label: Record constraint open parenthesis
+    description: "Line break before the opening parenthesis of a record constraint. add_new_line forces a line break, remove_new_line removes it, ignore skips the check."
+  regex:
+    type: string
+    format: regex
+    label: Regex
+    description: Regular expression the word must fully match when case is set to regex. Empty by default.
+  regex_exceptions:
+    type: list
+    item_type: string
+    format: regex
+    label: Regex exceptions
+    description: "Regular expressions matched from the start of the word, ignoring case; matching words are not checked."
+  remove_prefixes:
+    type: list
+    item_type: string
+    label: Remove prefixes
+    description: Prefixes removed from a local declaration before the fix adds the first allowed prefix.
+  remove_suffixes:
+    type: list
+    item_type: string
+    label: Remove suffixes
+    description: Suffixes removed from a local declaration before the fix adds the first allowed suffix.
+  reset_words:
+    type: list
+    item_type: string
+    label: Reset words
+    description: Word patterns (file-name style * and [0-9]) that mark a port as a reset; port names are split into words at underscores.
+  section_pattern:
+    type: string
+    format: regex
+    label: Section pattern
+    description: Regular expression that one of the comment lines directly above each group must match. The default accepts any comment.
+  separate_generic_port_alignment:
+    type: enum
+    values: ["yes", "no"]
+    label: Separate generic and port alignment
+    description: yes aligns generic and port clauses (or maps) separately; no aligns them as one group. Booleans true/false are also accepted.
+  severity:
+    type: string
+    label: Severity
+    description: "Name of the severity reported for violations: Error or Warning, or a custom name defined under the top-level severity key with type error or warning."
+  sort_within_sections:
+    type: enum
+    values: ["yes", "no"]
+    label: Sort within sections
+    description: yes sorts each group separated by a blank line or comment line on its own; no sorts the whole list. Booleans true/false are also accepted.
+  spaces_after:
+    type: integer
+    minimum: 1
+    label: Spaces after mode
+    description: Number of spaces required after the port mode.
+  spaces_before:
+    type: integer
+    minimum: 0
+    label: Spaces before mode
+    description: Number of spaces required before the port mode.
+  standard:
+    type: enum
+    values: ["1987", "1993", "2000", "2002", "2008", "2019", all]
+    label: VHDL standard
+    description: VHDL standard whose reserved words may not be used as names; all uses the words of every standard. Years must be quoted strings.
+  style:
+    type: enum
+    label: Style
+    description: Which blank lines or comments are required next to the checked line.
+    by_doc_link:
+      configuring_blank_lines_link:
+        values: [require_blank_line, no_blank_line, require_blank_line_unless_pragma]
+        description: require_blank_line requires a blank line below the line; no_blank_line removes blank lines; require_blank_line_unless_pragma requires one unless the next line is a pragma.
+      configuring_previous_line_rules_link:
+        values: [require_blank_line, no_blank_line, no_code, allow_comment, require_comment]
+        description: "Line above: require_blank_line needs a blank line; no_blank_line removes them; no_code allows blank or comment; allow_comment allows comments with a blank line above; require_comment needs a comment."
+    by_rule:
+      architecture_016:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      architecture_018:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      block_202:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      block_204:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      case_009:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      case_generate_statement_200:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      component_016:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      context_024:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      entity_016:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      entity_200:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      entity_202:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      generic_map_201:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      library_007:
+        values: [require_blank_line, no_blank_line, no_code, allow_comment, require_comment, no_blank_line_unless_different_library]
+        description: As for other previous line rules; no_blank_line_unless_different_library also removes blank lines between use clauses of the same library and requires one when the library changes.
+      package_012:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      package_body_202:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      port_001:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      port_map_201:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      process_021:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      process_023:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      process_026:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      process_027:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      subprogram_body_202:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+      subprogram_body_204:
+        values: [require_blank_line, no_blank_line]
+        description: require_blank_line requires a blank line; no_blank_line removes blank lines.
+  suffix_exceptions:
+    type: list
+    item_type: string
+    label: Suffix exceptions
+    description: Suffixes (found ignoring case) that must be written as listed; the case option is applied to the rest of the word.
+  suffixes:
+    type: list
+    item_type: string
+    label: Suffixes
+    description: "Allowed suffixes, compared ignoring case. The fix uses the first one."
+  units:
+    type: enum
+    values: [fs, ps, ns, us, ms, sec, min, hr]
+    label: Delay units
+    description: Time unit used in the after clause added to signal assignments.
+  user_error_message:
+    type: string
+    label: User error message
+    description: Extra text appended to the solution of every violation of this rule. Empty means no message.
+  wrap_at_when:
+    type: enum
+    values: ["yes", "no"]
+    label: Wrap at when
+    description: yes indents a multiline condition relative to its when keyword; no disables wrapping at when. Booleans true/false are also accepted.

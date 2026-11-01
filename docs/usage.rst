@@ -15,6 +15,7 @@ The command line tool can be invoked with:
                                  [-of {mhsg,syntastic,summary}] [-b]
                                  [-oc OUTPUT_CONFIGURATION]
                                  [-rc RULE_CONFIGURATION]
+                                 [--output_options OUTPUT_OPTIONS]
                                  [--style {indent_only,jcl}] [-v] [-ap]
                                  [--fix_only FIX_ONLY] [--stdin] [--stdout]
                                  [--quality_report QUALITY_REPORT] [-p JOBS]
@@ -54,6 +55,10 @@ The command line tool can be invoked with:
                            Write configuration to file name.
      -rc RULE_CONFIGURATION, --rule_configuration RULE_CONFIGURATION
                            Display configuration of a rule
+     --output_options OUTPUT_OPTIONS
+                           Write a description of every option, with its type,
+                           allowed values and default, to file name (JSON), for
+                           building an options dialog.
      --style {indent_only,jcl}
                            Use predefined style: indent_only (Only applies
                            indent rules), jcl (Coding style preferred by
@@ -139,6 +144,11 @@ The command line tool can be invoked with:
 |                               | the destination directory must exist.           |
 +-------------------------------+-------------------------------------------------+
 | --rule_configuration          | Displays the configuration of a rule.           |
++-------------------------------+-------------------------------------------------+
+| --output_options              | Writes a JSON description of every option, with |
+|                               | its type, allowed values, default and help      |
+|                               | text, for programs that build an options        |
+|                               | dialog. See :ref:`options-description`.         |
 +-------------------------------+-------------------------------------------------+
 | --style                       | Use a built in coding style.                    |
 +-------------------------------+-------------------------------------------------+
