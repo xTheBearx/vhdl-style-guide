@@ -78,6 +78,7 @@ template = "{tag}"
 
 [tool.setuptools.package-data]
 "mhsg" = [
+    "option_catalog.yaml",
     "rule_aliases.yaml",
 ]
 "mhsg.rules" = [

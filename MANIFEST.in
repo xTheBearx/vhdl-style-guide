@@ -12,6 +12,7 @@ include bin/mhsg_parser
 include bin/mhsg_rule_doc_gen
 include docs/conf.py
 include docs/example_configuration_json_file.json
+include docs/mhsg_options.json
 include tox.ini
 recursive-include .github *.md
 recursive-include .github *.yml
