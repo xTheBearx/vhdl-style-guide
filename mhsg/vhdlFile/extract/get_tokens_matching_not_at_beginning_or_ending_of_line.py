@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import parser
+from mhsg.token_map import is_in_sorted
 from mhsg.vhdlFile.extract import tokens
 
 
@@ -15,7 +16,7 @@ def get_tokens_matching_not_at_beginning_or_ending_of_line(lTokens, lAllTokens, 
     lIndexes.sort()
 
     for iIndex in lIndexes:
-        if iIndex - 1 not in lCarriageReturns and iIndex + 1 not in lCarriageReturns:
+        if not is_in_sorted(lCarriageReturns, iIndex - 1) and not is_in_sorted(lCarriageReturns, iIndex + 1):
             iLine = oTokenMap.get_line_number_of_index(iIndex)
             lReturn.append(tokens.New(iIndex, iLine, [lAllTokens[iIndex]]))
 

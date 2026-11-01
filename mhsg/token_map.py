@@ -80,7 +80,7 @@ class New:
             for sSubKey in lSubKeys:
                 for iIdx in range(0, 4):
                     iSearchIdx = iStartIndex + iIdx
-                    if iSearchIdx in self.dMap[sBaseKey][sSubKey]:
+                    if is_in_sorted(self.dMap[sBaseKey][sSubKey], iSearchIdx):
                         lTokens[iIdx] = iSearchIdx
                         continue
 
@@ -109,9 +109,7 @@ class New:
     def is_token_at_index(self, oToken, iIndex):
         try:
             sBase, sSub = extract_unique_id(oToken)
-            if iIndex in self.dMap[sBase][sSub]:
-                return True
-            return False
+            return is_in_sorted(self.dMap[sBase][sSub], iIndex)
         except KeyError:
             return False
 
@@ -155,10 +153,29 @@ class New:
             return self.dMap["parser"]["carriage_return"][iLine - 2] + 1
 
 
+def is_in_sorted(lIndexes, iIndex):
+    """Returns whether an index is in a sorted list of indexes."""
+    iPosition = bisect.bisect_left(lIndexes, iIndex)
+    return iPosition < len(lIndexes) and lIndexes[iPosition] == iIndex
+
+
+# The unique id of each token class, filled in as classes are seen
+dUniqueIds = {}
+
+
 def extract_unique_id(oToken):
-    lDoc = oToken.__doc__.split()
-    for iDoc, sDoc in enumerate(lDoc):
-        if sDoc == "unique_id":
+    oClass = oToken if isinstance(oToken, type) else oToken.__class__
+    tUniqueId = dUniqueIds.get(oClass)
+    if tUniqueId is None:
+        tUniqueId = parse_unique_id(oToken.__doc__)
+        dUniqueIds[oClass] = tUniqueId
+    return tUniqueId
+
+
+def parse_unique_id(sDoc):
+    lDoc = sDoc.split()
+    for iDoc, sWord in enumerate(lDoc):
+        if sWord == "unique_id":
             return lDoc[iDoc + 2], lDoc[iDoc + 4]
     return None, None
 
@@ -192,8 +209,10 @@ def process_tokens(lTokens):
             continue
         if sSub == "comma":
             try:
-                if iToken not in dMap["parser"]["comma"]:
-                    dMap["parser"]["comma"].append(iToken)
+                # Indexes are added in order, so a duplicate can only be the last one
+                lIndexes = dMap["parser"]["comma"]
+                if not lIndexes or lIndexes[-1] != iToken:
+                    lIndexes.append(iToken)
             except KeyError:
                 try:
                     dMap["parser"]["comma"] = []
@@ -205,8 +224,10 @@ def process_tokens(lTokens):
             continue
         if sSub == "open_parenthesis":
             try:
-                if iToken not in dMap["parser"]["open_parenthesis"]:
-                    dMap["parser"]["open_parenthesis"].append(iToken)
+                # Indexes are added in order, so a duplicate can only be the last one
+                lIndexes = dMap["parser"]["open_parenthesis"]
+                if not lIndexes or lIndexes[-1] != iToken:
+                    lIndexes.append(iToken)
             except KeyError:
                 try:
                     dMap["parser"]["open_parenthesis"] = []
@@ -228,59 +249,32 @@ def build_default_map():
 
 
 def extract_start_end_indexes(lStartIndexes, lEndIndexes):
-    mylStartIndexes = lStartIndexes.copy()
-    mylEndIndexes = lEndIndexes.copy()
-    lPairs = extract_pairs(mylStartIndexes, mylEndIndexes)
+    lPairs = extract_pairs(lStartIndexes, lEndIndexes)
     return extract_indexes_from_pairs(lPairs)
 
 
 def extract_pairs(lStartIndexes, lEndIndexes):
+    """
+    Pairs each end index with the closest unpaired start index before it, the
+    way nested parentheses are matched.  A start and an end at the same index
+    form a pair.  Indexes that cannot be paired are left out.
+    """
+    lEvents = [(iIndex, 0) for iIndex in lStartIndexes]
+    lEvents.extend((iIndex, 1) for iIndex in lEndIndexes)
+    lEvents.sort()
+    lOpen = []
     lMyPairs = []
-    while len(lEndIndexes) > 0 and len(lStartIndexes) > 0:
-        iMin = lEndIndexes[-1] + 1
-        lPair = []
-        for iStart in lStartIndexes:
-            lPair = extract_closest_pair(iStart, lEndIndexes, lPair, iMin)
-
-        if pair_is_empty(lPair):
-            break
-
-        lMyPairs.append(lPair)
-
-        lStartIndexes.remove(lPair[0])
-        lEndIndexes.remove(lPair[1])
-
+    for iIndex, iKind in lEvents:
+        if iKind == 0:
+            lOpen.append(iIndex)
+        elif lOpen:
+            lMyPairs.append([lOpen.pop(), iIndex])
     return lMyPairs
 
 
-def extract_closest_pair(iStart, lEndIndexes, lPair, iMin):
-    # The list of end indexes is assumed to be sorted. Get the first end >= start via binary search.
-    iPos = bisect.bisect_left(lEndIndexes, iStart)
-    if iPos == len(lEndIndexes):
-        return lPair
-    iEnd = lEndIndexes[iPos]
-    if iEnd - iStart < iMin:
-        lPair = [iStart, iEnd]
-    return lPair
-
-
 def extract_indexes_from_pairs(lPairs):
-    lStartIndexes = []
-    lPairs = remove_any_empty_pairs(lPairs)
-    for pair in lPairs:
-        lStartIndexes.append(pair[0])
-
-    lStartIndexes.sort()
-
-    lReturnStartIndexes = []
-    lReturnEndIndexes = []
-    for iStartIndex in lStartIndexes:
-        lReturnStartIndexes.append(iStartIndex)
-        for pair in lPairs:
-            if pair[0] == iStartIndex:
-                lReturnEndIndexes.append(pair[1])
-
-    return lReturnStartIndexes, lReturnEndIndexes
+    lPairs = sorted(remove_any_empty_pairs(lPairs))
+    return [lPair[0] for lPair in lPairs], [lPair[1] for lPair in lPairs]
 
 
 def pair_is_empty(lPair):
