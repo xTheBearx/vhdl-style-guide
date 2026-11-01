@@ -58,6 +58,7 @@ class test_options_description(unittest.TestCase):
                 self.assertIn(dDefinition["type"], ("boolean", "integer", "string", "enum", "integer_or_string", "list"))
                 self.assertTrue(dDefinition["label"])
                 self.assertTrue(dDefinition["description"])
+                self.assertNotIn(None, dDefinition.values())
                 if dDefinition["type"] == "enum":
                     self.assertTrue(dDefinition["values"])
                 if dDefinition["type"] == "list":

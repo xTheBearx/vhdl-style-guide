@@ -114,7 +114,8 @@ def add_definition(sOption, sDocLink, sRuleId, oDefault, dCatalog, dDefinitions)
         if sRuleId in dByRule:
             dDefinition.update(dByRule[sRuleId])
             sId = sOption + ":" + sRuleId
-    dDefinition = {sKey: dDefinition[sKey] for sKey in DEFINITION_FIELDS if sKey in dDefinition}
+    # An override can remove a field by setting it to null
+    dDefinition = {sKey: dDefinition[sKey] for sKey in DEFINITION_FIELDS if dDefinition.get(sKey) is not None}
     if sId in dDefinitions and dDefinitions[sId] != dDefinition:
         raise ValueError(f"Option {sOption} has two different definitions named {sId}")
     dDefinitions[sId] = dDefinition
