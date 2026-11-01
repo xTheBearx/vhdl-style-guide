@@ -766,8 +766,13 @@ The order is set by these options:
 * :code:`order`: the sort keys, most important first.
   The keys are :code:`clock_reset`, :code:`direction` and :code:`name`.
   The default is :code:`[clock_reset, direction, name]`.
-* :code:`clock_patterns` and :code:`reset_patterns`: name patterns, with :code:`*` as a wildcard, for the :code:`clock_reset` key.
+* :code:`clock_words`, :code:`reset_words` and :code:`qualifier_words`: words of port names for the :code:`clock_reset` key.
+  A name is split into words at its underscores, so :code:`s_axi_aclk` has the words :code:`s`, :code:`axi` and :code:`aclk`.
+  A port is a clock if one of its words matches :code:`clock_words`, and a reset if one matches :code:`reset_words`, unless one of its words matches :code:`qualifier_words`.
+  The words can use :code:`*` and :code:`[0-9]` as in file name patterns.
   Clocks come first, then resets, then the other ports.
+  With the defaults, :code:`clk_i`, :code:`sys_clk`, :code:`s_axi_aclk` and :code:`clk_100mhz` are clocks, and :code:`rst_n` and :code:`s_axi_aresetn` are resets,
+  but :code:`clk_en`, :code:`clk_sel`, :code:`rst_done` and :code:`reset_req` are neither.
 * :code:`direction_order`: the order of the modes for the :code:`direction` key.
   The default is :code:`[in, inout, out, buffer, linkage]`.
   A port without a mode is an :code:`in` port.

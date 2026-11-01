@@ -21,8 +21,13 @@ class rule_028(structure.Rule):
     * :code:`order`: the sort keys, most important first.
       The keys are :code:`clock_reset`, :code:`direction` and :code:`name`.
       The default is :code:`[clock_reset, direction, name]`.
-    * :code:`clock_patterns` and :code:`reset_patterns`: name patterns, with :code:`*` as a wildcard, for the :code:`clock_reset` key.
+    * :code:`clock_words`, :code:`reset_words` and :code:`qualifier_words`: words of port names for the :code:`clock_reset` key.
+      A name is split into words at its underscores, so :code:`s_axi_aclk` has the words :code:`s`, :code:`axi` and :code:`aclk`.
+      A port is a clock if one of its words matches :code:`clock_words`, and a reset if one matches :code:`reset_words`, unless one of its words matches :code:`qualifier_words`.
+      The words can use :code:`*` and :code:`[0-9]` as in file name patterns.
       Clocks come first, then resets, then the other ports.
+      With the defaults, :code:`clk_i`, :code:`sys_clk`, :code:`s_axi_aclk` and :code:`clk_100mhz` are clocks, and :code:`rst_n` and :code:`s_axi_aresetn` are resets,
+      but :code:`clk_en`, :code:`clk_sel`, :code:`rst_done` and :code:`reset_req` are neither.
     * :code:`direction_order`: the order of the modes for the :code:`direction` key.
       The default is :code:`[in, inout, out, buffer, linkage]`.
       A port without a mode is an :code:`in` port.
@@ -72,10 +77,31 @@ class rule_028(structure.Rule):
         self.configuration.append("order")
         self.direction_order = ["in", "inout", "out", "buffer", "linkage"]
         self.configuration.append("direction_order")
-        self.clock_patterns = ["clk", "clock", "*_clk", "clk_*", "*_clock", "clock_*"]
-        self.configuration.append("clock_patterns")
-        self.reset_patterns = ["rst", "rstn", "reset", "resetn", "*_rst", "rst_*", "*_rstn", "*_reset", "reset_*", "*_resetn"]
-        self.configuration.append("reset_patterns")
+        self.clock_words = ["clk", "clock", "*clk", "clk[0-9]*", "clock[0-9]*", "clkin", "clkout", "clockin", "clockout"]
+        self.configuration.append("clock_words")
+        # Listed instead of *rst and *reset, which would also match words such as first, burst and preset
+        self.reset_words = [
+            "rst",
+            "rstn",
+            "rstb",
+            "rst[0-9]*",
+            "nrst",
+            "arst",
+            "arstn",
+            "srst",
+            "srstn",
+            "reset",
+            "resetn",
+            "nreset",
+            "areset",
+            "aresetn",
+            "sreset",
+            "sresetn",
+            "presetn",
+        ]
+        self.configuration.append("reset_words")
+        self.qualifier_words = ["en", "ena", "enable", "sel", "div", "cnt", "count", "gate", "locked", "stable", "valid", "req", "ack", "done"]
+        self.configuration.append("qualifier_words")
         self.sort_within_sections = "yes"
         self.configuration.append("sort_within_sections")
         self.move_ports = "never"
@@ -113,9 +139,12 @@ class rule_028(structure.Rule):
         return lReturn
 
     def _clock_reset_rank(self, sName):
-        if matches_any(sName, self.clock_patterns):
+        lWords = [sWord for sWord in sName.lower().split("_") if sWord != ""]
+        if any_word_matches(lWords, self.qualifier_words):
+            return 2
+        if any_word_matches(lWords, self.clock_words):
             return 0
-        if matches_any(sName, self.reset_patterns):
+        if any_word_matches(lWords, self.reset_words):
             return 1
         return 2
 
@@ -161,5 +190,5 @@ def direction_rank(sMode, lDirectionOrder):
     return len(lOrder)
 
 
-def matches_any(sName, lPatterns):
-    return any(fnmatch.fnmatchcase(sName.lower(), sPattern.lower()) for sPattern in lPatterns)
+def any_word_matches(lWords, lPatterns):
+    return any(fnmatch.fnmatchcase(sWord, sPattern.lower()) for sWord in lWords for sPattern in lPatterns)

@@ -101,3 +101,38 @@ class test_rule(unittest.TestCase):
         oRule.fix(oFile)
 
         self.assertEqual(lUnchanged, oFile.get_lines())
+
+
+class test_clock_reset_words(unittest.TestCase):
+    def setUp(self):
+        self.oRule = port.rule_028()
+
+    def assert_rank(self, iRank, lNames):
+        for sName in lNames:
+            with self.subTest(sName):
+                self.assertEqual(iRank, self.oRule._clock_reset_rank(sName))
+
+    def test_clocks(self):
+        self.assert_rank(
+            0,
+            ["clk", "CLK", "i_clk", "clk_i", "sys_clk", "s_axi_aclk", "clk_100mhz", "clk100", "clk_p", "clock", "pclk", "clock0", "clkout", "clockin"],
+        )
+
+    def test_resets(self):
+        self.assert_rank(
+            1,
+            ["rst", "rst_n", "rstn", "i_rst", "s_axi_aresetn", "arst", "srst_n", "reset", "rst_sync", "nreset", "rst90", "rstb", "cpu_rstb", "presetn"],
+        )
+
+    def test_qualified_names_are_neither(self):
+        self.assert_rank(2, ["clk_en", "clk_en_i", "clk_sel", "clk_locked", "clk_div", "clock_ena", "clocken0", "rst_done", "reset_req", "rst_cnt"])
+
+    def test_other_ports(self):
+        self.assert_rank(2, ["data", "first", "burst", "preset_value", "block", "valid", "a_i"])
+
+    def test_custom_words(self):
+        self.oRule.clock_words = ["ck"]
+        self.oRule.qualifier_words = []
+        self.assert_rank(0, ["ck", "sys_ck"])
+        self.assert_rank(2, ["clk"])
+        self.assert_rank(1, ["rst_done"])
