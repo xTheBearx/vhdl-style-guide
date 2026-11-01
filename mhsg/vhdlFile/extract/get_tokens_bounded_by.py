@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import parser
+from mhsg.token_map import is_in_sorted
 from mhsg.vhdlFile.extract import tokens
 
 
@@ -42,13 +43,13 @@ def get_tokens_bounded_by(
     lWhiteSpace = oTokenMap.get_token_indexes(parser.whitespace)
     if include_trailing_whitespace:
         for iNewEnd, iIndex in enumerate(lNewEnd):
-            if iIndex + 1 in lWhiteSpace:
+            if is_in_sorted(lWhiteSpace, iIndex + 1):
                 lNewEnd[iNewEnd] += 1
     elif not bIncludeTillEndOfLine:
         for iNewEnd, iIndex in enumerate(lNewEnd):
-            if iIndex in lWhiteSpace:
+            if is_in_sorted(lWhiteSpace, iIndex):
                 lNewEnd[iNewEnd] -= 1
-            if lNewEnd[iNewEnd] in lCarriageReturns:
+            if is_in_sorted(lCarriageReturns, lNewEnd[iNewEnd]):
                 lNewEnd[iNewEnd] -= 1
 
     for iStart, iEnd, iIndex in zip(lNewStart, lNewEnd, lEnd):
@@ -58,7 +59,5 @@ def get_tokens_bounded_by(
         oToi.set_token_value(iIndex - iStart)
         lReturn.append(oToi)
 
-        oStart = lAllObjects[iStart]
-        oEnd = lAllObjects[iEnd]
-
     return lReturn
+
