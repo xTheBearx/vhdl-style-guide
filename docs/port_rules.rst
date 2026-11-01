@@ -766,8 +766,16 @@ The order is set by these options:
 * :code:`order`: the sort keys, most important first.
   The keys are :code:`clock_reset`, :code:`direction` and :code:`name`.
   The default is :code:`[clock_reset, direction, name]`.
-* :code:`clock_patterns` and :code:`reset_patterns`: name patterns, with :code:`*` as a wildcard, for the :code:`clock_reset` key.
+* :code:`clock_words`, :code:`reset_words` and :code:`qualifier_words`: words of port names for the :code:`clock_reset` key.
+  A name is split into words at its underscores, so :code:`s_axi_aclk` has the words :code:`s`, :code:`axi` and :code:`aclk`.
+  A port is a clock if one of its words matches :code:`clock_words`, and a reset if one matches :code:`reset_words`, unless one of its words matches :code:`qualifier_words`.
+  The words can use :code:`*` and :code:`[0-9]` as in file name patterns.
   Clocks come first, then resets, then the other ports.
+  With the defaults, :code:`clk_i`, :code:`sys_clk`, :code:`s_axi_aclk` and :code:`clk_100mhz` are clocks, and :code:`rst_n` and :code:`s_axi_aresetn` are resets,
+  but :code:`clk_en`, :code:`clk_sel`, :code:`rst_done` and :code:`reset_req` are neither.
+* :code:`differential_suffixes`: pairs of suffixes of differential ports, default :code:`[[_p, _n]]`.
+  When both ports of a pair, such as :code:`sys_clk_p` and :code:`sys_clk_n`, are in the port list, the :code:`name` key sorts them by their shared name with the positive port first.
+  A port without its other half, such as the active low reset :code:`rst_n`, is sorted by its own name.
 * :code:`direction_order`: the order of the modes for the :code:`direction` key.
   The default is :code:`[in, inout, out, buffer, linkage]`.
   A port without a mode is an :code:`in` port.
@@ -781,7 +789,8 @@ By default the rule only reports the expected order.
 Moving the ports of an entity changes what a direct instantiation with positional association connects to.
 With :code:`move_ports` set to :code:`when_safe`, the ports of an entity are moved if no file of the run instantiates it directly with positional association.
 A top-level entity, which is not instantiated in the run, is always moved.
-Instances in files that are not part of the run are not checked, and input from stdin is never moved.
+Instances in files that are not part of the run are not checked, unless the files are listed in index_file_list or given with --index_files.
+Input from stdin is never moved.
 Ports of component declarations are only reported, because moving them changes what positional instances of the component connect to.
 Ports are only moved if each declaration is on a line of its own; comments at the end of a line move with their port.
 

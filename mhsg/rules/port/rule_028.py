@@ -21,8 +21,16 @@ class rule_028(structure.Rule):
     * :code:`order`: the sort keys, most important first.
       The keys are :code:`clock_reset`, :code:`direction` and :code:`name`.
       The default is :code:`[clock_reset, direction, name]`.
-    * :code:`clock_patterns` and :code:`reset_patterns`: name patterns, with :code:`*` as a wildcard, for the :code:`clock_reset` key.
+    * :code:`clock_words`, :code:`reset_words` and :code:`qualifier_words`: words of port names for the :code:`clock_reset` key.
+      A name is split into words at its underscores, so :code:`s_axi_aclk` has the words :code:`s`, :code:`axi` and :code:`aclk`.
+      A port is a clock if one of its words matches :code:`clock_words`, and a reset if one matches :code:`reset_words`, unless one of its words matches :code:`qualifier_words`.
+      The words can use :code:`*` and :code:`[0-9]` as in file name patterns.
       Clocks come first, then resets, then the other ports.
+      With the defaults, :code:`clk_i`, :code:`sys_clk`, :code:`s_axi_aclk` and :code:`clk_100mhz` are clocks, and :code:`rst_n` and :code:`s_axi_aresetn` are resets,
+      but :code:`clk_en`, :code:`clk_sel`, :code:`rst_done` and :code:`reset_req` are neither.
+    * :code:`differential_suffixes`: pairs of suffixes of differential ports, default :code:`[[_p, _n]]`.
+      When both ports of a pair, such as :code:`sys_clk_p` and :code:`sys_clk_n`, are in the port list, the :code:`name` key sorts them by their shared name with the positive port first.
+      A port without its other half, such as the active low reset :code:`rst_n`, is sorted by its own name.
     * :code:`direction_order`: the order of the modes for the :code:`direction` key.
       The default is :code:`[in, inout, out, buffer, linkage]`.
       A port without a mode is an :code:`in` port.
@@ -36,7 +44,8 @@ class rule_028(structure.Rule):
     Moving the ports of an entity changes what a direct instantiation with positional association connects to.
     With :code:`move_ports` set to :code:`when_safe`, the ports of an entity are moved if no file of the run instantiates it directly with positional association.
     A top-level entity, which is not instantiated in the run, is always moved.
-    Instances in files that are not part of the run are not checked, and input from stdin is never moved.
+    Instances in files that are not part of the run are not checked, unless the files are listed in index_file_list or given with --index_files.
+    Input from stdin is never moved.
     Ports of component declarations are only reported, because moving them changes what positional instances of the component connect to.
     Ports are only moved if each declaration is on a line of its own; comments at the end of a line move with their port.
 
@@ -71,10 +80,34 @@ class rule_028(structure.Rule):
         self.configuration.append("order")
         self.direction_order = ["in", "inout", "out", "buffer", "linkage"]
         self.configuration.append("direction_order")
-        self.clock_patterns = ["clk", "clock", "*_clk", "clk_*", "*_clock", "clock_*"]
-        self.configuration.append("clock_patterns")
-        self.reset_patterns = ["rst", "rstn", "reset", "resetn", "*_rst", "rst_*", "*_rstn", "*_reset", "reset_*", "*_resetn"]
-        self.configuration.append("reset_patterns")
+        self.clock_words = ["clk", "clock", "*clk", "clk[0-9]*", "*clk[0-9]*", "clock[0-9]*", "clkin", "clkout", "clockin", "clockout"]
+        self.configuration.append("clock_words")
+        # Listed instead of *rst and *reset, which would also match words such as first, burst and preset
+        self.reset_words = [
+            "rst",
+            "rstn",
+            "rstb",
+            "rst[0-9]*",
+            "nrst",
+            "arst",
+            "arstn",
+            "srst",
+            "srstn",
+            "reset",
+            "resetn",
+            "nreset",
+            "areset",
+            "aresetn",
+            "sreset",
+            "sresetn",
+            "presetn",
+        ]
+        self.configuration.append("reset_words")
+        self.qualifier_words = ["en", "ena", "enable", "sel", "div", "cnt", "count", "gate", "locked", "stable", "valid", "req", "ack", "done"]
+        self.configuration.append("qualifier_words")
+        self.differential_suffixes = [["_p", "_n"]]
+        self.configuration.append("differential_suffixes")
+        self._dPairs = {}
         self.sort_within_sections = "yes"
         self.configuration.append("sort_within_sections")
         self.move_ports = "never"
@@ -87,6 +120,7 @@ class rule_028(structure.Rule):
         lReturn = []
         for oToi in ordered_list_utils.get_port_clauses(oFile):
             lElements = ordered_list_utils.get_elements(oToi)
+            self._dPairs = get_differential_pairs(lElements, self.differential_suffixes)
             sKind, sName = ordered_list_utils.get_context(oFile, oToi)
             if bWithinSections:
                 lGroups = ordered_list_utils.get_sections(lElements)
@@ -108,13 +142,17 @@ class rule_028(structure.Rule):
             elif sKey == "direction":
                 lReturn.append(direction_rank(dElement["mode"], self.direction_order))
             elif sKey == "name":
-                lReturn.append(dElement["names"][0].lower())
+                sName = dElement["names"][0].lower()
+                lReturn.append(self._dPairs.get(sName, (sName, 0)))
         return lReturn
 
     def _clock_reset_rank(self, sName):
-        if matches_any(sName, self.clock_patterns):
+        lWords = [sWord for sWord in sName.lower().split("_") if sWord != ""]
+        if any_word_matches(lWords, self.qualifier_words):
+            return 2
+        if any_word_matches(lWords, self.clock_words):
             return 0
-        if matches_any(sName, self.reset_patterns):
+        if any_word_matches(lWords, self.reset_words):
             return 1
         return 2
 
@@ -160,5 +198,26 @@ def direction_rank(sMode, lDirectionOrder):
     return len(lOrder)
 
 
-def matches_any(sName, lPatterns):
-    return any(fnmatch.fnmatchcase(sName.lower(), sPattern.lower()) for sPattern in lPatterns)
+def get_differential_pairs(lElements, lSuffixes):
+    """
+    Returns {name: (shared name, 0 or 1)} for the ports which form a differential pair, such as
+    clk_p and clk_n, so the positive port sorts directly before the negative one.
+    A port is only part of a pair if the other port of the pair is in the same port list,
+    so an active low reset such as rst_n is not.
+    """
+    setNames = {dElement["names"][0].lower() for dElement in lElements}
+    dReturn = {}
+    for lPair in lSuffixes:
+        sPositive, sNegative = (sSuffix.lower() for sSuffix in lPair)
+        for sName in setNames:
+            if not sName.endswith(sPositive) or len(sName) == len(sPositive):
+                continue
+            sBase = sName[: -len(sPositive)]
+            if sBase + sNegative in setNames:
+                dReturn[sName] = (sBase, 0)
+                dReturn[sBase + sNegative] = (sBase, 1)
+    return dReturn
+
+
+def any_word_matches(lWords, lPatterns):
+    return any(fnmatch.fnmatchcase(sWord, sPattern.lower()) for sWord in lWords for sPattern in lPatterns)

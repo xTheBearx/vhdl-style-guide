@@ -8,6 +8,7 @@ The command line tool can be invoked with:
 
    $ mhsg
    usage: Multiple HDL Style Guide (MHSG) [-h] [-f FILENAME [FILENAME ...]]
+                                 [--index_files INDEX_FILES [INDEX_FILES ...]]
                                  [-lr LOCAL_RULES [LOCAL_RULES ...]]
                                  [-c CONFIGURATION [CONFIGURATION ...]] [--fix]
                                  [-fp FIX_PHASE] [-j JUNIT] [-js JSON]
@@ -30,6 +31,10 @@ The command line tool can be invoked with:
      -h, --help            show this help message and exit
      -f FILENAME [FILENAME ...], --filename FILENAME [FILENAME ...]
                            File to analyze
+     --index_files INDEX_FILES [INDEX_FILES ...]
+                           Files which are only read to find declarations and
+                           instantiations, for example for port_028, and are not
+                           analyzed
      -lr LOCAL_RULES [LOCAL_RULES ...], --local_rules LOCAL_RULES [LOCAL_RULES ...]
                            Path(s) to local rule directories
      -c CONFIGURATION [CONFIGURATION ...], --configuration CONFIGURATION [CONFIGURATION ...]

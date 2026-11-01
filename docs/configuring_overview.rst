@@ -118,6 +118,21 @@ A file is matched however its path is written on the command line, for example *
 If a file matches more than one entry, every matching configuration is applied in the order of the entries, so a later entry overrides an earlier one.
 The configurations are applied after the **rule** section, so they override it for the files they match.
 
+index_file_list
+---------------
+
+The index_file_list is a list of files which are read, but not analyzed.
+Some rules look at other files of the run: port_028 and generic_022 check whether an entity is instantiated with positional association before they move its ports or generics, and port_map_012 looks up the declaration of an instantiated entity or component.
+Files such as testbenches, which are not analyzed, can be listed here so these rules also see them.
+It uses the same format as file_list, without rule configurations.
+The same files can be given on the command line with **--index_files**.
+
+.. code-block:: yaml
+
+   index_file_list:
+     - tb/**/*.vhd
+     - $IP_DIR/*.vhd
+
 linesep
 -------
 
