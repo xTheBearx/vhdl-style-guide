@@ -1,0 +1,51 @@
+name: Delete merged branches
+
+# Deletes branches whose work has been merged into master.
+#
+# A branch is deleted when its last commit is part of master but not on the
+# main line of master, which is the case for a branch merged with a merge
+# commit (git merge --no-ff). A new branch that has no commits of its own yet
+# points at a commit on the main line, so it is kept. Branches that are not
+# merged are never deleted.
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: delete-merged-branches
+  cancel-in-progress: false
+
+jobs:
+  delete:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Delete merged branches
+        run: |
+          git fetch --prune origin
+          git rev-list --first-parent origin/master > main_line.txt
+          git for-each-ref --format='%(refname:strip=3)' refs/remotes/origin | while read -r branch; do
+            if [ "$branch" = "HEAD" ] || [ "$branch" = "master" ]; then
+              continue
+            fi
+            commit=$(git rev-parse "origin/$branch")
+            if ! git merge-base --is-ancestor "$commit" origin/master; then
+              echo "Keeping $branch: not merged"
+              continue
+            fi
+            if grep -qx "$commit" main_line.txt; then
+              echo "Keeping $branch: no commits of its own"
+              continue
+            fi
+            echo "Deleting $branch"
+            git push origin --delete "$branch"
+          done
