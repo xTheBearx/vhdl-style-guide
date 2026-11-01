@@ -37,3 +37,6 @@ class rule_400(Rule):
         self.skip_array = False
         self.bSmartTabsIndentWithTabs = True
         self.phase = 5
+        # procedure_call_401 aligns => in subphase 2, which can move the parenthesis of a
+        # nested function call, so the lines inside it are indented again afterwards
+        self.fix_again_in_subphase = 3
