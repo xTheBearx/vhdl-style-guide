@@ -102,3 +102,57 @@ class test_rule(unittest.TestCase):
 
         oRule.analyze(self.oFile)
         self.assertEqual(lExpected, utils.extract_violation_lines_from_violation_object(oRule.violations))
+
+
+lIndentedBlock = [
+    "",
+    "architecture rtl of fifo is",
+    "",
+    "begin",
+    "",
+    "  process",
+    "  begin",
+    "",
+    "    " + "-" * 76,
+    "    -- Comment",
+    "    " + "-" * 76,
+    "",
+    "    a <= b;",
+    "",
+    "  end process;",
+    "",
+    "end architecture rtl;",
+]
+
+
+class test_rule_allow_indenting(unittest.TestCase):
+    """allow_indenting: no used to have no effect on block_comment_002 and 003 (issue #86)."""
+
+    def analyze(self, oRule, oAllowIndenting):
+        oFile = vhdlFile.vhdlFile(lIndentedBlock)
+        oFile.set_indent_map(dIndentMap)
+        oFile.set_token_indent()
+        oRule.allow_indenting = oAllowIndenting
+        oRule.analyze(oFile)
+        return oFile
+
+    def check_footer(self, oAllowIndenting, lExpected):
+        oRule = block_comment.rule_003()
+        oRule.max_footer_column = 80
+        self.analyze(oRule, oAllowIndenting)
+        self.assertEqual(lExpected, utils.extract_violation_lines_from_violation_object(oRule.violations))
+
+    def test_footer_with_indenting(self):
+        self.check_footer("yes", [])
+        self.check_footer(True, [])
+
+    def test_footer_without_indenting(self):
+        # Without indenting the footer is measured from column 0, so it is four characters short
+        self.check_footer("no", [11])
+        self.check_footer(False, [11])
+
+    def test_comment_indent_without_indenting(self):
+        for oAllowIndenting in ("no", False):
+            with self.subTest(oAllowIndenting):
+                oFile = self.analyze(block_comment.rule_002(), oAllowIndenting)
+                self.assertEqual(0, oFile.lAllObjects[[o.get_value() for o in oFile.lAllObjects].index("-- Comment")].get_indent())
