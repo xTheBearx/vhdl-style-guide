@@ -237,16 +237,26 @@ def regex_exception_found(sObjectValue, self):
     return False
 
 
+def get_case_exception(sObjectValue, self):
+    """
+    Returns the spelling of sObjectValue in case_exceptions, which is found ignoring case, or None if it is not listed.
+    """
+    sLower = sObjectValue.lower()
+    for sException in self.case_exceptions:
+        if sException.lower() == sLower:
+            return sException
+    return None
+
+
 def case_exception_found(sObjectValue, self):
-    if sObjectValue in self.case_exceptions:
-        return True
-    return False
+    return get_case_exception(sObjectValue, self) is not None
 
 
 def check_for_exception(sObjectValue, self, oToi, iIndex, iLine):
-    iIndex = self.case_exceptions_lower.index(sObjectValue.lower())
-    if sObjectValue != self.case_exceptions[iIndex]:
-        return create_case_violation(sObjectValue, self.case_exceptions[iIndex], oToi, iIndex, iLine)
+    sException = get_case_exception(sObjectValue, self)
+    if sObjectValue != sException:
+        return create_case_violation(sObjectValue, sException, oToi, iIndex, iLine)
+    return None
 
 
 def does_not_contain_any_alpha_characters(sObjectValue):

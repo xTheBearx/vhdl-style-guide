@@ -1,7 +1,7 @@
 {
   "format": "mhsg-options",
   "format_version": 1,
-  "mhsg_version": "3.35.0.post367+git.7d50ce1b.dirty",
+  "mhsg_version": "3.35.0.post379+git.df118044.dirty",
   "documentation_url": "https://github.com/xTheBearx/vhdl-style-guide/blob/master/docs/",
   "settings": [
     {
@@ -2675,7 +2675,7 @@
     "case_exceptions": {
       "type": "list",
       "label": "Case exceptions",
-      "description": "Words that are accepted when written exactly as listed, regardless of the case option.",
+      "description": "Words that must be spelled as listed, whatever the case option. A listed word written in another case is changed to the listed spelling.",
       "item_type": "string"
     },
     "clock": {

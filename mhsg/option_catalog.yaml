@@ -143,7 +143,7 @@ options:
     type: list
     item_type: string
     label: Case exceptions
-    description: "Words that are accepted when written exactly as listed, regardless of the case option."
+    description: "Words that must be spelled as listed, whatever the case option. A listed word written in another case is changed to the listed spelling."
   clock:
     type: enum
     values: [event, edge]
