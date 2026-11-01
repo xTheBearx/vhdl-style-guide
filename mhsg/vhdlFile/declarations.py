@@ -123,6 +123,41 @@ dScopeNameKinds = {
 }
 
 
+# Every token class build() acts on.  Tokens of other classes are skipped.
+tRelevantTokens = tuple(
+    [oOpener for oOpener, sKind, tClosers in lScopeOpeners]
+    + [oCloser for oOpener, sKind, tClosers in lScopeOpeners for oCloser in tClosers]
+    + [oClass for oClass, sKind in lDeclarationTokens]
+    + list(lInterfaceTokens)
+    + list(lScopeNameTokens)
+    + [
+        iteration_scheme.for_keyword,
+        iteration_scheme.while_keyword,
+        loop_statement.loop_keyword,
+        loop_statement.semicolon,
+        generic_clause.generic_keyword,
+        port_clause.port_keyword,
+        generic_clause.semicolon,
+        port_clause.semicolon,
+        use_clause.package_name,
+        architecture_body.entity_name,
+        identifier_list.identifier,
+    ]
+)
+
+# Whether a token class is a subclass of one in tRelevantTokens, filled in as classes are seen
+dRelevantClasses = {}
+
+
+def is_relevant(oToken):
+    oClass = oToken.__class__
+    bRelevant = dRelevantClasses.get(oClass)
+    if bRelevant is None:
+        bRelevant = issubclass(oClass, tRelevantTokens)
+        dRelevantClasses[oClass] = bRelevant
+    return bRelevant
+
+
 class Declaration:
     def __init__(self, sName, sKind, oScope, iIndex):
         self.name = sName
@@ -276,6 +311,8 @@ def build(self, lTokens):
     lStack = [self.root]
     sInterfaceKind = "parameter"
     for iIndex, oToken in enumerate(lTokens):
+        if not is_relevant(oToken):
+            continue
         oScope = lStack[-1]
 
         # Loop scopes start at the iteration scheme, or at the loop keyword of a loop without one

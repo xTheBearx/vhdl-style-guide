@@ -228,59 +228,32 @@ def build_default_map():
 
 
 def extract_start_end_indexes(lStartIndexes, lEndIndexes):
-    mylStartIndexes = lStartIndexes.copy()
-    mylEndIndexes = lEndIndexes.copy()
-    lPairs = extract_pairs(mylStartIndexes, mylEndIndexes)
+    lPairs = extract_pairs(lStartIndexes, lEndIndexes)
     return extract_indexes_from_pairs(lPairs)
 
 
 def extract_pairs(lStartIndexes, lEndIndexes):
+    """
+    Pairs each end index with the closest unpaired start index before it, the
+    way nested parentheses are matched.  A start and an end at the same index
+    form a pair.  Indexes that cannot be paired are left out.
+    """
+    lEvents = [(iIndex, 0) for iIndex in lStartIndexes]
+    lEvents.extend((iIndex, 1) for iIndex in lEndIndexes)
+    lEvents.sort()
+    lOpen = []
     lMyPairs = []
-    while len(lEndIndexes) > 0 and len(lStartIndexes) > 0:
-        iMin = lEndIndexes[-1] + 1
-        lPair = []
-        for iStart in lStartIndexes:
-            lPair = extract_closest_pair(iStart, lEndIndexes, lPair, iMin)
-
-        if pair_is_empty(lPair):
-            break
-
-        lMyPairs.append(lPair)
-
-        lStartIndexes.remove(lPair[0])
-        lEndIndexes.remove(lPair[1])
-
+    for iIndex, iKind in lEvents:
+        if iKind == 0:
+            lOpen.append(iIndex)
+        elif lOpen:
+            lMyPairs.append([lOpen.pop(), iIndex])
     return lMyPairs
 
 
-def extract_closest_pair(iStart, lEndIndexes, lPair, iMin):
-    # The list of end indexes is assumed to be sorted. Get the first end >= start via binary search.
-    iPos = bisect.bisect_left(lEndIndexes, iStart)
-    if iPos == len(lEndIndexes):
-        return lPair
-    iEnd = lEndIndexes[iPos]
-    if iEnd - iStart < iMin:
-        lPair = [iStart, iEnd]
-    return lPair
-
-
 def extract_indexes_from_pairs(lPairs):
-    lStartIndexes = []
-    lPairs = remove_any_empty_pairs(lPairs)
-    for pair in lPairs:
-        lStartIndexes.append(pair[0])
-
-    lStartIndexes.sort()
-
-    lReturnStartIndexes = []
-    lReturnEndIndexes = []
-    for iStartIndex in lStartIndexes:
-        lReturnStartIndexes.append(iStartIndex)
-        for pair in lPairs:
-            if pair[0] == iStartIndex:
-                lReturnEndIndexes.append(pair[1])
-
-    return lReturnStartIndexes, lReturnEndIndexes
+    lPairs = sorted(remove_any_empty_pairs(lPairs))
+    return [lPair[0] for lPair in lPairs], [lPair[1] for lPair in lPairs]
 
 
 def pair_is_empty(lPair):

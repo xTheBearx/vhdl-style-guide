@@ -124,7 +124,8 @@ def fix_selected_name(sValue, dElements, lOtherNames):
 
 
 def is_aggregate_choice(iToken, lAllTokens):
-    for oToken in lAllTokens[iToken + 1 :]:
+    for iIndex in range(iToken + 1, len(lAllTokens)):
+        oToken = lAllTokens[iIndex]
         if isinstance(oToken, parser.whitespace):
             continue
         return isinstance(oToken, token.element_association.assignment)
