@@ -11,8 +11,8 @@ begin
     set(
         arr   => data_result,
         value => get(
-                     arr=> data_inputs(input_idx),
-                     idx=> word_idx
+                     arr => data_inputs(input_idx),
+                     idx => word_idx
                    )
       );
 

@@ -137,6 +137,29 @@ This rule checks for a single space after the **=>** operator in procedure calls
      port_4 => underflow
    );
 
+procedure_call_102
+##################
+
+|phase_2| |error| |whitespace|
+
+Alias: :code:`procedure_call_space_before_arrow`
+
+This rule checks for at least a single space before the **=>** operator in procedure calls.
+
+|configuring_whitespace_rules_link|
+
+**Violation**
+
+.. code-block:: vhdl
+
+   connect_ports(port_1=> data, port_2=> enable);
+
+**Fix**
+
+.. code-block:: vhdl
+
+   connect_ports(port_1 => data, port_2 => enable);
+
 procedure_call_300
 ##################
 
