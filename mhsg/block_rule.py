@@ -28,6 +28,10 @@ class Rule(structure.Rule):
         self.max_footer_column = None
         self.configuration_documentation_link = "configuring_block_comments_link"
 
+    def analyze(self, oFile):
+        self.allow_indenting = utils.convert_yes_no_option_to_boolean(self.allow_indenting)
+        super().analyze(oFile)
+
     def analyze_comments(self, oToi):
         """
         Checks one block comment. Each block comment rule checks a different part of the block.
