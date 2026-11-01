@@ -39,3 +39,23 @@ projects:
       # Template that scripts/ada/smc_gen.sh completes into a package
       - scripts/ada/strings_maps_constants.head.vhdl
     known_issues: {}
+
+  - name: neorv32
+    url: https://github.com/stnolting/neorv32.git
+    commit: ca868623360fb3f94438e3b428cca80df5ead00e
+    known_issues: {}
+
+  - name: open-logic
+    url: https://github.com/open-logic/open-logic.git
+    commit: 10d65bee58be4a69d2434f4807732abc74c4d436
+    known_issues: {}
+
+  - name: hdl-modules
+    url: https://github.com/hdl-modules/hdl-modules.git
+    commit: 2bdb03032345a72b2cff17d2ab5ab6af422b636b
+    known_issues: {}
+
+  - name: surf
+    url: https://github.com/slaclab/surf.git
+    commit: f0b5e3a7b5ab191be1cb5f4453e418299181c9d8
+    known_issues: {}
