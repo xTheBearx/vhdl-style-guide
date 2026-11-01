@@ -23,7 +23,8 @@ def check_for_case_violation(oToi, self, check_prefix=False, check_suffix=False,
         return None
 
     elif case_exception_found(sObjectValue, self):
-        oViolation = check_for_exception(sObjectValue, self, oToi, iIndex, iMyLine)
+        # A word written exactly as listed is allowed. Other spellings of it follow the case option.
+        return None
 
     else:
         oViolation = dChecker[check_prefix][check_suffix](sObjectValue, self, oToi, iIndex, iMyLine, dCase[self.case]["check"])
@@ -238,15 +239,7 @@ def regex_exception_found(sObjectValue, self):
 
 
 def case_exception_found(sObjectValue, self):
-    if sObjectValue in self.case_exceptions:
-        return True
-    return False
-
-
-def check_for_exception(sObjectValue, self, oToi, iIndex, iLine):
-    iIndex = self.case_exceptions_lower.index(sObjectValue.lower())
-    if sObjectValue != self.case_exceptions[iIndex]:
-        return create_case_violation(sObjectValue, self.case_exceptions[iIndex], oToi, iIndex, iLine)
+    return sObjectValue in self.case_exceptions
 
 
 def does_not_contain_any_alpha_characters(sObjectValue):

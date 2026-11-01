@@ -111,7 +111,7 @@ There are several options to these rules:
    Empty String
 
 .. |ce_description| replace::
-   Enforce case for items in the list.
+   Allow items written exactly as listed. Other spellings follow the case option.
 
 .. |regex_option| replace::
    :code:`regex`
@@ -225,6 +225,10 @@ Example: |case_option| set to |upper_value| and |suffix_exceptions_option| set t
 
 Example: |case_option| set to |upper_value| and |case_exceptions_option| set to :code:`addr_WIDTH_c`
 ####################################################################################################
+
+Items in |case_exceptions_option| are allowed when they are written exactly as listed.
+Other spellings of them follow the |case_option| option, so :code:`ADDR_WIDTH_C` would also pass and :code:`Addr_Width_C` would be changed to :code:`ADDR_WIDTH_C`.
+The following code would pass:
 
 .. code-block:: vhdl
 
