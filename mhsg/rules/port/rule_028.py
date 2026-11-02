@@ -10,6 +10,30 @@ from mhsg.vhdlFile import utils
 lKeys = ["clock_reset", "direction", "name"]
 
 
+CLOCK_WORDS = ["clk", "clock", "*clk", "clk[0-9]*", "*clk[0-9]*", "clock[0-9]*", "clkin", "clkout", "clockin", "clockout"]
+# Listed instead of *rst and *reset, which would also match words such as first, burst and preset
+RESET_WORDS = [
+    "rst",
+    "rstn",
+    "rstb",
+    "rst[0-9]*",
+    "nrst",
+    "arst",
+    "arstn",
+    "srst",
+    "srstn",
+    "reset",
+    "resetn",
+    "nreset",
+    "areset",
+    "aresetn",
+    "sreset",
+    "sresetn",
+    "presetn",
+]
+QUALIFIER_WORDS = ["en", "ena", "enable", "sel", "div", "cnt", "count", "gate", "locked", "stable", "valid", "req", "ack", "done"]
+
+
 class rule_028(structure.Rule):
     """
     This rule checks the order of port declarations.
@@ -80,30 +104,11 @@ class rule_028(structure.Rule):
         self.configuration.append("order")
         self.direction_order = ["in", "inout", "out", "buffer", "linkage"]
         self.configuration.append("direction_order")
-        self.clock_words = ["clk", "clock", "*clk", "clk[0-9]*", "*clk[0-9]*", "clock[0-9]*", "clkin", "clkout", "clockin", "clockout"]
+        self.clock_words = list(CLOCK_WORDS)
         self.configuration.append("clock_words")
-        # Listed instead of *rst and *reset, which would also match words such as first, burst and preset
-        self.reset_words = [
-            "rst",
-            "rstn",
-            "rstb",
-            "rst[0-9]*",
-            "nrst",
-            "arst",
-            "arstn",
-            "srst",
-            "srstn",
-            "reset",
-            "resetn",
-            "nreset",
-            "areset",
-            "aresetn",
-            "sreset",
-            "sresetn",
-            "presetn",
-        ]
+        self.reset_words = list(RESET_WORDS)
         self.configuration.append("reset_words")
-        self.qualifier_words = ["en", "ena", "enable", "sel", "div", "cnt", "count", "gate", "locked", "stable", "valid", "req", "ack", "done"]
+        self.qualifier_words = list(QUALIFIER_WORDS)
         self.configuration.append("qualifier_words")
         self.differential_suffixes = [["_p", "_n"]]
         self.configuration.append("differential_suffixes")
@@ -147,14 +152,7 @@ class rule_028(structure.Rule):
         return lReturn
 
     def _clock_reset_rank(self, sName):
-        lWords = [sWord for sWord in sName.lower().split("_") if sWord != ""]
-        if any_word_matches(lWords, self.qualifier_words):
-            return 2
-        if any_word_matches(lWords, self.clock_words):
-            return 0
-        if any_word_matches(lWords, self.reset_words):
-            return 1
-        return 2
+        return clock_reset_rank(sName, self.clock_words, self.reset_words, self.qualifier_words)
 
     def _reason_not_moved(self, sKind, sName, lPositional, lGroup, lElements, bWithinSections):
         if self.move_ports != "when_safe":
@@ -217,6 +215,25 @@ def get_differential_pairs(lElements, lSuffixes):
                 dReturn[sName] = (sBase, 0)
                 dReturn[sBase + sNegative] = (sBase, 1)
     return dReturn
+
+
+def clock_reset_rank(sName, lClockWords=CLOCK_WORDS, lResetWords=RESET_WORDS, lQualifierWords=QUALIFIER_WORDS):
+    """
+    Returns 0 for a clock name, 1 for a reset name and 2 for any other name.
+    The name is split into words at underscores; a qualifier word such as en makes it neither.
+    """
+    lWords = [sWord for sWord in sName.lower().split("_") if sWord != ""]
+    if any_word_matches(lWords, lQualifierWords):
+        return 2
+    if any_word_matches(lWords, lClockWords):
+        return 0
+    if any_word_matches(lWords, lResetWords):
+        return 1
+    return 2
+
+
+def is_reset_name(sName):
+    return clock_reset_rank(sName) == 1
 
 
 def any_word_matches(lWords, lPatterns):
