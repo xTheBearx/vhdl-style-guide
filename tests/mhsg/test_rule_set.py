@@ -45,7 +45,7 @@ class test_rule_set(unittest.TestCase):
                 oFile.write("name: Mine\nprefix: MY\nchecks:\n  A1:\n    severity: Note\n    rules: [lint_009]\n")
             dRules = rules(sRuleSet=sFileName)
         self.assertEqual(["MY-A1"], dRules["lint_009"].rule_set_labels)
-        self.assertEqual("Note", dRules["lint_009"].severity.name)
+        self.assertEqual("Note", dRules["lint_009"].get_report_severity().name)
         self.assertTrue(dRules["lint_001"].disable)
 
     def test_unknown_rule_in_rule_set(self):
@@ -60,12 +60,14 @@ class test_rule_set(unittest.TestCase):
         dRules = rules()
         self.assertEqual(["DO254-SS4"], dRules["lint_009"].rule_set_labels)
         self.assertFalse(dRules["lint_009"].disable)
-        self.assertEqual("Warning", dRules["lint_009"].severity.name)
-        self.assertEqual("Note", dRules["lint_004"].severity.name)
-        self.assertEqual("Error", dRules["lint_003"].severity.name)
+        self.assertEqual("Warning", dRules["lint_009"].get_report_severity().name)
+        self.assertEqual("Note", dRules["lint_004"].get_report_severity().name)
+        self.assertEqual("Error", dRules["lint_003"].get_report_severity().name)
         self.assertEqual(["DO254-DR7"], dRules["whitespace_002"].rule_set_labels)
-        self.assertEqual("Warning", dRules["whitespace_002"].severity.name)
+        self.assertEqual("Warning", dRules["whitespace_002"].get_report_severity().name)
         self.assertEqual("DO254-SS4 (lint_009)", dRules["lint_009"].get_display_id())
+        # The rule's own severity, which decides whether --fix fixes it, is not changed
+        self.assertEqual("Error", dRules["whitespace_002"].severity.name)
 
     def test_do254_groups_and_configuration(self):
         dRules = rules()
@@ -95,6 +97,20 @@ class test_rule_set(unittest.TestCase):
     def test_lint_rules_off_without_lint_mode(self):
         oRules = rule_list.rule_list(vhdlFile.vhdlFile([""]), severity.create_list({}))
         self.assertTrue(all(o.disable for o in oRules.rules if o.lint))
+
+    def test_configured_severity_replaces_rule_set_severity(self):
+        oSeverities = severity.create_list({})
+        oRules = rule_list.rule_list(vhdlFile.vhdlFile([""]), oSeverities)
+        oConfig = config.config()
+        oConfig.severity_list = oSeverities
+        oConfig.lint_mode = "lint"
+        oConfig.rule_set = rule_set.load("do254")
+        rule_set.apply(oRules, oConfig)
+        oConfig.dConfig = {"rule": {"whitespace_002": {"severity": "Note"}}}
+        oRules.configure(oConfig)
+        dRules = {o.unique_id: o for o in oRules.rules}
+        self.assertEqual("Note", dRules["whitespace_002"].get_report_severity().name)
+        self.assertEqual("Warning", dRules["length_002"].get_report_severity().name)
 
     def test_most_severe(self):
         self.assertEqual("Error", rule_set.most_severe(["Note", "Error", "Warning"]))
@@ -130,6 +146,61 @@ class test_lint_command_line(unittest.TestCase):
     def test_unknown_rule_set(self):
         lOutput = self.run_mhsg(["--lint", "--rule_set", "nothing"])
         self.assertEqual(["ERROR: rule set nothing is not a built in rule set (do254) or a file"], lOutput)
+
+
+sFixInput = "\n".join(
+    [
+        "",
+        "architecture rtl of fifo is",
+        "",
+        "begin",
+        "",
+        "  PROC_A : process (a) is",
+        "  begin",
+        "",
+        "\tb <= a;",
+        "        c   <= a;",
+        "    if a = '1' then d <= a; end if;",
+        "",
+        "  end process PROC_A;",
+        "",
+        "END architecture rtl;",
+        "",
+    ]
+)
+
+
+class test_lint_fix(unittest.TestCase):
+    def fix(self, lArguments):
+        with tempfile.TemporaryDirectory() as sDirectory:
+            sFileName = os.path.join(sDirectory, "fix.vhd")
+            with open(sFileName, "w", encoding="utf-8") as oFile:
+                oFile.write(sFixInput)
+            oResult = subprocess.run([*utils.mhsg_exec(), "-f", sFileName, "--fix", "-of", "syntastic", *lArguments], cwd=sRoot, capture_output=True, text=True, check=False)
+            with open(sFileName, encoding="utf-8") as oFile:
+                return oFile.read().splitlines(), oResult.stdout
+
+    def test_lint_fix_fixes_style_like_fix(self):
+        lPlain, sPlain = self.fix([])
+        lLint, sLint = self.fix(["--lint"])
+        self.assertEqual(lPlain, lLint)
+        # Tabs (DR7) and indent (DR6) are fixed although the rule set reports them as Warning and Note
+        self.assertIn("    b <= a;", lLint)
+        self.assertIn("end architecture rtl;", lLint)
+
+    def test_lint_only_fix_fixes_only_the_rule_set_style_rules(self):
+        lFixed, sOutput = self.fix(["--lint_only"])
+        # Indent and tabs are in the rule set and are fixed
+        self.assertIn("    b <= a;", lFixed)
+        self.assertIn("    c   <= a;", lFixed)
+        # Keyword case and alignment are not in the rule set and are left as they are
+        self.assertIn("END architecture rtl;", lFixed)
+
+    def test_lint_checks_run_after_the_fix(self):
+        lFixed, sOutput = self.fix(["--lint_only"])
+        # DR5 moves the assignment after then to its own line, and the latch is reported on that line of the fixed file
+        self.assertEqual("      d <= a;", lFixed[11])
+        self.assertIn("(12)DO254-SS4 (lint_009) -- Signal d is not assigned on every path of the combinational process, which infers a latch", sOutput)
 
 
 class test_rule_set_documentation(unittest.TestCase):

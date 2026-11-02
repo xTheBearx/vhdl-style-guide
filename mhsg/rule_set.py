@@ -3,8 +3,9 @@
 Rule sets map the checks of a coding standard, such as the DO-254 coding standards, to the rules that implement them.
 
 A rule set is a YAML file. Built in sets are in mhsg/rule_sets and are selected by name; a user's own set is selected by its path.
-When a rule set is applied, each rule it lists is enabled, gets the severity of its check, and is labelled with the
-check identifier in reports, for example "DO254-CP2 (lint_001)".
+When a rule set is applied, each rule it lists is enabled, is reported with the severity of its check, and is labelled
+with the check identifier in reports, for example "DO254-CP2 (lint_001)". The severity only changes reporting: whether
+--fix fixes a rule still follows the rule's own severity.
 """
 
 import os
@@ -136,7 +137,8 @@ def set_attribute(oRule, sAttribute, oValue, oSeverityList, oRuleSet):
         oSeverity = oSeverityList.get_severity_named(oValue)
         if oSeverity is None:
             raise exceptions.ConfigurationError(f"ERROR: severity {oValue} in rule set {oRuleSet.name} does not exist")
-        oRule.severity = oSeverity
+        # Only the reported severity changes: whether --fix fixes the rule still follows its own severity
+        oRule.report_severity = oSeverity
     elif sAttribute in oRule.configuration:
         setattr(oRule, sAttribute, oValue)
     else:

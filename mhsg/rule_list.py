@@ -212,7 +212,7 @@ class rule_list:
         iFailures = 0
         for oRule in filter_out_disabled_rules([o for o in self.rules if o.lint]):
             oRule.analyze(self.oVhdlFile)
-            if oRule.severity.type == severity.error_type:
+            if oRule.get_report_severity().type == severity.error_type:
                 iFailures += len(oRule.violations)
             self.iNumberRulesRan += 1
         return iFailures
@@ -265,7 +265,7 @@ class rule_list:
 
                 for oRule in lRules:
                     oRule.analyze(self.oVhdlFile)
-                    if oRule.severity.type == severity.error_type:
+                    if oRule.get_report_severity().type == severity.error_type:
                         iFailures += len(oRule.violations)
                     self.iNumberRulesRan += 1
                 self.lastPhaseRan = phase
@@ -396,7 +396,7 @@ class rule_list:
         oTestcase = junit.testcase(sVhdlFileName, str(0))
         oFailure = junit.failure("Failure")
         for oRule in self.rules:
-            if len(oRule.violations) > 0 and oRule.severity.type == severity.error_type:
+            if len(oRule.violations) > 0 and oRule.get_report_severity().type == severity.error_type:
                 for dViolation in oRule.violations:
                     sLine = oRule.get_display_id() + ": "
                     sLine += str(utils.get_violation_line_number(dViolation)) + " : "
@@ -424,7 +424,7 @@ class rule_list:
                     if oRule.rule_set_labels:
                         dTemp["checks"] = list(oRule.rule_set_labels)
                     dTemp["linenumber"] = oViolation.get_line_number()
-                    dTemp["severity"] = oRule.severity.name
+                    dTemp["severity"] = oRule.get_report_severity().name
                     dTemp["solution"] = oViolation.get_solution()
                     dReturn["violations"].append(dTemp)
         return dReturn

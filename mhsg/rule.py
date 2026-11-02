@@ -37,6 +37,9 @@ class Rule:
         self.lint = False
         # The check identifiers of the rule sets this rule implements, such as DO254-CP2
         self.rule_set_labels = []
+        # The severity a rule set reports this rule with, or None. It is used for reporting and the exit status;
+        # whether --fix fixes the rule still follows self.severity, so a rule set does not change what is fixed.
+        self.report_severity = None
 
     def configure(self, oConfig):
         """Configures attributes on rules using a dictionary of the following form:
@@ -69,12 +72,17 @@ class Rule:
     def _build_violation_dict_from_violation_object(self, violation):
         dViolation = {}
         dViolation["severity"] = {}
-        dViolation["severity"]["name"] = self.severity.name
-        dViolation["severity"]["type"] = self.severity.type
+        oSeverity = self.get_report_severity()
+        dViolation["severity"]["name"] = oSeverity.name
+        dViolation["severity"]["type"] = oSeverity.type
         dViolation["rule"] = self.get_display_id()
         dViolation["lineNumber"] = str(violation.get_line_number())
         dViolation["solution"] = violation.get_solution()
         return dViolation
+
+    def get_report_severity(self):
+        """Returns the severity violations are reported with: the one from the rule set, if any, else the rule's own."""
+        return self.report_severity if self.report_severity is not None else self.severity
 
     def get_display_id(self):
         """
@@ -209,7 +217,7 @@ class Rule:
         dConfig = {}
         for sParameter in self.configuration:
             dConfig[sParameter] = getattr(self, sParameter)
-        dConfig["severity"] = self.severity.name
+        dConfig["severity"] = self.get_report_severity().name
         return dConfig
 
     def _get_solution(self, iLineNumber):
@@ -289,6 +297,7 @@ def configure_attribute(self, oConfig, sGroupName):
         for sAttributeName in oConfig.dConfig["rule"]["group"][sGroupName]:
             if sAttributeName == "severity":
                 self.severity = oConfig.severity_list.get_severity_named(oConfig.dConfig["rule"]["group"][sGroupName]["severity"])
+                self.report_severity = None
             elif sAttributeName in self.__dict__:
                 self.__dict__[sAttributeName] = oConfig.dConfig["rule"]["group"][sGroupName][sAttributeName]
     except KeyError:
@@ -316,7 +325,9 @@ def configure_rule_attributes(self, oConfig):
     try:
         for sAttributeName in oConfig.dConfig["rule"][self.get_unique_id()]:
             if sAttributeName == "severity":
+                # A severity configured for the rule itself replaces the one from the rule set
                 self.severity = oConfig.severity_list.get_severity_named(oConfig.dConfig["rule"][self.get_unique_id()]["severity"])
+                self.report_severity = None
             elif sAttributeName in self.__dict__:
                 self.__dict__[sAttributeName] = oConfig.dConfig["rule"][self.get_unique_id()][sAttributeName]
             for oOption in self.options:

@@ -39,7 +39,30 @@ The same can be set in a configuration file:
 
 Lint rules run before the style phases and do not stop a run, so they report the same problems whatever the formatting.
 A rule set can also reuse style rules, for example the indent rules for consistent indentation.
-Those rules get the severity of their check, so a style rule with the severity Warning or Note is reported but not fixed by **--fix**.
+Those rules are reported with the severity of their check.
+
+Fixing in lint mode
+-------------------
+
+Lint rules never change the code. With **--fix**, the style rules are fixed first and the lint checks then run on the fixed file,
+so their line numbers refer to the fixed file.
+
+The severity from a rule set only changes how a rule is reported and whether it fails the run.
+Whether **--fix** fixes a rule still follows the rule's own severity, its default or the one in your configuration:
+
++----------------------+------------------------------------------------------------+------------------------------+
+| Command              | Fixed                                                      | Lint checks                  |
++======================+============================================================+==============================+
+| --fix                | The style rules, as without lint mode                      | Not run                      |
++----------------------+------------------------------------------------------------+------------------------------+
+| --lint --fix         | The style rules, as without lint mode                      | Reported on the fixed file   |
++----------------------+------------------------------------------------------------+------------------------------+
+| --lint_only --fix    | Only the style rules of the rule set, such as indentation  | Reported on the fixed file   |
+|                      | and tabs for **do254**                                     |                              |
++----------------------+------------------------------------------------------------+------------------------------+
+
+A rule set can also change which rules run: **do254** disables the rules that remove labels, since DR1 asks for labels.
+Setting the severity of a rule in a configuration file replaces the severity from the rule set.
 
 Output
 ------
