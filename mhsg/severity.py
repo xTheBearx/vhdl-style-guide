@@ -50,6 +50,16 @@ def _add_built_in_severities(self):
     return lReturn
 
 
+def add_note(oSeverityList):
+    """
+    Adds the Note severity, used by rule sets, unless the list already has a severity of that name.
+    A Note is reported like a warning: it does not fail a run. It is added only in lint mode, so the summary of
+    other runs does not change.
+    """
+    if oSeverityList.get_severity_named("Note") is None:
+        oSeverityList.add_severity(warning("Note"))
+
+
 def _extract_severities_from_configuration(dConfiguration):
     """
     Creates a list of severities from a configuration.

@@ -11,10 +11,12 @@ from . import (
     apply_rules,
     cmd_line_args,
     config,
+    exceptions,
     junit,
     options_description,
     project_index,
     rule_list,
+    rule_set,
     utils,
     version,
     vhdlFile,
@@ -40,6 +42,7 @@ def generate_output_configuration(commandLineArguments, oConfig):
         # Create empty file so it can be used to create the rule list
         oVhdlFile = vhdlFile.vhdlFile([""])
         oRules = rule_list.rule_list(oVhdlFile, oConfig.severity_list, commandLineArguments.local_rules)
+        rule_set.apply(oRules, oConfig)
         oRules.configure(oConfig)
         dOutputConfiguration = {}
         if commandLineArguments.filename:
@@ -83,6 +86,7 @@ def display_rule_configuration(commandLineArguments, oConfig):
         # Create empty file so it can be used to create the rule list
         oVhdlFile = vhdlFile.vhdlFile([""])
         oRules = rule_list.rule_list(oVhdlFile, oConfig.severity_list, commandLineArguments.local_rules)
+        rule_set.apply(oRules, oConfig)
         oRules.configure(oConfig)
         dOutputConfiguration = {}
         if commandLineArguments.local_rules:
@@ -149,11 +153,18 @@ def main():
     version.print_version(commandLineArguments)
 
     oConfig = config.New(commandLineArguments)
+    try:
+        rule_set.configure_lint_mode(oConfig, commandLineArguments)
+    except exceptions.ConfigurationError as e:
+        print(e.message)
+        sys.exit(1)
     if not commandLineArguments.stdin:
         lIndexFiles = get_index_files(commandLineArguments)
         oConfig.project_type_names = project_index.collect_type_names(lIndexFiles)
         oConfig.project_positional_entities = project_index.collect_positional_entity_instantiations(lIndexFiles)
         oConfig.project_port_orders = project_index.collect_port_orders(lIndexFiles)
+        if oConfig.lint_mode is not None:
+            oConfig.project_port_modes = project_index.collect_port_modes(lIndexFiles)
         oConfig.project_positional_generic_entities = project_index.collect_positional_entity_instantiations(lIndexFiles, "generic")
 
     # Add local rule path to system path so the rules can be loaded

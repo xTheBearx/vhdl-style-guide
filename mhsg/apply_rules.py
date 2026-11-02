@@ -3,7 +3,7 @@
 import os
 import shutil
 
-from . import config, junit, rule_list, vhdlFile
+from . import config, junit, rule_list, rule_set, vhdlFile
 from .exceptions import ClassifyError, ConfigurationError
 
 
@@ -98,6 +98,7 @@ def apply_rules(commandLineArguments, oConfig, tIndexFileName):
         return 1, None, dJsonEntry, sOutputStd, sOutputErr, bStopProcessingFiles
 
     try:
+        rule_set.apply(oRules, oConfig)
         configure_rules(oConfig, oRules, configuration, iIndex, sFileName)
     except ConfigurationError as e:
         fExitStatus = True

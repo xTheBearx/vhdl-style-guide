@@ -32,6 +32,11 @@ class Rule:
         self.configuration_documentation_link = None
         self.prerequisites = []
         self.remap = True
+        # Lint rules report problems in the design instead of its formatting. They run in a pass of their
+        # own, before the phases, and only when lint mode is on.
+        self.lint = False
+        # The check identifiers of the rule sets this rule implements, such as DO254-CP2
+        self.rule_set_labels = []
 
     def configure(self, oConfig):
         """Configures attributes on rules using a dictionary of the following form:
@@ -66,10 +71,19 @@ class Rule:
         dViolation["severity"] = {}
         dViolation["severity"]["name"] = self.severity.name
         dViolation["severity"]["type"] = self.severity.type
-        dViolation["rule"] = self.get_unique_id()
+        dViolation["rule"] = self.get_display_id()
         dViolation["lineNumber"] = str(violation.get_line_number())
         dViolation["solution"] = violation.get_solution()
         return dViolation
+
+    def get_display_id(self):
+        """
+        Returns the identifier shown in reports: the rule identifier, preceded by the checks of the
+        active rule set it implements, for example "DO254-SS4 (lint_009)".
+        """
+        if self.rule_set_labels:
+            return "/".join(self.rule_set_labels) + " (" + self.get_unique_id() + ")"
+        return self.get_unique_id()
 
     @property
     def alias(self):
