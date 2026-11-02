@@ -17,6 +17,7 @@ Welcome to vhdl-style-guide's documentation!
    formatting_terminal_output
    styles
    configuring
+   lint
    code_tags
    continuous_integration_servers
    editor_integration/editor_integration

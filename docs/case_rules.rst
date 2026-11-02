@@ -514,6 +514,63 @@ case_021
 
 The function of this rule has been superseded with comment indent updates and is handled by rule comment_010.
 
+case_022
+########
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`case_label_exists`
+
+This rule checks that case statements have a label.
+
+.. NOTE:: This rule is disabled by default.
+
+Labels make the statements easier to find in reviews and simulation.
+This rule cannot add labels, because it cannot name them.
+It is the opposite of case_019, which removes labels, so enable only one of them.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   case address is
+
+**Fix**
+
+.. code-block:: vhdl
+
+   address_decode : case address is
+
+case_023
+########
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`case_end_label_exists`
+
+This rule checks that the end of a case statement repeats its label.
+
+.. NOTE:: This rule is disabled by default.
+
+A case statement without a label is reported by case_022 instead.
+It is the opposite of case_020, which removes the label after **end case**, so enable only one of them.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   address_decode : case address is
+     when others => null;
+   end case;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   address_decode : case address is
+     when others => null;
+   end case address_decode;
+
 case_200
 ########
 

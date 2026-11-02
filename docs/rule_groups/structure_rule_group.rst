@@ -29,6 +29,8 @@ Rules Enforcing Structure Rule Group
 * `case_012 <../case_rules.html#case-012>`_
 * `case_019 <../case_rules.html#case-019>`_
 * `case_020 <../case_rules.html#case-020>`_
+* `case_022 <../case_rules.html#case-022>`_
+* `case_023 <../case_rules.html#case-023>`_
 * `comment_011 <../comment_rules.html#comment-011>`_
 * `comment_012 <../comment_rules.html#comment-012>`_
 * `comment_013 <../comment_rules.html#comment-013>`_
@@ -39,6 +41,7 @@ Rules Enforcing Structure Rule Group
 * `concurrent_005 <../concurrent_rules.html#concurrent-005>`_
 * `concurrent_011 <../concurrent_rules.html#concurrent-011>`_
 * `concurrent_012 <../concurrent_rules.html#concurrent-012>`_
+* `concurrent_013 <../concurrent_rules.html#concurrent-013>`_
 * `conditional_waveforms_001 <../conditional_waveforms_rules.html#conditional-waveforms-001>`_
 * `constant_007 <../constant_rules.html#constant-007>`_
 * `constant_016 <../constant_rules.html#constant-016>`_
