@@ -33,6 +33,10 @@ class rule_001(Rule):
             tKey = (oMessage.file, oMessage.line, oMessage.text)
             if oMessage.severity in (None, "error") and tKey not in lSeen:
                 lSeen.append(tKey)
-                sSource = "Design" if oMessage.stage == "configuration" else "GHDL"
-                lReturn.append(Finding(oMessage.file, oMessage.line, f"{sSource} {oMessage.stage} error: {oMessage.text}"))
+                if oMessage.stage == "verilog":
+                    sText = f"Yosys error: {oMessage.text}"
+                else:
+                    sSource = "Design" if oMessage.stage == "configuration" else "GHDL"
+                    sText = f"{sSource} {oMessage.stage} error: {oMessage.text}"
+                lReturn.append(Finding(oMessage.file, oMessage.line, sText))
         return lReturn

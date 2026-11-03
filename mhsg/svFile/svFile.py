@@ -71,6 +71,11 @@ class svFile(vhdl.vhdlFile):
 
     def parse(self, sText):
         """Builds the tokens of a text, with its syntax tree and the syntax nodes by kind."""
+        # The offset of the start of each line, in bytes as slang counts, see line_of
+        self.line_offsets = [0]
+        for iIndex, iByte in enumerate(sText.encode("utf-8")):
+            if iByte == 10:
+                self.line_offsets.append(iIndex + 1)
         # The source manager is kept with the tree, which refers to its buffers
         self.lAllObjects, (self.syntax_tree, self.source_manager), self.dNodes = build_tokens(sText, self.filename or "source.sv", bTree=True)
         self.dTokenAtOffset = {o.offset: o for o in self.lAllObjects if getattr(o, "offset", None) is not None}
@@ -92,6 +97,10 @@ class svFile(vhdl.vhdlFile):
         for sKind in lKinds:
             lReturn.extend(self.dNodes.get(sKind, []))
         return lReturn
+
+    def line_of(self, iOffset):
+        """The line number, from 1, of an offset in the text."""
+        return bisect.bisect_right(self.line_offsets, iOffset)
 
     def token_at_or_after(self, iOffset):
         """The first token of the file at or after an offset, or None."""

@@ -23,7 +23,7 @@ dBuiltIn = {}
 
 
 class Tools:
-    def __init__(self, sGhdl, sYosys, dEnvironment, sGhdlVersion, sYosysVersion, bBuiltIn=False):
+    def __init__(self, sGhdl, sYosys, dEnvironment, sGhdlVersion, sYosysVersion, bBuiltIn=False, bSlang=False):
         self.ghdl = sGhdl
         self.yosys = sYosys
         self.environment = dEnvironment
@@ -31,18 +31,25 @@ class Tools:
         self.yosys_version = sYosysVersion
         # Whether the ghdl command is built into Yosys, so no module is loaded
         self.built_in = bBuiltIn
+        # Whether Yosys has the read_slang command of the yosys-slang plugin, for SystemVerilog
+        self.slang = bSlang
 
     def module_options(self):
         """Returns the options that make the ghdl command available in Yosys: none if it is built in, else -m ghdl."""
         return [] if self.built_in else ["-m", "ghdl"]
 
 
-def find():
-    """Returns the Tools, or raises a DesignError when they are missing or the plugin does not load."""
+def find(bGhdl=True):
+    """
+    Returns the Tools, or raises a DesignError when they are missing or the plugin does not load. A design without
+    VHDL, bGhdl False, needs only Yosys.
+    """
     sGhdl = shutil.which("ghdl")
     sYosys = shutil.which("yosys")
-    if sGhdl is None or sYosys is None:
-        raise exceptions.DesignError("ERROR: " + INSTALL_HINT)
+    if sYosys is None or (bGhdl and sGhdl is None):
+        raise exceptions.DesignError("ERROR: " + (INSTALL_HINT if bGhdl else "Design analysis of Verilog and SystemVerilog needs Yosys."))
+    if not bGhdl:
+        return Tools(sGhdl, sYosys, dict(os.environ), "", first_line([sYosys, "-V"]), bSlang=has_slang(sYosys))
     dEnvironment = dict(os.environ)
     if "GHDL_PREFIX" not in dEnvironment:
         # The plugin does not always find the libraries of the installed GHDL backend, so tell it where they are
@@ -54,7 +61,28 @@ def find():
         oPlugin = subprocess.run([sYosys, "-m", "ghdl", "-q", "-p", "help ghdl"], capture_output=True, text=True, env=dEnvironment, check=False)
         if oPlugin.returncode != 0:
             raise exceptions.DesignError("ERROR: Yosys cannot load the GHDL plugin. " + INSTALL_HINT)
-    return Tools(sGhdl, sYosys, dEnvironment, first_line([sGhdl, "--version"]), first_line([sYosys, "-V"]), bBuiltIn)
+    return Tools(sGhdl, sYosys, dEnvironment, first_line([sGhdl, "--version"]), first_line([sYosys, "-V"]), bBuiltIn, has_slang(sYosys))
+
+
+# Yosys -> the options that give it the read_slang command, or None
+dSlang = {}
+
+
+def has_slang(sYosys):
+    """Whether Yosys has the read_slang command, built in or from the slang plugin, checked once for each Yosys."""
+    return slang_options(sYosys) is not None
+
+
+def slang_options(sYosys):
+    """The options that give Yosys the read_slang command: none when it is built in, -m slang for the plugin."""
+    if sYosys not in dSlang:
+        dSlang[sYosys] = None
+        for lOptions in ([], ["-m", "slang"]):
+            oHelp = subprocess.run([sYosys, *lOptions, "-Q", "-T", "-p", "help read_slang"], capture_output=True, text=True, check=False)
+            if oHelp.returncode == 0 and "No such command" not in oHelp.stdout + oHelp.stderr:
+                dSlang[sYosys] = lOptions
+                break
+    return dSlang[sYosys]
 
 
 def built_in(sYosys, dEnvironment):

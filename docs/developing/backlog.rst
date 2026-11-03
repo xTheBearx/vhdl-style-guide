@@ -105,7 +105,13 @@ files with pyslang and running the language neutral rules, is done; see :doc:`..
   checks slang does not make, as an optional tool like GHDL.
 * **Sensitivity lists** (sv_lint_008) are compared with the names the block reads, by name; reads through
   functions and hierarchical names are not followed.
-* **Design analysis** of SystemVerilog (yosys-slang) is a later step of the plan.
+* **SystemVerilog designs without the yosys-slang plugin**: Yosys' own reader handles Verilog and part of
+  SystemVerilog; ibex and common_cells need the plugin, which is not packaged for Ubuntu. Not yet tried with it.
+* **Mixed designs with a Verilog top** and VHDL modules: Yosys would need each VHDL entity the Verilog instantiates
+  elaborated with the ghdl command first; the design section could list them.
+* **Black boxes in Verilog designs**: an instance of a module with no source, such as a vendor primitive, stops
+  Yosys' hierarchy check. Vendor simulation libraries in Verilog (unisims), or stubs made from the black box
+  declarations, would let them through.
 * **Real-world SystemVerilog check**: ibex, common_cells and picorv32 (914 files) were checked by hand; they should be
   added to :code:`scripts/real_world_designs.yaml` once it can hold SystemVerilog projects.
 
