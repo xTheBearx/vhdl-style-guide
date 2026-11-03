@@ -99,7 +99,7 @@ checks:
   SS2:
     title: Ensure proper case statement specification
     severity: Error
-    rules: [lint_005, lint_006, lint_007, sv_case_001, sv_lint_006]
+    rules: [lint_005, lint_006, lint_007, sv_case_001, sv_lint_006, sv_lint_013]
   SS3:
     title: Avoid combinational feedback
     severity: Error
@@ -115,7 +115,7 @@ checks:
   SS6:
     title: Avoid multiple drivers
     severity: Error
-    rules: [lint_010, design_004, sv_lint_003]
+    rules: [lint_010, design_004, sv_lint_003, sv_lint_012]
   SS7:
     title: Avoid uninitialized VHDL deferred constants
     severity: Warning

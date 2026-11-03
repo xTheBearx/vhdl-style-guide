@@ -1079,7 +1079,8 @@ checks:
     title: Case item widths and coverage must match the selector width
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_lint_013
     note: Verilog only.
   2.8.2.1:
     title: Split case tables exceeding 32 I/Os (about 20 inputs, 12 outputs)

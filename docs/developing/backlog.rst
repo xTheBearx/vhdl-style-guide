@@ -45,12 +45,8 @@ Design analysis
   but slower and loses names.
 * **Unused combinational signals and delay chains** (DO-254 SS17 in part, SS1) cannot be found in the netlist, because
   GHDL removes them; they need per-file checks.
-* **Unused register detection** parses every VHDL file of the design, which slows large designs (neorv32: about 4 s to
-  13 s). Caching the parsed files would help.
 * **True dual-port RAM** written from two processes through a shared variable does not synthesize in GHDL
   (Open Logic olo_base_ram_tdp).
-* **Generics of type real** are set by patching a copy of the top file; other types GHDL cannot set from the command
-  line would need the same.
 * **More real-world designs** in :code:`scripts/real_world_designs.yaml`: surf (needs the vendor libraries), the
   hdl-modules designs that use them (hard_fifo), and a multi-clock design with vendor clocking.
 
@@ -60,13 +56,8 @@ Lint and rule sets
 * **DO-254 checks still planned for per-file lint**: CP3, CP4, CP6 (reset state and others branch), CP9, CP10, CP14
   and DR2 for VHDL (checked for SystemVerilog), SS5, SS7, SS17 (signals), SS20, SS21, DR3, DR9, DR10, DR11. See the
   coverage table of the do254 rule set.
-* **Waivers in the other reports**: waived findings are listed in the text and JSON outputs; the JUnit report and the
-  code quality report leave them out.
 * **Tool qualification support**: :code:`--qualify` running the pass and fail examples of each check of a rule set,
   with a report of expected against actual results and the versions of mhsg, the rule set, GHDL and Yosys.
-* **Record of the run in more reports**: the JSON, JUnit and clock domain crossing reports record the versions of
-  the tools and the configuration; the text output on the terminal and the code quality report
-  (:code:`--quality_report`, whose format has no place for it) do not.
 
 Verilog and SystemVerilog
 -------------------------
@@ -98,8 +89,6 @@ under way: the entries below.
 * **STARC rule set**: 50 of the 613 items of the STARC guide have rules. The per-file items (216) are planned with
   the SystemVerilog rules, the clock and reset items with design analysis of Verilog designs. The catalogue the set
   was made from records each item's limits and its Verible equivalent, kept in the notes of the set.
-* **Verilator with the rule sets**: no rule set lists sv_lint_011, as one rule reports several kinds of warning. A
-  rule per warning, or labels per warning, would let the DO-254 and STARC sets use MULTIDRIVEN and CASEINCOMPLETE.
 * **Sensitivity lists** (sv_lint_008) are compared with the names the block reads, by name; reads through
   functions and hierarchical names are not followed.
 * **SystemVerilog designs without the yosys-slang plugin**: Yosys' own reader handles Verilog and part of

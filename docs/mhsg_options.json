@@ -2104,7 +2104,9 @@
         "sv_lint_008",
         "sv_lint_009",
         "sv_lint_010",
-        "sv_lint_011"
+        "sv_lint_011",
+        "sv_lint_012",
+        "sv_lint_013"
       ]
     },
     {
@@ -61803,7 +61805,7 @@
       "groups": [
         "lint"
       ],
-      "summary": "This rule reports the warnings of Verilator, when it is installed, for checks slang does not make: blocking assignments in clocked processes (BLKSEQ), non-blocking assignments in combinational ones (COMBDLY), signals assigned in more than one process (MULTIDRIVEN), case statements that do not cover every value (CASEINCOMPLETE), and others. The verilator_warnings option lists the warnings reported, by Verilator's names; by default those whose checks slang does not make.",
+      "summary": "This rule reports the warnings of Verilator, when it is installed, for checks slang does not make: blocking assignments in clocked processes (BLKSEQ), non-blocking assignments in combinational ones (COMBDLY), and others. The verilator_warnings option lists the warnings reported, by Verilator's names; by default those whose checks slang does not make, but for MULTIDRIVEN and CASEINCOMPLETE, which sv_lint_012 and sv_lint_013 report.",
       "documentation": "sv_lint_rules.rst",
       "options": [
         {
@@ -61846,14 +61848,106 @@
           "default": [
             "ALWCOMBORDER",
             "BLKSEQ",
-            "CASEINCOMPLETE",
             "CASEX",
             "COMBDLY",
             "INITIALDLY",
-            "MULTIDRIVEN",
             "SYNCASYNCNET"
           ],
           "definition": "verilator_warnings"
+        }
+      ]
+    },
+    {
+      "id": "sv_lint_012",
+      "alias": "sv_lint_verilator_multiple_drivers",
+      "category": "sv_lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule reports signals assigned in more than one process (Verilator's MULTIDRIVEN), which synthesis resolves as multiple drivers. Verilator lints the SystemVerilog files of a run when it is installed, see sv_lint_011.",
+      "documentation": "sv_lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_lint_013",
+      "alias": "sv_lint_verilator_incomplete_case",
+      "category": "sv_lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule reports case statements that do not cover every value of their selector and have no default branch (Verilator's CASEINCOMPLETE). Verilator lints the SystemVerilog files of a run when it is installed, see sv_lint_011.",
+      "documentation": "sv_lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
         }
       ]
     },

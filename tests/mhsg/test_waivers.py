@@ -120,3 +120,51 @@ class test_run(unittest.TestCase):
             )
         self.assertEqual(1, oResult.returncode)
         self.assertEqual("ERROR: waiver 1 (rule sv_lint_002) needs a justification\n", oResult.stdout)
+
+
+class test_reports(unittest.TestCase):
+    def test_junit_and_quality_report(self):
+        # The JUnit report lists waived findings in the system-out of the file's testcase, the code quality report
+        # with the severity info
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sCopy = os.path.join(sTemporary, "lint.sv")
+            shutil.copy(sLintFile, sCopy)
+            sConfiguration = os.path.join(sTemporary, "mhsg.json")
+            with open(sConfiguration, "w", encoding="utf-8") as oFile:
+                json.dump({"waivers": [{"rule": "sv_lint_002", "justification": "The latch is intended"}]}, oFile)
+            sJunit = os.path.join(sTemporary, "junit.xml")
+            sQuality = os.path.join(sTemporary, "quality.json")
+            subprocess.run(
+                [
+                    sys.executable,
+                    "bin/mhsg",
+                    "-f",
+                    sCopy,
+                    "-c",
+                    sConfiguration,
+                    "--lint_only",
+                    "--rule_set",
+                    "none",
+                    "-j",
+                    sJunit,
+                    "--quality_report",
+                    sQuality,
+                ],
+                cwd=sRoot,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            with open(sJunit, encoding="utf-8") as oFile:
+                sJunitText = oFile.read()
+            with open(sQuality, encoding="utf-8") as oFile:
+                lQuality = json.load(oFile)
+        self.assertIn(
+            "    <system-out>\nWaived sv_lint_002: 16 : Latch inferred for &apos;l_o&apos; because it is not assigned on all control paths "
+            "(waiver 1: The latch is intended)\n    </system-out>\n  </testcase>",
+            sJunitText,
+        )
+        self.assertEqual(
+            [("info", "sv_lint_002 :: Latch inferred for 'l_o' because it is not assigned on all control paths (waived, waiver 1: The latch is intended)")],
+            [(d["severity"], d["description"]) for d in lQuality if "waived" in d["description"]],
+        )

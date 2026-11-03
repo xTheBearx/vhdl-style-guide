@@ -271,10 +271,9 @@ sv_lint_011
 Alias: :code:`sv_lint_verilator`
 
 This rule reports the warnings of Verilator, when it is installed, for checks slang does not make: blocking
-assignments in clocked processes (BLKSEQ), non-blocking assignments in combinational ones (COMBDLY), signals
-assigned in more than one process (MULTIDRIVEN), case statements that do not cover every value
-(CASEINCOMPLETE), and others. The verilator_warnings option lists the warnings reported, by Verilator's names;
-by default those whose checks slang does not make.
+assignments in clocked processes (BLKSEQ), non-blocking assignments in combinational ones (COMBDLY), and others.
+The verilator_warnings option lists the warnings reported, by Verilator's names; by default those whose checks
+slang does not make, but for MULTIDRIVEN and CASEINCOMPLETE, which sv_lint_012 and sv_lint_013 report.
 
 Verilator lints the SystemVerilog files of a run together; the systemverilog section of the configuration turns
 it off with :code:`verilator: false`, or names the program with :code:`verilator: /path/to/verilator`.
@@ -296,4 +295,71 @@ it off with :code:`verilator: false`, or names the program with :code:`verilator
 
    always_ff @(posedge clk) begin
        count <= count + 1;
+   end
+
+sv_lint_012
+###########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`sv_lint_verilator_multiple_drivers`
+
+This rule reports signals assigned in more than one process (Verilator's MULTIDRIVEN), which synthesis
+resolves as multiple drivers. Verilator lints the SystemVerilog files of a run when it is installed, see
+sv_lint_011.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and reports what Verilator finds; without Verilator it
+   reports nothing.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk) busy <= 1'b1;
+   always_ff @(posedge clk) if (done) busy <= 1'b0;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk) begin
+       if (done) busy <= 1'b0;
+       else busy <= 1'b1;
+   end
+
+sv_lint_013
+###########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`sv_lint_verilator_incomplete_case`
+
+This rule reports case statements that do not cover every value of their selector and have no default
+branch (Verilator's CASEINCOMPLETE). Verilator lints the SystemVerilog files of a run when it is installed, see
+sv_lint_011.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and reports what Verilator finds; without Verilator it
+   reports nothing.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_comb begin
+       case (sel)
+           2'b00: y = a;
+           2'b01: y = b;
+       endcase
+   end
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_comb begin
+       case (sel)
+           2'b00: y = a;
+           2'b01: y = b;
+           default: y = '0;
+       endcase
    end

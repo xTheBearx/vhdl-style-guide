@@ -683,6 +683,15 @@ class test_top(unittest.TestCase):
         self.assertEqual(["SPEED"], [sName for sFile, iLine, sName in top.unknown_generics(oDesign)])
         self.assertEqual([], top.missing_generics(self.design({"FREQ_HZ": 1.0e6, "WIDTH": 8})))
 
+    def test_generic_values(self):
+        self.assertEqual("10 ns", top.time_literal("10ns"))
+        self.assertEqual("2.5 us", top.time_literal(" 2.5 us "))
+        self.assertEqual("7 ns", top.time_literal(7))
+        self.assertEqual("'1'", runner.value_text(1, "std_logic"))
+        self.assertEqual("'b'", runner.value_text("b", "character"))
+        self.assertEqual("1010", runner.value_text("1010", "std_logic_vector"))
+        self.assertEqual("true", runner.value_text(True, "boolean"))
+
     def test_patch_real_generics(self):
         oDesign = self.design({"FREQ_HZ": 100.0e6, "RATE_HZ": 2000, "WIDTH": 8})
         with tempfile.TemporaryDirectory() as sDirectory:
@@ -895,6 +904,12 @@ class test_design_analysis(unittest.TestCase):
             ],
             [t for t in self.findings("registers_top", "registers.vhd") if t[2] in ("design_005", "design_006")],
         )
+
+    def test_generics_of_every_type(self):
+        # time and real are patched into a copy of the top file; std_logic and character values are quoted for GHDL
+        dGenerics = {"T_g": "5 ns", "E_g": 1, "C_g": "b", "R_g": 2.5, "V_g": "1010", "N_g": 3, "B_g": True, "S_g": "xy"}
+        iStatus, lOutput = self.run_design("generic_types_top", "generic_types.vhd", dGenerics=dGenerics)
+        self.assertEqual((0, []), (iStatus, lOutput))
 
     def test_verilog_black_boxes(self):
         # BUFGCE comes from Yosys' Xilinx cell models and vendor_ip from a stub; the crossings through them are found.

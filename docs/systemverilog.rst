@@ -113,12 +113,13 @@ With :code:`--fix`, the files are fixed first and compiled together again, so th
 checked against the others.
 
 **Verilator.** When Verilator is installed, it lints the files of the run too (:code:`verilator --lint-only -Wall`),
-and :code:`sv_lint_011` reports the warnings of the checks slang does not make: blocking assignments in clocked
-processes (BLKSEQ), non-blocking ones in combinational processes (COMBDLY), signals assigned in several processes
-(MULTIDRIVEN), incomplete case statements (CASEINCOMPLETE), and others; its **verilator_warnings** option lists them.
-Verilator runs only when :code:`sv_lint_011` is enabled: always in lint mode without a rule set
-(:code:`--lint --rule_set none`), and with a rule set when the configuration enables it, as the built in rule sets
-do not list it:
+and three rules report the warnings of the checks slang does not make: :code:`sv_lint_012` signals assigned in
+several processes (MULTIDRIVEN), :code:`sv_lint_013` case statements that do not cover every value (CASEINCOMPLETE),
+and :code:`sv_lint_011` the others, such as blocking assignments in clocked processes (BLKSEQ) and non-blocking ones
+in combinational processes (COMBDLY); its **verilator_warnings** option lists them. The **do254** rule set labels
+:code:`sv_lint_012` with SS6 and :code:`sv_lint_013` with SS2, and **starc** :code:`sv_lint_013` with 2.8.1.6.
+Verilator runs only when one of the three rules is enabled: in lint mode without a rule set
+(:code:`--lint --rule_set none`), with a rule set that lists one, or when the configuration enables one:
 
 .. code-block:: yaml
 
