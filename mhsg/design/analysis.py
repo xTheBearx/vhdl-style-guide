@@ -28,10 +28,10 @@ from mhsg.design import (
     netlist,
     project,
     runner,
+    source_summary,
     tools,
     top,
 )
-from mhsg.lint import model
 from mhsg.rules import sv_tree
 
 # mhsg.svFile exports the class svFile under the name of its module
@@ -68,16 +68,15 @@ class Context:
             self._oGraph = graph.DesignGraph(self.netlist)
         return self._oGraph
 
-    def vhdl_file(self, sFileName):
-        """Returns the parsed VHDL file, or None if it cannot be read or parsed, or is not a VHDL file."""
+    def vhdl_summary(self, sFileName):
+        """
+        Returns the processes of a VHDL file by architecture, see source_summary.py, or None if it cannot be read or
+        parsed, or is not a VHDL file.
+        """
         if language.of_file(sFileName) != language.VHDL:
             return None
         if sFileName not in self._dFiles:
-            try:
-                lLines, eError = vhdlFile.utils.read_vhdlfile(sFileName)
-                self._dFiles[sFileName] = None if eError else vhdlFile.vhdlFile(lLines)
-            except Exception:  # pylint: disable=broad-except
-                self._dFiles[sFileName] = None
+            self._dFiles[sFileName] = source_summary.load(sFileName)
         return self._dFiles[sFileName]
 
     def sv_file(self, sFileName):
@@ -125,12 +124,11 @@ class Context:
         if sSignal and language.of_file(oLocation.file) == language.SYSTEMVERILOG:
             iLine = self.refine_verilog(oLocation, list(reversed(sSignal.lower().split("[")[0].split("."))), bLast)
             return oLocation.file, iLine if iLine is not None else oLocation.line
-        oFile = self.vhdl_file(oLocation.file) if sSignal and language.of_file(oLocation.file) == language.VHDL else None
-        if oFile is not None:
+        lArchitectures = self.vhdl_summary(oLocation.file) if sSignal and language.of_file(oLocation.file) == language.VHDL else None
+        if lArchitectures is not None:
             # Names carry generate labels before the signal, such as gen_fifo.memory, and record fields after it,
             # such as ctrl_o.cpu_priv: try the parts from the last
             lParts = list(reversed(sSignal.lower().split("[")[0].split(".")))
-            lArchitectures = oFile.get_lint_model().architectures
             for oArchitecture in lArchitectures:
                 for oProcess in oArchitecture.processes:
                     if oProcess.line <= oLocation.line <= oProcess.end_line:
@@ -150,20 +148,19 @@ class Context:
 
 def assignment_line(oProcess, lParts, bLast=False):
     """Returns the line of the first assignment in a process to one of the names, tried in order, or of the last with bLast."""
-    lAssignments = list(model.assignments(oProcess.statements))
+    lAssignments = list(oProcess.assignments)
     if bLast:
         lAssignments.reverse()
     for sBase in lParts:
-        for oAssignment in lAssignments:
-            if oAssignment.base == sBase:
-                return oAssignment.line
+        for sName, iLine in lAssignments:
+            if sName == sBase:
+                return iLine
     return None
 
 
 def declaration_line(oArchitecture, iLine):
     """Returns whether a line comes before the statements of an architecture: in its declarations, or before it."""
-    lLines = [o.line for o in oArchitecture.processes + oArchitecture.assignments + oArchitecture.instances]
-    return not lLines or iLine < min(lLines)
+    return oArchitecture.first_statement is None or iLine < oArchitecture.first_statement
 
 
 def design_rules(oConfig, lLocalRules):

@@ -121,10 +121,33 @@ def real_literal(oValue):
     return sMantissa + ("e" + sExponent if sExponent else "")
 
 
+def time_literal(oValue):
+    """Returns a value as a VHDL physical literal, such as 10 ns, from 10 ns, 10ns or a number of nanoseconds."""
+    if isinstance(oValue, (int, float)) and not isinstance(oValue, bool):
+        return f"{oValue} ns"
+    oMatch = re.fullmatch(r"\s*([0-9][0-9_.eE+-]*)\s*([A-Za-z]+)\s*", str(oValue))
+    return f"{oMatch.group(1)} {oMatch.group(2)}" if oMatch else str(oValue)
+
+
+# The types of generics GHDL cannot set from the command line, and how their values are written in VHDL
+PATCHED_TYPES = {"real": real_literal, "time": time_literal, "delay_length": time_literal}
+
+# The types whose values GHDL wants quoted as character literals on the command line, such as '1'
+CHARACTER_TYPES = ("std_logic", "std_ulogic", "bit", "character")
+
+
+def generic_types(oDesign):
+    """Returns {lower case name: lower case type mark} of the generics of the top entity, or {}."""
+    _, oFile = find_top(oDesign)
+    if oFile is None:
+        return {}
+    return {s.lower(): d["type"] for d in generic_declarations(oFile, oDesign.top) for s, _ in d["names"] if d["type"]}
+
+
 def patch_real_generics(oDesign, sDirectory):
     """
-    GHDL cannot set a generic of type real from the command line. Writes a copy of the file of the top entity in
-    which the values of the real generics set in the design section are the defaults, keeping every line in place.
+    GHDL cannot set a generic of type real or time from the command line. Writes a copy of the file of the top entity
+    in which the values of those generics set in the design section are the defaults, keeping every line in place.
     Returns (original file, copy, names of the patched generics), or None if there is nothing to patch.
     """
     sFile, oFile = find_top(oDesign)
@@ -134,13 +157,14 @@ def patch_real_generics(oDesign, sDirectory):
     lPatched = []
     for dDeclaration in generic_declarations(oFile, oDesign.top):
         lNames = [s.lower() for s, _ in dDeclaration["names"]]
-        if dDeclaration["type"] != "real" or len(lNames) != 1 or lNames[0] not in dValues:
+        if dDeclaration["type"] not in PATCHED_TYPES or len(lNames) != 1 or lNames[0] not in dValues:
             continue
         iStart = dDeclaration["default"] if dDeclaration["default"] is not None else dDeclaration["end"]
         for iIndex in range(iStart, dDeclaration["end"]):
             if not isinstance(oFile.lAllObjects[iIndex], parser.carriage_return):
                 oFile.lAllObjects[iIndex].set_value("")
-        oFile.lAllObjects[iStart].set_value(" := " + real_literal(dValues[lNames[0]]) + oFile.lAllObjects[iStart].get_value())
+        sValue = PATCHED_TYPES[dDeclaration["type"]](dValues[lNames[0]])
+        oFile.lAllObjects[iStart].set_value(" := " + sValue + oFile.lAllObjects[iStart].get_value())
         lPatched.append(dDeclaration["names"][0][0])
     if not lPatched:
         return None

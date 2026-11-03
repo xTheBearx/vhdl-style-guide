@@ -60,14 +60,19 @@ The design is described in the **design** section of a configuration file:
   listed in compile order, such as a whole source directory given by a glob pattern. GHDL reads every VHDL file of the
   libraries (:code:`ghdl -i`) and gives the order the top entity needs (:code:`--elab-order`); files the top does not
   use are not analyzed. The default, **listed**, analyzes the libraries and their files in the order given.
-* **generics** sets generics of the top entity: numbers, booleans, strings, and vectors as bits, such as ``"00000111"``.
+* **generics** sets generics of the top entity: numbers, booleans, strings, vectors as bits, such as ``"00000111"``,
+  single bits and characters, such as ``1`` for a std_logic, and times, such as ``10 ns``.
   Every generic without a default value must be set, and every generic set must exist; otherwise design_001 reports
   it before GHDL runs, since GHDL would quietly use the leftmost value of the type, such as 1 for a positive.
-  GHDL cannot set a generic of type real from the command line, so MHSG analyzes a copy of the file of the top entity
-  in which the value is the default. Findings still name the original file, at the same lines.
+  GHDL cannot set a generic of type real or time from the command line, so MHSG analyzes a copy of the file of the top
+  entity in which the value is the default. Findings still name the original file, at the same lines.
 * **ghdl_options** are passed to GHDL, for example :code:`-fsynopsys` for designs which use the Synopsys packages.
 * **work_directory** keeps the files of GHDL and Yosys, such as the Verilog and the JSON netlist, in a directory,
   for a closer look. Without it they are written to a temporary directory and removed.
+
+What design analysis needs from the VHDL files themselves, such as the processes and their assignments, is kept in a
+cache, so a file is only parsed again when it changes: in :code:`$MHSG_CACHE_DIRECTORY`, else
+:code:`$XDG_CACHE_HOME/mhsg`, else :code:`~/.cache/mhsg`. :code:`MHSG_CACHE_DIRECTORY` set to nothing turns it off.
 
 Paths in the configuration may use environment variables.
 

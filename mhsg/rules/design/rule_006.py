@@ -3,7 +3,6 @@
 import re
 
 from mhsg.design.rule import Finding, Rule, display_name, module_text
-from mhsg.lint import model
 
 
 class rule_006(Rule):
@@ -110,19 +109,19 @@ def removed_registers(oContext, oModule):
     """
     setNames = netlist_names(oModule)
     for sFile, setLines in module_lines(oContext, oModule).items():
-        oFile = oContext.vhdl_file(sFile)
-        if oFile is None:
+        lArchitectures = oContext.vhdl_summary(sFile)
+        if lArchitectures is None:
             continue
-        for oArchitecture in oFile.get_lint_model().architectures:
+        for oArchitecture in lArchitectures:
             for oProcess in oArchitecture.processes:
-                if oProcess.clock is None or not any(oProcess.line <= i <= oProcess.end_line for i in setLines):
+                if not oProcess.clocked or not any(oProcess.line <= i <= oProcess.end_line for i in setLines):
                     continue
                 lDone = []
-                for oAssignment in model.assignments(oProcess.statements):
-                    if oAssignment.kind != "signal" or oAssignment.base in lDone or oAssignment.base in setNames:
+                for sBase, iLine in oProcess.assignments:
+                    if sBase in lDone or sBase in setNames:
                         continue
-                    lDone.append(oAssignment.base)
-                    yield sFile, oAssignment.line, oAssignment.base
+                    lDone.append(sBase)
+                    yield sFile, iLine, sBase
 
 
 reSignal = re.compile(r"^\s*signal\s+([^:]+):", re.IGNORECASE)

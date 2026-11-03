@@ -45,12 +45,8 @@ Design analysis
   but slower and loses names.
 * **Unused combinational signals and delay chains** (DO-254 SS17 in part, SS1) cannot be found in the netlist, because
   GHDL removes them; they need per-file checks.
-* **Unused register detection** parses every VHDL file of the design, which slows large designs (neorv32: about 4 s to
-  13 s). Caching the parsed files would help.
 * **True dual-port RAM** written from two processes through a shared variable does not synthesize in GHDL
   (Open Logic olo_base_ram_tdp).
-* **Generics of type real** are set by patching a copy of the top file; other types GHDL cannot set from the command
-  line would need the same.
 * **More real-world designs** in :code:`scripts/real_world_designs.yaml`: surf (needs the vendor libraries), the
   hdl-modules designs that use them (hard_fifo), and a multi-clock design with vendor clocking.
 

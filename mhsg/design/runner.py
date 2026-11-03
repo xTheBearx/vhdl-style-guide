@@ -68,7 +68,8 @@ def elaboration_options(oDesign, sWorkDirectory, lPatched=()):
     """
     lOptions = ghdl_options(oDesign, sWorkDirectory) + [f"--work={oDesign.top_library}", "--latches"]
     setPatched = {s.lower() for s in lPatched}
-    lOptions += [f"-g{sName}={value_text(oValue)}" for sName, oValue in oDesign.generics.items() if sName.lower() not in setPatched]
+    dTypes = top.generic_types(oDesign) if oDesign.generics else {}
+    lOptions += [f"-g{sName}={value_text(oValue, dTypes.get(sName.lower()))}" for sName, oValue in oDesign.generics.items() if sName.lower() not in setPatched]
     return lOptions
 
 
@@ -76,10 +77,15 @@ def top_units(oDesign):
     return [oDesign.top] + ([oDesign.architecture] if oDesign.architecture else [])
 
 
-def value_text(oValue):
+def value_text(oValue, sType=None):
+    """A generic's value as GHDL takes it on the command line; a single character of a character type, such as 1 for a
+    std_logic, is quoted as a character literal."""
     if isinstance(oValue, bool):
         return "true" if oValue else "false"
-    return str(oValue)
+    sValue = str(oValue)
+    if sType in top.CHARACTER_TYPES and len(sValue) == 1:
+        return f"'{sValue}'"
+    return sValue
 
 
 def analysis_groups(oDesign, oTools, sWorkDirectory, oResult):
