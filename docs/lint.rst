@@ -102,7 +102,7 @@ They do not resolve types or evaluate generics, so they err on the side of not r
 * statements in different if or case generate statements are not compared, since elaboration decides which exist;
 * an if statement whose condition reads only constants and generics is treated as decided at elaboration.
 
-Checks that need the whole elaborated design, such as clock domain crossings, are planned for a design analysis mode.
+Checks that need the whole elaborated design run in design analysis, see :doc:`design_analysis`.
 
 Rule set files
 --------------

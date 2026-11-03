@@ -103,6 +103,8 @@ With multiple options available, the user is required to make the decision.
 * `constant_600 <constant_rules.html#constant-600>`_
 * `constant_601 <constant_rules.html#constant-601>`_
 * `constant_602 <constant_rules.html#constant-602>`_
+* `design_001 <design_rules.html#design-001>`_
+* `design_002 <design_rules.html#design-002>`_
 * `function_600 <function_rules.html#function-600>`_
 * `function_601 <function_rules.html#function-601>`_
 * `generate_017 <generate_rules.html#generate-017>`_

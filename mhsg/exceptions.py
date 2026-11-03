@@ -30,3 +30,13 @@ class ConfigurationError(Exception):
 
     def __str__(self):
         return self.message
+
+
+class DesignError(Exception):
+    """
+    Exception raised when design analysis cannot run, for example because a tool is missing.
+    """
+
+    def __init__(self, message):
+        super().__init__(message)
+        self.message = message

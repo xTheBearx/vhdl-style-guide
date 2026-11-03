@@ -220,6 +220,8 @@ def coverage_table(oRuleSet):
         sStatus = STATUS_TEXT.get(oCheck.status, oCheck.status)
         if oCheck.status == "implemented" and not oCheck.enable:
             sStatus = "Implemented, enable after configuring"
+        elif oCheck.status == "implemented" and oCheck.rules and all(s.startswith("design_") for s in oCheck.rules):
+            sStatus = "Implemented, design analysis"
         lRows.append((oRuleSet.prefix + "-" + oCheck.id, oCheck.title, oCheck.severity or "", sStatus, ", ".join(lRules)))
     lWidths = [max(len(tRow[i]) for tRow in lRows) for i in range(5)]
     sRule = "+" + "+".join("-" * (i + 2) for i in lWidths) + "+"

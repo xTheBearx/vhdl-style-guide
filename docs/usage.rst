@@ -15,7 +15,8 @@ The command line tool can be invoked with:
                                  [-of {mhsg,syntastic,summary}] [-b]
                                  [-oc OUTPUT_CONFIGURATION]
                                  [-rc RULE_CONFIGURATION]
-                                 [--lint] [--lint_only] [--rule_set RULE_SET]
+                                 [--lint] [--lint_only] [--design]
+                                 [--rule_set RULE_SET]
                                  [--output_options OUTPUT_OPTIONS]
                                  [--style {indent_only,jcl}] [-v] [-ap]
                                  [--fix_only FIX_ONLY] [--stdin] [--stdout]
@@ -61,6 +62,8 @@ The command line tool can be invoked with:
                            set.
      --lint_only           Run only the lint checks and the rules of the rule
                            set.
+     --design              Run design analysis with GHDL and Yosys on the design
+                           described in the design section of the configuration.
      --rule_set RULE_SET   Rule set for lint mode: a built in name (default
                            do254), a YAML file, or none for all lint rules
                            without labels.
@@ -158,6 +161,9 @@ The command line tool can be invoked with:
 |                               | :ref:`lint`.                                    |
 +-------------------------------+-------------------------------------------------+
 | --lint_only                   | Runs only the rules of the rule set.            |
++-------------------------------+-------------------------------------------------+
+| --design                      | Runs design analysis with GHDL and Yosys. See   |
+|                               | :ref:`design_analysis`.                         |
 +-------------------------------+-------------------------------------------------+
 | --rule_set                    | The rule set used in lint mode.                 |
 +-------------------------------+-------------------------------------------------+

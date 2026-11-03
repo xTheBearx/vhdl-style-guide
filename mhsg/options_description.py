@@ -14,6 +14,7 @@ import re
 import yaml
 
 from mhsg import rule_list, severity, version, vhdlFile
+from mhsg.design import project
 
 FORMAT_NAME = "mhsg-options"
 FORMAT_VERSION = 1
@@ -238,6 +239,60 @@ def describe_settings():
             "label": "Rule set",
             "description": "Rule set for lint mode: a built in name such as do254, the path of a YAML file, or none for all lint rules without labels.",
             "default": "do254",
+        },
+        {
+            "path": ["design", "top"],
+            "type": "string",
+            "nullable": True,
+            "label": "Design top entity",
+            "description": "The top entity of the design analyzed with --design.",
+            "default": None,
+        },
+        {
+            "path": ["design", "architecture"],
+            "type": "string",
+            "nullable": True,
+            "label": "Design top architecture",
+            "description": "The architecture of the top entity. GHDL chooses the last analyzed one when it is not set.",
+            "default": None,
+        },
+        {
+            "path": ["design", "standard"],
+            "type": "enum",
+            "values": list(project.STANDARDS),
+            "label": "VHDL standard",
+            "description": "The VHDL standard GHDL analyzes the design with.",
+            "default": "08",
+        },
+        {
+            "path": ["design", "libraries"],
+            "type": "design_library_list",
+            "label": "Design libraries",
+            "description": "The libraries of the design in analysis order. Each has a name and files, a list of files and glob patterns, or files_from, a file listing them.",
+            "default": [],
+        },
+        {
+            "path": ["design", "top_library"],
+            "type": "string",
+            "nullable": True,
+            "label": "Top library",
+            "description": "The library of the top entity. The last library when it is not set.",
+            "default": None,
+        },
+        {
+            "path": ["design", "generics"],
+            "type": "generic_map",
+            "label": "Top generics",
+            "description": "Values of the generics of the top entity, by name.",
+            "default": {},
+        },
+        {
+            "path": ["design", "ghdl_options"],
+            "type": "list",
+            "item_type": "string",
+            "label": "GHDL options",
+            "description": "Extra options for GHDL, such as -fsynopsys.",
+            "default": [],
         },
         {
             "path": ["linesep"],

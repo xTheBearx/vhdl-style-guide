@@ -72,6 +72,89 @@
     },
     {
       "path": [
+        "design",
+        "top"
+      ],
+      "type": "string",
+      "nullable": true,
+      "label": "Design top entity",
+      "description": "The top entity of the design analyzed with --design.",
+      "default": null
+    },
+    {
+      "path": [
+        "design",
+        "architecture"
+      ],
+      "type": "string",
+      "nullable": true,
+      "label": "Design top architecture",
+      "description": "The architecture of the top entity. GHDL chooses the last analyzed one when it is not set.",
+      "default": null
+    },
+    {
+      "path": [
+        "design",
+        "standard"
+      ],
+      "type": "enum",
+      "values": [
+        "87",
+        "93",
+        "93c",
+        "00",
+        "02",
+        "08",
+        "19"
+      ],
+      "label": "VHDL standard",
+      "description": "The VHDL standard GHDL analyzes the design with.",
+      "default": "08"
+    },
+    {
+      "path": [
+        "design",
+        "libraries"
+      ],
+      "type": "design_library_list",
+      "label": "Design libraries",
+      "description": "The libraries of the design in analysis order. Each has a name and files, a list of files and glob patterns, or files_from, a file listing them.",
+      "default": []
+    },
+    {
+      "path": [
+        "design",
+        "top_library"
+      ],
+      "type": "string",
+      "nullable": true,
+      "label": "Top library",
+      "description": "The library of the top entity. The last library when it is not set.",
+      "default": null
+    },
+    {
+      "path": [
+        "design",
+        "generics"
+      ],
+      "type": "generic_map",
+      "label": "Top generics",
+      "description": "Values of the generics of the top entity, by name.",
+      "default": {}
+    },
+    {
+      "path": [
+        "design",
+        "ghdl_options"
+      ],
+      "type": "list",
+      "item_type": "string",
+      "label": "GHDL options",
+      "description": "Extra options for GHDL, such as -fsynopsys.",
+      "default": []
+    },
+    {
+      "path": [
         "linesep"
       ],
       "type": "enum",
@@ -1759,6 +1842,13 @@
         "use_clause_501",
         "use_clause_502",
         "variable_004"
+      ]
+    },
+    {
+      "name": "design",
+      "rules": [
+        "design_001",
+        "design_002"
       ]
     },
     {
@@ -18464,6 +18554,100 @@
         }
       ],
       "option_documentation": "configuring_uppercase_and_lowercase_rules.rst"
+    },
+    {
+      "id": "design_001",
+      "alias": "design_ghdl_error",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports the errors GHDL finds when it analyzes and elaborates the design.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_002",
+      "alias": "design_latch",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports latches in the synthesized design.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
     },
     {
       "id": "element_association_100",
