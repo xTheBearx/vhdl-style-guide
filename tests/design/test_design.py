@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import tempfile
 import unittest
+from unittest import mock
 
 import yaml
 
@@ -22,6 +23,7 @@ from mhsg.design import (
     netlist,
     project,
     runner,
+    tools,
     top,
     vendors,
 )
@@ -148,6 +150,204 @@ class test_netlist(unittest.TestCase):
         self.assertEqual((oLocation.file, 17), oContext.refine(oLocation, "q"))
         self.assertEqual((oLocation.file, 14), oContext.refine(oLocation, "unknown"))
         self.assertEqual((None, 0), oContext.refine(None, "q"))
+
+
+# GHDL's Verilog output in later versions: src attributes on declarations and statements, and location comments with #
+sSourceAttributes = """module sub_Brtl
+  (input  clk_i,
+   input  d_i,
+   output q_o);
+  (* src="sub.vhd:15.12" *) reg q_r;
+  (* src="sub.vhd:21.9" *) reg n34;
+  assign q_o = q_r; //(module output)
+  /*# sub.vhd:21:9 */
+  (* src="sub.vhd:21.9" *) always @(posedge clk_i)
+    n34 <= d_i;
+  (* src="sub.vhd:21.9" *) initial
+    n34 = 1'b0;
+endmodule
+
+module top
+  (input  clk_a,
+   input  in_a,
+   output [1:0] out_b);
+  (* src="top.vhd:20.12" *) wire src_q;
+  (* src="top.vhd:53.20" *) wire [1:0] n20;
+  (* src="top.vhd:37.9" *) reg n22;
+  assign out_b = n20; //(module output)
+  /*# top.vhd:28:5 */
+  (* src="top.vhd:28.5" *) sub_Brtl u_src (
+    .clk_i(clk_a),
+    .d_i(in_a),
+    .q_o(src_q));
+  /*# top.vhd:53:20 */
+  assign n20 = {src_q, n22};
+  /*# top.vhd:37:9 */
+  (* src="top.vhd:37.9" *) always @(posedge clk_a)
+    n22 <= in_a;
+endmodule
+"""
+
+
+class test_netlist_locations(unittest.TestCase):
+    """The locations of GHDL's Verilog in its different forms: comments, src attributes, or both."""
+
+    def read(self, sText, lSourceFiles=None):
+        with tempfile.TemporaryDirectory() as sDirectory:
+            sVerilog = os.path.join(sDirectory, "design.v")
+            with open(sVerilog, "w", encoding="utf-8") as oFile:
+                oFile.write(sText)
+            return {k: repr(v) for k, v in netlist.read_locations(sVerilog, lSourceFiles).items()}
+
+    def test_comments_and_attributes(self):
+        dExpected = {
+            ("sub_Brtl", "34"): "sub.vhd:21:9",
+            ("top", "20"): "top.vhd:53:20",
+            ("top", "22"): "top.vhd:37:9",
+            ("top", "instance u_src"): "top.vhd:28:5",
+        }
+        self.assertEqual(dExpected, self.read(sSourceAttributes))
+
+    def test_attributes_only(self):
+        # Without comments: the src attribute of the statement, else of the declaration of the output, as for n20
+        sText = "\n".join(s for s in sSourceAttributes.splitlines() if "/*#" not in s) + "\n"
+        dExpected = {
+            ("sub_Brtl", "34"): "sub.vhd:21:9",
+            ("top", "20"): "top.vhd:53:20",
+            ("top", "22"): "top.vhd:37:9",
+            ("top", "instance u_src"): "top.vhd:28:5",
+        }
+        self.assertEqual(dExpected, self.read(sText))
+
+    def test_attribute_does_not_outlive_its_statement(self):
+        # The assignment to n21 has no location of its own and must not take the one of the statement before it
+        sText = (
+            "module top\n  (input a);\n  wire n21;\n" '  (* src="top.vhd:30.3-32.5" *) always @(posedge a)\n    n7 <= a;\n' "  assign n21 = ~a;\nendmodule\n"
+        )
+        self.assertEqual({("top", "7"): "top.vhd:30:3"}, self.read(sText))
+
+    def test_attribute_values(self):
+        oLocation = netlist.source_location("/work/src/fifo.vhd:28.3-30.5")
+        self.assertEqual(("/work/src/fifo.vhd", 28, 3), (oLocation.file, oLocation.line, oLocation.column))
+        self.assertEqual("fifo.vhd:28:0", repr(netlist.source_location("fifo.vhd:28")))
+        # Several locations: the first in a file of the design, else the first in a VHDL file
+        sSource = "/lib/ieee/numeric_std-body.vhdl:120.5-121.9|src/fifo.vhd:42.5|src/top.vhd:7.1"
+        self.assertEqual("/lib/ieee/numeric_std-body.vhdl:120:5", repr(netlist.source_location(sSource)))
+        self.assertEqual("src/fifo.vhd:42:5", repr(netlist.source_location(sSource, netlist.source_file_set(["src/fifo.vhd", "src/top.vhd"]))))
+        self.assertEqual("src/top.vhd:7:1", repr(netlist.source_location(sSource, netlist.source_file_set([os.path.abspath("src/top.vhd")]))))
+        # Locations outside VHDL files, such as Yosys sources, are not locations of the design
+        self.assertIsNone(netlist.source_location("ghdl.cc:832"))
+        self.assertIsNone(netlist.source_location(None))
+        self.assertEqual("top.vhd:3:1", repr(netlist.attribute_location('  (* keep, src = "top.vhd:3.1|ghdl.cc:9" *) reg n3;')))
+        self.assertIsNone(netlist.attribute_location("  reg n3;"))
+
+    def test_cell_names(self):
+        # Yosys names the cells of the GHDL plugin \\34 or :34
+        oNetlist = netlist.Netlist(
+            {"modules": {"top": {"cells": {":34": {"type": "$dff"}, "\\35": {"type": "$dff"}}}}},
+            {("top", "34"): "a", ("top", "35"): "b"},
+        )
+        self.assertEqual("a", oNetlist.location("top", ":34"))
+        self.assertEqual("b", oNetlist.location("top", "\\35"))
+        self.assertEqual("34", netlist.instance_number(":34"))
+        self.assertEqual("data:1", netlist.instance_number("data:1"))
+
+    def test_json_src_attribute(self):
+        # A src attribute on a cell of the JSON netlist locates the cells the Verilog does not
+        dModule = {
+            "cells": {
+                "\\5": {"type": "$not", "attributes": {"src": "ghdl.cc:12|latch.vhd:21.8-21.15"}},
+                "\\6": {"type": "$dlatch", "attributes": {"src": "latch.vhd:14.3-19.26"}},
+                "\\7": {"type": "$mux", "attributes": {}},
+            },
+        }
+        oNetlist = netlist.Netlist({"modules": {"latch_top": dModule}}, {("latch_top", "6"): netlist.Location("latch.vhd", 14, 1)})
+        self.assertEqual("latch.vhd:21:8", repr(oNetlist.location("latch_top", "\\5")))
+        self.assertEqual("latch.vhd:14:1", repr(oNetlist.location("latch_top", "\\6")))
+        self.assertIsNone(oNetlist.location("latch_top", "\\7"))
+
+    def test_refine_from_declaration(self):
+        # Later versions of GHDL locate the latch of q at the declaration of the port, line 7: refine finds the assignment
+        oContext = analysis.Context(None, None, None)
+        sFile = os.path.join(sTestDir, "latch.vhd")
+        self.assertEqual((sFile, 17), oContext.refine(netlist.Location(sFile, 7, 5), "q"))
+        # A concurrent assignment stays where it is
+        self.assertEqual((sFile, 21), oContext.refine(netlist.Location(sFile, 21, 8), "r"))
+        self.assertEqual((sFile, 7), oContext.refine(netlist.Location(sFile, 7, 5), "unknown"))
+
+
+class test_tools(unittest.TestCase):
+    """Yosys loads the GHDL plugin with -m ghdl, unless the ghdl command is built into it, as in MSYS2 on Windows."""
+
+    def setUp(self):
+        tools.dBuiltIn.clear()
+        self.addCleanup(tools.dBuiltIn.clear)
+        self.lCalls = []
+
+    def fake_run(self, bBuiltIn):
+        def run(lCommand, **dOptions):
+            self.lCalls.append((lCommand, dOptions.get("env")))
+            sStdout, iStatus = "", 0
+            if lCommand[0] == "yosys" and "help ghdl" in lCommand:
+                if "-m" in lCommand:
+                    iStatus = 1 if bBuiltIn else 0
+                elif not bBuiltIn:
+                    sStdout = "-- Running command `help ghdl' --\nNo such command or cell type: ghdl\n"
+                else:
+                    sStdout = "-- Running command `help ghdl' --\n\n    ghdl [options] unit [arch]\n"
+            elif lCommand[1:] == ["--dispconfig"]:
+                sStdout = "library prefix: /usr/lib/ghdl\n"
+            return subprocess.CompletedProcess(lCommand, iStatus, sStdout, "")
+
+        return run
+
+    def find(self, bBuiltIn, dEnvironment=None):
+        with mock.patch.object(tools.shutil, "which", side_effect=lambda s: s), mock.patch.object(tools.subprocess, "run", side_effect=self.fake_run(bBuiltIn)):
+            with mock.patch.dict(os.environ, dEnvironment or {}, clear=False):
+                if not dEnvironment:
+                    os.environ.pop("GHDL_PREFIX", None)
+                return tools.find()
+
+    def yosys_command(self, oTools):
+        oDesign = project.from_configuration({"design": {"top": "clean_top", "libraries": [{"name": "work", "files": [os.path.join(sTestDir, "clean.vhd")]}]}})
+        with tempfile.TemporaryDirectory() as sDirectory, mock.patch.object(runner.subprocess, "run", side_effect=self.fake_run(oTools.built_in)):
+            oResult = runner.run(oDesign, oTools, sDirectory)
+        self.assertEqual("yosys", oResult.failed_stage)
+        return oResult.commands[-1]
+
+    def test_plugin_module(self):
+        oTools = self.find(False)
+        self.assertFalse(oTools.built_in)
+        self.assertEqual(["-m", "ghdl"], oTools.module_options())
+        self.assertEqual("/usr/lib/ghdl", oTools.environment["GHDL_PREFIX"])
+        self.assertEqual(["yosys", "-m", "ghdl", "-q", "-l"], self.yosys_command(oTools)[:5])
+
+    def test_built_in(self):
+        oTools = self.find(True, {"GHDL_PREFIX": "C:/msys64/ucrt64/lib/ghdl"})
+        self.assertTrue(oTools.built_in)
+        self.assertEqual([], oTools.module_options())
+        # GHDL_PREFIX from the environment is kept, and GHDL is not asked for its own
+        self.assertEqual("C:/msys64/ucrt64/lib/ghdl", oTools.environment["GHDL_PREFIX"])
+        self.assertFalse([l for l, _ in self.lCalls if l[1:] == ["--dispconfig"]])
+        self.assertTrue(all(d["GHDL_PREFIX"] == "C:/msys64/ucrt64/lib/ghdl" for l, d in self.lCalls if "help ghdl" in l))
+        # No -m ghdl, which fails without a module to load
+        self.assertEqual(["yosys", "-q", "-l"], self.yosys_command(oTools)[:3])
+        self.assertFalse([l for l, _ in self.lCalls if l[0] == "yosys" and "-m" in l])
+
+    def test_answer_is_cached(self):
+        self.find(True, {"GHDL_PREFIX": "/opt/ghdl"})
+        self.find(True, {"GHDL_PREFIX": "/opt/ghdl"})
+        self.assertEqual(1, len([l for l, _ in self.lCalls if l[0] == "yosys" and "help ghdl" in l]))
+
+    def test_no_plugin(self):
+        def run(lCommand, **dOptions):
+            if lCommand[0] == "yosys" and "help ghdl" in lCommand:
+                return subprocess.CompletedProcess(lCommand, 1 if "-m" in lCommand else 0, "No such command or cell type: ghdl\n", "")
+            return subprocess.CompletedProcess(lCommand, 0, "", "")
+
+        with mock.patch.object(tools.shutil, "which", side_effect=lambda s: s), mock.patch.object(tools.subprocess, "run", side_effect=run):
+            with self.assertRaises(exceptions.DesignError):
+                tools.find()
 
 
 class test_cdc_configuration(unittest.TestCase):

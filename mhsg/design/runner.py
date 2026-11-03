@@ -3,9 +3,10 @@
 Runs GHDL and Yosys on a design:
 
 1. GHDL analyzes the files of each library, in order.
-2. GHDL synthesizes the top entity to Verilog. The Verilog is not used as a netlist, only for the location
-   comments GHDL writes before each statement, which netlist.py joins to the cells of the Yosys netlist.
-3. Yosys synthesizes the same top entity through the GHDL plugin, runs proc and check, and writes a JSON netlist.
+2. GHDL synthesizes the top entity to Verilog. The Verilog is not used as a netlist, only for the locations GHDL
+   writes for each statement, as comments or src attributes, which netlist.py joins to the cells of the Yosys netlist.
+3. Yosys synthesizes the same top entity through the GHDL plugin, loaded with -m ghdl unless it is built into Yosys,
+   runs proc and check, and writes a JSON netlist.
    The netlist is taken before any optimization, which would remove and rewrite logic.
 
 Both synthesis runs use the same options, so GHDL numbers the instances the same way in both.
@@ -105,7 +106,7 @@ def run(oDesign, oTools, sWorkDirectory):
     sNetlist = os.path.join(sWorkDirectory, "design.json")
     sLog = os.path.join(sWorkDirectory, "yosys.log")
     sScript = "ghdl " + " ".join(elaboration_options(oDesign, sWorkDirectory, lPatched) + top_units(oDesign)) + f"; proc; check; write_json {sNetlist}"
-    lCommand = [oTools.yosys, "-m", "ghdl", "-q", "-l", sLog, "-p", sScript]
+    lCommand = [oTools.yosys, *yosys_module_options(oTools), "-q", "-l", sLog, "-p", sScript]
     oResult.commands.append(lCommand)
     oProcess = subprocess.run(lCommand, capture_output=True, text=True, env=oTools.environment, check=False)
     oResult.messages.extend(parse_messages(oResult.unpatch(oProcess.stderr), "yosys"))
@@ -118,6 +119,12 @@ def run(oDesign, oTools, sWorkDirectory):
     with open(sNetlist, encoding="utf-8") as oFile:
         oResult.netlist = json.load(oFile)
     return oResult
+
+
+def yosys_module_options(oTools):
+    """Returns the options that load the GHDL plugin into Yosys: -m ghdl, or none when it is built into Yosys."""
+    fOptions = getattr(oTools, "module_options", None)
+    return fOptions() if fOptions is not None else ["-m", "ghdl"]
 
 
 def run_ghdl(oResult, oTools, lCommand, sStage, sOutput=None):

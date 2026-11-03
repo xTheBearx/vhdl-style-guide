@@ -76,18 +76,40 @@ class Context:
             # Names carry generate labels before the signal, such as gen_fifo.memory, and record fields after it,
             # such as ctrl_o.cpu_priv: try the parts from the last
             lParts = list(reversed(sSignal.lower().split("[")[0].split(".")))
-            for oArchitecture in oFile.get_lint_model().architectures:
+            lArchitectures = oFile.get_lint_model().architectures
+            for oArchitecture in lArchitectures:
                 for oProcess in oArchitecture.processes:
-                    if not oProcess.line <= oLocation.line <= oProcess.end_line:
-                        continue
-                    lAssignments = list(model.assignments(oProcess.statements))
-                    if bLast:
-                        lAssignments.reverse()
-                    for sBase in lParts:
-                        for oAssignment in lAssignments:
-                            if oAssignment.base == sBase:
-                                return oLocation.file, oAssignment.line
+                    if oProcess.line <= oLocation.line <= oProcess.end_line:
+                        iLine = assignment_line(oProcess, lParts, bLast)
+                        if iLine is not None:
+                            return oLocation.file, iLine
+            if all(declaration_line(o, oLocation.line) for o in lArchitectures):
+                # Later versions of GHDL locate some cells, such as latches, at the declaration of the signal or port
+                # they drive instead of the process: use the first process that assigns the signal
+                for oArchitecture in lArchitectures:
+                    for oProcess in oArchitecture.processes:
+                        iLine = assignment_line(oProcess, lParts, bLast)
+                        if iLine is not None:
+                            return oLocation.file, iLine
         return oLocation.file, oLocation.line
+
+
+def assignment_line(oProcess, lParts, bLast=False):
+    """Returns the line of the first assignment in a process to one of the names, tried in order, or of the last with bLast."""
+    lAssignments = list(model.assignments(oProcess.statements))
+    if bLast:
+        lAssignments.reverse()
+    for sBase in lParts:
+        for oAssignment in lAssignments:
+            if oAssignment.base == sBase:
+                return oAssignment.line
+    return None
+
+
+def declaration_line(oArchitecture, iLine):
+    """Returns whether a line comes before the statements of an architecture: in its declarations, or before it."""
+    lLines = [o.line for o in oArchitecture.processes + oArchitecture.assignments + oArchitecture.instances]
+    return not lLines or iLine < min(lLines)
 
 
 def design_rules(oConfig, lLocalRules):
@@ -116,7 +138,8 @@ def run(commandLineArguments, oConfig):
             oResult = runner.run(oDesign, oTools, sWorkDirectory)
         oNetlist = None
         if oResult.netlist is not None:
-            oNetlist = netlist.Netlist(oResult.netlist, netlist.read_locations(oResult.verilog_file))
+            lFiles = [s for o in oDesign.libraries for s in o.files]
+            oNetlist = netlist.Netlist(oResult.netlist, netlist.read_locations(oResult.verilog_file, lFiles), lFiles)
         oContext = Context(oDesign, oResult, oNetlist)
         lFindings = [(oRule, oFinding) for oRule in lRules for oFinding in oRule.check_design(oContext)]
         write_cdc_report(getattr(commandLineArguments, "cdc_report", None), oContext)
