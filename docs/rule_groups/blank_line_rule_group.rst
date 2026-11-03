@@ -105,6 +105,7 @@ Rules Enforcing Blank Line Rule Group
 * `subtype_200 <../subtype_rules.html#subtype-200>`_
 * `subtype_201 <../subtype_rules.html#subtype-201>`_
 * `subtype_202 <../subtype_rules.html#subtype-202>`_
+* `sv_blank_line_001 <../sv_blank_line_rules.html#sv-blank-line-001>`_
 * `type_010 <../type_rules.html#type-010>`_
 * `type_011 <../type_rules.html#type-011>`_
 * `type_200 <../type_rules.html#type-200>`_

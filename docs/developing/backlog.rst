@@ -80,9 +80,12 @@ files with pyslang and running the language neutral rules, is done; see :doc:`..
   parameters and named ports by its wrap width, twice the indent by default; part of ibex does so. sv_indent_001
   uses one level; an option could allow two.
 * **begin on its own line** is put at the level of the statement it belongs to; some code indents it one level more.
-* **Inactive** :code:`\`ifdef` **branches and macro arguments** are kept as unclassified tokens (about 5% of the
-  tokens of ibex, common_cells and picorv32), so rules about syntax will not see them. Parsing each branch with its
-  defines set would let rules check them.
+* **Inactive** :code:`\`ifdef` **branches and macro arguments** are kept as unclassified tokens (about 11% of the
+  tokens of ibex, common_cells and picorv32, most in the arguments of macros such as :code:`\`ASSERT` and
+  :code:`\`uvm_info`), so rules do not check them. Parsing each branch with its defines set, and macro arguments
+  that are expressions, would let rules check them.
+* **Spaces inside parentheses and braces** and around :code:`) (` between parameter and port lists are not checked;
+  Verible's formatter sets them by context.
 * **Include files and defines from the command line**: files are parsed on their own; a macro defined in another file
   is not expanded, which is fine for style rules but not for lint.
 * **Code tags in block comments**: :code:`/* mhsg_off */` is not recognized; only :code:`//` comments are.

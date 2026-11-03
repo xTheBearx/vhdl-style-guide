@@ -49,6 +49,8 @@ repos:
       - id: detect-private-key
       - id: fix-byte-order-marker
       - id: end-of-file-fixer
+        # Blank lines at the end of the file are what sv_blank_line_001 checks
+        exclude: '^tests/svfile/whitespace\.sv$'
       - id: trailing-whitespace
         exclude: "^(\
           tests/styles/code_examples/trailing_whitespace\\.vhd|\

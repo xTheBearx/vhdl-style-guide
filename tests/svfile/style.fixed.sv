@@ -4,5 +4,5 @@ module style;
     // mhsg_off
     logic c;   
     // mhsg_on
-    assign a = b; // a comment that makes this line longer than eighty characters
+    assign a = b;  // a comment that makes this line longer than eighty characters
 endmodule

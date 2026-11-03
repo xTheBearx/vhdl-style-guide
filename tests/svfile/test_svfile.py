@@ -150,6 +150,12 @@ class test_indent(unittest.TestCase):
         sText = "module m; // — em dash\n    logic a;\n    initial begin\n        a = 1;\n    end\nendmodule\n"
         self.assertEqual([0, 1, 1, 2, 1, 0], self.levels(sText))
 
+    def test_zero_width_tokens(self):
+        # The implicit type of b_i is a placeholder token of no width at the offset of b_i
+        lTokens = tokens_of("module m (input logic [7:0] a_i,b_i);\nendmodule\n")
+        oName = [o for o in lTokens if o.get_value() == "b_i"][0]
+        self.assertIsInstance(oName, tokens.of("Declarator", "name"))
+
     def test_token_map_finds_base_classes(self):
         oFile = svFile(["module m;", "    logic a;", "endmodule"], sFilename="m.sv")
         self.assertEqual(["module", "logic", "endmodule"], [o.get_tokens()[0].get_value() for o in oFile.get_tokens_matching([tokens.keyword])])
@@ -186,6 +192,7 @@ class test_rules(unittest.TestCase):
                 "ERROR: style.sv(2)sv_indent_001 -- Use 4 spaces for indent",
                 "ERROR: style.sv(2)whitespace_001 -- Remove trailing whitespace",
                 "ERROR: style.sv(3)whitespace_002 -- Remove tab",
+                "ERROR: style.sv(7)sv_whitespace_015 -- Add spaces before the comment",
                 "WARNING: style.sv(7)length_001 -- Reduce line to less than 80 characters",
             ],
             sorted(lOutput),
@@ -223,6 +230,50 @@ class test_rules(unittest.TestCase):
             subprocess.run([sys.executable, "bin/mhsg", "-f", sCopy, "--fix"], cwd=sRoot, capture_output=True, check=False)
             with open(sCopy, encoding="utf-8") as oFile:
                 self.assertEqual("module m;\n    logic a;  // trailing\n              // continued\nendmodule\n", oFile.read())
+
+    def test_whitespace_check(self):
+        iStatus, lOutput, _ = self.run_mhsg([], "whitespace.sv")
+        self.assertEqual(1, iStatus)
+        lRules = [s.split(")", 1)[1].split(" ")[0] for s in lOutput]
+        dCounts = {s: lRules.count(s) for s in lRules}
+        self.assertEqual(
+            {
+                "sv_whitespace_001": 3,
+                "sv_whitespace_002": 1,
+                "sv_whitespace_003": 1,
+                "sv_whitespace_004": 2,
+                "sv_whitespace_005": 1,
+                "sv_whitespace_006": 2,
+                "sv_whitespace_007": 1,
+                "sv_whitespace_008": 6,
+                "sv_whitespace_009": 1,
+                "sv_whitespace_010": 1,
+                "sv_whitespace_011": 1,
+                "sv_whitespace_012": 1,
+                "sv_whitespace_013": 3,
+                "sv_whitespace_014": 2,
+                "sv_whitespace_015": 1,
+            },
+            dCounts,
+        )
+
+    def test_whitespace_fix(self):
+        # The fix keeps the space before the packed dimension of a type, the empty case item, the empty argument,
+        # the operators in brackets and the arguments of the macro; it removes the blank lines at the end
+        _, lOutput, sAfter = self.run_mhsg(["--fix"], "whitespace.sv")
+        self.assertEqual(read("whitespace.fixed.sv"), sAfter)
+        self.assertEqual([], lOutput)
+        self.assertEqual((0, []), self.run_mhsg(["-ap"], "whitespace.fixed.sv")[:2])
+
+    def test_blank_lines_at_end(self):
+        iStatus, lOutput, _ = self.run_mhsg(["-ap"], "whitespace.fixed.sv")
+        self.assertEqual((0, []), (iStatus, lOutput))
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sCopy = os.path.join(sTemporary, "e.sv")
+            with open(sCopy, "w", encoding="utf-8") as oFile:
+                oFile.write("module m;\nendmodule\n\n\n")
+            oResult = subprocess.run([sys.executable, "bin/mhsg", "-f", sCopy, "-of", "syntastic"], cwd=sRoot, capture_output=True, text=True, check=False)
+            self.assertEqual([f"ERROR: {sCopy}(3)sv_blank_line_001 -- Remove blank lines at the end of the file"], oResult.stdout.splitlines())
 
     def test_sample_is_clean(self):
         self.assertEqual((0, []), self.run_mhsg([], "sample.sv")[:2])

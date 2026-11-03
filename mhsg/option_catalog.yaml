@@ -561,6 +561,10 @@ options:
     values: ["yes", "no"]
     label: Sort within sections
     description: yes sorts each group separated by a blank line or comment line on its own; no sorts the whole list. Booleans true/false are also accepted.
+  spaces:
+    type: integer
+    label: Spaces
+    description: The least number of spaces between code and a comment at the end of its line.
   spaces_after:
     type: integer
     minimum: 1
