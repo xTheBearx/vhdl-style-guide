@@ -411,6 +411,41 @@ black box type that has none, with its instances, generic values, ports, directi
 ``TODO``. Fill it in, then add it to **black_box_libraries** or copy it into the design section; design_017 reports
 every ``TODO`` that remains.
 
+**Libraries that come with MHSG.** Two declaration libraries come with MHSG, for AMD/Xilinx and for Microchip. A
+design includes them by name, so using them stays your decision:
+
+.. code-block:: yaml
+
+   design:
+     vendor_libraries: [xilinx]
+     black_box_libraries: [xilinx]
+     black_boxes:
+       # Changes a single port of a declaration of the library
+       BUFGMUX:
+         ports: {O: {clock_out: {from: I0, relation: same}}}
+
+The declarations are taken from the vendors' published libraries guides, not from vendor files. A declaration in the
+design section, or a library listed earlier, takes precedence port by port, so a single port can be changed. Ports
+whose behaviour depends on how a primitive is used, such as the ECC ports of block RAM or the latch mode of the
+Microchip SLE, are left out on purpose, so design_017 asks for them. Check the declarations against the guides of your
+tool versions.
+
+* **xilinx**: clock buffers, input and output buffers, MMCM and PLL, registers, shift registers, DSP, IDDR and ODDR,
+  IDELAY, block RAM, configuration primitives, and the XPM CDC macros, FIFOs and memories. The output of a clock
+  multiplexer is a clock of its own; MMCM and PLL outputs are derived from CLKIN1.
+* **microchip**: global and regional clock buffers, input and output buffers, SLE, the large SRAM blocks, and the
+  PF_CCC, PF_OSC, PF_INIT_MONITOR and CoreReset_PF cores, matched by the names Libero gives them, such as PF_CCC_C0.
+
+xilinx
+~~~~~~
+
+.. include:: black_box_library_xilinx.rst
+
+microchip
+~~~~~~~~~
+
+.. include:: black_box_library_microchip.rst
+
 **Report.** The crossing report lists each black box type, where it is declared, its reference and reviewer, the
 outputs synchronized inside black boxes for manual review, the static ports with their justification and reviewer,
 and the problems of the declarations.

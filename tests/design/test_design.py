@@ -300,6 +300,40 @@ class test_black_box_declarations(unittest.TestCase):
         self.assertEqual([sLibrary], [o.source for o in oLibrary.find("BUFG", "u")])
 
 
+class test_declaration_libraries(unittest.TestCase):
+    def test_libraries_parse(self):
+        self.assertEqual(["microchip", "xilinx"], black_box.built_in_libraries())
+        for sName in black_box.built_in_libraries():
+            with self.subTest(sName):
+                oLibrary = black_box.from_design({"black_box_libraries": [sName]})
+                self.assertTrue(oLibrary.types)
+                self.assertTrue(all(o.reference for o in oLibrary.types))
+                # No library declaration needs a reviewer, which only the user can give
+                self.assertFalse([o.name for o in oLibrary.types for _, r in o.ports if r is not None and r.kind == "static"])
+
+    def test_documentation_is_up_to_date(self):
+        """docs/black_box_library_<name>.rst is written with black_box.library_documentation(name)."""
+        for sName in black_box.built_in_libraries():
+            with self.subTest(sName), open(os.path.join(sRoot, "docs", f"black_box_library_{sName}.rst"), encoding="utf-8") as oFile:
+                self.assertEqual(black_box.library_documentation(sName), oFile.read())
+
+    def test_design_section_changes_single_ports(self):
+        oLibrary = black_box.from_design(
+            {"black_box_libraries": ["xilinx"], "black_boxes": {"BUFGMUX": {"ports": {"O": {"clock_out": {"from": "I0", "relation": "same"}}}}}},
+        )
+        oInstance = black_box.Instance(FakeCell("BUFGMUX", ["O", "I0", "I1", "S"]), oLibrary.find("BUFGMUX", "u_mux"))
+        self.assertEqual(
+            ("same", "I0", "async", "clock"),
+            (oInstance.role("O").relation, oInstance.role("O").source, oInstance.role("S").kind, oInstance.role("I1").kind),
+        )
+        self.assertEqual(["design section", "library xilinx"], [o.source for o in oInstance.declarations])
+
+    def test_unknown_library(self):
+        with self.assertRaises(exceptions.ConfigurationError) as oContext:
+            black_box.from_design({"black_box_libraries": ["acme"]})
+        self.assertIn("not a file or a library that comes with mhsg (microchip, xilinx)", oContext.exception.message)
+
+
 class test_vendor_libraries(unittest.TestCase):
     def install(self, sDirectory, lFiles):
         for sFile in lFiles:
@@ -808,6 +842,81 @@ class test_design_analysis(unittest.TestCase):
         self.assertEqual((0, ""), (oResult.returncode, oResult.stdout))
         self.assertEqual([("clk_pad", "port", 1)], [(d["name"], d["kind"], d["registers"]) for d in dReport["clocks"]])
         self.assertEqual([("u_sync", "clk_pad", "clk_b", 3)], [(d["instance"], d["from"], d["clock"], d["stages"]) for d in dReport["box_synchronizers"]])
+
+    def run_library_design(self, sTop, sFile, dVendor, sLibrary):
+        dDesign = {
+            "top": sTop,
+            "vendor_libraries": [dVendor],
+            "black_box_libraries": [sLibrary],
+            "libraries": [{"name": "work", "files": [os.path.join(sTestDir, sFile)]}],
+        }
+        with tempfile.TemporaryDirectory() as sDirectory:
+            sConfiguration = os.path.join(sDirectory, "design.yaml")
+            sReport = os.path.join(sDirectory, "cdc.json")
+            with open(sConfiguration, "w", encoding="utf-8") as oFile:
+                json.dump({"design": dDesign}, oFile)
+            oResult = subprocess.run(
+                [*utils.mhsg_exec(), "--design", "-c", sConfiguration, "-of", "syntastic", "--cdc_report", sReport],
+                cwd=sRoot,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            with open(sReport, encoding="utf-8") as oFile:
+                dReport = json.load(oFile)
+        lFindings = []
+        for sLine in oResult.stdout.splitlines():
+            sLocation, sMessage = sLine.split(": ", 1)[1].split(" -- ", 1)
+            sFile, sRest = sLocation.rsplit("(", 1)
+            sLineNumber, sRule = sRest.split(")", 1)
+            lFindings.append((int(sLineNumber), sRule, sMessage))
+        return lFindings, dReport
+
+    def test_xilinx_library(self):
+        lFindings, dReport = self.run_library_design(
+            "xilinx_top",
+            "vendor_library_top.vhd",
+            {"vendor": "xilinx", "path": os.path.join(sTestDir, "vendor", "vivado")},
+            "xilinx",
+        )
+        # The clock multiplexer, rd_en of the FIFO and port b of the memory with independent clocks cross;
+        # the MMCM clock and port b of the memory with a common clock do not
+        self.assertEqual(
+            [
+                (101, "design_008", "mux_q (u_mux.O) captures flag_a (clk_pad) without a synchronizer"),
+                (118, "design_008", "u_fifo.rd_en (clk_b) captures en_a (clk_pad) without a synchronizer"),
+                (158, "design_008", "u_ram_independent.addrb (clk_b) captures count_a (clk_pad) without a synchronizer"),
+            ],
+            lFindings,
+        )
+        self.assertEqual(
+            [("clk_pad", "clk_pad", None), ("u_mmcm.CLKOUT0", "clk_pad", "clk_pad"), ("u_mux.O", "u_mux.O", None)],
+            [(d["name"], d["group"], d["from"]) for d in dReport["clocks"]],
+        )
+        self.assertEqual(
+            [("u_gray", "synchronizer", 3), ("u_fifo", "dual clock FIFO", None)],
+            [(d["instance"], d["kind"], d.get("stages")) for d in dReport["box_synchronizers"]],
+        )
+        self.assertTrue(all(d["declared_in"] == ["library xilinx"] for d in dReport["black_boxes"]))
+
+    def test_microchip_library(self):
+        lFindings, dReport = self.run_library_design(
+            "microchip_top",
+            "vendor_microchip_top.vhd",
+            {"vendor": "microchip", "family": "polarfire", "path": os.path.join(sTestDir, "vendor", "libero")},
+            "microchip",
+        )
+        self.assertEqual(
+            [
+                (78, "design_017", "Black box SLE: port LAT has no role"),
+                (92, "design_008", "u_ram.B_ADDR (clk_b) captures addr_a (clk_pad) without a synchronizer"),
+            ],
+            lFindings,
+        )
+        self.assertEqual(
+            [("clk_pad", "clk_pad", None), ("u_ccc.OUT0_FABCLK_0", "clk_pad", "clk_pad")],
+            [(d["name"], d["group"], d["from"]) for d in dReport["clocks"]],
+        )
 
     def test_crossing_report(self):
         with tempfile.TemporaryDirectory() as sDirectory:

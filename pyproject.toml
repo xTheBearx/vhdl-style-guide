@@ -83,6 +83,7 @@ template = "{tag}"
 [tool.setuptools.package-data]
 "mhsg" = [
     "option_catalog.yaml",
+    "black_box_libraries/*.yaml",
     "rule_sets/*.yaml",
     "rule_aliases.yaml",
 ]
