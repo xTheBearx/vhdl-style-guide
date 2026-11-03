@@ -23,7 +23,7 @@ import glob
 import os
 
 from mhsg import exceptions
-from mhsg.design import black_box
+from mhsg.design import black_box, vendors
 
 STANDARDS = ("87", "93", "93c", "00", "02", "08", "19")
 
@@ -48,6 +48,8 @@ class Design:
         self.work_directory = None
         # Clock domain crossing constraints: clocks, clock_groups, inputs and waivers
         self.cdc = {}
+        # Libraries of vendor component declarations, see vendors.py; also the first entries of libraries
+        self.vendor_libraries = []
         # Declarations of the black boxes, see black_box.py
         self.black_boxes = black_box.Library()
 
@@ -77,6 +79,9 @@ def from_configuration(dConfiguration):
         oDesign.libraries.append(Library(str(dLibrary["name"]), [s for s in expand_files(lPatterns) if not excluded(s, lExclude)]))
     if not oDesign.all_files():
         raise exceptions.ConfigurationError("ERROR: the design section lists no files that exist")
+    # Vendor declarations are analyzed first, so the design can use them
+    oDesign.vendor_libraries = vendors.resolve(dDesign.get("vendor_libraries"))
+    oDesign.libraries = [Library(o.name, o.files) for o in oDesign.vendor_libraries] + oDesign.libraries
     oDesign.top_library = str(dDesign.get("top_library") or oDesign.libraries[-1].name)
     oDesign.generics = dict(dDesign.get("generics") or {})
     oDesign.ghdl_options = [str(s) for s in dDesign.get("ghdl_options") or []]
