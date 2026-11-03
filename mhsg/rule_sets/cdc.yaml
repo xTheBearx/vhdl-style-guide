@@ -44,6 +44,6 @@ checks:
     severity: Error
     rules: [design_015]
   "009":
-    title: Check reconvergence of separately synchronized signals
-    status: design
-    note: Planned.
+    title: Avoid reconvergence of separately synchronized signals
+    severity: Error
+    rules: [design_016]

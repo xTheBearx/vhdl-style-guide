@@ -1882,7 +1882,8 @@
         "design_012",
         "design_013",
         "design_014",
-        "design_015"
+        "design_015",
+        "design_016"
       ]
     },
     {
@@ -19266,6 +19267,53 @@
         "design"
       ],
       "summary": "This rule reports asynchronous resets that are not released synchronously to the clock of the registers they reset.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_016",
+      "alias": "design_reconvergence",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports signals synchronized separately from one clock domain that meet again in logic.",
       "documentation": "design_rules.rst",
       "options": [
         {

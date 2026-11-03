@@ -105,7 +105,7 @@ Design rules
 * :code:`design_006` reports registers that are never used and signals that are read but never assigned (DO-254 SS17).
 * :code:`design_007` reports combinational paths deeper than :code:`maximum_depth` logic levels, 48 by default (DO-254 SS19).
 
-* :code:`design_008` to :code:`design_015` check clock domain crossings, clocks and resets, see below.
+* :code:`design_008` to :code:`design_016` check clock domain crossings, clocks and resets, see below.
 
 See :doc:`design_rules`. Design rules are configured like other rules, for example with a different severity:
 
@@ -156,6 +156,12 @@ A register of another, asynchronous domain is a crossing, classified as:
 +--------------------------------+---------------------------------------------------------------------------------+
 | waived                         | Waived in the design section, with a justification.                             |
 +--------------------------------+---------------------------------------------------------------------------------+
+
+**Reconvergence.** Signals synchronized separately from one clock domain can arrive in different cycles of the
+destination clock. A register whose inputs combine two or more of them, through logic of its own domain, can see a
+state the source never had; design_016 reports it. The bits of one bus count as one signal, since a gray-coded bus is
+meant to be combined and design_009 reports other buses. A signal combined with a delayed copy of itself, as in an
+edge detector, is one signal.
 
 Data that crosses through a memory, as in an asynchronous FIFO, is not a crossing: the FIFO is safe when its pointers
 cross safely, which the analysis checks.
@@ -231,7 +237,8 @@ Limitations
   signals, which a netlist cannot show. Checks for those are planned for the per-file lint.
 * Findings depend on the generics: logic that a generic disables may be constant or unused. Each finding names the
   entity with its generics, as GHDL names it, such as :code:`neorv32_cpu_regfile_5_3`.
-* Reconvergence of separately synchronized signals, and reset domain crossings through logic, are not checked yet.
+* Reconvergence is checked through logic up to the first register in the destination domain, not across further
+  registers. Reset domain crossings through logic are not checked yet.
 * A black box is assumed to have no path from its inputs to its outputs, so a crossing through one is not found;
   name its clock outputs under clocks.
 * Formal reachability is planned.

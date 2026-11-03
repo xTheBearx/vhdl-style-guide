@@ -408,6 +408,22 @@ class test_design_analysis(unittest.TestCase):
             lOutput,
         )
 
+    def test_reconvergence(self):
+        # The gray-coded bus and the edge detector on one synchronized signal are not reported
+        self.assertEqual(
+            [("reconvergence.vhd", 53, "design_016", "mode_a, start_a from clk_a are synchronized separately and meet again in go_b (clk_b)")],
+            self.findings("reconvergence_top", "reconvergence.vhd"),
+        )
+        with tempfile.TemporaryDirectory() as sDirectory:
+            sJson = os.path.join(sDirectory, "cdc.json")
+            self.run_design("reconvergence_top", "reconvergence.vhd", ["--cdc_report", sJson])
+            with open(sJson, encoding="utf-8") as oFile:
+                dReport = json.load(oFile)
+        self.assertEqual(
+            [{"signals": [{"signal": "mode_a", "clock": "clk_a"}, {"signal": "start_a", "clock": "clk_a"}], "clock": "clk_b", "registers": ["go_b"]}],
+            [{k: v for k, v in d.items() if k != "location"} for d in dReport["reconvergences"]],
+        )
+
     def test_crossing_report(self):
         with tempfile.TemporaryDirectory() as sDirectory:
             sJson = os.path.join(sDirectory, "cdc.json")

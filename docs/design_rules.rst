@@ -396,3 +396,35 @@ A reset input declared in the domain of the registers under inputs in the cdc se
        q <= d;
      end if;
    end process;
+
+design_016
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_reconvergence`
+
+This rule reports signals synchronized separately from one clock domain that meet again in logic.
+
+.. NOTE:: This is a design rule. It runs in design analysis and implements DO-254 check CDC1.
+
+Each synchronizer takes one or two cycles of the destination clock, and which one is random.
+Two signals that change together in the source domain can therefore arrive in different cycles, and logic that
+combines them can see a state the source never had, for example a request without its qualifier.
+Synchronize one signal and derive the others from it in the destination domain, use a handshake, or gray code a counter.
+The bits of one bus count as one signal: a gray-coded bus is meant to be combined, and design_009 reports other buses.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   process (clk_b) is
+   begin
+     if rising_edge(clk_b) then
+       start_meta <= start_a;
+       start_b    <= start_meta;
+       mode_meta  <= mode_a;
+       mode_b     <= mode_meta;
+       go_b       <= start_b and mode_b;  -- start_a and mode_a meet again
+     end if;
+   end process;
