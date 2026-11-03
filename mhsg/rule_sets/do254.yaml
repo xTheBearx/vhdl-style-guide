@@ -1,0 +1,232 @@
+# DO-254 coding standards.
+#
+# Each check of the position paper maps to the mhsg rules that implement it, with the paper's
+# default severity. Checks without rules record their status:
+#   planned  a per-file lint rule is planned
+#   design   needs design analysis of the whole design (GHDL and Yosys), planned
+#   manual   left to manual code review
+#
+# Rules are labelled with the check in reports, for example "DO254-CP2 (lint_001)".
+
+name: DO-254
+prefix: DO254
+version: "1"
+title: Best Practice VHDL Coding Standards for DO-254 Programs
+source: DO-254 Users Group position paper DO254-UG-001 Rev 1a (2010)
+
+checks:
+
+  # Coding practices
+
+  CP1:
+    title: Avoid incorrect VHDL type usage
+    severity: Error
+    status: design
+  CP2:
+    title: Avoid duplicate signal assignments
+    severity: Warning
+    rules: [lint_001]
+  CP3:
+    title: Avoid hard-coded numeric values
+    severity: Warning
+    status: planned
+  CP4:
+    title: Avoid hard-coded vector assignment
+    severity: Note
+    status: planned
+  CP5:
+    title: Ensure consistent FSM state encoding style
+    severity: Error
+    status: planned
+  CP6:
+    title: Ensure safe FSM transitions
+    severity: Error
+    status: planned
+    note: Unreachable and dead-end states need design analysis.
+  CP7:
+    title: Avoid mismatching ranges
+    severity: Warning
+    status: design
+  CP8:
+    title: Ensure complete sensitivity list
+    severity: Warning
+    rules: [lint_002]
+  CP9:
+    title: Ensure proper sub-program body
+    severity: Warning
+    status: planned
+  CP10:
+    title: Assign value before using
+    severity: Warning
+    status: planned
+  CP11:
+    title: Avoid unconnected input ports
+    severity: Error
+    rules: [lint_003]
+  CP12:
+    title: Avoid unconnected output ports
+    severity: Note
+    rules: [lint_004]
+  CP13:
+    title: Declare objects before use
+    severity: Error
+    status: design
+  CP14:
+    title: Avoid unused declarations
+    severity: Warning
+    status: planned
+
+  # Clock domain crossing
+
+  CDC1:
+    title: Analyze multiple asynchronous clocks
+    status: design
+
+  # Safe synthesis
+
+  SS1:
+    title: Avoid implied logic
+    severity: Warning
+    status: planned
+  SS2:
+    title: Ensure proper case statement specification
+    severity: Error
+    rules: [lint_005, lint_006, lint_007]
+  SS3:
+    title: Avoid combinational feedback
+    severity: Error
+    rules: [lint_008]
+  SS4:
+    title: Avoid latch inference
+    severity: Warning
+    rules: [lint_009]
+  SS5:
+    title: Avoid multiple waveforms
+    severity: Error
+    status: planned
+  SS6:
+    title: Avoid multiple drivers
+    severity: Error
+    rules: [lint_010]
+  SS7:
+    title: Avoid uninitialized VHDL deferred constants
+    severity: Warning
+    status: planned
+  SS8:
+    title: Avoid clock used as data
+    severity: Error
+    status: design
+  SS9:
+    title: Avoid shared clock and reset signal
+    severity: Error
+    status: design
+  SS10:
+    title: Avoid gated clocks
+    severity: Warning
+    status: design
+  SS11:
+    title: Avoid internally generated clocks
+    severity: Warning
+    status: design
+  SS12:
+    title: Avoid internally generated resets
+    severity: Warning
+    status: design
+  SS13:
+    title: Avoid mixed polarity reset
+    severity: Warning
+    rules: [lint_011]
+  SS14:
+    title: Avoid unresettable registers
+    severity: Warning
+    rules: [lint_012]
+  SS15:
+    title: Avoid asynchronous reset release
+    severity: Error
+    status: design
+  SS16:
+    title: Avoid initialization assignments
+    severity: Error
+    rules: [lint_013]
+  SS17:
+    title: Avoid undriven and unused logic
+    severity: Error
+    status: planned
+  SS18:
+    title: Ensure register controllability
+    severity: Warning
+    status: design
+  SS19:
+    title: Avoid snake paths
+    severity: Warning
+    status: design
+  SS20:
+    title: Ensure nesting limits
+    severity: Warning
+    status: planned
+  SS21:
+    title: Ensure consistent vector order
+    severity: Warning
+    status: planned
+
+  # Design reviews
+
+  DR1:
+    title: Use statement labels
+    severity: Note
+    rules: [process_016, process_018, concurrent_013, case_022, case_023, loop_statement_006, loop_statement_007, generate_011, block_007]
+    configuration:
+      # These remove labels, the opposite of DR1
+      concurrent_005: {disable: true}
+      case_019: {disable: true}
+      case_020: {disable: true}
+  DR2:
+    title: Avoid mixed case naming for differentiation
+    severity: Warning
+    status: planned
+  DR3:
+    title: Ensure unique name spaces
+    severity: Error
+    status: planned
+  DR4:
+    title: Use separate declaration style
+    severity: Note
+    rules: [signal_015, variable_015]
+  DR5:
+    title: Use separate statement style
+    severity: Note
+    rules: [sequential_007, if_022, if_024, case_012, loop_statement_001]
+  DR6:
+    title: Ensure consistent indentation
+    severity: Note
+    groups: [indent]
+  DR7:
+    title: Avoid using tabs
+    severity: Warning
+    rules: [whitespace_002]
+  DR8:
+    title: Avoid large design files
+    severity: Warning
+    rules: [length_002]
+  DR9:
+    title: Ensure consistent signal names across hierarchy
+    severity: Warning
+    status: planned
+  DR10:
+    title: Ensure consistent file header
+    severity: Warning
+    status: planned
+  DR11:
+    title: Ensure sufficient comment density
+    severity: Warning
+    status: planned
+  DR12:
+    title: Ensure proper placement of comments
+    severity: Note
+    status: manual
+  DR13:
+    title: Ensure company specific naming standards
+    severity: Note
+    groups: [naming]
+    # The prefixes and suffixes are project specific: configure and enable the naming rules first
+    enable: false

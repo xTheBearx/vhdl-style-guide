@@ -219,6 +219,27 @@ def describe_settings():
             "default": [],
         },
         {
+            "path": ["lint"],
+            "type": "boolean",
+            "label": "Lint mode",
+            "description": "Also run the lint checks, labelled with the checks of the rule set. The same as --lint.",
+            "default": False,
+        },
+        {
+            "path": ["lint_only"],
+            "type": "boolean",
+            "label": "Lint only",
+            "description": "Run only the lint checks and the rules of the rule set. The same as --lint_only.",
+            "default": False,
+        },
+        {
+            "path": ["rule_set"],
+            "type": "string",
+            "label": "Rule set",
+            "description": "Rule set for lint mode: a built in name such as do254, the path of a YAML file, or none for all lint rules without labels.",
+            "default": "do254",
+        },
+        {
             "path": ["linesep"],
             "type": "enum",
             "values": ["\n", "\r\n"],

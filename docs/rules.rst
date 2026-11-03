@@ -63,6 +63,7 @@ The rules are divided into categories depending on the part of the VHDL code bei
    iteration_scheme_rules.rst
    length_rules.rst
    library_rules.rst
+   lint_rules.rst
    logical_operator_rules.rst
    loop_statement_rules.rst
    next_statement_rules.rst

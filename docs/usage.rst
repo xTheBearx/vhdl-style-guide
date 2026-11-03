@@ -15,6 +15,7 @@ The command line tool can be invoked with:
                                  [-of {mhsg,syntastic,summary}] [-b]
                                  [-oc OUTPUT_CONFIGURATION]
                                  [-rc RULE_CONFIGURATION]
+                                 [--lint] [--lint_only] [--rule_set RULE_SET]
                                  [--output_options OUTPUT_OPTIONS]
                                  [--style {indent_only,jcl}] [-v] [-ap]
                                  [--fix_only FIX_ONLY] [--stdin] [--stdout]
@@ -55,6 +56,14 @@ The command line tool can be invoked with:
                            Write configuration to file name.
      -rc RULE_CONFIGURATION, --rule_configuration RULE_CONFIGURATION
                            Display configuration of a rule
+     --lint                Also run the lint checks, which report design problems
+                           such as latches, labelled with the checks of the rule
+                           set.
+     --lint_only           Run only the lint checks and the rules of the rule
+                           set.
+     --rule_set RULE_SET   Rule set for lint mode: a built in name (default
+                           do254), a YAML file, or none for all lint rules
+                           without labels.
      --output_options OUTPUT_OPTIONS
                            Write a description of every option, with its type,
                            allowed values and default, to file name (JSON), for
@@ -144,6 +153,13 @@ The command line tool can be invoked with:
 |                               | the destination directory must exist.           |
 +-------------------------------+-------------------------------------------------+
 | --rule_configuration          | Displays the configuration of a rule.           |
++-------------------------------+-------------------------------------------------+
+| --lint                        | Also runs the lint checks of the rule set. See  |
+|                               | :ref:`lint`.                                    |
++-------------------------------+-------------------------------------------------+
+| --lint_only                   | Runs only the rules of the rule set.            |
++-------------------------------+-------------------------------------------------+
+| --rule_set                    | The rule set used in lint mode.                 |
 +-------------------------------+-------------------------------------------------+
 | --output_options              | Writes a JSON description of every option, with |
 |                               | its type, allowed values, default and help      |

@@ -194,8 +194,31 @@ def collect_port_orders(lFilenames):
     return dReturn
 
 
-def get_port_orders(sText):
-    """Returns (kind, name, ports) for each entity and component declaration in the text."""
+def collect_port_modes(lFilenames):
+    """
+    Returns {"entity": {name: ports}, "component": {name: ports}} where ports is a tuple of (port name, mode)
+    in declaration order, with lower case names and modes. A port without a mode has the mode "in".
+    A name declared more than once with different ports maps to None.
+    """
+    dReturn = {"entity": {}, "component": {}}
+    for sText in read_files(lFilenames):
+        for sKind, sName, lPorts in get_port_orders(sText, bModes=True):
+            dKind = dReturn[sKind]
+            if sName in dKind and dKind[sName] != lPorts:
+                dKind[sName] = None
+            else:
+                dKind[sName] = lPorts
+    return dReturn
+
+
+reMode = re.compile(r"\s*(in|out|inout|buffer|linkage)\b", re.IGNORECASE)
+
+
+def get_port_orders(sText, bModes=False):
+    """
+    Returns (kind, name, ports) for each entity and component declaration in the text.
+    ports is a tuple of lower case names, or of (name, mode) pairs with bModes.
+    """
     sText = reComment.sub(" ", sText)
     sText = reString.sub('""', sText)
     lReturn = []
@@ -214,6 +237,12 @@ def get_port_orders(sText):
         for sDeclaration in get_parenthesized(sText, oPort.end()).split(";"):
             if ":" in sDeclaration:
                 sNames = re.sub(r"^\s*signal\b", "", sDeclaration.split(":")[0], flags=re.IGNORECASE)
-                lPorts.extend(sName.strip().lower() for sName in sNames.split(",") if sName.strip())
+                lNames = [sName.strip().lower() for sName in sNames.split(",") if sName.strip()]
+                if bModes:
+                    oMode = reMode.match(sDeclaration.split(":", 1)[1])
+                    sMode = oMode.group(1).lower() if oMode else "in"
+                    lPorts.extend((sName, sMode) for sName in lNames)
+                else:
+                    lPorts.extend(lNames)
         lReturn.append((sKind, sName, tuple(lPorts)))
     return lReturn

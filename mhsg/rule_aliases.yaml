@@ -136,6 +136,8 @@ case_017: case_end_keyword_case
 case_018: case_end_case_keyword_case
 case_019: case_no_label_before_case_keyword
 case_020: case_no_label_after_end_case
+case_022: case_label_exists
+case_023: case_end_label_exists
 case_200: case_blank_line_below_arrow
 case_201: case_lines_above_when_keyword
 case_300: case_label_indent
@@ -189,6 +191,7 @@ concurrent_009: concurrent_conditional_assignment_multiline_alignment
 concurrent_010: concurrent_no_blank_lines_in_assignments
 concurrent_011: concurrent_assignment_structure
 concurrent_012: concurrent_simple_assignment_array_structure
+concurrent_013: concurrent_assignment_label_exists
 concurrent_400: concurrent_record_aggregate_arrow_alignment
 concurrent_401: concurrent_simple_assignment_array_alignment
 conditional_expressions_100: conditional_expressions_space_before_when_keyword
@@ -566,6 +569,19 @@ library_010: library_keyword_on_own_line
 library_011: library_use_keyword_on_own_line
 library_012: library_allowed_libraries
 library_500: library_logical_name_case
+lint_001: lint_duplicate_signal_assignment
+lint_002: lint_sensitivity_list
+lint_003: lint_unconnected_input_port
+lint_004: lint_unconnected_output_port
+lint_005: lint_case_without_others
+lint_006: lint_duplicate_case_choice
+lint_007: lint_unreachable_case_choice
+lint_008: lint_combinational_feedback
+lint_009: lint_latch_inference
+lint_010: lint_multiple_drivers
+lint_011: lint_mixed_reset_usage
+lint_012: lint_unresettable_register
+lint_013: lint_initial_value
 logical_operator_500: logical_operator_case
 loop_statement_001: loop_statement_no_code_after_loop_keyword
 loop_statement_002: loop_statement_end_keyword_on_own_line

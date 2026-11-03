@@ -200,9 +200,22 @@ class rule_list:
         """
         lReturn = []
         for oRule in self.rules:
-            if oRule.phase == iPhaseNumber:
+            if oRule.phase == iPhaseNumber and not oRule.lint:
                 lReturn.append(oRule)
         return lReturn
+
+    def check_lint_rules(self):
+        """
+        Analyzes the enabled lint rules and returns the number of error violations.
+        Lint rules run before the phases and do not stop a run, so their results do not depend on formatting.
+        """
+        iFailures = 0
+        for oRule in filter_out_disabled_rules([o for o in self.rules if o.lint]):
+            oRule.analyze(self.oVhdlFile)
+            if oRule.get_report_severity().type == severity.error_type:
+                iFailures += len(oRule.violations)
+            self.iNumberRulesRan += 1
+        return iFailures
 
     def get_rules_in_subphase(self, lRules, iSubPhase, bFix=False):
         """
@@ -239,8 +252,8 @@ class rule_list:
         if lSkipPhase is None:
             lSkipPhase = []
         self.iNumberRulesRan = 0
-        iFailures = 0
         self.violations = False
+        iFailures = self.check_lint_rules()
         for phase in range(1, 8):
             if phase in lSkipPhase:
                 continue
@@ -252,7 +265,7 @@ class rule_list:
 
                 for oRule in lRules:
                     oRule.analyze(self.oVhdlFile)
-                    if oRule.severity.type == severity.error_type:
+                    if oRule.get_report_severity().type == severity.error_type:
                         iFailures += len(oRule.violations)
                     self.iNumberRulesRan += 1
                 self.lastPhaseRan = phase
@@ -383,9 +396,9 @@ class rule_list:
         oTestcase = junit.testcase(sVhdlFileName, str(0))
         oFailure = junit.failure("Failure")
         for oRule in self.rules:
-            if len(oRule.violations) > 0 and oRule.severity.type == severity.error_type:
+            if len(oRule.violations) > 0 and oRule.get_report_severity().type == severity.error_type:
                 for dViolation in oRule.violations:
-                    sLine = oRule.name + "_" + oRule.identifier + ": "
+                    sLine = oRule.get_display_id() + ": "
                     sLine += str(utils.get_violation_line_number(dViolation)) + " : "
                     sLine += dViolation.get_solution()
                     oFailure.add_text(sLine)
@@ -408,8 +421,10 @@ class rule_list:
                 for oViolation in oRule.violations:
                     dTemp = {}
                     dTemp["rule"] = oRule.unique_id
+                    if oRule.rule_set_labels:
+                        dTemp["checks"] = list(oRule.rule_set_labels)
                     dTemp["linenumber"] = oViolation.get_line_number()
-                    dTemp["severity"] = oRule.severity.name
+                    dTemp["severity"] = oRule.get_report_severity().name
                     dTemp["solution"] = oViolation.get_solution()
                     dReturn["violations"].append(dTemp)
         return dReturn

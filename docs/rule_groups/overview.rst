@@ -23,6 +23,8 @@ The following is a list of the rule groups:
 +-------------------------+---------------------------------------------------------+
 | length                  | Rules restricting length.                               |
 +-------------------------+---------------------------------------------------------+
+| lint                    | Rules reporting design problems, run in lint mode.      |
++-------------------------+---------------------------------------------------------+
 | indent                  | Rules involving line indents.                           |
 +-------------------------+---------------------------------------------------------+
 | naming                  | Rules for constraining how identifiers etc.. are named. |

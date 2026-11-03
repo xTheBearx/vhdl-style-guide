@@ -1,7 +1,7 @@
 {
   "format": "mhsg-options",
   "format_version": 1,
-  "mhsg_version": "3.35.0.post367+git.7d50ce1b.dirty",
+  "mhsg_version": "3.35.0.post388+git.77bb6983.dirty",
   "documentation_url": "https://github.com/xTheBearx/vhdl-style-guide/blob/master/docs/",
   "settings": [
     {
@@ -42,6 +42,33 @@
       "label": "Local rule directories",
       "description": "Directories with local rules to load.",
       "default": []
+    },
+    {
+      "path": [
+        "lint"
+      ],
+      "type": "boolean",
+      "label": "Lint mode",
+      "description": "Also run the lint checks, labelled with the checks of the rule set. The same as --lint.",
+      "default": false
+    },
+    {
+      "path": [
+        "lint_only"
+      ],
+      "type": "boolean",
+      "label": "Lint only",
+      "description": "Run only the lint checks and the rules of the rule set. The same as --lint_only.",
+      "default": false
+    },
+    {
+      "path": [
+        "rule_set"
+      ],
+      "type": "string",
+      "label": "Rule set",
+      "description": "Rule set for lint mode: a built in name such as do254, the path of a YAML file, or none for all lint rules without labels.",
+      "default": "do254"
     },
     {
       "path": [
@@ -1852,6 +1879,24 @@
       ]
     },
     {
+      "name": "lint",
+      "rules": [
+        "lint_001",
+        "lint_002",
+        "lint_003",
+        "lint_004",
+        "lint_005",
+        "lint_006",
+        "lint_007",
+        "lint_008",
+        "lint_009",
+        "lint_010",
+        "lint_011",
+        "lint_012",
+        "lint_013"
+      ]
+    },
+    {
       "name": "naming",
       "rules": [
         "alias_declaration_600",
@@ -1944,6 +1989,8 @@
         "case_012",
         "case_019",
         "case_020",
+        "case_022",
+        "case_023",
         "comment_011",
         "comment_012",
         "comment_013",
@@ -1954,6 +2001,7 @@
         "concurrent_005",
         "concurrent_011",
         "concurrent_012",
+        "concurrent_013",
         "conditional_waveforms_001",
         "constant_007",
         "constant_016",
@@ -11130,6 +11178,100 @@
       ]
     },
     {
+      "id": "case_022",
+      "alias": "case_label_exists",
+      "category": "case",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that case statements have a label.",
+      "documentation": "case_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "case_023",
+      "alias": "case_end_label_exists",
+      "category": "case",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that the end of a case statement repeats its label.",
+      "documentation": "case_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
       "id": "case_200",
       "alias": "case_blank_line_below_arrow",
       "category": "case",
@@ -14089,6 +14231,53 @@
         }
       ],
       "option_documentation": "configuring_array_multiline_structure_rules.rst"
+    },
+    {
+      "id": "concurrent_013",
+      "alias": "concurrent_assignment_label_exists",
+      "category": "concurrent",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that concurrent signal assignments have a label.",
+      "documentation": "concurrent_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
     },
     {
       "id": "concurrent_400",
@@ -34375,6 +34564,617 @@
         }
       ],
       "option_documentation": "configuring_uppercase_and_lowercase_rules.rst"
+    },
+    {
+      "id": "lint_001",
+      "alias": "lint_duplicate_signal_assignment",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that a signal is assigned at most once in the same statement region of a process.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_002",
+      "alias": "lint_sensitivity_list",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that the sensitivity list of a process contains the signals the process needs, and no others.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_003",
+      "alias": "lint_unconnected_input_port",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that every input port of an instance is connected.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_004",
+      "alias": "lint_unconnected_output_port",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that every output port of an instance is connected.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_005",
+      "alias": "lint_case_without_others",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that every case statement has a when others choice.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_006",
+      "alias": "lint_duplicate_case_choice",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that no choice appears twice in a case statement.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_007",
+      "alias": "lint_unreachable_case_choice",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks for case choices that can never be reached in hardware.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_008",
+      "alias": "lint_combinational_feedback",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks for combinational feedback: a signal that is read and assigned in the same combinational process or concurrent assignment.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_009",
+      "alias": "lint_latch_inference",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks for latches: signals that a combinational process assigns on some paths but not on all of them.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_010",
+      "alias": "lint_multiple_drivers",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that a signal is driven by only one process, concurrent assignment or instance in an architecture.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_011",
+      "alias": "lint_mixed_reset_usage",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that a reset signal is used with one polarity and one style throughout a file.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_012",
+      "alias": "lint_unresettable_register",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that every register has a reset.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_013",
+      "alias": "lint_initial_value",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks for initial values on signals and output ports.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
     },
     {
       "id": "logical_operator_500",

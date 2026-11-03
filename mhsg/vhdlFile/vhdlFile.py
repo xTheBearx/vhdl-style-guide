@@ -383,9 +383,21 @@ class vhdlFile:
 
     def clear_declarations(self):
         """
-        Discards the declaration list, for example after names were changed in place.
+        Discards the declaration list and the lint model, for example after names were changed in place.
         """
         self._oDeclarations = None
+        self._oLintModel = None
+
+    def get_lint_model(self):
+        """
+        Returns the model of the processes, statements and instances used by the lint rules.
+        Like the declaration list, it is built once and kept until the tokens change.
+        """
+        if getattr(self, "_oLintModel", None) is None:
+            from mhsg.lint import model
+
+            self._oLintModel = model.Model(self)
+        return self._oLintModel
 
     def update(self, lUpdates, bUpdateMap):
         self.clear_declarations()

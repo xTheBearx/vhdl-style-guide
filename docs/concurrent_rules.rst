@@ -326,6 +326,33 @@ This rule checks the structure of multiline concurrent simple signal assignments
      32768
    );
 
+concurrent_013
+##############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`concurrent_assignment_label_exists`
+
+This rule checks that concurrent signal assignments have a label.
+
+.. NOTE:: This rule is disabled by default.
+
+Labels make the statements easier to find in reviews and simulation.
+This rule cannot add labels, because it cannot name them.
+It is the opposite of concurrent_005, which removes labels, so enable only one of them.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   data_out <= div_data when clk_div_en = '1' else ser_if_data;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   data_out_mux : data_out <= div_data when clk_div_en = '1' else ser_if_data;
+
 concurrent_400
 ##############
 

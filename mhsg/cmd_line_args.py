@@ -60,6 +60,19 @@ def parse_command_line_arguments():
     parser.add_argument("-oc", "--output_configuration", default=None, action="store", help="Write configuration to file name.")
     parser.add_argument("-rc", "--rule_configuration", default=None, action="store", help="Display configuration of a rule")
     parser.add_argument(
+        "--lint",
+        default=False,
+        action="store_true",
+        help="Also run the lint checks, which report design problems such as latches, labelled with the checks of the rule set.",
+    )
+    parser.add_argument("--lint_only", default=False, action="store_true", help="Run only the lint checks and the rules of the rule set.")
+    parser.add_argument(
+        "--rule_set",
+        default=None,
+        action="store",
+        help="Rule set for lint mode: a built in name (default do254), a YAML file, or none for all lint rules without labels.",
+    )
+    parser.add_argument(
         "--output_options",
         default=None,
         action="store",
