@@ -424,6 +424,15 @@ class test_design_analysis(unittest.TestCase):
             [{k: v for k, v in d.items() if k != "location"} for d in dReport["reconvergences"]],
         )
 
+    def test_black_boxes(self):
+        # A component without an entity is a black box: the clock comes from its output, it is not undriven
+        with tempfile.TemporaryDirectory() as sDirectory:
+            sJson = os.path.join(sDirectory, "cdc.json")
+            self.run_design("bb_top", "black_box.vhd", ["--cdc_report", sJson])
+            with open(sJson, encoding="utf-8") as oFile:
+                dReport = json.load(oFile)
+        self.assertEqual([("u_buf.O", "box", 1)], [(d["name"], d["kind"], d["registers"]) for d in dReport["clocks"]])
+
     def test_crossing_report(self):
         with tempfile.TemporaryDirectory() as sDirectory:
             sJson = os.path.join(sDirectory, "cdc.json")
