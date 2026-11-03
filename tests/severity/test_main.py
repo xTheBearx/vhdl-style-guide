@@ -147,6 +147,9 @@ class test_severity_using_main(unittest.TestCase):
 
         lActual = pathlib.Path(self._sJUnitFileName).read_text().splitlines()
         lExpected = pathlib.Path(sJUnitFile).read_text().splitlines()
+        # The properties record the run, such as the version of mhsg, which changes from one version to the next
+        self.assertTrue(any('<property name="mhsg.version"' in s for s in lActual))
+        lActual = [s for s in lActual if not s.strip().startswith("<property ")]
 
         self.assertEqual(iExitStatus, 1)
 
