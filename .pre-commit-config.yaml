@@ -24,7 +24,8 @@ repos:
     rev: v1.5.4
     hooks:
       - id: forbid-tabs
-        exclude: '^(.*\.vhd|.*\.svg|tests/svfile/style(\.fixed)?\.sv)$'
+        # The qualification examples are copies of test inputs, whose expected findings depend on every character
+        exclude: '^(.*\.vhd|.*\.svg|tests/svfile/style(\.fixed)?\.sv|mhsg/qualification/examples/.*)$'
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
@@ -50,13 +51,14 @@ repos:
       - id: fix-byte-order-marker
       - id: end-of-file-fixer
         # Blank lines at the end of the file are what sv_blank_line_001 checks
-        exclude: '^tests/svfile/whitespace\.sv$'
+        exclude: '^(tests/svfile/whitespace\.sv|mhsg/qualification/examples/.*)$'
       - id: trailing-whitespace
         exclude: "^(\
           tests/styles/code_examples/trailing_whitespace\\.vhd|\
           tests/styles/jcl/trailing_whitespace.fixed\\.vhd|\
           tests/whitespace/.*\\.vhd|\
-          tests/svfile/style(\\.fixed)?\\.sv\
+          tests/svfile/style(\\.fixed)?\\.sv|\
+          mhsg/qualification/examples/.*\
           )$"
       - id: fix-encoding-pragma
 
@@ -76,7 +78,7 @@ repos:
         args:
           - -I.codespell-ignore
         # Package names in the lock file, such as astroid, are not misspellings
-        exclude: '^uv\.lock$'
+        exclude: '^(uv\.lock|mhsg/qualification/examples/.*)$'
 
   - repo: https://github.com/PyCQA/flake8
     rev: 7.0.0

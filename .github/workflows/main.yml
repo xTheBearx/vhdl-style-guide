@@ -132,3 +132,10 @@ jobs:
           MHSG_REQUIRE_DESIGN_TOOLS: "1"
         run: |
           uv run --locked pytest tests/design tests/svfile/test_verilator.py
+      - name: qualification
+        # Every case of the qualification suites, design analysis included, must give the recorded findings
+        run: |
+          for sRuleSet in cdc do254 do254_plus starc; do
+            uv run --locked mhsg --qualify $sRuleSet > qualification_$sRuleSet.txt || { tail -40 qualification_$sRuleSet.txt; exit 1; }
+            tail -3 qualification_$sRuleSet.txt
+          done

@@ -177,6 +177,10 @@ def main():
         print(e.message)
         sys.exit(1)
 
+    if commandLineArguments.qualify:
+        from mhsg import qualify  # pylint: disable=import-outside-toplevel
+
+        qualify.main(commandLineArguments, oConfig)
     if commandLineArguments.design:
         run_design_analysis(commandLineArguments, oConfig)
     if not commandLineArguments.stdin:

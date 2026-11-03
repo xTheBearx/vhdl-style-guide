@@ -209,7 +209,13 @@ def run(commandLineArguments, oConfig):
                 {
                     "file_path": d["filename"],
                     "violations": [
-                        {"rule": v["rule"], "linenumber": int(v["lineNumber"]), "severity": v["severity"]["name"], "solution": v["solution"]}
+                        {
+                            "rule": v["rule_id"],
+                            **({"checks": v["checks"]} if v["checks"] else {}),
+                            "linenumber": int(v["lineNumber"]),
+                            "severity": v["severity"]["name"],
+                            "solution": v["solution"],
+                        }
                         for v in d["violations"]
                     ],
                     **({"waived": d["waived"]} if d["waived"] else {}),
@@ -339,6 +345,8 @@ def run_info(sFile, lFindings, oSeverityList, iRules):
             {
                 "severity": {"name": oSeverity.name, "type": oSeverity.type},
                 "rule": oRule.get_display_id(),
+                "rule_id": oRule.get_unique_id(),
+                "checks": list(oRule.rule_set_labels),
                 "lineNumber": str(oFinding.line),
                 "solution": oFinding.message,
             },
