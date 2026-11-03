@@ -146,7 +146,8 @@ def is_user_admin():
 
 
 def mhsg_exec():
-    return [sys.executable, "bin/mhsg"]
+    """The command that runs mhsg, with the settings the test files were written for, see tests/test_defaults.yaml."""
+    return [sys.executable, "bin/mhsg", "-c", os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_defaults.yaml")]
 
 
 def is_windows():

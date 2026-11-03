@@ -37,6 +37,10 @@ class rule_400(Rule):
     def __init__(self):
         super().__init__(lTokenPairs)
         self.phase = 5
-        self.subphase = 4
+        # The continuation lines of a constraint move the := after it, so they are aligned before the := of the
+        # declarations are (declarative_part_400, subphase 3); those of a default value hang off the :=, so they are
+        # aligned again after
+        self.subphase = 2
+        self.fix_again_in_subphase = 4
         self.bIgnoreStartParen = True
         self.bConstraint = True

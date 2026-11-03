@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
+import importlib
 import math
 
 from mhsg import block_rule, parser, violation
 from mhsg.vhdlFile import utils
+
+# mhsg.rules exports the class line_length under the name of its module
+line_length = importlib.import_module("mhsg.rules.line_length")
 
 
 class rule_001(block_rule.Rule):
@@ -38,7 +42,8 @@ class rule_001(block_rule.Rule):
         self.header_string = None
         self.header_right_repeat = None
         self.header_alignment = "center"
-        self.max_header_column = 120
+        # The same as the line length of length_001
+        self.max_header_column = line_length.DEFAULT_LENGTH
         self.configuration.extend(["header_left", "header_left_repeat", "header_string", "header_right_repeat", "header_alignment", "max_header_column"])
 
     def analyze(self, oFile):

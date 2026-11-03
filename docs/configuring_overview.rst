@@ -179,7 +179,8 @@ Here are a list of attributes that can be altered for each rule:
 +--------------+---------+--------------------------------------------------+
 | Attribute    | Values  | Description                                      |
 +==============+=========+==================================================+
-| indent_size  | Integer | Sets the number of spaces for each indent level. |
+| indent_size  | Integer | Sets the number of spaces for each indent level, |
+|              |         | 4 by default.                                    |
 +--------------+---------+--------------------------------------------------+
 | phase        | Integer | Sets the phase the rule will run in.             |
 +--------------+---------+--------------------------------------------------+
@@ -226,7 +227,7 @@ The configuration for a single rule can be reported using the **-rc** option:
      "rule": {
        "entity_001": {
          "alias": "entity_keyword_indent",
-         "indent_size": 2,
+         "indent_size": 4,
          "phase": 4,
          "disable": false,
          "fixable": true

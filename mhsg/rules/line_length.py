@@ -4,6 +4,9 @@
 from mhsg import violation
 from mhsg.rule_group import length
 
+# The longest line allowed, unless a configuration sets length
+DEFAULT_LENGTH = 80
+
 
 class line_length(length.Rule):
     """
@@ -23,7 +26,7 @@ class line_length(length.Rule):
     def __init__(self):
         super().__init__()
         self.disable = False
-        self.length = 120
+        self.length = DEFAULT_LENGTH
 
     def _get_tokens_of_interest(self, oFile):
         return oFile.get_lines_with_length_that_exceed_column(self.length)
