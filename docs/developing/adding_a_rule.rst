@@ -294,7 +294,7 @@ Now that the single test runs, the entire suite of tests must be ran to ensure t
 
    $ uv run pytest
    ======================================== test session starts =========================================
-   platform linux -- Python 3.8.10, pytest-8.1.1, pluggy-1.4.0
+   platform linux -- Python 3.12.3, pytest-8.1.1, pluggy-1.4.0
    cachedir: .pytest_cache
    rootdir: /home/jcleary/projects/mhsg-master
    configfile: pyproject.toml
@@ -306,7 +306,7 @@ Now that the single test runs, the entire suite of tests must be ran to ensure t
    .............................................................................................. [ 97%]
    .......................................................................................        [100%]
 
-   ---------- coverage: platform linux, python 3.8.10-final-0 -----------
+   ---------- coverage: platform linux, python 3.12.3-final-0 -----------
    Coverage HTML written to dir build.out/test-py38/coverage
    Coverage XML written to file build.out/test-py38/coverage.xml
 

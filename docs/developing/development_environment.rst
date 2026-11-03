@@ -26,7 +26,8 @@ This allows you to execute MHSG without installing it.
 Install prerequisites
 #####################
 
-The project is managed with `uv <https://docs.astral.sh/uv/>`_.
+The project is managed with `uv <https://docs.astral.sh/uv/>`_ and needs Python 3.12 or newer.
+uv uses the version in ``.python-version``, 3.12, and installs it when needed.
 Install the locked dependencies, including those for testing and the style checks, into ``.venv``:
 
 .. code-block:: bash

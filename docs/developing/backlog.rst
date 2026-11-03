@@ -74,7 +74,5 @@ Verilog and SystemVerilog
 Project
 -------
 
-* **Python 3.8 is past its end of life.** The minimum could move up; SystemVerilog support through pyslang would need
-  Python 3.11 for that feature.
 * **Documentation warnings.** A few pages have Sphinx warnings that predate this work, such as short title
   underlines in configuring_library_and_package_name_restriction_rules.rst and overview.rst.
