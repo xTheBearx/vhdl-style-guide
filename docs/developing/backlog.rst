@@ -43,19 +43,12 @@ Design analysis
 * **Reset domain crossings through logic** are not checked.
 * **Logic depth** counts operators before technology mapping, which is crude; a mapped count would be more realistic
   but slower and loses names.
-* **Unused combinational signals and delay chains** (DO-254 SS17 in part, SS1) cannot be found in the netlist, because
-  GHDL removes them; they need per-file checks.
-* **True dual-port RAM** written from two processes through a shared variable does not synthesize in GHDL
-  (Open Logic olo_base_ram_tdp).
 * **More real-world designs** in :code:`scripts/real_world_designs.yaml`: surf (needs the vendor libraries), the
   hdl-modules designs that use them (hard_fifo), and a multi-clock design with vendor clocking.
 
 Lint and rule sets
 ------------------
 
-* **DO-254 checks still planned for per-file lint**: CP3, CP4, CP6 (reset state and others branch), CP9, CP10, CP14
-  and DR2 for VHDL (checked for SystemVerilog), SS5, SS7, SS17 (signals), SS20, SS21, DR3, DR9, DR10, DR11. See the
-  coverage table of the do254 rule set.
 * **Tool qualification support**: :code:`--qualify` running the pass and fail examples of each check of a rule set,
   with a report of expected against actual results and the versions of mhsg, the rule set, GHDL and Yosys.
 

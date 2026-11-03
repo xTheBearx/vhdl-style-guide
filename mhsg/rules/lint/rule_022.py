@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import re
+
 from mhsg.lint import model
 from mhsg.lint.rule import Rule
 
@@ -61,7 +63,10 @@ def visit(lStatements, setAssigned, setVariables, lReported):
     """Walks statements in order, reporting variables read before they are assigned, and returns the variables assigned on every path."""
     setAssigned = set(setAssigned)
     for oStatement in lStatements:
-        if isinstance(oStatement, (model.Assignment, model.Other)):
+        if isinstance(oStatement, model.Other) and oStatement.kind == "call":
+            # A variable given to a procedure may be an out parameter, which the procedure assigns
+            setAssigned.update(s for s in oStatement.reads if s.split(".")[0] in setVariables)
+        elif isinstance(oStatement, (model.Assignment, model.Other)):
             check_reads(oStatement.reads, oStatement.index, setAssigned, setVariables, lReported)
             if isinstance(oStatement, model.Assignment) and oStatement.kind == "variable":
                 setAssigned.add(oStatement.covers())
@@ -79,7 +84,13 @@ def visit(lStatements, setAssigned, setVariables, lReported):
                 setAssigned |= model.common(lResults)
         elif isinstance(oStatement, model.Loop):
             check_reads(model.names(oStatement.header), oStatement.index, setAssigned, setVariables, lReported)
-            visit(oStatement.statements, setAssigned, setVariables, lReported)
+            # The parameter of a for loop hides a variable of the same name inside the loop
+            visit(oStatement.statements, setAssigned | ({oStatement.parameter} if oStatement.parameter else set()), setVariables, lReported)
+            # An element assignment indexed by the parameter of a for loop, such as v(i) := ..., assigns every element
+            if oStatement.parameter:
+                for oAssignment in model.assignments(oStatement.statements, "variable"):
+                    if re.search(r"\(\s*" + re.escape(oStatement.parameter) + r"\s*\)", oAssignment.target):
+                        setAssigned.add(oAssignment.base)
     return setAssigned
 
 

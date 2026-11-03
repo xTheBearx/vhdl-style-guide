@@ -42,7 +42,7 @@ class rule_001(Rule):
                 for lSequence in model.sequences(oProcess.statements):
                     dFirst = {}
                     for oStatement in lSequence:
-                        if isinstance(oStatement, model.Other) and oStatement.kind in ("wait", "other"):
+                        if isinstance(oStatement, model.Other) and oStatement.kind in ("wait", "other", "call"):
                             # Time can pass at a wait statement, or in a procedure called here, so later assignments are new values
                             dFirst = {}
                             continue

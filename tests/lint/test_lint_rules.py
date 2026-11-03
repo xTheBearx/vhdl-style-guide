@@ -103,6 +103,41 @@ dPlusExpected = {
     27: [(18, "Declare the states of fsm_state with an enumerated type instead of std_logic_vector")],
 }
 
+# Rules of the do254 rule set added for its planned checks: rule number: [(line, message), ...], each on its own input
+dDo254Expected = {
+    28: [(11, "Variable sum is read before it is assigned on every path, so it keeps its last value like a latch")],
+    29: [
+        (5, "Assign one waveform element; synthesis ignores the others and their delays"),
+        (10, "Assign one waveform element; synthesis ignores the others and their delays"),
+    ],
+    30: [(12, "Nesting level 5 is deeper than the limit of 4")],
+    31: [(5, "Declare the std_logic_vector with downto, like the other vectors"), (11, "Declare the unsigned with downto, like the other vectors")],
+    32: [
+        (4, "Give deferred constant c_width its value in the package body of this file, or in the package"),
+        (13, "Give deferred constant c_size its value in the package body of this file, or in the package"),
+    ],
+    33: [(4, "Signal spare is assigned but never read"), (5, "Signal unused is never assigned or read")],
+    34: [(10, "Replace 99 by a named constant or generic")],
+    35: [(6, 'Replace "0110" by a named constant'), (7, 'Replace x"A5" by a named constant')],
+    36: [
+        (4, "Function parity_bad can reach its end without returning a value"),
+        (22, "Remove the wait statement from procedure pause; synthesis does not support it"),
+    ],
+    37: [
+        (10, "State ERROR of state is never assigned, so the machine never enters it"),
+        (19, "State DONE of state assigns no other state, so the machine never leaves it"),
+    ],
+    38: [(9, "Signal delay_2 inverts delay_1, which inverts trigger: a chain of inverters")],
+    39: [
+        (13, "The process label busy has the name of a signal; give it a name of its own"),
+        (14, "The variable count has the name of a port or generic; give it a name of its own"),
+        (17, "The loop parameter clk has the name of a port or generic; give it a name of its own"),
+    ],
+    40: [(7, "Signal payload connected to port wr_data of u_fifo has another name")],
+    41: [(2, "Start the file with a header comment")],
+    42: [(2, "Comments are on 14% of the lines; add comments to reach 20%")],
+}
+
 # Options set for a rule before it runs
 dOptions = {17: {"attributes": ["fsm_safe_state"]}}
 
@@ -131,6 +166,21 @@ class test_lint_rules(unittest.TestCase):
                 oFile.filename = os.path.join(sTestDir, f"rule_{iRule:03d}_test_input.vhd")
                 oRule.analyze(oFile)
                 self.assertEqual(lExpected, [(o.get_line_number(), o.get_solution()) for o in oRule.violations])
+
+    def test_do254_violations(self):
+        for iRule, lExpected in dDo254Expected.items():
+            with self.subTest(rule=iRule):
+                oRule = getattr(lint, f"rule_{iRule:03d}")()
+                oRule.analyze(read(iRule))
+                self.assertEqual(lExpected, [(o.get_line_number(), o.get_solution()) for o in oRule.violations])
+
+    def test_rule_041_required_fields(self):
+        # The header has the field Title but not Author
+        oRule = lint.rule_041()
+        oRule.required_fields = ["Title", "Author"]
+        lFile, _ = vhdlFile.utils.read_vhdlfile(os.path.join(sTestDir, "rule_041b_test_input.vhd"))
+        oRule.analyze(vhdlFile.vhdlFile(lFile))
+        self.assertEqual([(3, "Add the field Author to the file header")], [(o.get_line_number(), o.get_solution()) for o in oRule.violations])
 
     def test_rule_017_without_attributes_option(self):
         oRule = lint.rule_017()

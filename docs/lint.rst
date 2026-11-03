@@ -246,6 +246,10 @@ The DO-254 rule set
 
 This table is generated from :code:`mhsg/rule_sets/do254.yaml`.
 DR13 lists the naming rules but does not enable them: configure the prefixes and suffixes of your project, then enable the naming rules.
+Some checks have options a project usually sets: the fields of the file header (lint_041, **required_fields**), the
+share of comments (lint_042, **minimum_percent**), the nesting limit (lint_030, **nesting_limit**), the direction of
+vector ranges (lint_031, **direction**) and the parts of names ignored when a signal is compared with its port
+(lint_040, **strip_prefixes** and **strip_suffixes**).
 
 .. include:: do254_coverage.rst
 
