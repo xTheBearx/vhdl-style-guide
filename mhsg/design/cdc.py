@@ -406,7 +406,10 @@ class Analysis:
             self.crossings.append(oCrossing)
         self._find_buses()
         self.crossings.sort(key=lambda o: o.name)
-        self._find_reconvergence()
+        self.reconvergences = self._find_reconvergence(False)
+        # Meetings found only when synchronous resets are followed, listed in the report and reported on request
+        lData = {(self.endpoint_name(t[0][0]), tuple(x[1] for x in t[1])) for t in self.reconvergences}
+        self.reset_reconvergences = [t for t in self._find_reconvergence(True) if (self.endpoint_name(t[0][0]), tuple(x[1] for x in t[1])) not in lData]
 
     def stages_after(self, oCell, iIndex):
         """Returns the number of registers in the same domain that follow a register bit as a chain, each feeding only the next."""
@@ -519,62 +522,286 @@ class Analysis:
                 oCrossing.status = sStatus
                 oCrossing.detail = f"{len(setBits)} bits of {self.flat.cell_name(oSource)}" + (", gray coded" if sStatus == GRAY else " cross separately")
 
-    def _find_reconvergence(self):
+    def _find_reconvergence(self, bFollowResets):
         """
-        Signals synchronized separately from one clock domain can change in different cycles of the destination clock,
-        so logic that combines them can see a state the source never had. A register whose inputs depend on two or
-        more of them, through logic of its own domain, is a reconvergence. The bits of one bus count as one signal:
-        a gray-coded bus is meant to be combined, and a bus synchronized bit by bit is reported as a hazard already.
+        Each synchronizer delivers its signal one or two destination cycles after the change, at random, so two
+        synchronized signals can be seen in a combination the source never had, and two synchronizers of the same
+        signal can disagree. Every synchronizer gets a tag on its output, and the tags flow forward through logic,
+        registers and memories of the destination domain. Where tags of two synchronizers from the same source
+        domain meet for the first time, at a register, a memory, a black box input or an output, is a reconvergence.
+        The bits of one bus share a tag: a gray-coded bus is meant to be combined, and design_009 reports other buses.
         """
-        dOutputs = {}
+        self.sync_tags = []
+        dSeeds = {}
+        dBusTags = {}
         for oCrossing in self.crossings:
-            if oCrossing.status not in (SYNCHRONIZED, GRAY, BUS) and getattr(oCrossing, "original_status", None) not in (SYNCHRONIZED, GRAY, BUS):
+            sStatus = getattr(oCrossing, "original_status", None) or oCrossing.status
+            if sStatus not in (SYNCHRONIZED, GRAY, BUS):
                 continue
             for iIndex, tSource in getattr(oCrossing, "first_stages", []):
-                _, oLast, iLast = self.chain(oCrossing.cell, iIndex)
                 oSourceDomain = self.domain_of(tSource)
                 if oSourceDomain is None:
                     continue
-                sSourceGroup = "async" if oSourceDomain == "async" else oSourceDomain.group
-                if oCrossing.status in (GRAY, BUS) or getattr(oCrossing, "original_status", None) in (GRAY, BUS):
-                    tKey = ("bus", id(tSource[0]))
-                    sName = self.flat.cell_name(tSource[0])
+                sGroup = "async" if oSourceDomain == "async" else oSourceDomain.group
+                if sStatus in (GRAY, BUS):
+                    tBus = (id(tSource[0]), oCrossing.clock.group)
+                    if tBus not in dBusTags:
+                        dBusTags[tBus] = len(self.sync_tags)
+                        self.sync_tags.append((self.flat.cell_name(tSource[0]), oCrossing.name, oSourceDomain, (sGroup, oCrossing.clock.group)))
+                    iTag = dBusTags[tBus]
                 else:
-                    tKey = ("bit", id(tSource[0]), tSource[2])
-                    sName = self.point_name(tSource)
+                    sSource = self.point_name(tSource)
+                    sFirst = oCrossing.name
                     if len(tSource[0].connections.get("Q", [])) > 1:
-                        sName += f"({tSource[2]})"
-                dOutputs[oLast.connections["Q"][iLast]] = (tKey, sName, sSourceGroup, oCrossing.clock.group, oSourceDomain)
-        if len(dOutputs) < 2:
-            return
+                        sSource += f"({tSource[2]})"
+                    if len(oCrossing.cell.connections.get("Q", [])) > 1:
+                        sFirst += f"({iIndex})"
+                    iTag = len(self.sync_tags)
+                    self.sync_tags.append((sSource, sFirst, oSourceDomain, (sGroup, oCrossing.clock.group)))
+                _, oLast, iLast = self.chain(oCrossing.cell, iIndex)
+                tNode = ("r", id(oLast), iLast)
+                dSeeds[tNode] = dSeeds.get(tNode, 0) | (1 << iTag)
+        if len(self.sync_tags) < 2:
+            return []
+        lReturn = []
+        dDependencies, dGroups = self._tag_graph(bFollowResets)
+        dTags = self._propagate_tags(dDependencies, dSeeds)
+        if not bFollowResets:
+            # Kept for checking how far each synchronizer reaches
+            self.tag_masks = dTags
         dFound = {}
-        for oCell in self.flat.cells:
-            oDomain = self.cell_clock.get(id(oCell))
-            if not is_register(oCell) or oDomain is None:
+
+        def check(tEndpoint, lSets):
+            iNew = new_meetings(lSets, self.sync_tags)
+            if iNew:
+                dFound.setdefault(iNew, []).append(tEndpoint)
+
+        # Tags that circulate in a feedback loop, such as a state machine, reach every register of the loop, so a
+        # meeting inside a loop is judged on the loop as a whole: on the tags that enter it from outside
+        lNodes = sorted(set(dDependencies) | set(dSeeds), key=repr)
+        for lComponent in graph.strongly_connected(lNodes, lambda t: dDependencies.get(t, ())):
+            setComponent = set(lComponent)
+            lSets = []
+            dEntries = {}
+            for tNode in lComponent:
+                lEntering = [dSeeds.get(tNode, 0)] + [dTags.get(t, 0) for t in dDependencies.get(tNode, ()) if t not in setComponent]
+                lSets += lEntering
+                dEntries[tNode] = 0
+                for iSet in lEntering:
+                    dEntries[tNode] |= iSet
+            iNew = new_meetings(lSets, self.sync_tags)
+            if not iNew:
                 continue
-            dSignals = {}
-            for sPort, lNets in oCell.connections.items():
-                if sPort in CONTROL_PORTS or sPort == "Q" or self.flat.direction(oCell, sPort) != "input":
+            # Report where the meeting tags enter the loop, or at the node itself
+            lPlaces = [t for t in lComponent if dEntries[t] & iNew] if len(lComponent) > 1 else lComponent
+            for tNode in lPlaces:
+                if tNode[0] in ("r", "m", "d"):
+                    dFound.setdefault(iNew, []).append(("node", tNode))
+        # Each bit of a black box input and of an output of the design, where tags leave the analysis; what a black
+        # box does with its inputs is not known, so only logic before it counts
+        for oCell in self.flat.cells:
+            if oCell.is_black_box():
+                for oNet in self.input_nets(oCell):
+                    check(("box", oCell), [dTags.get(t, 0) for t in self.point_nodes(self.sources(oNet))])
+        for sPort, (sDirection, lNets) in self.flat.top_ports.items():
+            if sDirection in ("output", "inout"):
+                for iIndex, oNet in enumerate(lNets):
+                    if graph.is_variable(oNet):
+                        sName = sPort if len(lNets) == 1 else f"{sPort}({iIndex})"
+                        check(("port", sName, [oNet]), [dTags.get(t, 0) for t in self.point_nodes(self.sources(oNet))])
+        # One finding for each place: the bits of one register, memory, black box or output port together
+        dPlaces = {}
+        for iMask, lEndpoints in dFound.items():
+            for tEndpoint in lEndpoints:
+                if tEndpoint[0] == "node":
+                    oPlace = dGroups["cells"].get(tEndpoint[1]) or self._node_cell.get(tEndpoint[1])
+                elif tEndpoint[0] == "box":
+                    oPlace = tEndpoint[1]
+                else:
+                    oPlace = ("port", tEndpoint[1].split("(")[0], tEndpoint[2])
+                if oPlace is None:
                     continue
-                for oNet in lNets:
-                    if not graph.is_variable(oNet):
-                        continue
-                    for oSource, sSourcePort, iSource in self.sources(oNet):
-                        if oSource is None or sSourcePort != "Q":
+                tKey = (id(oPlace) if not isinstance(oPlace, tuple) else oPlace[1], iMask)
+                if tKey not in dPlaces:
+                    dPlaces[tKey] = (oPlace, iMask)
+        for oPlace, iMask in dPlaces.values():
+            lSignals = [self.sync_tags[i] for i in range(len(self.sync_tags)) if iMask >> i & 1]
+            lReturn.append(([oPlace], lSignals))
+        lReturn.sort(key=lambda t: self.endpoint_name(t[0][0]))
+        return lReturn
+
+    def reconvergence_location(self, oEndpoint):
+        """(file, line) of a reconvergence point; for an output, of the logic that drives it."""
+        if isinstance(oEndpoint, tuple):
+            for oNet in oEndpoint[2]:
+                tDriver = self.flat.driver(oNet) if graph.is_variable(oNet) else None
+                if tDriver is not None and tDriver[0] is not None:
+                    return self.locate(tDriver[0], oEndpoint[1])
+            return None, 0
+        return self.locate(oEndpoint, self.endpoint_name(oEndpoint).split(".")[-1])
+
+    def endpoint_clock(self, oEndpoint):
+        oDomain = None if isinstance(oEndpoint, tuple) else self.cell_clock.get(id(oEndpoint))
+        return oDomain.name if oDomain is not None else None
+
+    def endpoint_name(self, oEndpoint):
+        """The name of a reconvergence point: a register or memory cell, a black box, or an output port."""
+        if isinstance(oEndpoint, tuple):
+            return oEndpoint[1]
+        if oEndpoint.is_black_box() or oEndpoint.type in ("$memwr", "$memwr_v2"):
+            return repr(oEndpoint) if oEndpoint.is_black_box() else self.flat.cell_name(oEndpoint, "DATA")
+        return self.flat.cell_name(oEndpoint)
+
+    def input_nets(self, oCell):
+        return [b for s, l in oCell.connections.items() if self.flat.direction(oCell, s) == "input" for b in l if graph.is_variable(b)]
+
+    def point_nodes(self, setPoints):
+        """The tag nodes of source points: register bits and memory read ports."""
+        lReturn = []
+        for oCell, _, iIndex in setPoints:
+            if oCell is None or oCell.is_black_box():
+                continue
+            if is_register(oCell):
+                lReturn.append(("r", id(oCell), iIndex))
+            elif oCell.type in MEMORY_READ_TYPES:
+                lReturn.append(("d", id(oCell)))
+        return lReturn
+
+    def split_inputs(self, oCell, iIndex):
+        """
+        Splits the data input of a register bit into data and synchronous reset: follows the multiplexers in front of
+        the register, where the select of one that keeps the value, an enable, is data, and the select of one that
+        loads a constant, a reset, set or clear, is a reset. Returns (data nets, reset nets).
+        """
+        lQ = oCell.connections.get("Q", [])
+        lD = oCell.connections.get("D", [])
+        oOwn = lQ[iIndex] if iIndex < len(lQ) else None
+        oNet = lD[iIndex] if iIndex < len(lD) else None
+        lData = []
+        lReset = []
+        setSeen = set()
+        while graph.is_variable(oNet) and oNet not in setSeen:
+            setSeen.add(oNet)
+            tDriver = self.flat.driver(oNet)
+            if tDriver is None or tDriver[0] is None:
+                break
+            oMux, _, iOut = tDriver
+            if oMux.type in ("$pos", "$buf"):
+                oNet = graph.extend(oMux.connections.get("A", []), iOut, False)
+                continue
+            if oMux.type != "$mux":
+                break
+            oA = graph.extend(oMux.connections.get("A", []), iOut, False)
+            oB = graph.extend(oMux.connections.get("B", []), iOut, False)
+            lSelect = [b for b in oMux.connections.get("S", []) if graph.is_variable(b)]
+            if oA == oOwn or oB == oOwn:
+                lData += lSelect
+                oNet = oB if oA == oOwn else oA
+            elif not graph.is_variable(oA) or not graph.is_variable(oB):
+                lReset += lSelect
+                oNet = oB if not graph.is_variable(oA) else oA
+            else:
+                break
+        if graph.is_variable(oNet):
+            lData.append(oNet)
+        return lData, lReset
+
+    def _tag_graph(self, bFollowResets=False):
+        """
+        Returns ({node: nodes it depends on}, {"cells": {node: cell}}) for register bits ("r"), memory read ports ("d")
+        and memories ("m"). A node only depends on nodes of its own clock domain: the rest are crossings.
+        Unless bFollowResets, a synchronous reset is not followed: a node that loads a constant into two or more
+        registers through the multiplexers in front of them.
+        """
+        dDependencies = {}
+        dCells = {}
+        dDomain = {}
+
+        def group(oCell):
+            oDomain = self.cell_clock.get(id(oCell))
+            return oDomain.group if oDomain is not None else None
+
+        def add(tNode, oCell, lNets):
+            sGroup = dDomain.get(tNode)
+            lNodes = dDependencies.setdefault(tNode, [])
+            for oNet in lNets:
+                for tSource in self.point_nodes(self.sources(oNet)):
+                    oSource = dCells.get(tSource) or self._node_cell.get(tSource)
+                    sSourceGroup = group(oSource) if oSource is not None else None
+                    if sGroup is None or sSourceGroup is None or sSourceGroup == sGroup:
+                        lNodes.append(tSource)
+
+        self._node_cell = {}
+        dMemories = {}
+        for oCell in self.flat.cells:
+            if is_register(oCell):
+                for iIndex in range(len(oCell.connections.get("Q", []))):
+                    self._node_cell[("r", id(oCell), iIndex)] = oCell
+            elif oCell.type in MEMORY_READ_TYPES:
+                self._node_cell[("d", id(oCell))] = oCell
+        dInputs = {}
+        dResetFanout = {}
+        for oCell in self.flat.cells:
+            if is_register(oCell) and self.cell_clock.get(id(oCell)) is not None:
+                for iIndex in range(len(oCell.connections.get("Q", []))):
+                    lData, lReset = self.split_inputs(oCell, iIndex)
+                    for sPort, lBits in oCell.connections.items():
+                        if sPort in CONTROL_PORTS or sPort in ("Q", "D") or self.flat.direction(oCell, sPort) != "input":
                             continue
-                        tOutput = dOutputs.get(oSource.connections["Q"][iSource])
-                        if tOutput is None or tOutput[3] != oDomain.group:
-                            continue
-                        dSignals.setdefault(tOutput[2], {})[tOutput[0]] = (tOutput[1], tOutput[4])
-            for sGroup, dKeys in dSignals.items():
-                if len(dKeys) < 2:
-                    continue
-                tKey = (sGroup, frozenset(dKeys))
-                dFound.setdefault(tKey, (sorted(dKeys.values(), key=lambda t: t[0]), []))[1].append(oCell)
-        for lSignals, lCells in dFound.values():
-            lCells.sort(key=self.flat.cell_name)
-            self.reconvergences.append((lCells, lSignals))
-        self.reconvergences.sort(key=lambda t: self.flat.cell_name(t[0][0]))
+                        # An input other than the data input, such as an enable, feeds every bit
+                        lData += [b for b in lBits if graph.is_variable(b)]
+                    dInputs[("r", id(oCell), iIndex)] = (oCell, lData, lReset)
+                    for oNet in lReset:
+                        for tSource in self.point_nodes(self.sources(oNet)):
+                            dResetFanout.setdefault(tSource, set()).add(id(oCell))
+        setResets = set() if bFollowResets else {t for t, s in dResetFanout.items() if len(s) >= 2}
+        for tNode, (oCell, lData, lReset) in dInputs.items():
+            dCells[tNode] = oCell
+            dDomain[tNode] = group(oCell)
+            add(tNode, oCell, lData)
+            lBefore = list(dDependencies[tNode])
+            add(tNode, oCell, lReset)
+            dDependencies[tNode] = lBefore + [t for t in dDependencies[tNode][len(lBefore) :] if t not in setResets]
+        for oCell in self.flat.cells:
+            if oCell.type in ("$memwr", "$memwr_v2", "$meminit", "$meminit_v2"):
+                tNode = ("m", oCell.path, str(oCell.cell.get("parameters", {}).get("MEMID")))
+                dCells.setdefault(tNode, oCell)
+                dDomain.setdefault(tNode, group(oCell) if is_clocked(oCell) else None)
+                dMemories.setdefault(tNode, []).append(oCell)
+                add(tNode, oCell, self.input_nets(oCell))
+        for oCell in self.flat.cells:
+            if oCell.type in MEMORY_READ_TYPES:
+                tNode = ("d", id(oCell))
+                dDomain[tNode] = group(oCell) if is_clocked(oCell) else None
+                add(tNode, oCell, self.input_nets(oCell))
+                tMemory = ("m", oCell.path, str(oCell.cell.get("parameters", {}).get("MEMID")))
+                if tMemory in dDependencies:
+                    dDependencies[tNode].append(tMemory)
+        return dDependencies, {"cells": dCells}
+
+    @staticmethod
+    def _propagate_tags(dDependencies, dSeeds):
+        """Returns {node: tag mask}: its own tags and those of every node it depends on, to a fixed point."""
+        dSuccessors = {}
+        for tNode, lDependencies in dDependencies.items():
+            for tDependency in lDependencies:
+                dSuccessors.setdefault(tDependency, []).append(tNode)
+        dTags = dict(dSeeds)
+        lWork = list(dDependencies)
+        setQueued = set(lWork)
+        while lWork:
+            tNode = lWork.pop()
+            setQueued.discard(tNode)
+            iTags = dSeeds.get(tNode, 0)
+            for tDependency in dDependencies.get(tNode, ()):
+                iTags |= dTags.get(tDependency, 0)
+            if iTags != dTags.get(tNode, 0):
+                dTags[tNode] = iTags
+                for tNext in dSuccessors.get(tNode, ()):
+                    if tNext not in setQueued:
+                        setQueued.add(tNext)
+                        lWork.append(tNext)
+        return dTags
 
     def gray_coded(self, oCell):
         """Returns whether a register is loaded with the gray code of a binary value: bit i is b(i) xor b(i+1), the top bit b(n)."""
@@ -833,19 +1060,60 @@ class Analysis:
                 },
             )
         dReturn["reconvergences"] = []
-        for lCells, lSignals in self.reconvergences:
-            sFile, iLine = self.locate(lCells[0], self.flat.cell_name(lCells[0]).split(".")[-1])
+        for lEndpoints, lSignals in self.reconvergences:
+            sFile, iLine = self.reconvergence_location(lEndpoints[0])
             dReturn["reconvergences"].append(
                 {
-                    "signals": [{"signal": s, "clock": o.name if o != "async" else "async"} for s, o in lSignals],
-                    "clock": self.cell_clock[id(lCells[0])].name,
-                    "registers": [self.flat.cell_name(o) for o in lCells],
+                    "synchronizers": [{"signal": t[0], "synchronizer": t[1], "clock": t[2].name if t[2] != "async" else "async"} for t in lSignals],
+                    "clock": self.endpoint_clock(lEndpoints[0]),
+                    "points": [self.endpoint_name(o) for o in lEndpoints],
+                    "location": f"{sFile}:{iLine}" if sFile else None,
+                },
+            )
+        dReturn["reconvergences_through_resets"] = []
+        for lEndpoints, lSignals in self.reset_reconvergences:
+            sFile, iLine = self.reconvergence_location(lEndpoints[0])
+            dReturn["reconvergences_through_resets"].append(
+                {
+                    "synchronizers": [{"signal": t[0], "synchronizer": t[1], "clock": t[2].name if t[2] != "async" else "async"} for t in lSignals],
+                    "clock": self.endpoint_clock(lEndpoints[0]),
+                    "points": [self.endpoint_name(o) for o in lEndpoints],
                     "location": f"{sFile}:{iLine}" if sFile else None,
                 },
             )
         for oReset in self.resets:
             dReturn["resets"].append({"reset": oReset.reset, "kind": oReset.kind, "detail": oReset.detail, "registers": len(oReset.cells)})
         return dReturn
+
+
+def new_meetings(lSets, lTags):
+    """
+    Returns the mask of the tags that meet for the first time where inputs with the tag masks lSets come together:
+    pairs of tags of the same source and destination domains that no single input carries already.
+    """
+    iUnion = 0
+    for iSet in lSets:
+        iUnion |= iSet
+    if bin(iUnion).count("1") < 2:
+        return 0
+    dGroups = {}
+    for iTag in range(len(lTags)):
+        if iUnion >> iTag & 1:
+            dGroups.setdefault(lTags[iTag][3], []).append(iTag)
+    iReturn = 0
+    for lMembers in dGroups.values():
+        if len(lMembers) < 2:
+            continue
+        iMask = sum(1 << i for i in lMembers)
+        if any(iSet & iMask == iMask for iSet in lSets):
+            continue
+        lSets_ = [iSet & iMask for iSet in lSets if iSet & iMask]
+        for iFirst, iA in enumerate(lMembers):
+            for iB in lMembers[iFirst + 1 :]:
+                iPair = (1 << iA) | (1 << iB)
+                if not any(iSet & iPair == iPair for iSet in lSets_):
+                    iReturn |= iPair
+    return iReturn
 
 
 def report_text(dReport):
@@ -871,10 +1139,19 @@ def report_text(dReport):
     if not dReport.get("reconvergences"):
         lLines.append("  none")
     for dReconvergence in dReport.get("reconvergences", []):
-        sSignals = ", ".join(f"{d['signal']} ({d['clock']})" for d in dReconvergence["signals"])
-        lLines.append(f"  {sSignals} meet in {', '.join(dReconvergence['registers'])} ({dReconvergence['clock']})")
+        sSignals = ", ".join(f"{d['signal']} ({d['clock']}, by {d['synchronizer']})" for d in dReconvergence["synchronizers"])
+        sClock = f" ({dReconvergence['clock']})" if dReconvergence["clock"] else ""
+        lLines.append(f"  {sSignals} meet in {', '.join(dReconvergence['points'])}{sClock}")
         if dReconvergence["location"]:
             lLines.append(f"    at {dReconvergence['location']}")
+    if dReport.get("reconvergences_through_resets"):
+        lLines += ["", "Reconvergence through synchronous resets (reported by design_016 with follow_resets)"]
+        for dReconvergence in dReport["reconvergences_through_resets"]:
+            sSignals = ", ".join(f"{d['signal']} ({d['clock']}, by {d['synchronizer']})" for d in dReconvergence["synchronizers"])
+            sClock = f" ({dReconvergence['clock']})" if dReconvergence["clock"] else ""
+            lLines.append(f"  {sSignals} meet in {', '.join(dReconvergence['points'])}{sClock}")
+            if dReconvergence["location"]:
+                lLines.append(f"    at {dReconvergence['location']}")
     lLines += ["", "Reset findings"]
     if not dReport["resets"]:
         lLines.append("  none")

@@ -404,15 +404,20 @@ design_016
 
 Alias: :code:`design_reconvergence`
 
-This rule reports signals synchronized separately from one clock domain that meet again in logic.
+This rule reports signals synchronized separately from one clock domain that meet again.
 
 .. NOTE:: This is a design rule. It runs in design analysis and implements DO-254 check CDC1.
 
 Each synchronizer takes one or two cycles of the destination clock, and which one is random.
 Two signals that change together in the source domain can therefore arrive in different cycles, and logic that
 combines them can see a state the source never had, for example a request without its qualifier.
+Two synchronizers of the same signal can disagree for a cycle in the same way.
+Every synchronizer tags its output, and the tags follow the signal through logic, registers and memories of the destination domain.
+A reconvergence is reported where tags of two synchronizers first meet: at a register, a memory, a black box input or an output.
 Synchronize one signal and derive the others from it in the destination domain, use a handshake, or gray code a counter.
 The bits of one bus count as one signal: a gray-coded bus is meant to be combined, and design_009 reports other buses.
+A synchronous reset, an input that loads a constant into two or more registers, is a reset path rather than data
+and is not followed, unless :code:`follow_resets` is true; the crossing report lists the meetings through resets either way.
 
 **Violation**
 
