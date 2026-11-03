@@ -90,6 +90,8 @@ template = "{tag}"
     "black_box_libraries/*.yaml",
     "rule_sets/*.yaml",
     "rule_aliases.yaml",
+    "qualification/*.yaml",
+    "qualification/examples/**/*",
 ]
 "mhsg.rules" = [
     "*/preamble_doc.rst",

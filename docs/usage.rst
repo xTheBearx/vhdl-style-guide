@@ -18,6 +18,7 @@ The command line tool can be invoked with:
                                  [--lint] [--lint_only] [--design]
                                  [--cdc_report FILE]
                                  [--black_box_template FILE]
+                                 [--qualify RULE_SET] [--qualify_report FILE]
                                  [--rule_set RULE_SET]
                                  [--output_options OUTPUT_OPTIONS]
                                  [--style {indent_only,jcl}] [-v] [-ap]
@@ -71,6 +72,11 @@ The command line tool can be invoked with:
      --black_box_template FILE
                            With --design, write a template of declarations for
                            the black boxes of the design that have none.
+     --qualify RULE_SET    Run the qualification suite of a built in rule set and
+                           report each case, expected against actual.
+     --qualify_report FILE
+                           With --qualify, also write the report to a file: JSON
+                           for a .json file, otherwise text.
      --rule_set RULE_SET   Rule set for lint mode: a built in name (default
                            do254), a YAML file, or none for all lint rules
                            without labels.
@@ -180,6 +186,11 @@ The command line tool can be invoked with:
 +-------------------------------+-------------------------------------------------+
 | --black_box_template          | Writes a template of the black box declarations |
 |                               | a design needs.                                 |
++-------------------------------+-------------------------------------------------+
+| --qualify                     | Runs the qualification suite of a built in rule |
+|                               | set, see :doc:`qualification`.                  |
++-------------------------------+-------------------------------------------------+
+| --qualify_report              | Writes the qualification report to a file.      |
 +-------------------------------+-------------------------------------------------+
 | --rule_set                    | The rule set used in lint mode.                 |
 +-------------------------------+-------------------------------------------------+

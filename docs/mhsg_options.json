@@ -62681,7 +62681,7 @@
       "groups": [
         "lint"
       ],
-      "summary": "This rule reports signals assigned in more than one process (Verilator's MULTIDRIVEN), which synthesis resolves as multiple drivers. Verilator lints the SystemVerilog files of a run when it is installed, see sv_lint_011.",
+      "summary": "This rule reports signals assigned in always blocks of different clocks (Verilator's MULTIDRIVEN), which synthesis cannot build as one register. Verilator lints the SystemVerilog files of a run when it is installed, see sv_lint_011.",
       "documentation": "sv_lint_rules.rst",
       "options": [
         {

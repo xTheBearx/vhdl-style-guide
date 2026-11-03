@@ -1,0 +1,2673 @@
+# Qualification suite of the DO-254 plus rule set, made by scripts/make_qualification_suite.py.
+# The expected results were reviewed before they were committed; see mhsg/qualify.py.
+rule_set: DO-254 plus
+rule_set_version: '1'
+cases:
+- rule: alias_declaration_503
+  file: examples/alias_declaration/rule_503_test_input.fixed.vhd
+  expected: []
+- rule: alias_declaration_503
+  file: examples/alias_declaration/rule_503_test_input.vhd
+  expected:
+  - - 6
+    - Change OPCODE to opcode
+  - - 10
+    - Change OpCode to opcode
+  - - 15
+    - Change OpCOde to opcode
+  - - 17
+    - Change opCODE to opcode
+- rule: block_007
+  file: examples/block/rule_007_test_input.fixed_add.vhd
+  expected: []
+- rule: block_007
+  file: examples/block/rule_007_test_input.fixed_remove.vhd
+  expected:
+  - - 6
+    - Add label
+  - - 11
+    - Add label
+  - - 13
+    - Add label
+  - - 17
+    - Add label
+  - - 22
+    - Add label
+  - - 24
+    - Add label
+- rule: block_007
+  file: examples/block/rule_007_test_input.vhd
+  expected:
+  - - 17
+    - Add label
+  - - 22
+    - Add label
+  - - 24
+    - Add label
+- rule: case_012
+  file: examples/case/rule_012_test_input.fixed.vhd
+  expected: []
+- rule: case_012
+  file: examples/case/rule_012_test_input.vhd
+  expected:
+  - - 20
+    - Move code after the => to the next line.
+  - - 21
+    - Move code after the => to the next line.
+  - - 22
+    - Move code after the => to the next line.
+- rule: case_022
+  file: examples/extra/case_022/fail_and_pass.vhd
+  expected:
+  - - 8
+    - Add a label
+- rule: case_023
+  file: examples/extra/case_023/fail_and_pass.vhd
+  expected:
+  - - 13
+    - Add first_decode after end case
+- rule: comment_013
+  file: examples/comment/rule_013_test_input.vhd
+  expected:
+  - - 30
+    - Remove commented out code.
+  - - 31
+    - Remove commented out code.
+  - - 32
+    - Remove commented out code.
+  - - 33
+    - Remove commented out code.
+  - - 34
+    - Remove commented out code.
+  - - 35
+    - Remove commented out code.
+  - - 36
+    - Remove commented out code.
+  - - 37
+    - Remove commented out code.
+  - - 38
+    - Remove commented out code.
+- rule: concurrent_013
+  file: examples/extra/concurrent_013/fail_and_pass.vhd
+  expected:
+  - - 6
+    - Add a label
+- rule: constant_004
+  file: examples/constant/rule_004_test_input.fixed_lower.vhd
+  expected:
+  - - 4
+    - Change "c_width" to "C_WIDTH"
+  - - 6
+    - Change "c_depth" to "C_DEPTH"
+  - - 8
+    - Change "c_word" to "C_WORD"
+- rule: constant_004
+  file: examples/constant/rule_004_test_input.fixed_upper.vhd
+  expected: []
+- rule: constant_004
+  file: examples/constant/rule_004_test_input.vhd
+  expected:
+  - - 4
+    - Change "c_width" to "C_WIDTH"
+  - - 8
+    - Change "C_word" to "C_WORD"
+- rule: constant_013
+  file: examples/constant/rule_013_test_input.fixed.vhd
+  expected: []
+- rule: constant_013
+  file: examples/constant/rule_013_test_input.package.fixed.vhd
+  expected: []
+- rule: constant_013
+  file: examples/constant/rule_013_test_input.package.vhd
+  expected:
+  - - 5
+    - Change C_WIDTH to c_width
+  - - 11
+    - Change C_Width to c_width
+  - - 17
+    - Change C_WIDTH to c_width
+  - - 17
+    - Change C_MAX to c_max
+  - - 17
+    - Change C_LOCAL to c_local
+- rule: constant_013
+  file: examples/constant/rule_013_test_input.vhd
+  expected:
+  - - 5
+    - Change C_SIZE to c_size
+  - - 12
+    - Change C_ONES to c_ones
+  - - 17
+    - Change C_ones to c_ones
+  - - 17
+    - Change c_Zeros to c_zeros
+  - - 20
+    - Change c_Zeros to c_zeros
+- rule: entity_600
+  file: examples/entity/rule_600_test_input.fixed.vhd
+  expected: []
+- rule: entity_600
+  file: examples/entity/rule_600_test_input.vhd
+  expected:
+  - - 8
+    - Change g_width to G_WIDTH
+  - - 17
+    - Change G_WIDTH to g_width
+- rule: function_010
+  file: examples/function/rule_010_test_input.fixed.vhd
+  expected: []
+- rule: function_010
+  file: examples/function/rule_010_test_input.vhd
+  expected:
+  - - 7
+    - Change FUNC_1 to func_1
+  - - 11
+    - Change Func_1 to func_1
+  - - 16
+    - Change FUNC_1 to func_1
+  - - 17
+    - Change FUNC_1 to func_1
+  - - 17
+    - Change funC_2 to func_2
+- rule: generate_011
+  file: examples/generate/rule_011_test_input.fixed_add.vhd
+  expected: []
+- rule: generate_011
+  file: examples/generate/rule_011_test_input.fixed_remove.vhd
+  expected:
+  - - 8
+    - Add label FOR_LABEL
+  - - 12
+    - Add label IF_LABEL
+  - - 16
+    - Add label CASE_LABEL
+  - - 22
+    - Add label FOR_LABEL
+  - - 26
+    - Add label IF_LABEL
+  - - 30
+    - Add label CASE_LABEL
+  - - 40
+    - Add label LABEL_3
+  - - 44
+    - Add label LABEL_4
+  - - 46
+    - Add label LABEL_2
+  - - 52
+    - Add label LABEL_6
+  - - 56
+    - Add label LABEL_7
+  - - 58
+    - Add label LABEL_5
+  - - 60
+    - Add label LABEL_1
+- rule: generate_011
+  file: examples/generate/rule_011_test_input.vhd
+  expected:
+  - - 22
+    - Add label FOR_LABEL
+  - - 26
+    - Add label IF_LABEL
+  - - 30
+    - Add label CASE_LABEL
+  - - 40
+    - Add label LABEL_3
+  - - 44
+    - Add label LABEL_4
+  - - 46
+    - Add label LABEL_2
+  - - 52
+    - Add label LABEL_6
+  - - 56
+    - Add label LABEL_7
+  - - 58
+    - Add label LABEL_5
+  - - 60
+    - Add label LABEL_1
+- rule: generic_007
+  file: examples/generic/rule_007_test_input.fixed_lower.vhd
+  expected:
+  - - 4
+    - Change "g_width" to "G_WIDTH"
+  - - 5
+    - Change "g_depth" to "G_DEPTH"
+  - - 6
+    - Change "prefix_generic_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 16
+    - Change "g_width" to "G_WIDTH"
+  - - 17
+    - Change "g_depth" to "G_DEPTH"
+  - - 18
+    - Change "prefix_generic_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 28
+    - Change "g_width" to "G_WIDTH"
+  - - 29
+    - Change "g_depth" to "G_DEPTH"
+  - - 30
+    - Change "prefix_generic_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 40
+    - Change "g_width" to "G_WIDTH"
+  - - 41
+    - Change "g_depth" to "G_DEPTH"
+  - - 42
+    - Change "prefix_generic_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 51
+    - Change "g_size" to "G_SIZE"
+  - - 52
+    - Change "g_width" to "G_WIDTH"
+  - - 53
+    - Change "g_depth" to "G_DEPTH"
+  - - 54
+    - Change "prefix_generic_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 63
+    - Change "g_size" to "G_SIZE"
+  - - 64
+    - Change "g_width" to "G_WIDTH"
+  - - 65
+    - Change "g_depth" to "G_DEPTH"
+  - - 66
+    - Change "prefix_generic_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 75
+    - Change "g_size" to "G_SIZE"
+  - - 76
+    - Change "g_width" to "G_WIDTH"
+  - - 77
+    - Change "g_depth" to "G_DEPTH"
+  - - 78
+    - Change "prefix_generic_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 87
+    - Change "g_size" to "G_SIZE"
+  - - 88
+    - Change "g_width" to "G_WIDTH"
+  - - 89
+    - Change "g_depth" to "G_DEPTH"
+  - - 90
+    - Change "prefix_generic_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 99
+    - Change "g_size" to "G_SIZE"
+  - - 100
+    - Change "g_width" to "G_WIDTH"
+  - - 101
+    - Change "g_depth" to "G_DEPTH"
+  - - 102
+    - Change "prefix_generic" to "PREFIX_GENERIC"
+  - - 111
+    - Change "g_size" to "G_SIZE"
+  - - 112
+    - Change "g_width" to "G_WIDTH"
+  - - 113
+    - Change "g_depth" to "G_DEPTH"
+  - - 114
+    - Change "prefix_generic" to "PREFIX_GENERIC"
+  - - 123
+    - Change "g_size" to "G_SIZE"
+  - - 124
+    - Change "g_width" to "G_WIDTH"
+  - - 125
+    - Change "g_depth" to "G_DEPTH"
+  - - 126
+    - Change "generic_suffix" to "GENERIC_SUFFIX"
+  - - 135
+    - Change "g_size" to "G_SIZE"
+  - - 136
+    - Change "g_width" to "G_WIDTH"
+  - - 137
+    - Change "g_depth" to "G_DEPTH"
+  - - 138
+    - Change "generic_suffix" to "GENERIC_SUFFIX"
+- rule: generic_007
+  file: examples/generic/rule_007_test_input.fixed_lower_with_upper_prefix.vhd
+  expected:
+  - - 4
+    - Change "g_width" to "G_WIDTH"
+  - - 5
+    - Change "g_depth" to "G_DEPTH"
+  - - 6
+    - Change "PREFIX_generic_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 16
+    - Change "g_width" to "G_WIDTH"
+  - - 17
+    - Change "g_depth" to "G_DEPTH"
+  - - 18
+    - Change "PREFIX_generic_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 28
+    - Change "g_width" to "G_WIDTH"
+  - - 29
+    - Change "g_depth" to "G_DEPTH"
+  - - 30
+    - Change "PREFIX_generic_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 40
+    - Change "g_width" to "G_WIDTH"
+  - - 41
+    - Change "g_depth" to "G_DEPTH"
+  - - 42
+    - Change "PREFIX_generic_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 51
+    - Change "g_size" to "G_SIZE"
+  - - 52
+    - Change "g_width" to "G_WIDTH"
+  - - 53
+    - Change "g_depth" to "G_DEPTH"
+  - - 54
+    - Change "PREFIX_generic_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 63
+    - Change "g_size" to "G_SIZE"
+  - - 64
+    - Change "g_width" to "G_WIDTH"
+  - - 65
+    - Change "g_depth" to "G_DEPTH"
+  - - 66
+    - Change "PREFIX_generic_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 75
+    - Change "g_size" to "G_SIZE"
+  - - 76
+    - Change "g_width" to "G_WIDTH"
+  - - 77
+    - Change "g_depth" to "G_DEPTH"
+  - - 78
+    - Change "PREFIX_generic_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 87
+    - Change "g_size" to "G_SIZE"
+  - - 88
+    - Change "g_width" to "G_WIDTH"
+  - - 89
+    - Change "g_depth" to "G_DEPTH"
+  - - 90
+    - Change "PREFIX_generic_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 99
+    - Change "g_size" to "G_SIZE"
+  - - 100
+    - Change "g_width" to "G_WIDTH"
+  - - 101
+    - Change "g_depth" to "G_DEPTH"
+  - - 102
+    - Change "PREFIX_generic" to "PREFIX_GENERIC"
+  - - 111
+    - Change "g_size" to "G_SIZE"
+  - - 112
+    - Change "g_width" to "G_WIDTH"
+  - - 113
+    - Change "g_depth" to "G_DEPTH"
+  - - 114
+    - Change "PREFIX_generic" to "PREFIX_GENERIC"
+  - - 123
+    - Change "g_size" to "G_SIZE"
+  - - 124
+    - Change "g_width" to "G_WIDTH"
+  - - 125
+    - Change "g_depth" to "G_DEPTH"
+  - - 126
+    - Change "generic_suffix" to "GENERIC_SUFFIX"
+  - - 135
+    - Change "g_size" to "G_SIZE"
+  - - 136
+    - Change "g_width" to "G_WIDTH"
+  - - 137
+    - Change "g_depth" to "G_DEPTH"
+  - - 138
+    - Change "generic_suffix" to "GENERIC_SUFFIX"
+- rule: generic_007
+  file: examples/generic/rule_007_test_input.fixed_lower_with_upper_prefix_and_suffix.vhd
+  expected:
+  - - 4
+    - Change "g_width" to "G_WIDTH"
+  - - 5
+    - Change "g_depth" to "G_DEPTH"
+  - - 6
+    - Change "PREFIX_generic_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 16
+    - Change "g_width" to "G_WIDTH"
+  - - 17
+    - Change "g_depth" to "G_DEPTH"
+  - - 18
+    - Change "PREFIX_generic_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 28
+    - Change "g_width" to "G_WIDTH"
+  - - 29
+    - Change "g_depth" to "G_DEPTH"
+  - - 30
+    - Change "PREFIX_generic_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 40
+    - Change "g_width" to "G_WIDTH"
+  - - 41
+    - Change "g_depth" to "G_DEPTH"
+  - - 42
+    - Change "PREFIX_generic_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 51
+    - Change "g_size" to "G_SIZE"
+  - - 52
+    - Change "g_width" to "G_WIDTH"
+  - - 53
+    - Change "g_depth" to "G_DEPTH"
+  - - 54
+    - Change "PREFIX_generic_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 63
+    - Change "g_size" to "G_SIZE"
+  - - 64
+    - Change "g_width" to "G_WIDTH"
+  - - 65
+    - Change "g_depth" to "G_DEPTH"
+  - - 66
+    - Change "PREFIX_generic_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 75
+    - Change "g_size" to "G_SIZE"
+  - - 76
+    - Change "g_width" to "G_WIDTH"
+  - - 77
+    - Change "g_depth" to "G_DEPTH"
+  - - 78
+    - Change "PREFIX_generic_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 87
+    - Change "g_size" to "G_SIZE"
+  - - 88
+    - Change "g_width" to "G_WIDTH"
+  - - 89
+    - Change "g_depth" to "G_DEPTH"
+  - - 90
+    - Change "PREFIX_generic_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 99
+    - Change "g_size" to "G_SIZE"
+  - - 100
+    - Change "g_width" to "G_WIDTH"
+  - - 101
+    - Change "g_depth" to "G_DEPTH"
+  - - 102
+    - Change "PREFIX_generic" to "PREFIX_GENERIC"
+  - - 111
+    - Change "g_size" to "G_SIZE"
+  - - 112
+    - Change "g_width" to "G_WIDTH"
+  - - 113
+    - Change "g_depth" to "G_DEPTH"
+  - - 114
+    - Change "PREFIX_generic" to "PREFIX_GENERIC"
+  - - 123
+    - Change "g_size" to "G_SIZE"
+  - - 124
+    - Change "g_width" to "G_WIDTH"
+  - - 125
+    - Change "g_depth" to "G_DEPTH"
+  - - 126
+    - Change "generic_SUFFIX" to "GENERIC_SUFFIX"
+  - - 135
+    - Change "g_size" to "G_SIZE"
+  - - 136
+    - Change "g_width" to "G_WIDTH"
+  - - 137
+    - Change "g_depth" to "G_DEPTH"
+  - - 138
+    - Change "generic_SUFFIX" to "GENERIC_SUFFIX"
+- rule: generic_007
+  file: examples/generic/rule_007_test_input.fixed_lower_with_upper_suffix.vhd
+  expected:
+  - - 4
+    - Change "g_width" to "G_WIDTH"
+  - - 5
+    - Change "g_depth" to "G_DEPTH"
+  - - 6
+    - Change "prefix_generic_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 16
+    - Change "g_width" to "G_WIDTH"
+  - - 17
+    - Change "g_depth" to "G_DEPTH"
+  - - 18
+    - Change "prefix_generic_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 28
+    - Change "g_width" to "G_WIDTH"
+  - - 29
+    - Change "g_depth" to "G_DEPTH"
+  - - 30
+    - Change "prefix_generic_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 40
+    - Change "g_width" to "G_WIDTH"
+  - - 41
+    - Change "g_depth" to "G_DEPTH"
+  - - 42
+    - Change "prefix_generic_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 51
+    - Change "g_size" to "G_SIZE"
+  - - 52
+    - Change "g_width" to "G_WIDTH"
+  - - 53
+    - Change "g_depth" to "G_DEPTH"
+  - - 54
+    - Change "prefix_generic_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 63
+    - Change "g_size" to "G_SIZE"
+  - - 64
+    - Change "g_width" to "G_WIDTH"
+  - - 65
+    - Change "g_depth" to "G_DEPTH"
+  - - 66
+    - Change "prefix_generic_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 75
+    - Change "g_size" to "G_SIZE"
+  - - 76
+    - Change "g_width" to "G_WIDTH"
+  - - 77
+    - Change "g_depth" to "G_DEPTH"
+  - - 78
+    - Change "prefix_generic_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 87
+    - Change "g_size" to "G_SIZE"
+  - - 88
+    - Change "g_width" to "G_WIDTH"
+  - - 89
+    - Change "g_depth" to "G_DEPTH"
+  - - 90
+    - Change "prefix_generic_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 99
+    - Change "g_size" to "G_SIZE"
+  - - 100
+    - Change "g_width" to "G_WIDTH"
+  - - 101
+    - Change "g_depth" to "G_DEPTH"
+  - - 102
+    - Change "prefix_generic" to "PREFIX_GENERIC"
+  - - 111
+    - Change "g_size" to "G_SIZE"
+  - - 112
+    - Change "g_width" to "G_WIDTH"
+  - - 113
+    - Change "g_depth" to "G_DEPTH"
+  - - 114
+    - Change "prefix_generic" to "PREFIX_GENERIC"
+  - - 123
+    - Change "g_size" to "G_SIZE"
+  - - 124
+    - Change "g_width" to "G_WIDTH"
+  - - 125
+    - Change "g_depth" to "G_DEPTH"
+  - - 126
+    - Change "generic_SUFFIX" to "GENERIC_SUFFIX"
+  - - 135
+    - Change "g_size" to "G_SIZE"
+  - - 136
+    - Change "g_width" to "G_WIDTH"
+  - - 137
+    - Change "g_depth" to "G_DEPTH"
+  - - 138
+    - Change "generic_SUFFIX" to "GENERIC_SUFFIX"
+- rule: generic_007
+  file: examples/generic/rule_007_test_input.fixed_upper.vhd
+  expected: []
+- rule: generic_007
+  file: examples/generic/rule_007_test_input.fixed_upper_with_lower_prefix.vhd
+  expected:
+  - - 6
+    - Change "prefix_GENERIC_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 18
+    - Change "prefix_GENERIC_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 30
+    - Change "prefix_GENERIC_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 42
+    - Change "prefix_GENERIC_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 54
+    - Change "prefix_GENERIC_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 66
+    - Change "prefix_GENERIC_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 78
+    - Change "prefix_GENERIC_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 90
+    - Change "prefix_GENERIC_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 102
+    - Change "prefix_GENERIC" to "PREFIX_GENERIC"
+  - - 114
+    - Change "prefix_GENERIC" to "PREFIX_GENERIC"
+- rule: generic_007
+  file: examples/generic/rule_007_test_input.fixed_upper_with_lower_prefix_and_suffix.vhd
+  expected:
+  - - 6
+    - Change "prefix_GENERIC_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 18
+    - Change "prefix_GENERIC_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 30
+    - Change "prefix_GENERIC_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 42
+    - Change "prefix_GENERIC_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 54
+    - Change "prefix_GENERIC_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 66
+    - Change "prefix_GENERIC_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 78
+    - Change "prefix_GENERIC_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 90
+    - Change "prefix_GENERIC_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 102
+    - Change "prefix_GENERIC" to "PREFIX_GENERIC"
+  - - 114
+    - Change "prefix_GENERIC" to "PREFIX_GENERIC"
+  - - 126
+    - Change "GENERIC_suffix" to "GENERIC_SUFFIX"
+  - - 138
+    - Change "GENERIC_suffix" to "GENERIC_SUFFIX"
+- rule: generic_007
+  file: examples/generic/rule_007_test_input.fixed_upper_with_lower_suffix.vhd
+  expected:
+  - - 6
+    - Change "PREFIX_GENERIC_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 18
+    - Change "PREFIX_GENERIC_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 30
+    - Change "PREFIX_GENERIC_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 42
+    - Change "PREFIX_GENERIC_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 54
+    - Change "PREFIX_GENERIC_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 66
+    - Change "PREFIX_GENERIC_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 78
+    - Change "PREFIX_GENERIC_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 90
+    - Change "PREFIX_GENERIC_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 126
+    - Change "GENERIC_suffix" to "GENERIC_SUFFIX"
+  - - 138
+    - Change "GENERIC_suffix" to "GENERIC_SUFFIX"
+- rule: generic_007
+  file: examples/generic/rule_007_test_input.vhd
+  expected:
+  - - 6
+    - Change "prefix_GENERIC_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 18
+    - Change "PREFIX_GENERIC_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 30
+    - Change "prefix_GENERIC_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 51
+    - Change "g_size" to "G_SIZE"
+  - - 52
+    - Change "g_width" to "G_WIDTH"
+  - - 53
+    - Change "g_depth" to "G_DEPTH"
+  - - 54
+    - Change "prefix_generic_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 63
+    - Change "g_size" to "G_SIZE"
+  - - 64
+    - Change "g_width" to "G_WIDTH"
+  - - 65
+    - Change "g_depth" to "G_DEPTH"
+  - - 66
+    - Change "PREFIX_generic_suffix" to "PREFIX_GENERIC_SUFFIX"
+  - - 75
+    - Change "g_size" to "G_SIZE"
+  - - 76
+    - Change "g_width" to "G_WIDTH"
+  - - 77
+    - Change "g_depth" to "G_DEPTH"
+  - - 78
+    - Change "prefix_generic_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 87
+    - Change "g_size" to "G_SIZE"
+  - - 88
+    - Change "g_width" to "G_WIDTH"
+  - - 89
+    - Change "g_depth" to "G_DEPTH"
+  - - 90
+    - Change "PREFIX_generic_SUFFIX" to "PREFIX_GENERIC_SUFFIX"
+  - - 99
+    - Change "g_size" to "G_SIZE"
+  - - 100
+    - Change "g_width" to "G_WIDTH"
+  - - 101
+    - Change "g_depth" to "G_DEPTH"
+  - - 102
+    - Change "PREFIX_generic" to "PREFIX_GENERIC"
+  - - 111
+    - Change "g_size" to "G_SIZE"
+  - - 112
+    - Change "g_width" to "G_WIDTH"
+  - - 113
+    - Change "g_depth" to "G_DEPTH"
+  - - 114
+    - Change "prefix_generic" to "PREFIX_GENERIC"
+  - - 123
+    - Change "g_size" to "G_SIZE"
+  - - 124
+    - Change "g_width" to "G_WIDTH"
+  - - 125
+    - Change "g_depth" to "G_DEPTH"
+  - - 126
+    - Change "generic_SUFFIX" to "GENERIC_SUFFIX"
+  - - 135
+    - Change "g_size" to "G_SIZE"
+  - - 136
+    - Change "g_width" to "G_WIDTH"
+  - - 137
+    - Change "g_depth" to "G_DEPTH"
+  - - 138
+    - Change "generic_suffix" to "GENERIC_SUFFIX"
+- rule: generic_map_008
+  file: examples/generic_map/rule_008_test_input.vhd
+  expected:
+  - - 46
+    - Add formal_part to positional assignment.
+  - - 53
+    - Add formal_part to positional assignment.
+  - - 55
+    - Add formal_part to positional assignment.
+  - - 68
+    - Add formal_part to positional assignment.
+  - - 77
+    - Add formal_part to positional assignment.
+- rule: if_022
+  file: examples/if_statement/rule_022_test_input.fixed.vhd
+  expected: []
+- rule: if_022
+  file: examples/if_statement/rule_022_test_input.vhd
+  expected:
+  - - 29
+    - Move code after *else* keyword to the next line.
+  - - 33
+    - Move code after *else* keyword to the next line.
+- rule: if_022
+  file: examples/extra/if_022/fail_and_pass.vhd
+  expected:
+  - - 8
+    - Move code after *else* keyword to the next line.
+- rule: if_024
+  file: examples/if_statement/rule_024_test_input.fixed.vhd
+  expected: []
+- rule: if_024
+  file: examples/if_statement/rule_024_test_input.vhd
+  expected:
+  - - 25
+    - Move code after *then* keyword to the next line.
+  - - 26
+    - Move code after *then* keyword to the next line.
+  - - 28
+    - Move code after *then* keyword to the next line.
+  - - 29
+    - Move code after *then* keyword to the next line.
+- rule: if_024
+  file: examples/extra/if_024/fail_and_pass.vhd
+  expected:
+  - - 8
+    - Move code after *then* keyword to the next line.
+- rule: instantiation_601
+  file: examples/instantiation/rule_601_test_input.vhd
+  expected:
+  - - 6
+    - 'Prefix INST_INST1 with one of the following: u_'
+  - - 20
+    - 'Prefix INST1 with one of the following: u_'
+- rule: length_001
+  file: examples/length/rule_001_test_input.vhd
+  expected:
+  - - 3
+    - Reduce line to less than 80 characters
+  - - 7
+    - Reduce line to less than 80 characters
+  - - 9
+    - Reduce line to less than 80 characters
+- rule: length_002
+  file: examples/length/rule_002_test_input.vhd
+  expected: []
+- rule: length_002
+  file: examples/extra/length_002/long_file.vhd
+  expected:
+  - - 2000
+    - Reduce file length to less than 2000 lines
+- rule: lint_001
+  file: examples/lint/rule_001_test_input.vhd
+  expected:
+  - - 14
+    - Signal beep is also assigned on line 13 in the same statement region
+- rule: lint_002
+  file: examples/lint/rule_002_test_input.vhd
+  expected:
+  - - 20
+    - Add sel to the sensitivity list; the process reads it
+  - - 20
+    - Remove c from the sensitivity list; the process does not read it
+  - - 29
+    - Add rst to the sensitivity list
+  - - 29
+    - Remove a from the sensitivity list of the clocked process
+- rule: lint_003
+  file: examples/lint/rule_003_test_input.vhd
+  expected:
+  - - 25
+    - Input port in2 of instance u_bad is not connected
+  - - 25
+    - Input port bus1 of instance u_bad is not connected
+- rule: lint_004
+  file: examples/lint/rule_003_test_input.vhd
+  expected:
+  - - 25
+    - Output port out1 of instance u_bad is not connected
+  - - 33
+    - Output port out2 of instance u_positional is not connected
+- rule: lint_005
+  file: examples/lint/rule_005_test_input.vhd
+  expected:
+  - - 8
+    - Add a when others choice to the case statement
+- rule: lint_006
+  file: examples/lint/rule_005_test_input.vhd
+  expected:
+  - - 13
+    - Choice "000" is already covered on line 9
+- rule: lint_007
+  file: examples/lint/rule_005_test_input.vhd
+  expected:
+  - - 15
+    - Choice "10X" contains a metavalue and is never reached in hardware
+  - - 21
+    - Choice "0-Z" contains a metavalue and is never reached in hardware
+- rule: lint_008
+  file: examples/lint/rule_008_test_input.vhd
+  expected:
+  - - 11
+    - Signal gated_in_s is assigned and read in the same combinational process
+  - - 7
+    - Signal count is assigned from an expression that reads it
+- rule: lint_009
+  file: examples/lint/rule_009_test_input.vhd
+  expected:
+  - - 9
+    - Signal out1 is not assigned on every path of the combinational process, which infers a latch
+  - - 13
+    - Signal out2 is not assigned on every path of the combinational process, which infers a latch
+  - - 22
+    - Signal out5 is not assigned on every path of the combinational process, which infers a latch
+- rule: lint_010
+  file: examples/lint/rule_010_test_input.vhd
+  expected:
+  - - 22
+    - Signal a3 is also driven by process operate_proc on line 15
+  - - 31
+    - Signal q is also driven by a concurrent assignment on line 29
+- rule: lint_011
+  file: examples/lint/rule_011_test_input.vhd
+  expected:
+  - - 19
+    - Reset rst_master is active low here but active high on line 9
+  - - 19
+    - Reset rst_master is asynchronous here but synchronous on line 9
+  - - 28
+    - Reset rst_master is asynchronous here but synchronous on line 9
+- rule: lint_012
+  file: examples/lint/rule_012_test_input.vhd
+  expected:
+  - - 12
+    - Register out3 is not assigned when reset is active
+  - - 20
+    - Register sync1 has no reset; the process has none
+  - - 31
+    - Register flag is not assigned when rst is active
+- rule: lint_013
+  file: examples/lint/rule_013_test_input.vhd
+  expected:
+  - - 5
+    - Remove the initial value of port q
+  - - 12
+    - Remove the initial value of signal count
+  - - 13
+    - Remove the initial value of signal a, b
+- rule: lint_014
+  file: examples/lint/rule_014_test_input.vhd
+  expected:
+  - - 4
+    - Replace the real type with a fixed point or integer type; synthesis does not support it
+  - - 6
+    - Remove the shared variable; synthesis does not support it
+  - - 7
+    - Remove the access type; synthesis does not support it
+  - - 8
+    - Remove the file declaration; synthesis does not support it
+  - - 12
+    - Remove the after delay; synthesis does not support it
+  - - 13
+    - Remove the transport delay; synthesis does not support it
+  - - 13
+    - Remove the after delay; synthesis does not support it
+  - - 17
+    - Remove the wait statement; synthesis does not support it
+- rule: lint_015
+  file: examples/lint/rule_015_test_input.vhd
+  expected:
+  - - 6
+    - Code from here is hidden from synthesis; justify the region
+  - - 14
+    - Code from here is hidden from coverage; justify the region
+- rule: lint_016
+  file: examples/lint/rule_016_test_input.vhd
+  expected:
+  - - 4
+    - Give the natural a range, such as range 0 to 15
+  - - 12
+    - Give the natural a range, such as range 0 to 15
+  - - 14
+    - Give the positive a range, such as range 0 to 15
+- rule: lint_017
+  file: examples/lint/rule_017_test_input.vhd
+  expected:
+  - - 20
+    - Assign a defined state in the when others choice of the state machine on state
+- rule: lint_018
+  file: examples/lint/rule_018_test_input.vhd
+  expected:
+  - - 7
+    - Add a requirement tag matching \bREQ\s*:\s*\S+ to the entity
+  - - 20
+    - Add a requirement tag matching \bREQ\s*:\s*\S+ to the process
+- rule: lint_019
+  file: examples/lint/rule_019_test_input.vhd
+  expected:
+  - - 4
+    - Replace the buffer port with an out port and an internal signal
+  - - 5
+    - Use inout ports only on the top level, for device pins
+- rule: lint_020
+  file: examples/lint/rule_020_test_input.vhd
+  expected:
+  - - 8
+    - Use rising_edge(clk) or falling_edge(clk) instead of clk'event
+  - - 13
+    - The process uses more than one clock edge (rising edge of clk1, rising edge of clk2); use one process for each
+- rule: lint_021
+  file: examples/lint/rule_021_test_input.vhd
+  expected:
+  - - 5
+    - Move entity ram to a file of its own; this file already declares fifo
+  - - 2
+    - Name the file after entity fifo
+- rule: lint_022
+  file: examples/lint/rule_022_test_input.vhd
+  expected:
+  - - 11
+    - Variable count is read before it is written, so it holds its value from the previous clock edge like a register
+- rule: lint_023
+  file: examples/lint/rule_023_test_input.vhd
+  expected:
+  - - 3
+    - Check the generics of entity top with an assertion
+- rule: lint_024
+  file: examples/lint/rule_024_test_input.vhd
+  expected:
+  - - 11
+    - Give state_next a default value at the start of the process
+- rule: lint_025
+  file: examples/lint/rule_025_test_input.vhd
+  expected:
+  - - 6
+    - Use process (all) for the combinational process
+- rule: lint_026
+  file: examples/lint/rule_026_test_input.vhd
+  expected:
+  - - 18
+    - Instantiate fifo with entity work.fifo instead of a component
+- rule: lint_027
+  file: examples/lint/rule_027_test_input.vhd
+  expected:
+  - - 18
+    - Declare the states of fsm_state with an enumerated type instead of std_logic_vector
+- rule: lint_028
+  file: examples/lint/rule_028_test_input.vhd
+  expected:
+  - - 11
+    - Variable sum is read before it is assigned on every path, so it keeps its last value like a latch
+- rule: lint_029
+  file: examples/lint/rule_029_test_input.vhd
+  expected:
+  - - 5
+    - Assign one waveform element; synthesis ignores the others and their delays
+  - - 10
+    - Assign one waveform element; synthesis ignores the others and their delays
+- rule: lint_030
+  file: examples/lint/rule_030_test_input.vhd
+  expected:
+  - - 12
+    - Nesting level 5 is deeper than the limit of 4
+- rule: lint_031
+  file: examples/lint/rule_031_test_input.vhd
+  expected:
+  - - 5
+    - Declare the std_logic_vector with downto, like the other vectors
+  - - 11
+    - Declare the unsigned with downto, like the other vectors
+- rule: lint_032
+  file: examples/lint/rule_032_test_input.vhd
+  expected:
+  - - 4
+    - Give deferred constant c_width its value in the package body of this file, or in the package
+  - - 13
+    - Give deferred constant c_size its value in the package body of this file, or in the package
+- rule: lint_033
+  file: examples/lint/rule_033_test_input.vhd
+  expected:
+  - - 4
+    - Signal spare is assigned but never read
+  - - 5
+    - Signal unused is never assigned or read
+- rule: lint_034
+  file: examples/lint/rule_034_test_input.vhd
+  expected:
+  - - 10
+    - Replace 99 by a named constant or generic
+- rule: lint_035
+  file: examples/lint/rule_035_test_input.vhd
+  expected:
+  - - 6
+    - Replace "0110" by a named constant
+  - - 7
+    - Replace x"A5" by a named constant
+- rule: lint_036
+  file: examples/lint/rule_036_test_input.vhd
+  expected:
+  - - 4
+    - Function parity_bad can reach its end without returning a value
+  - - 22
+    - Remove the wait statement from procedure pause; synthesis does not support it
+- rule: lint_037
+  file: examples/lint/rule_037_test_input.vhd
+  expected:
+  - - 10
+    - State ERROR of state is never assigned, so the machine never enters it
+  - - 19
+    - State DONE of state assigns no other state, so the machine never leaves it
+- rule: lint_038
+  file: examples/lint/rule_038_test_input.vhd
+  expected:
+  - - 9
+    - 'Signal delay_2 inverts delay_1, which inverts trigger: a chain of inverters'
+- rule: lint_039
+  file: examples/lint/rule_039_test_input.vhd
+  expected:
+  - - 13
+    - The process label busy has the name of a signal; give it a name of its own
+  - - 14
+    - The variable count has the name of a port or generic; give it a name of its own
+  - - 17
+    - The loop parameter clk has the name of a port or generic; give it a name of its own
+- rule: lint_040
+  file: examples/lint/rule_040_test_input.vhd
+  expected:
+  - - 7
+    - Signal payload connected to port wr_data of u_fifo has another name
+- rule: lint_041
+  file: examples/lint/rule_041_test_input.vhd
+  expected:
+  - - 2
+    - Start the file with a header comment
+- rule: lint_042
+  file: examples/lint/rule_042_test_input.vhd
+  expected:
+  - - 2
+    - Comments are on 14% of the lines; add comments to reach 20%
+- rule: loop_statement_001
+  file: examples/loop_statement/rule_001_test_input.fixed.vhd
+  expected: []
+- rule: loop_statement_001
+  file: examples/loop_statement/rule_001_test_input.vhd
+  expected:
+  - - 23
+    - Move code after **loop** to the next line.
+  - - 27
+    - Move code after **loop** to the next line.
+- rule: loop_statement_006
+  file: examples/loop_statement/rule_006_test_input.vhd
+  expected:
+  - - 20
+    - Add label for loop statement
+  - - 22
+    - Add label for loop statement
+  - - 24
+    - Add label for loop statement
+  - - 31
+    - Add label for loop statement
+  - - 33
+    - Add label for loop statement
+  - - 35
+    - Add label for loop statement
+  - - 42
+    - Add label for loop statement
+  - - 44
+    - Add label for loop statement
+  - - 46
+    - Add label for loop statement
+- rule: loop_statement_007
+  file: examples/loop_statement/rule_007_test_input.fixed.vhd
+  expected:
+  - - 13
+    - Add a label for the "end loop".
+- rule: loop_statement_007
+  file: examples/loop_statement/rule_007_test_input.vhd
+  expected:
+  - - 11
+    - Add a label for the "end loop".
+  - - 13
+    - Add a label for the "end loop".
+  - - 15
+    - Add a label for the "end loop".
+- rule: port_map_008
+  file: examples/port_map/rule_008_test_input.vhd
+  expected:
+  - - 26
+    - Add formal_part to positional assignment.
+  - - 28
+    - Add formal_part to positional assignment.
+  - - 38
+    - Add formal_part to positional assignment.
+  - - 39
+    - Add formal_part to positional assignment.
+- rule: procedure_507
+  file: examples/procedure/rule_507_test_input.fixed.vhd
+  expected: []
+- rule: procedure_507
+  file: examples/procedure/rule_507_test_input.vhd
+  expected:
+  - - 8
+    - Change Average_samples to average_samples
+  - - 13
+    - Change AVERAGE_SAMPLES to average_samples
+  - - 14
+    - Change AVERAGE_SaMPLES to average_samples
+  - - 15
+    - Change aVeRAGE_SaMPLES to average_samples
+- rule: process_016
+  file: examples/process/rule_016_test_input.vhd
+  expected:
+  - - 15
+    - Add label for process statement
+  - - 22
+    - Add label for process statement
+  - - 36
+    - Add label for process statement
+  - - 43
+    - Add label for process statement
+- rule: process_018
+  file: examples/process/rule_018_test_input.fixed_add.vhd
+  expected:
+  - - 6
+    - Add a label for the "end process".
+  - - 20
+    - Add a label for the "end process".
+- rule: process_018
+  file: examples/process/rule_018_test_input.fixed_remove.vhd
+  expected:
+  - - 6
+    - Add a label for the "end process".
+  - - 10
+    - Add a label for the "end process".
+  - - 16
+    - Add a label for the "end process".
+  - - 20
+    - Add a label for the "end process".
+- rule: process_018
+  file: examples/process/rule_018_test_input.vhd
+  expected:
+  - - 6
+    - Add a label for the "end process".
+  - - 16
+    - Add a label for the "end process".
+  - - 20
+    - Add a label for the "end process".
+- rule: sequential_007
+  file: examples/sequential/rule_007_test_input.fixed.vhd
+  expected: []
+- rule: sequential_007
+  file: examples/sequential/rule_007_test_input.vhd
+  expected:
+  - - 19
+    - Move code after the ; to the next line.
+  - - 21
+    - Move code after the ; to the next line.
+  - - 21
+    - Move code after the ; to the next line.
+- rule: signal_014
+  file: examples/signal/rule_014_test_input.fixed.vhd
+  expected: []
+- rule: signal_014
+  file: examples/signal/rule_014_test_input.vhd
+  expected:
+  - - 22
+    - Change siG2 to sig2
+  - - 25
+    - Change siG1 to sig1
+  - - 27
+    - Change SIG2 to sig2
+  - - 28
+    - Change sIg1 to sig1
+  - - 29
+    - Change SiG2 to sig2
+  - - 30
+    - Change SIg1 to sig1
+  - - 33
+    - Change Sig1 to sig1
+  - - 33
+    - Change SIG2 to sig2
+  - - 33
+    - Change SIG3 to sig3
+  - - 34
+    - Change SIG1 to sig1
+  - - 37
+    - Change Sig1 to sig1
+  - - 37
+    - Change SIG2 to sig2
+  - - 38
+    - Change SIg3 to sig3
+  - - 41
+    - Change Sig1 to sig1
+  - - 41
+    - Change SIG2 to sig2
+  - - 42
+    - Change SIg3 to sig3
+  - - 44
+    - Change siG1 to sig1
+  - - 46
+    - Change siG1 to sig1
+  - - 53
+    - Change Sig1 to sig1
+  - - 54
+    - Change SIg2 to sig2
+  - - 61
+    - Change Sig3 to sig3
+  - - 63
+    - Change siG5 to sig5
+  - - 69
+    - Change siG6 to sig6
+  - - 73
+    - Change Sig1 to sig1
+  - - 75
+    - Change Sig2 to sig2
+  - - 77
+    - Change Sig3 to sig3
+  - - 78
+    - Change SIG1 to sig1
+  - - 78
+    - Change SIG2 to sig2
+  - - 78
+    - Change SIG3 to sig3
+  - - 79
+    - Change SIG1 to sig1
+  - - 79
+    - Change SIG1 to sig1
+  - - 79
+    - Change SIG1 to sig1
+  - - 81
+    - Change Sig1 to sig1
+  - - 81
+    - Change SIG2 to sig2
+  - - 83
+    - Change Sig1 to sig1
+  - - 83
+    - Change SIG2 to sig2
+  - - 83
+    - Change SIG3 to sig3
+  - - 84
+    - Change SIG1 to sig1
+  - - 87
+    - Change Sig1 to sig1
+  - - 87
+    - Change SIG2 to sig2
+  - - 88
+    - Change SIg3 to sig3
+- rule: signal_015
+  file: examples/signal/rule_015_test_input.fixed.vhd
+  expected: []
+- rule: signal_015
+  file: examples/signal/rule_015_test_input.vhd
+  expected:
+  - - 5
+    - Split signal declaration into individual declarations
+  - - 8
+    - Split signal declaration into individual declarations
+  - - 79
+    - Split signal declaration into individual declarations
+  - - 81
+    - Split signal declaration into individual declarations
+  - - 82
+    - Split signal declaration into individual declarations
+- rule: subtype_002
+  file: examples/subtype/rule_002_test_input.fixed.vhd
+  expected: []
+- rule: subtype_002
+  file: examples/subtype/rule_002_test_input.vhd
+  expected:
+  - - 7
+    - Change READ_SIZE to read_size
+  - - 11
+    - Change WRITE_size to write_size
+- rule: sv_case_001
+  file: examples/svfile/structure.fixed.sv
+  expected:
+  - - 31
+    - Add a default item
+- rule: sv_case_001
+  file: examples/svfile/structure.sv
+  expected:
+  - - 33
+    - Add a default item
+- rule: sv_case_001
+  file: examples/svfile/verilator/vl_top.sv
+  expected:
+  - - 25
+    - Add a default item
+- rule: sv_case_001
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_001
+  file: examples/svfile/lint.sv
+  expected:
+  - - 14
+    - Implicit conversion truncates from 8 to 4 bits
+- rule: sv_lint_001
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_002
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 42
+    - Latch inferred for 'v' because it is not assigned on all control paths
+- rule: sv_lint_002
+  file: examples/svfile/lint.sv
+  expected:
+  - - 16
+    - Latch inferred for 'l_o' because it is not assigned on all control paths
+- rule: sv_lint_002
+  file: examples/svfile/verilator/vl_top.sv
+  expected:
+  - - 26
+    - Latch inferred for 's_o' because it is not assigned on all control paths
+- rule: sv_lint_002
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_003
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 29
+    - Cannot have multiple continuous assignments to variable 'v'
+  - - 30
+    - Cannot have multiple continuous assignments to variable 'v'
+  - - 31
+    - Cannot have multiple continuous assignments to variable 'v'
+  - - 40
+    - Cannot mix continuous and procedural assignments to variable 'v'
+  - - 42
+    - Variable 'v' driven by always_comb procedure cannot be written to by any other process
+  - - 53
+    - Variable 'v' driven by always_comb procedure cannot be written to by any other process
+- rule: sv_lint_003
+  file: examples/svfile/lint.sv
+  expected:
+  - - 19
+    - Cannot mix continuous and procedural assignments to variable 'm_o'
+- rule: sv_lint_003
+  file: examples/svfile/whitespace.fixed.sv
+  expected:
+  - - 14
+    - Variable 'y_o' driven by always_comb procedure cannot be written to by any other process
+- rule: sv_lint_003
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_004
+  file: examples/svfile/lint.sv
+  expected:
+  - - 20
+    - Implicit net 'implicit_net' created
+- rule: sv_lint_004
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_005
+  file: examples/svfile/code_tags.sv
+  expected:
+  - - 11
+    - Unused variable 'c'
+  - - 12
+    - Unused variable 'd'
+  - - 15
+    - Unused variable 'e'
+  - - 17
+    - Unused variable 'f'
+- rule: sv_lint_005
+  file: examples/svfile/lint.sv
+  expected:
+  - - 13
+    - Variable 'spare' is assigned but its value is never used
+  - - 20
+    - Implicit net 'implicit_net' is unused elsewhere
+- rule: sv_lint_005
+  file: examples/svfile/sample.sv
+  expected:
+  - - 7
+    - Unused parameter 'Depth'
+- rule: sv_lint_005
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_006
+  file: examples/svfile/lint.sv
+  expected:
+  - - 25
+    - '''case'' statement contains duplicate items for value ''4''b1'' (the second one will never be matched)'
+- rule: sv_lint_006
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_007
+  file: examples/svfile/lint.sv
+  expected:
+  - - 30
+    - Comparison of differently signed types ('logic[3:0]' and 'int')
+- rule: sv_lint_007
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_008
+  file: examples/svfile/lint.sv
+  expected:
+  - - 21
+    - Add b_i to the sensitivity list, or use always_comb
+- rule: sv_lint_008
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_010
+  file: examples/svfile/project/sub.sv
+  expected:
+  - - 5
+    - Undriven output port 'unused_o'
+- rule: sv_lint_010
+  file: examples/svfile/style.fixed.sv
+  expected:
+  - - 3
+    - Variable 'b' is never assigned a value
+- rule: sv_lint_010
+  file: examples/svfile/style.sv
+  expected:
+  - - 3
+    - Variable 'b' is never assigned a value
+- rule: sv_lint_010
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_012
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_012
+  file: examples/extra/sv_lint_012/multidriven.sv
+  expected:
+  - - 7
+    - 'Signal has multiple driving blocks with different clocking: ''busy'' (Verilator MULTIDRIVEN)'
+- rule: sv_lint_013
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_013
+  file: examples/extra/sv_lint_013/incomplete_case.sv
+  expected:
+  - - 12
+    - Case values incompletely covered (example pattern 0x2) (Verilator CASEINCOMPLETE)
+- rule: sv_naming_012
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 23
+    - Rename Data, which differs from data only in case
+- rule: sv_naming_012
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_003
+  file: examples/svfile/structure.fixed.sv
+  expected:
+  - - 41
+    - Move the statement to its own line
+- rule: sv_statement_003
+  file: examples/svfile/structure.sv
+  expected:
+  - - 10
+    - Move the statement to its own line
+  - - 10
+    - Move the statement to its own line
+  - - 43
+    - Move the statement to its own line
+- rule: sv_statement_003
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: type_014
+  file: examples/type_definition/rule_014_test_input.fixed.vhd
+  expected: []
+- rule: type_014
+  file: examples/type_definition/rule_014_test_input.vhd
+  expected:
+  - - 7
+    - Change STATE_MACHINE to state_machine
+  - - 9
+    - Change State_Machine to state_machine
+  - - 13
+    - Change STATE_MACHINE to state_machine
+  - - 20
+    - Change STATE_machine to state_machine
+  - - 25
+    - Change State_machine to state_machine
+  - - 27
+    - Change STATe_machine to state_machine
+- rule: type_501
+  file: examples/type_definition/rule_501_test_input.fixed.vhd
+  expected: []
+- rule: type_501
+  file: examples/type_definition/rule_501_test_input.record_element_choice.vhd
+  expected:
+  - - 21
+    - Change data_stream_length to DATA_STREAM_LENGTH
+- rule: type_501
+  file: examples/type_definition/rule_501_test_input.vhd
+  expected:
+  - - 6
+    - Change IDLE to idle
+  - - 15
+    - Change IDLE to idle
+  - - 16
+    - Change Write to write
+  - - 17
+    - Change ReAd to read
+  - - 18
+    - Change dONe to done
+- rule: type_600
+  file: examples/type_definition/rule_600_test_input.vhd
+  expected:
+  - - 8
+    - 'Suffix state_machine with one of the following: _t'
+- rule: use_clause_001
+  file: examples/use_clause/rule_001_test_input.vhd
+  expected:
+  - - 3
+    - 'Package name is on list of restricted names: std_logic_arith, std_logic_unsigned, std_logic_signed, std_logic_misc'
+- rule: variable_011
+  file: examples/variable/rule_011_test_input.fixed.vhd
+  expected: []
+- rule: variable_011
+  file: examples/variable/rule_011_test_input.vhd
+  expected:
+  - - 22
+    - Change variable1 to VAriable1
+  - - 22
+    - Change variable2 to VAriable2
+  - - 22
+    - Change variable3 to VAriable3
+  - - 22
+    - Change variable4 to VAriable4
+  - - 24
+    - Change variable1 to VAriable1
+  - - 28
+    - Change variable1 to VAriable1
+  - - 29
+    - Change variable2 to VAriable2
+  - - 32
+    - Change my_shared_variable to My_shared_variable
+  - - 47
+    - Change variable1 to Variable1
+  - - 47
+    - Change variable2 to Variable2
+  - - 47
+    - Change variable3 to Variable3
+  - - 47
+    - Change variable4 to Variable4
+  - - 50
+    - Change my_shared_variable to MY_shared_variable
+  - - 86
+    - Change variable1 to VARiable1
+  - - 86
+    - Change variable2 to VARiable2
+  - - 86
+    - Change variable3 to VARiable3
+  - - 86
+    - Change variable4 to VARiable4
+  - - 88
+    - Change my_shared_variable to MY_Shared_variable
+  - - 104
+    - Change variable1 to VARIable1
+  - - 104
+    - Change variable2 to VARIable2
+  - - 104
+    - Change variable3 to VARIable3
+  - - 104
+    - Change variable4 to VARIable4
+  - - 106
+    - Change my_shared_variable to MY_SHared_variable
+  - - 113
+    - Change VARIABLE1 to variable1
+  - - 113
+    - Change VARIABLE2 to variable2
+  - - 113
+    - Change VARIABLE3 to variable3
+  - - 113
+    - Change VARIABLE4 to variable4
+  - - 116
+    - Change My_shared_variable to my_shared_variable
+  - - 139
+    - Change variable1 to VARIAble1
+  - - 139
+    - Change variable2 to VARIAble2
+  - - 139
+    - Change variable3 to VARIAble3
+  - - 139
+    - Change variable4 to VARIAble4
+  - - 142
+    - Change my_shared_variable to MY_SHAred_variable
+  - - 157
+    - Change variable1 to VARIABle1
+  - - 157
+    - Change variable2 to VARIABle2
+  - - 157
+    - Change variable3 to VARIABle3
+  - - 157
+    - Change variable4 to VARIABle4
+  - - 160
+    - Change my_shared_variable to MY_SHARed_variable
+  - - 167
+    - Change variable1 to VARIABLE1
+  - - 167
+    - Change variable2 to VARIABLE2
+  - - 167
+    - Change variable3 to VARIABLE3
+  - - 167
+    - Change variable4 to VARIABLE4
+  - - 169
+    - Change My_shared_variable to my_shared_variable
+  - - 204
+    - Change variable1 to VARiable1
+  - - 204
+    - Change variable2 to VARiable2
+  - - 204
+    - Change variable3 to VARiable3
+  - - 204
+    - Change variable4 to VARiable4
+  - - 206
+    - Change my_shared_variable to MY_Shared_variable
+  - - 222
+    - Change variable1 to VARIable1
+  - - 222
+    - Change variable2 to VARIable2
+  - - 222
+    - Change variable3 to VARIable3
+  - - 222
+    - Change variable4 to VARIable4
+  - - 224
+    - Change my_SHARED_variable to MY_SHared_variable
+  - - 225
+    - Change my_shared_variable to MY_SHared_variable
+  - - 231
+    - Change VARIABLE1 to variable1
+  - - 231
+    - Change VARIABLE2 to variable2
+  - - 231
+    - Change VARIABLE3 to variable3
+  - - 231
+    - Change VARIABLE4 to variable4
+  - - 234
+    - Change My_shared_variable to my_SHARED_variable
+  - - 235
+    - Change my_shared_variable to my_SHARED_variable
+  - - 259
+    - Change variable1 to VARIAble1
+  - - 259
+    - Change variable2 to VARIAble2
+  - - 259
+    - Change variable3 to VARIAble3
+  - - 259
+    - Change variable4 to VARIAble4
+  - - 262
+    - Change my_shared_variable to MY_SHAred_variable
+  - - 277
+    - Change variable1 to VARIABle1
+  - - 277
+    - Change variable2 to VARIABle2
+  - - 277
+    - Change variable3 to VARIABle3
+  - - 277
+    - Change variable4 to VARIABle4
+  - - 280
+    - Change my_shared_variable to MY_SHARed_variable
+  - - 287
+    - Change variable1 to VARIABLE1
+  - - 287
+    - Change variable2 to VARIABLE2
+  - - 287
+    - Change variable3 to VARIABLE3
+  - - 287
+    - Change variable4 to VARIABLE4
+  - - 290
+    - Change my_shared_variable to my_Shared_variable
+  - - 321
+    - Change variable1 to VARiABle1
+  - - 321
+    - Change variable2 to VARiABle2
+  - - 321
+    - Change variable3 to VARiABle3
+  - - 321
+    - Change variable4 to VARiABle4
+  - - 324
+    - Change my_shared_variable to my_shaRED_VARIABLE
+  - - 331
+    - Change variable1 to VARiaBle1
+  - - 331
+    - Change variable2 to VARiaBle2
+  - - 331
+    - Change variable3 to VARiaBle3
+  - - 331
+    - Change variable4 to VARiaBle4
+  - - 334
+    - Change my_shared_variable to my_sharED_VARIABLE
+  - - 495
+    - Change VAR1 to var1
+- rule: variable_015
+  file: examples/variable/rule_015_test_input.fixed.vhd
+  expected: []
+- rule: variable_015
+  file: examples/variable/rule_015_test_input.vhd
+  expected:
+  - - 7
+    - Split variable declaration into individual declarations
+  - - 9
+    - Split variable declaration into individual declarations
+  - - 76
+    - Split variable declaration into individual declarations
+  - - 78
+    - Split variable declaration into individual declarations
+  - - 79
+    - Split variable declaration into individual declarations
+  - - 81
+    - Split variable declaration into individual declarations
+- rule: whitespace_002
+  file: examples/whitespace/rule_002_test_input.fixed.vhd
+  expected: []
+- rule: whitespace_002
+  file: examples/whitespace/rule_002_test_input.vhd
+  expected:
+  - - 4
+    - Remove tab
+  - - 6
+    - Remove tab
+  - - 8
+    - Remove tab
+  - - 10
+    - Remove tab
+  - - 13
+    - Remove tab
+  - - 15
+    - Remove tab
+  - - 17
+    - Remove tab
+  - - 19
+    - Remove tab
+design_cases:
+- rule: design_001
+  name: clean design
+  design: &id001
+    top: clean_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/clean.vhd
+  expected: []
+- rule: design_002
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_003
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_004
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_005
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_006
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_007
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_008
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_009
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_010
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_011
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_012
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_013
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_014
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_015
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_016
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_017
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_001
+  name: undeclared signal
+  design: &id002
+    top: undeclared_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/undeclared.vhd
+  expected:
+  - - examples/design/undeclared.vhd
+    - 14
+    - 'GHDL analysis error: no declaration for "missing_signal"'
+- rule: design_002
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_003
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_004
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_005
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_006
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_007
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_008
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_009
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_010
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_011
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_012
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_013
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_014
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_015
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_016
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_017
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_001
+  name: latch
+  design: &id003
+    top: latch_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/latch.vhd
+  expected: []
+- rule: design_002
+  name: latch
+  design: *id003
+  expected:
+  - - examples/design/latch.vhd
+    - 17
+    - Synthesis infers a latch for q in latch_top
+- rule: design_003
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_004
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_005
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_006
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_007
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_008
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_009
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_010
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_011
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_012
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_013
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_014
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_015
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_016
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_017
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_001
+  name: combinational loop
+  design: &id004
+    top: loop_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/loop.vhd
+  expected: []
+- rule: design_002
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_003
+  name: combinational loop
+  design: *id004
+  expected:
+  - - examples/design/loop.vhd
+    - 40
+    - Combinational loop through a, b in loop_top
+  - - examples/design/loop.vhd
+    - 45
+    - Combinational loop through e, f in loop_top and instance u_pass
+- rule: design_004
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_005
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_006
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_007
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_008
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_009
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_010
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_011
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_012
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_013
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_014
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_015
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_016
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_017
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_001
+  name: multiple drivers
+  design: &id005
+    top: md_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/multiple_drivers.vhd
+  expected: []
+- rule: design_002
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_003
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_004
+  name: multiple drivers
+  design: *id005
+  expected:
+  - - examples/design/multiple_drivers.vhd
+    - 37
+    - 'Signal shared_net in md_top has 2 drivers: u_first, u_second'
+- rule: design_005
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_006
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_007
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_008
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_009
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_010
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_011
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_012
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_013
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_014
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_015
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_016
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_017
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_001
+  name: registers
+  design: &id006
+    top: registers_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/registers.vhd
+  expected: []
+- rule: design_002
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_003
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_004
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_005
+  name: registers
+  design: *id006
+  expected:
+  - - examples/design/registers.vhd
+    - 37
+    - 'Register busy_r in registers_top never changes: it is always 0'
+- rule: design_006
+  name: registers
+  design: *id006
+  expected:
+  - - examples/design/registers.vhd
+    - 24
+    - Signal missing in registers_top is read but never assigned
+  - - examples/design/registers.vhd
+    - 33
+    - Register count in registers_top is never used
+- rule: design_007
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_008
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_009
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_010
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_011
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_012
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_013
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_014
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_015
+  name: registers
+  design: *id006
+  expected:
+  - - examples/design/registers.vhd
+    - 31
+    - 'Reset rst is released asynchronously: it resets registers clocked by clk without a reset synchronizer (3 registers)'
+- rule: design_016
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_017
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_001
+  name: logic depth
+  design: &id007
+    top: depth_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/depth.vhd
+  expected: []
+- rule: design_002
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_003
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_004
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_005
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_006
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_007
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_008
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_009
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_010
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_011
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_012
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_013
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_014
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_015
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_016
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_017
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_001
+  name: clock domain crossings
+  design: &id008
+    top: cdc_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/cdc.vhd
+  expected: []
+- rule: design_002
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_003
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_004
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_005
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_006
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_007
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_008
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 90
+    - unsync_b (clk_b) captures flag_a (clk_a) without a synchronizer
+- rule: design_009
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 93
+    - Logic on x_a (clk_a), y_a (clk_a) before synchronizer logic1_b (clk_b) can glitch
+  - - examples/design/cdc.vhd
+    - 95
+    - bus_a (clk_a) is synchronized bit by bit into bus1_b (clk_b); the bits can arrive in different cycles
+- rule: design_010
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 69
+    - Clock clk_b is used as data
+- rule: design_011
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 198
+    - clk_c is used as a clock and as an asynchronous reset
+- rule: design_012
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 170
+    - Clock clk_a is gated by logic into clk_gated (1 register)
+- rule: design_013
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 81
+    - Clock div_a is made by a register from clk_a (1 register)
+- rule: design_014
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 163
+    - Asynchronous reset is made by logic of rst_b, soft_a
+- rule: design_015
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 136
+    - 'Reset rst_a is released asynchronously: it resets registers clocked by clk_a without a reset synchronizer'
+  - - examples/design/cdc.vhd
+    - 146
+    - Reset rst_b is synchronized to clk_b, resets registers clocked by clk_a
+  - - examples/design/cdc.vhd
+    - 198
+    - 'Reset clk_c is released asynchronously: it resets registers clocked by clk_a without a reset synchronizer'
+- rule: design_016
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_017
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_001
+  name: reconvergence
+  design: &id009
+    top: reconvergence_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/reconvergence.vhd
+  expected: []
+- rule: design_002
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_003
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_004
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_005
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_006
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_007
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_008
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_009
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_010
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_011
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_012
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_013
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_014
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_015
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_016
+  name: reconvergence
+  design: *id009
+  expected:
+  - - examples/design/reconvergence.vhd
+    - 71
+    - Separately synchronized mode_a (by mode_meta) and start_a (by start_meta) from clk_a meet again in go_b (clk_b)
+  - - examples/design/reconvergence.vhd
+    - 82
+    - Separately synchronized flag_a (by first1_b) and flag_a (by second1_b) from clk_a meet again in differ_b (clk_b)
+  - - examples/design/reconvergence.vhd
+    - 88
+    - Separately synchronized mode_a (by mode_meta) and start_a (by start_meta) from clk_a meet again in late_b (clk_b)
+  - - examples/design/reconvergence.vhd
+    - 93
+    - Separately synchronized mode_a (by mode_meta) and start_a (by start_meta) from clk_a meet again in busy_b (clk_b)
+- rule: design_017
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_001
+  name: black box
+  design: &id010
+    top: bb_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/black_box.vhd
+  expected: []
+- rule: design_002
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_003
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_004
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_005
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_006
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_007
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_008
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_009
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_010
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_011
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_012
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_013
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_014
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_015
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_016
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_017
+  name: black box
+  design: *id010
+  expected:
+  - - examples/design/black_box.vhd
+    - 41
+    - Black box BUFGCE has no declaration of its clock domain behaviour
+  - - examples/design/black_box.vhd
+    - 57
+    - Black box xpm_cdc_single has no declaration of its clock domain behaviour
+- rule: design_001
+  name: deep logic
+  design: &id011
+    top: deep_top
+    libraries:
+    - name: work
+      files:
+      - examples/extra/design_007/deep.vhd
+  expected: []
+- rule: design_002
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_003
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_004
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_005
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_006
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_007
+  name: deep logic
+  design: *id011
+  expected:
+  - - examples/extra/design_007/deep.vhd
+    - 28
+    - Path of 127 logic levels to register q in deep_top, more than 48
+- rule: design_008
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_009
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_010
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_011
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_012
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_013
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_014
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_015
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_016
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_017
+  name: deep logic
+  design: *id011
+  expected: []

@@ -92,6 +92,18 @@ def parse_command_line_arguments():
         help="With --design, write a template of declarations for the black boxes of the design that have none.",
     )
     parser.add_argument(
+        "--qualify",
+        default=None,
+        metavar="RULE_SET",
+        help="Run the qualification suite of a built in rule set and report each case, expected against actual.",
+    )
+    parser.add_argument(
+        "--qualify_report",
+        default=None,
+        metavar="FILE",
+        help="With --qualify, also write the report to a file: JSON for a .json file, otherwise text.",
+    )
+    parser.add_argument(
         "--rule_set",
         default=None,
         action="store",
