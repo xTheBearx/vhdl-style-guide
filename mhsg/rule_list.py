@@ -133,13 +133,14 @@ class rule_list:
       sLocalRulesDirectory: (string) (optional)
     """
 
-    def __init__(self, oVhdlFile, oSeverityList, sLocalRulesDirectory=None):
+    def __init__(self, oVhdlFile, oSeverityList, sLocalRulesDirectory=None, bAllLanguages=False):
         self.rules = load_rules()
         for iDirectory, sDirectory in enumerate(config.get_local_rule_directories(sLocalRulesDirectory)):
             self.rules.extend(load_local_rules(sDirectory, iDirectory))
-        # Only the rules for the language of the file
-        sLanguageName = getattr(oVhdlFile, "language", language.VHDL)
-        self.rules = [o for o in self.rules if sLanguageName in getattr(o, "languages", (language.VHDL,))]
+        # Only the rules for the language of the file, unless the rules of every language are listed, as for -oc and -rc
+        if not bAllLanguages:
+            sLanguageName = getattr(oVhdlFile, "language", language.VHDL)
+            self.rules = [o for o in self.rules if sLanguageName in getattr(o, "languages", (language.VHDL,))]
         self.iNumberRulesRan = 0
         self.lastPhaseRan = 0
         self.oVhdlFile = oVhdlFile

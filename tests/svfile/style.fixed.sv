@@ -1,5 +1,5 @@
 module style;
-	logic a;
+    logic a;
     logic b;  // tab in the line
     // mhsg_off
     logic c;   

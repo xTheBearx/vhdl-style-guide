@@ -6,13 +6,15 @@ SystemVerilog files: tokens from slang, kept exactly as written, and the languag
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
+
+import pytest
 
 from mhsg import language, parser, rule_list
 from mhsg.svFile import svFile, tokens
 from mhsg.vhdlFile import vhdlFile
-from tests import utils
 
 sDirectory = os.path.dirname(os.path.abspath(__file__))
 sRoot = os.path.dirname(os.path.dirname(sDirectory))
@@ -88,31 +90,100 @@ class test_svfile(unittest.TestCase):
         # The inactive branch is kept, unclassified
         self.assertIsInstance(dByValue["$display"], tokens.unclassified)
 
-    def test_only_language_neutral_rules(self):
+    def test_rules_of_the_language(self):
         oRules = rule_list.rule_list(svFile(["module m;\n", "endmodule\n"], sFilename="m.sv"), None)
-        self.assertEqual(["length_001", "length_002", "length_004", "whitespace_001", "whitespace_002"], sorted(o.unique_id for o in oRules.rules))
+        lRules = sorted(o.unique_id for o in oRules.rules)
+        self.assertEqual(["length_001", "length_002", "length_004", "whitespace_001", "whitespace_002"], [s for s in lRules if not s.startswith("sv_")])
+        self.assertIn("sv_indent_001", lRules)
         self.assertTrue(all(language.SYSTEMVERILOG in o.languages for o in oRules.rules))
+        # VHDL files do not get the SystemVerilog rules
+        self.assertFalse([o for o in rule_list.rule_list(vhdlFile([""]), None).rules if o.unique_id.startswith("sv_")])
         self.assertGreater(len(rule_list.rule_list(vhdlFile([""]), None).rules), 1000)
 
 
+@pytest.mark.current_defaults
+class test_indent(unittest.TestCase):
+    def levels(self, sText):
+        """The indent level of the first token of each line, None where indentation is not checked."""
+        dReturn = {}
+        iLine = 1
+        bStart = True
+        for oToken in tokens_of(sText):
+            if isinstance(oToken, parser.carriage_return):
+                iLine += 1
+                bStart = True
+            elif not isinstance(oToken, (parser.whitespace, parser.blank_line)):
+                if bStart:
+                    dReturn[iLine] = oToken.get_indent()
+                bStart = False
+        return [dReturn.get(i) for i in range(1, iLine)]
+
+    def test_levels(self):
+        sText = (
+            "module m (\n"
+            "    input logic a_i\n"
+            ");\n"
+            "    always_comb begin\n"
+            "        if (a_i)\n"
+            "            x = 1;\n"
+            "        else begin\n"
+            "            // comment above end\n"
+            "        end\n"
+            "        y = f(a,\n"
+            "              b);\n"
+            "    end\n"
+            "endmodule\n"
+        )
+        self.assertEqual([0, 1, 0, 1, 2, 3, 2, 3, 2, 2, None, 1, 0], self.levels(sText))
+
+    def test_comment_continuing_a_trailing_comment(self):
+        sText = "module m;\n    logic a;  // trailing\n              // continued\n    logic b;\nendmodule\n"
+        self.assertEqual([0, 1, None, 1, 0], self.levels(sText))
+
+    def test_stacked_comments(self):
+        # A comment line under a comment line is not a continuation of a trailing comment
+        sText = "module m;\n    initial begin\n        // one\n        // two\n    end\nendmodule\n"
+        self.assertEqual([0, 1, 2, 2, 1, 0], self.levels(sText))
+
+    def test_levels_after_utf8(self):
+        # slang counts offsets in bytes: a character of several bytes must not shift the lines after it
+        sText = "module m; // — em dash\n    logic a;\n    initial begin\n        a = 1;\n    end\nendmodule\n"
+        self.assertEqual([0, 1, 1, 2, 1, 0], self.levels(sText))
+
+    def test_token_map_finds_base_classes(self):
+        oFile = svFile(["module m;", "    logic a;", "endmodule"], sFilename="m.sv")
+        self.assertEqual(["module", "logic", "endmodule"], [o.get_tokens()[0].get_value() for o in oFile.get_tokens_matching([tokens.keyword])])
+        self.assertEqual(["m"], [o.get_tokens()[0].get_value() for o in oFile.get_tokens_matching([tokens.of("ModuleHeader", "name")])])
+
+
+@pytest.mark.current_defaults
 class test_rules(unittest.TestCase):
     def run_mhsg(self, lArguments, sFile):
-        """Runs mhsg on a copy of a test file; returns (exit status, output lines, file after)."""
+        """
+        Runs mhsg on a copy of a test file with the default configuration, not the settings the VHDL test files were
+        written for (see tests/test_defaults.yaml); returns (exit status, output lines, file after).
+        """
         with tempfile.TemporaryDirectory() as sTemporary:
             sCopy = os.path.join(sTemporary, sFile)
             shutil.copy(os.path.join(sDirectory, sFile), sCopy)
-            oResult = subprocess.run([*utils.mhsg_exec(), "-f", sCopy, "-of", "syntastic", *lArguments], cwd=sRoot, capture_output=True, text=True, check=False)
+            oResult = subprocess.run(
+                [sys.executable, "bin/mhsg", "-f", sCopy, "-of", "syntastic", *lArguments],
+                cwd=sRoot,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
             with open(sCopy, encoding="utf-8") as oFile:
                 sAfter = oFile.read()
         return oResult.returncode, [s.replace(sCopy, sFile) for s in oResult.stdout.splitlines()], sAfter
 
     def test_check(self):
-        # The leading tab of line 2 is left to the indentation rules, which SystemVerilog does not have yet;
-        # the trailing whitespace of line 5 is inside an mhsg_off region
-        iStatus, lOutput, _ = self.run_mhsg(["-ap", "-c", os.path.join(sDirectory, "length_80.yaml")], "style.sv")
+        # The trailing whitespace of line 5 is inside an mhsg_off region
+        iStatus, lOutput, _ = self.run_mhsg(["-ap"], "style.sv")
         self.assertEqual(1, iStatus)
         self.assertEqual(
             [
+                "ERROR: style.sv(2)sv_indent_001 -- Use 4 spaces for indent",
                 "ERROR: style.sv(2)whitespace_001 -- Remove trailing whitespace",
                 "ERROR: style.sv(3)whitespace_002 -- Remove tab",
                 "WARNING: style.sv(7)length_001 -- Reduce line to less than 80 characters",
@@ -121,9 +192,37 @@ class test_rules(unittest.TestCase):
         )
 
     def test_fix(self):
-        _, lOutput, sAfter = self.run_mhsg(["--fix", "-c", os.path.join(sDirectory, "length_80.yaml")], "style.sv")
+        _, lOutput, sAfter = self.run_mhsg(["--fix"], "style.sv")
         self.assertEqual(read("style.fixed.sv"), sAfter)
         self.assertEqual(["WARNING: style.sv(7)length_001 -- Reduce line to less than 80 characters"], lOutput)
+
+    def test_indent_clean(self):
+        self.assertEqual((0, []), self.run_mhsg([], "indent.sv")[:2])
+
+    def test_indent_fix(self):
+        # Every line whose indent is checked is indented by one space; the fix restores the file
+        sText = read("indent.sv")
+        lLevels = test_indent.levels(None, sText)
+        lLines = sText.splitlines()
+        lBad = [" " + sLine.lstrip(" ") if lLevels[i] is not None else sLine for i, sLine in enumerate(lLines)]
+        self.assertGreater(sum(1 for i in lLevels if i is not None), 80)
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sCopy = os.path.join(sTemporary, "indent.sv")
+            with open(sCopy, "w", encoding="utf-8") as oFile:
+                oFile.write("\n".join(lBad) + "\n")
+            subprocess.run([sys.executable, "bin/mhsg", "-f", sCopy, "--fix"], cwd=sRoot, capture_output=True, check=False)
+            with open(sCopy, encoding="utf-8") as oFile:
+                self.assertEqual(sText, oFile.read())
+
+    def test_comment_continuation_follows_its_line(self):
+        sText = "module m;\n  logic a;  // trailing\n            // continued\nendmodule\n"
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sCopy = os.path.join(sTemporary, "c.sv")
+            with open(sCopy, "w", encoding="utf-8") as oFile:
+                oFile.write(sText)
+            subprocess.run([sys.executable, "bin/mhsg", "-f", sCopy, "--fix"], cwd=sRoot, capture_output=True, check=False)
+            with open(sCopy, encoding="utf-8") as oFile:
+                self.assertEqual("module m;\n    logic a;  // trailing\n              // continued\nendmodule\n", oFile.read())
 
     def test_sample_is_clean(self):
         self.assertEqual((0, []), self.run_mhsg([], "sample.sv")[:2])

@@ -1110,3 +1110,4 @@ whitespace_101: whitespace_space_around_shift_operators
 whitespace_102: whitespace_space_before_direction_keyword
 whitespace_103: whitespace_space_after_direction_keyword
 whitespace_200: whitespace_consecutive_blank_lines
+sv_indent_001: sv_indent_code

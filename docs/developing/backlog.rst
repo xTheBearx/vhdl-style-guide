@@ -73,7 +73,13 @@ files with pyslang and running the language neutral rules, is done; see :doc:`..
 
 * **Style rules (plan step 2 onwards)**: indentation (4 spaces), alignment, naming, keyword and spacing rules after
   the lowRISC style that Verible checks. Until then only whitespace_001, whitespace_002 and the length rules run.
-* **Leading tabs** in SystemVerilog files are not reported; in VHDL the indentation rules report them.
+* **Indentation not checked yet**: continuation lines, lists aligned after their bracket, the contents of
+  expressions (multi-line assignment patterns, randomize with blocks), preprocessor directives and inactive
+  :code:`\`ifdef` branches. Verible's formatter has rules for each; they need studying before mhsg checks them.
+* **Double indentation of port and parameter lists**: Verible's formatter indents port declarations, named
+  parameters and named ports by its wrap width, twice the indent by default; part of ibex does so. sv_indent_001
+  uses one level; an option could allow two.
+* **begin on its own line** is put at the level of the statement it belongs to; some code indents it one level more.
 * **Inactive** :code:`\`ifdef` **branches and macro arguments** are kept as unclassified tokens (about 5% of the
   tokens of ibex, common_cells and picorv32), so rules about syntax will not see them. Parsing each branch with its
   defines set would let rules check them.

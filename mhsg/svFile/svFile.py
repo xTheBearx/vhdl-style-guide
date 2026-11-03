@@ -25,8 +25,8 @@ from pyslang.parsing import (  # pylint: disable=import-error
 )
 from pyslang.syntax import SyntaxNode, SyntaxTree  # pylint: disable=import-error
 
-from mhsg import parser
-from mhsg.svFile import tokens
+from mhsg import parser, token_map
+from mhsg.svFile import indent, tokens
 
 # mhsg.vhdlFile exports the class vhdlFile under the name of its module
 vhdl = importlib.import_module("mhsg.vhdlFile.vhdlFile")
@@ -70,7 +70,11 @@ class svFile(vhdl.vhdlFile):
         self.syntax_tree = None
         self.lAllObjects = build_tokens(sText, self.filename or "source.sv")
         vhdl.set_code_tags(self.lAllObjects)
-        self.oTokenMap = vhdl.process_tokens(self.lAllObjects)
+        self.oTokenMap = self.build_token_map()
+
+    def build_token_map(self):
+        """The token map, where each token is also found under the base classes of its class, such as keyword."""
+        return build_token_map(self.lAllObjects)
 
     def get_lint_model(self):
         """SystemVerilog has no per-file lint model yet."""
@@ -89,7 +93,7 @@ def build_tokens(sText, sFileName):
     oSourceManager = pyslang.SourceManager()
     oTree = SyntaxTree.fromText(sText, oSourceManager, sFileName)
     oFirst = oTree.root.getFirstToken()
-    dClasses = classify(oTree, oFirst.location.buffer.id) if oFirst is not None else {}
+    dClasses = classify(oTree, oFirst.location.buffer.id, line_starts(sText)) if oFirst is not None else {}
     oBuffer = oSourceManager.assignText(sFileName + " (as written)", sText)
     oLexer = Lexer(oBuffer, pyslang.BumpAllocator(), pyslang.Diagnostics(), oSourceManager, LexerOptions())
     lReturn = []
@@ -100,15 +104,17 @@ def build_tokens(sText, sFileName):
         if oToken.kind == TokenKind.EndOfFile:
             break
         sKind = oToken.kind.name
-        tClass = dClasses.get(oToken.location.offset)
-        if tClass is None or tClass[2] != sKind:
+        oInfo = dClasses.get(oToken.location.offset)
+        if oInfo is None or oInfo.kind != sKind:
             oClass = tokens.preprocessor if tokens.base_class(sKind) is tokens.preprocessor else tokens.unclassified
             oNew = oClass(oToken.rawText, sKind)
         else:
-            tSyntax, sField = tClass[0], tClass[1]
-            oNew = tokens.for_token(sKind, tSyntax, sField)(oToken.rawText, sKind, tSyntax, sField)
+            oNew = tokens.for_token(sKind, oInfo.syntax, oInfo.field)(oToken.rawText, sKind, oInfo.syntax, oInfo.field)
+            oNew.set_indent(oInfo.indent)
+            oNew.closing = oInfo.closing
         add_text(lReturn, oNew)
     mark_blank_lines(lReturn)
+    set_comment_indents(lReturn)
     return lReturn
 
 
@@ -144,6 +150,8 @@ def add_text(lTokens, oToken):
             oPart = type(oToken).__new__(type(oToken))
             oPart.__dict__.update(oToken.__dict__)
             oPart.set_value(sLine)
+            # The lines of a block comment after its first keep their own layout
+            oPart.continued = iLine > 0
             mark_tab(oPart)
             lTokens.append(oPart)
 
@@ -193,37 +201,256 @@ def fields(oNode):
     return _dFields[oClass]
 
 
-def classify(oTree, iBuffer):
-    """Returns {offset: (syntax node kinds, field, token kind)} for the tokens of the file in a syntax tree."""
+class token_info:
+    """What the syntax tree tells about a token of the file."""
+
+    __slots__ = ("syntax", "field", "kind", "indent", "closing")
+
+    def __init__(self, tSyntax, sField, sKind, iIndent, bClosing):
+        # The syntax node kinds from the root down to the node holding the token
+        self.syntax = tSyntax
+        # The field of that node holding the token, or None for an element of a list
+        self.field = sField
+        self.kind = sKind
+        # The indent level of the token when it starts a line, or None when indentation does not apply to it
+        self.indent = iIndent
+        # True for a token that closes a construct, such as end or a closing parenthesis
+        self.closing = bClosing
+
+
+def line_starts(sText):
+    """
+    The offsets of the first character, other than spaces and tabs, of each line. slang's offsets count bytes of
+    UTF-8, so these do too.
+    """
+    sReturn = set()
+    iStart = 0
+    for bLine in sText.encode("utf-8").split(b"\n"):
+        bContent = bLine.lstrip(b" \t")
+        if bContent:
+            sReturn.add(iStart + len(bLine) - len(bContent))
+        iStart += len(bLine) + 1
+    return sReturn
+
+
+def classify(oTree, iBuffer, sLineStarts):
+    """
+    Returns {offset: token_info} for the tokens of the file in a syntax tree; sLineStarts are the offsets of the
+    tokens that start a line.
+    """
     dReturn = {}
-    lStack = [(oTree.root, ())]
+    # The indent levels of the tokens that start an item, such as a statement or a port: {offset: level}
+    dItemStarts = {}
+    lStack = [(oTree.root, (), 0)]
+    first_offset = _first_offset_function(iBuffer)
+    iRoot = first_offset(oTree.root)
+    if iRoot is not None:
+        dItemStarts[iRoot] = 0
     while lStack:
-        oNode, tPath = lStack.pop()
-        tPath = tPath + (tokens.short_name(oNode.kind.name),)
-        sUnparsed = set()
-        for sField in UNPARSED_FIELDS:
-            oValue = getattr(oNode, sField, None)
-            if isinstance(oValue, list):
-                sUnparsed.update(oToken.location.offset for oToken in oValue if isinstance(oToken, Token))
-        dFields = {}
-        for sField in fields(oNode):
-            try:
-                oValue = getattr(oNode, sField)
-            except Exception:  # pylint: disable=broad-except
-                continue
-            if isinstance(oValue, Token) and oValue.location.buffer.id == iBuffer:
-                dFields[oValue.location.offset] = sField
+        oNode, tPath, iLevel = lStack.pop()
+        sKind = oNode.kind.name
+        tPath = tPath + (tokens.short_name(sKind),)
+        dFields, sUnparsed, dListStarts = node_fields(oNode)
+        # A list whose first element is on the line of its opening bracket is aligned rather than indented, such as
+        # the arguments of a call continued under the first; its elements are not checked
+        sAligned = {sField for sField, iOffset in dListStarts.items() if iOffset is not None and iOffset not in sLineStarts}
+        lFieldsOfNode = [(sField, bList) for sField, bList in dFields.values()]
+        # An empty list, such as the items of an empty begin-end block, still makes a body
+        lFieldsOfNode.extend((sField, True) for sField in dListStarts if dListStarts[sField] is None)
+        bHasBody = any(indent.is_body_field(sKind, sField, bList) and sField not in sAligned for sField, bList in lFieldsOfNode)
         for oChild in oNode:
             if oChild is None:
                 continue
             if isinstance(oChild, Token):
-                if oChild.location.buffer.id == iBuffer and oChild.location.offset not in sUnparsed:
-                    dReturn[oChild.location.offset] = (tPath, dFields.get(oChild.location.offset), oChild.kind.name)
+                iOffset = oChild.location.offset
+                if oChild.location.buffer.id == iBuffer and iOffset not in sUnparsed:
+                    sField, _ = dFields.get(("T", iOffset), (None, False))
+                    sChildKind = oChild.kind.name
+                    iIndent = dItemStarts.get(iOffset)
+                    bClosing = bHasBody and indent.is_closing(sChildKind)
+                    if iIndent is None and iLevel is not None and bHasBody and indent.is_own_line(sChildKind):
+                        iIndent = iLevel
+                    dReturn[iOffset] = token_info(tPath, sField, sChildKind, iIndent, bClosing)
                 for oTrivia in oChild.trivia:
                     oSyntax = oTrivia.syntax()
                     if oSyntax is not None:
-                        # A directive stands on its own, whichever token it comes before
-                        lStack.append((oSyntax, ()))
+                        # A directive stands on its own, whichever token it comes before; it is not indented yet
+                        lStack.append((oSyntax, (), None))
             elif isinstance(oChild, SyntaxNode):
-                lStack.append((oChild, tPath))
+                iChildLevel = None
+                if iLevel is not None:
+                    iOffset = first_offset(oChild)
+                    sField, bList = dFields.get(("N", oChild.kind.name, iOffset), (None, False))
+                    iIncrement = indent.increment(sKind, sField, bList, oChild.kind.name)
+                    if bList and sField in sAligned:
+                        # Aligned elements keep the level of their list and are not checked
+                        iIncrement = None
+                    iChildLevel = iLevel + (iIncrement or 0)
+                    if iIncrement is not None and iOffset is not None:
+                        dItemStarts.setdefault(iOffset, iChildLevel)
+                    if indent.is_expression(oChild.kind.name):
+                        # Inside an expression, lines are continuations, which are not checked
+                        iChildLevel = None
+                lStack.append((oChild, tPath, iChildLevel))
     return dReturn
+
+
+def _first_offset_function(iBuffer):
+    def first_offset(oNode):
+        oToken = oNode.getFirstToken()
+        if oToken is None or oToken.location.buffer.id != iBuffer:
+            return None
+        return oToken.location.offset
+
+    return first_offset
+
+
+def node_fields(oNode):
+    """
+    Returns ({key: (field, in a list)}, unparsed offsets) for the children of a syntax node, where the key of a token
+    is ("T", offset) and that of a node ("N", kind, offset of its first token).
+    """
+    dReturn = {}
+    sUnparsed = set()
+    # The offset of the first element of each list
+    dListStarts = {}
+    for sField in fields(oNode):
+        try:
+            oValue = getattr(oNode, sField)
+        except Exception:  # pylint: disable=broad-except
+            continue
+        if isinstance(oValue, Token):
+            dReturn[("T", oValue.location.offset)] = (sField, False)
+        elif isinstance(oValue, SyntaxNode):
+            add_field(dReturn, oValue, sField, False)
+        elif isinstance(oValue, list):
+            # pyslang gives lists, such as the members of a module, as Python lists
+            if sField in UNPARSED_FIELDS:
+                sUnparsed.update(oToken.location.offset for oToken in oValue if isinstance(oToken, Token))
+            else:
+                dListStarts.setdefault(sField, None)
+                for oElement in oValue:
+                    iOffset = add_field(dReturn, oElement, sField, True)
+                    if iOffset is not None and dListStarts[sField] is None:
+                        dListStarts[sField] = iOffset
+    return dReturn, sUnparsed, dListStarts
+
+
+def add_field(dFields, oChild, sField, bList):
+    """Records the field of a child; returns the offset of the child's first token, or None."""
+    if isinstance(oChild, Token):
+        dFields[("T", oChild.location.offset)] = (sField, bList)
+        return oChild.location.offset
+    if isinstance(oChild, SyntaxNode):
+        oFirst = oChild.getFirstToken()
+        if oFirst is not None:
+            dFields[("N", oChild.kind.name, oFirst.location.offset)] = (sField, bList)
+            return oFirst.location.offset
+    return None
+
+
+def set_comment_indents(lTokens):
+    """
+    Gives a comment that starts a line the indent of the next line of code: one level more when that line closes a
+    construct, as a comment above end belongs to the statements before it.
+    """
+    lPending = []
+    bLineStart = True
+    iColumn = 0
+    # The column of the comment ending the previous line, if it ended with one, and that of the current line
+    iTrailingComment = None
+    iThisTrailingComment = None
+    oTrailingComment = None
+    oThisTrailingComment = None
+    for oToken in lTokens:
+        if isinstance(oToken, (parser.carriage_return, parser.blank_line)):
+            if isinstance(oToken, parser.carriage_return):
+                iTrailingComment = iThisTrailingComment
+                oTrailingComment = oThisTrailingComment
+                iThisTrailingComment = None
+                oThisTrailingComment = None
+                iColumn = 0
+            bLineStart = True
+            continue
+        iTokenColumn = iColumn
+        iColumn += len(oToken.get_value())
+        if isinstance(oToken, parser.whitespace):
+            continue
+        if isinstance(oToken, parser.comment) and not bLineStart:
+            # A comment after code on its line
+            iThisTrailingComment = iTokenColumn
+            oThisTrailingComment = oToken
+        if bLineStart:
+            if isinstance(oToken, parser.comment):
+                if getattr(oToken, "continued", False):
+                    pass
+                elif iTokenColumn == iTrailingComment and iTokenColumn > 0:
+                    # A comment continuing the comment at the end of the line above, aligned with it; it follows
+                    # that comment when the line above is indented again, see realign_comment_continuations
+                    iThisTrailingComment = iTokenColumn
+                    oThisTrailingComment = oToken
+                    oToken.continues = oTrailingComment
+                else:
+                    lPending.append(oToken)
+            else:
+                iIndent = oToken.get_indent()
+                if iIndent is not None and getattr(oToken, "closing", False):
+                    iIndent += 1
+                for oComment in lPending:
+                    oComment.set_indent(iIndent)
+                lPending = []
+        bLineStart = False
+
+
+def realign_comment_continuations(lTokens):
+    """
+    Moves each comment continuing a trailing comment, see set_comment_indents, back under the comment it continues,
+    after the indent of the line above was fixed. Returns True if any token changed.
+    """
+    bChanged = False
+    dColumns = {}
+    iColumn = 0
+    iToken = 0
+    while iToken < len(lTokens):
+        oToken = lTokens[iToken]
+        if isinstance(oToken, parser.carriage_return):
+            iColumn = 0
+            iToken += 1
+            continue
+        oAnchor = getattr(oToken, "continues", None)
+        if oAnchor is not None and id(oAnchor) in dColumns and not oToken.has_code_tag("sv_indent_001"):
+            iTarget = dColumns[id(oAnchor)]
+            oPrevious = lTokens[iToken - 1] if iToken > 0 else None
+            if isinstance(oPrevious, parser.whitespace):
+                if oPrevious.get_value() != " " * iTarget:
+                    oPrevious.set_value(" " * iTarget)
+                    oPrevious.has_tab = False
+                    bChanged = True
+                iColumn = iTarget
+            elif iTarget > 0:
+                lTokens.insert(iToken, parser.whitespace(" " * iTarget))
+                bChanged = True
+                iColumn = iTarget
+                iToken += 1
+        if isinstance(oToken, parser.comment):
+            dColumns[id(oToken)] = iColumn
+        iColumn += len(oToken.get_value())
+        iToken += 1
+    return bChanged
+
+
+def build_token_map(lTokens):
+    """Returns the token map, with each SystemVerilog token also under the base classes of its class."""
+    oTokenMap = vhdl.process_tokens(lTokens)
+    dMap = oTokenMap.dMap
+    sChanged = set()
+    for iToken, oToken in enumerate(lTokens):
+        if not isinstance(oToken, tokens.token):
+            continue
+        for oClass in tokens.token_classes(type(oToken))[1:]:
+            sBase, sSub = token_map.extract_unique_id(oClass)
+            dMap.setdefault(sBase, {}).setdefault(sSub, []).append(iToken)
+            sChanged.add((sBase, sSub))
+    for sBase, sSub in sChanged:
+        dMap[sBase][sSub].sort()
+    return oTokenMap

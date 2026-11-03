@@ -109,3 +109,14 @@ The rules are divided into categories depending on the part of the VHDL code bei
    while_loop_rules.rst
    whitespace_rules.rst
    with_rules.rst
+
+SystemVerilog and Verilog
+-------------------------
+
+These rules check SystemVerilog and Verilog files, see :doc:`systemverilog`.
+The rules length_001, length_002, length_004, whitespace_001 and whitespace_002 check them as well.
+
+.. toctree::
+   :maxdepth: 2
+
+   sv_indent_rules.rst

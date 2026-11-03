@@ -50,6 +50,9 @@ def build_rule_class_doc(path, sRuleName, dRules):
         sTitle = "Context Reference Rules"
     elif sRuleName == "exit_statement":
         sTitle = "Exit Rules"
+    elif sRuleName.startswith("sv_"):
+        # The rules of SystemVerilog and Verilog files
+        sTitle = ("SystemVerilog " + sRuleName[len("sv_") :].title() + " Rules").replace("_", " ")
     else:
         sTitle = (sRuleName.title() + " Rules").replace("_", " ")
     lRuleClassDoc.append(sTitle)
@@ -76,7 +79,7 @@ def import_preamble_doc(sRuleName):
 def build_rule_list():
     oVhdlFile = vhdlFile.vhdlFile([""])
     oConfig = config.config()
-    return rule_list.rule_list(oVhdlFile, oConfig)
+    return rule_list.rule_list(oVhdlFile, oConfig, bAllLanguages=True)
 
 
 def build_rule_dictionary(oRuleList):
