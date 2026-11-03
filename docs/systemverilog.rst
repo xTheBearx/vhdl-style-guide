@@ -109,6 +109,8 @@ The SystemVerilog files of a run are compiled together, once, with the files of 
 :code:`--index_files`, so each file is checked against the others: an instance against the ports of its module, a
 package against the files that use it. A file that still uses a module, package or macro the run does not know is not
 checked for unused, undriven and implicit signals, as a signal driven or read there would look undriven or unused.
+With :code:`--fix`, the files are fixed first and compiled together again, so the files the fixes changed are still
+checked against the others.
 
 **Verilator.** When Verilator is installed, it lints the files of the run too (:code:`verilator --lint-only -Wall`),
 and :code:`sv_lint_011` reports the warnings of the checks slang does not make: blocking assignments in clocked
