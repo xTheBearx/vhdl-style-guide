@@ -87,6 +87,31 @@ Each violation is labelled with the check of the rule set, followed by the MHSG 
 
 The JSON output lists the checks of each violation under **checks**.
 
+.. _run_record:
+
+**Record of the run.** So that a result can be reproduced and shown to an auditor, the reports record how they were
+made: the versions of MHSG, Python and pyslang, and of GHDL and Yosys for design analysis; the command line; each
+configuration file with its SHA-256 digest, and a digest of the configuration they make together; the lint mode; and
+each rule set with its version and digest. The JSON output (:code:`--json`) has it under **run**:
+
+.. code-block:: json
+
+   "run": {
+     "mhsg": "3.36.0",
+     "python": "3.12.3",
+     "pyslang": "12.1.0",
+     "command_line": ["-f", "fifo.vhd", "-c", "mhsg.yaml", "--rule_set", "do254", "--json", "fifo.json"],
+     "configuration_files": [{"file": "mhsg.yaml", "sha256": "e10324..."}],
+     "configuration_sha256": "31b0f5...",
+     "lint_mode": "lint",
+     "rule_sets": [{"name": "DO-254", "version": "1", "sha256": "253f82..."}]
+   }
+
+The JUnit report (:code:`--junit`) has the same in the properties of its test suite, such as
+:code:`<property name="mhsg.version" value="3.36.0" />`. With :code:`--design`, :code:`--json` writes the findings of
+design analysis, with the versions of GHDL and Yosys and whether Yosys has the yosys-slang plugin, and the clock domain
+crossing report ends with the record too, see :doc:`design_analysis`.
+
 In lint mode there is a third severity, **Note**, which the DO-254 coding standards use for checks that only need to be examined.
 A Note is reported like a warning and does not fail a run.
 

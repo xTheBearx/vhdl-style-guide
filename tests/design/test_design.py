@@ -13,7 +13,7 @@ from unittest import mock
 
 import yaml
 
-from mhsg import exceptions, vhdlFile
+from mhsg import exceptions, version, vhdlFile
 from mhsg.design import (
     analysis,
     black_box,
@@ -1202,12 +1202,26 @@ class test_design_analysis(unittest.TestCase):
         with tempfile.TemporaryDirectory() as sDirectory:
             sJson = os.path.join(sDirectory, "cdc.json")
             sText = os.path.join(sDirectory, "cdc.txt")
-            self.run_design("cdc_top", "cdc.vhd", ["--cdc_report", sJson])
+            sFindings = os.path.join(sDirectory, "findings.json")
+            self.run_design("cdc_top", "cdc.vhd", ["--cdc_report", sJson, "--json", sFindings])
             self.run_design("cdc_top", "cdc.vhd", ["--cdc_report", sText])
             with open(sJson, encoding="utf-8") as oFile:
                 dReport = json.load(oFile)
             with open(sText, encoding="utf-8") as oFile:
                 sReport = oFile.read()
+            with open(sFindings, encoding="utf-8") as oFile:
+                dFindings = json.load(oFile)
+        # The reports record the versions of the tools and the configuration, see docs/lint.rst
+        for dRun in (dReport["run"], dFindings["run"]):
+            self.assertEqual(version.get_version(), dRun["mhsg"])
+            self.assertTrue(dRun["ghdl"] and dRun["yosys"])
+            self.assertEqual(64, len(dRun["configuration_files"][0]["sha256"]))
+        self.assertIn("\nRun\n  Tools: mhsg ", sReport)
+        self.assertIn("  Configuration: ", sReport)
+        # --json with --design writes the findings with the keys --json writes for the files of a run
+        dFile = next(d for d in dFindings["files"] if d["file_path"].endswith("cdc.vhd"))
+        self.assertTrue(all(set(d) == {"rule", "linenumber", "severity", "solution"} for d in dFile["violations"]))
+        self.assertTrue(any(d["rule"].startswith("design_") or "cdc" in d["rule"].lower() for d in dFile["violations"]))
         self.assertEqual(
             {
                 "bus1_b": cdc.BUS,

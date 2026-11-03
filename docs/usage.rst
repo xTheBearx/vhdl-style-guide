@@ -142,6 +142,9 @@ The command line tool can be invoked with:
 | --json                        | Filename of JSON file to generate.              |
 |                               | The path to the file can also be specified, but |
 |                               | the destination directory must exist.           |
+|                               | With --design, it holds the findings of design  |
+|                               | analysis. It records the versions of the tools  |
+|                               | and the configuration used.                     |
 +-------------------------------+-------------------------------------------------+
 | --output_format               | Configures the sdout output format.             |
 |                               |   mhsg -- standard MHSG output                  |

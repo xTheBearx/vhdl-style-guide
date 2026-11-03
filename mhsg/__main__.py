@@ -16,6 +16,7 @@ from . import (
     junit,
     options_description,
     project_index,
+    provenance,
     rule_list,
     rule_set,
     utils,
@@ -193,6 +194,8 @@ def main():
     if commandLineArguments.junit:
         oJunitFile = junit.xmlfile(commandLineArguments.junit)
         oJunitTestsuite = junit.testsuite("vhdl-style-guide", str(0))
+        for sName, sValue in provenance.properties(provenance.record(commandLineArguments, oConfig)):
+            oJunitTestsuite.add_property(sName, sValue)
 
     generate_output_configuration(commandLineArguments, oConfig)
 
@@ -201,6 +204,8 @@ def main():
     display_rule_configuration(commandLineArguments, oConfig)
 
     dJson = create_json_dictionary()
+    if commandLineArguments.json:
+        dJson["run"] = provenance.record(commandLineArguments, oConfig)
 
     f = functools.partial(apply_rules.apply_rules, commandLineArguments, oConfig)
     # It's easier to debug when not using multiprocessing.Pool()

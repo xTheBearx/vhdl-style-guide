@@ -80,6 +80,11 @@ class testsuite:
         self.time = sTime
         self.testcases = None
         self.timestamp = datetime.datetime.now().strftime("%Y-%m-%dT%I:%M:%S")
+        self.properties = []
+
+    def add_property(self, sName, sValue):
+        """Adds a property, such as the version of a tool, written in the properties of the testsuite."""
+        self.properties.append((sName, sValue))
 
     def add_testcase(self, oTestcase):
         try:
@@ -106,6 +111,8 @@ class testsuite:
         sHeader += ">"
         lJunit = [sHeader]
         lJunit.append("  <properties>")
+        for sName, sValue in self.properties:
+            lJunit.append(f'    <property name="{escape_xml_characters(sName)}" value="{escape_xml_characters(sValue)}" />')
         lJunit.append("  </properties>")
         for oTestcase in self.testcases:
             lJunit.extend(oTestcase.build_junit())

@@ -65,7 +65,9 @@ Lint and rule sets
   required justification, listed in the report, exists only for crossings.
 * **Tool qualification support**: :code:`--qualify` running the pass and fail examples of each check of a rule set,
   with a report of expected against actual results and the versions of mhsg, the rule set, GHDL and Yosys.
-* **Reproducibility**: reports do not yet record the versions of the tools and the configuration used.
+* **Record of the run in more reports**: the JSON, JUnit and clock domain crossing reports record the versions of
+  the tools and the configuration; the text output on the terminal and the code quality report
+  (:code:`--quality_report`, whose format has no place for it) do not.
 
 Verilog and SystemVerilog
 -------------------------

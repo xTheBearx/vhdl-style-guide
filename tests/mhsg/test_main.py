@@ -17,6 +17,15 @@ from mhsg import __main__, version
 from tests import utils
 
 
+def without_run_properties(oTest, lJunit):
+    """
+    Checks the properties recording the run, the version of mhsg among them, and returns the report without them,
+    as their values change from one version to the next.
+    """
+    oTest.assertTrue(any('<property name="mhsg.version"' in s for s in lJunit))
+    return [s for s in lJunit if not s.strip().startswith("<property ")]
+
+
 class command_line_args:
     """This is used as an input into the version command."""
 
@@ -195,6 +204,7 @@ class testMain(unittest.TestCase):
         # Read in the actual JUnit XML file for comparison
         lActual = []
         utils.read_file(junit_file, lActual)
+        lActual = without_run_properties(self, lActual)
         # Compare the two files, but skip the line with the timestamp (as it will never match)
         for iLineNumber, sLine in enumerate(lExpected):
             if iLineNumber != 1:
@@ -222,6 +232,7 @@ class testMain(unittest.TestCase):
         # Read in the actual JUnit XML file for comparison
         lActual = []
         utils.read_file(junit_file, lActual)
+        lActual = without_run_properties(self, lActual)
         # Compare the two files, but skip the line with the timestamp (as it will never match)
         for iLineNumber, sLine in enumerate(lExpected):
             if iLineNumber != 1:
@@ -489,6 +500,10 @@ class testMain(unittest.TestCase):
             dExpected = yaml.full_load(yaml_file)
         with open(config_file) as yaml_file:
             dActual = yaml.full_load(yaml_file)
+
+        # The record of the run, see docs/lint.rst
+        self.assertEqual(version.get_version(), dActual["run"]["mhsg"])
+        self.assertEqual(["tests/mhsg/config_glob.yaml"], [d["file"] for d in dActual["run"]["configuration_files"]])
 
         lExpected = dExpected["files"]
         lActual = dActual["files"]
