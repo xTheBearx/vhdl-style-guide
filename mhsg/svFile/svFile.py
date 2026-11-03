@@ -14,6 +14,7 @@ languages they apply to, see rule.Rule.languages.
 
 import bisect
 import importlib
+import os
 
 import pyslang
 
@@ -27,7 +28,7 @@ from pyslang.parsing import (  # pylint: disable=import-error
 from pyslang.syntax import SyntaxNode, SyntaxTree  # pylint: disable=import-error
 
 from mhsg import parser, token_map
-from mhsg.svFile import indent, lint, tokens
+from mhsg.svFile import indent, lint, preprocessor, project, tokens
 
 # mhsg.vhdlFile exports the class vhdlFile under the name of its module
 vhdl = importlib.import_module("mhsg.vhdlFile.vhdlFile")
@@ -77,7 +78,17 @@ class svFile(vhdl.vhdlFile):
             if iByte == 10:
                 self.line_offsets.append(iIndex + 1)
         # The source manager is kept with the tree, which refers to its buffers
-        self.lAllObjects, (self.syntax_tree, self.source_manager), self.dNodes = build_tokens(sText, self.filename or "source.sv", bTree=True)
+        dConfig = getattr(self.configuration, "dConfig", None)
+        oOptions = preprocessor.options(dConfig)
+        sPath = os.path.abspath(self.filename) if self.filename and self.filename != "stdin" else ""
+        self.text = sText
+        self.lAllObjects, (self.syntax_tree, self.source_manager, self.buffer_id), self.dNodes = build_tokens(
+            sText,
+            self.filename or "source.sv",
+            bTree=True,
+            oOptions=oOptions,
+            sPath=sPath,
+        )
         self.dTokenAtOffset = {o.offset: o for o in self.lAllObjects if getattr(o, "offset", None) is not None}
         self.syntax_errors = syntax_errors(self.syntax_tree)
         self.lint_model = None
@@ -110,7 +121,7 @@ class svFile(vhdl.vhdlFile):
 
     def token_at(self, oSyntaxToken):
         """The mhsg token for a token of the syntax tree, or None for one not in the file as written."""
-        if oSyntaxToken is None:
+        if oSyntaxToken is None or oSyntaxToken.location.buffer.id != self.buffer_id:
             return None
         return self.dTokenAtOffset.get(oSyntaxToken.location.offset)
 
@@ -121,7 +132,13 @@ class svFile(vhdl.vhdlFile):
     def get_lint_model(self):
         """The lint model of the file as it is now, made the first time a lint rule asks for it."""
         if self.lint_model is None:
-            self.lint_model = lint.LintModel(self.syntax_tree)
+            # The warnings of the whole run, when the run compiled this file as it is now, see project.py
+            dProject = getattr(self.configuration, "sv_lint_project", None) or {}
+            dEntry = dProject.get(os.path.abspath(self.filename)) if self.filename else None
+            if dEntry is not None and dEntry["hash"] == project.text_hash("\n".join(self.get_lines()[1:]) + "\n"):
+                self.lint_model = lint.LintModel.from_project(dEntry)
+            else:
+                self.lint_model = lint.LintModel(self.syntax_tree, self.buffer_id)
         return self.lint_model
 
     def set_indent_map(self, dIndentMap):
@@ -139,6 +156,12 @@ PREPROCESSOR_DIAGNOSTICS = {"UnknownDirective", "CouldNotOpenIncludeFile", "Unde
 STYLE_DIAGNOSTICS = {"EndNameMismatch", "EndNameNotEmpty"}
 
 
+def in_buffer(oNode, iBuffer):
+    """True for a node of the file, False for one of a file it includes; a node without tokens counts as the file's."""
+    oFirst = oNode.getFirstToken()
+    return oFirst is None or oFirst.location.buffer.id == iBuffer
+
+
 def node_offset(oNode):
     oFirst = oNode.getFirstToken()
     return oFirst.location.offset if oFirst is not None else -1
@@ -154,16 +177,19 @@ def syntax_errors(oTree):
     return lReturn
 
 
-def build_tokens(sText, sFileName, bTree=False):
+def build_tokens(sText, sFileName, bTree=False, oOptions=None, sPath=""):
     """
     Returns the mhsg tokens of a SystemVerilog text: lexed as written, classified from the syntax tree. With bTree,
-    returns (tokens, (syntax tree, its source manager), {kind: syntax nodes}).
+    returns (tokens, (syntax tree, its source manager, the id of the file's buffer), {kind: syntax nodes}), where the
+    nodes are those of the file, not of the files it includes.
     """
     oSourceManager = pyslang.SourceManager()
-    oTree = SyntaxTree.fromText(sText, oSourceManager, sFileName)
-    oFirst = oTree.root.getFirstToken()
+    # The buffer is named by the path of the file, so includes are found next to it; the options carry the defines
+    # and include directories. With includes, the tree also holds the tokens of other buffers.
+    oFileBuffer = oSourceManager.assignText(sPath or sFileName, sText)
+    oTree = SyntaxTree.fromBuffer(oFileBuffer, oSourceManager, oOptions) if oOptions is not None else SyntaxTree.fromBuffer(oFileBuffer, oSourceManager)
     dNodes = {}
-    dClasses = classify(oTree, oFirst.location.buffer.id, line_starts(sText), dNodes) if oFirst is not None else {}
+    dClasses = classify(oTree, oFileBuffer.id.id, line_starts(sText), dNodes)
     oBuffer = oSourceManager.assignText(sFileName + " (as written)", sText)
     oLexer = Lexer(oBuffer, pyslang.BumpAllocator(), pyslang.Diagnostics(), oSourceManager, LexerOptions())
     lReturn = []
@@ -191,7 +217,7 @@ def build_tokens(sText, sFileName, bTree=False):
     for lNodes in dNodes.values():
         lNodes.sort(key=node_offset)
     if bTree:
-        return lReturn, (oTree, oSourceManager), dNodes
+        return lReturn, (oTree, oSourceManager, oFileBuffer.id.id), dNodes
     return lReturn
 
 
@@ -328,7 +354,7 @@ def classify(oTree, iBuffer, sLineStarts, dNodes=None):
     while lStack:
         oNode, tPath, iLevel = lStack.pop()
         sKind = oNode.kind.name
-        if dNodes is not None:
+        if dNodes is not None and in_buffer(oNode, iBuffer):
             dNodes.setdefault(sKind, []).append(oNode)
         tPath = tPath + (tokens.short_name(sKind),)
         dFields, sUnparsed, dListStarts = node_fields(oNode)

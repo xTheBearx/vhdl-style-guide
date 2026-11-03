@@ -7,8 +7,10 @@ Features that are incomplete, choices that are not yet confirmed, and improvemen
 Keep this page up to date: add an entry when something is left out or a limitation is found, and remove it when it is done.
 Each entry says what is missing and, where known, what it would take.
 
-Needs confirmation on real installations
-----------------------------------------
+Deferred: needs confirmation on real installations
+--------------------------------------------------
+
+Deferred for now: these need Vivado and Libero installed.
 
 * **Vendor declaration file locations.** The locations :code:`vendor_libraries` searches for AMD/Xilinx, Microchip,
   Intel and Lattice follow the vendors' documented layouts but were never checked against a real installation.
@@ -64,7 +66,6 @@ Lint and rule sets
 * **Tool qualification support**: :code:`--qualify` running the pass and fail examples of each check of a rule set,
   with a report of expected against actual results and the versions of mhsg, the rule set, GHDL and Yosys.
 * **Reproducibility**: reports do not yet record the versions of the tools and the configuration used.
-* **Open question**: should lint mode run all style rules by default, or only those of the selected rule set?
 
 Verilog and SystemVerilog
 -------------------------
@@ -86,23 +87,19 @@ under way: the entries below.
   tokens of ibex, common_cells and picorv32, most in the arguments of macros such as :code:`\`ASSERT` and
   :code:`\`uvm_info`), so rules do not check them. Parsing each branch with its defines set, and macro arguments
   that are expressions, would let rules check them.
-* **Files with syntax errors** are skipped by the SystemVerilog rules, as a VHDL file that does not parse is. Parsing them with the defines and include
-  paths of the project (a file list, as Verilator and slang take) would let fewer files fall in this case: 340 of
-  the 914 corpus files have errors once macros of other files are left undefined.
+* **Files with syntax errors** are skipped by the SystemVerilog rules, as a VHDL file that does not parse is. The
+  defines and include directories of the systemverilog section let fewer files fall in this case; the real-world
+  check runs without them.
+* **Lint after --fix**: a file the fixes changed is linted on its own, not with the files of the run; compiling the
+  run again after the fixes would keep the checks across files.
 * **STARC lint items needing data flow**: about 100 per-file items of the STARC guide, such as widths of function
   arguments, loop bounds, reset polarity and resource sharing, need more than slang's warnings.
 * **Spaces inside parentheses and braces** and around :code:`) (` between parameter and port lists are not checked;
   Verible's formatter sets them by context.
-* **Include files and defines from the command line**: files are parsed on their own; a macro defined in another file
-  is not expanded, which is fine for style rules but not for lint.
 * **Code tags in block comments**: :code:`/* mhsg_off */` is not recognized; only :code:`//` comments are.
 * **STARC rule set**: 50 of the 613 items of the STARC guide have rules. The per-file items (216) are planned with
   the SystemVerilog rules, the clock and reset items with design analysis of Verilog designs. The catalogue the set
   was made from records each item's limits and its Verible equivalent, kept in the notes of the set.
-* **Lint of a whole design**: each file is elaborated on its own, so unused, undriven and implicit signals are
-  only checked in files that use nothing from other files (on the corpus, 466 of 2,685 unused findings remain).
-  Elaborating the files of a design together, from a file list or the design section of the configuration, would
-  check them everywhere and let slang check port connections across modules.
 * **Verilator** is not used yet: its warnings (BLKSEQ, COMBDLY, MULTIDRIVEN, CASEINCOMPLETE and others) could add
   checks slang does not make, as an optional tool like GHDL.
 * **Sensitivity lists** (sv_lint_008) are compared with the names the block reads, by name; reads through

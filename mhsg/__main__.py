@@ -6,6 +6,7 @@ import os
 import sys
 
 from mhsg.report import quality_report
+from mhsg.svFile import project as sv_project
 
 from . import (
     apply_rules,
@@ -181,6 +182,8 @@ def main():
         oConfig.project_port_orders = project_index.collect_port_orders(lIndexFiles)
         if oConfig.lint_mode is not None:
             oConfig.project_port_modes = project_index.collect_port_modes(lIndexFiles)
+            # The SystemVerilog files of the run are compiled together once, see svFile/project.py
+            oConfig.sv_lint_project = sv_project.collect(lIndexFiles, oConfig.dConfig)
         oConfig.project_positional_generic_entities = project_index.collect_positional_entity_instantiations(lIndexFiles, "generic")
 
     # Add local rule path to system path so the rules can be loaded

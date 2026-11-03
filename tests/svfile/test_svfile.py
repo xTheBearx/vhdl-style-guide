@@ -30,6 +30,13 @@ def only(lOutput, *lRuleGroups):
     return [s for s in lOutput if any(f"){sGroup}_" in s for sGroup in lRuleGroups)]
 
 
+class Configuration:
+    """A configuration with only a dictionary, as svFile reads it."""
+
+    def __init__(self, dConfig):
+        self.dConfig = dConfig
+
+
 def tokens_of(sText):
     return svFile(sText.splitlines(True), sFilename="test.sv").lAllObjects
 
@@ -460,6 +467,47 @@ class test_rules(unittest.TestCase):
                 check=False,
             )
         self.assertEqual([], oResult.stdout.splitlines())
+
+    def run_project(self, lFiles, lArguments):
+        lPaths = [os.path.join(sDirectory, "project", s) for s in lFiles]
+        oResult = subprocess.run(
+            [sys.executable, "bin/mhsg", "-f", *lPaths, "-of", "syntastic", "-c", os.path.join(sDirectory, "project", "project.yaml"), *lArguments],
+            cwd=sRoot,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        return [s.replace(os.path.join(sDirectory, "project") + os.sep, "") for s in oResult.stdout.splitlines()]
+
+    def test_lint_of_the_run(self):
+        # Compiled together, the files are checked against each other: the instance against the module
+        self.assertEqual(
+            [
+                "ERROR: top.sv(9)sv_lint_005 -- Unused variable 'spare'",
+                "ERROR: top.sv(11)sv_lint_009 -- Output port 'unused_o' has no connection (slang UnconnectedOutputPort)",
+                "ERROR: top.sv(13)sv_lint_001 -- Implicit conversion of port connection truncates from 8 to 4 bits",
+                "ERROR: top.sv(18)sv_lint_005 -- Unused variable 'extra'",
+                "ERROR: sub.sv(5)sv_lint_010 -- Undriven output port 'unused_o'",
+            ],
+            self.run_project(["top.sv", "sub.sv"], ["--lint_only", "--rule_set", "none"]),
+        )
+
+    def test_lint_of_a_file_alone(self):
+        # Alone, top.sv uses a module the run does not know, so unused and undriven signals are not checked
+        self.assertEqual([], self.run_project(["top.sv"], ["--lint_only", "--rule_set", "none"]))
+
+    def test_preprocessor_settings(self):
+        # The include directory and the define of the configuration: `WIDTH expands and the ifdef branch is parsed
+        lOutput = self.run_project(["top.sv", "sub.sv"], ["-ap"])
+        self.assertFalse([s for s in lOutput if "sv_syntax_001" in s])
+        oFile = svFile(
+            read(os.path.join("project", "top.sv")).splitlines(True),
+            sFilename=os.path.join(sDirectory, "project", "top.sv"),
+            configuration=Configuration(
+                {"systemverilog": {"defines": {"EXTRA": None}, "include_directories": [os.path.join(sDirectory, "project", "include")]}},
+            ),
+        )
+        self.assertIsInstance([o for o in oFile.lAllObjects if o.get_value() == "extra"][0], tokens.of("Declarator", "name"))
 
     def test_sample_is_clean(self):
         self.assertEqual((0, []), self.run_mhsg([], "sample.sv")[:2])
