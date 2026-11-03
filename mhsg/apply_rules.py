@@ -145,7 +145,7 @@ def apply_rules(commandLineArguments, oConfig, tIndexFileName):
         dJsonEntry["file_path"] = sFileName
         dViolations = oRules.extract_violation_dictionary()
         dJsonEntry["violations"] = dViolations["violations"]
-        if dViolations["waived"]:
+        if dViolations.get("waived"):
             dJsonEntry["waived"] = dViolations["waived"]
     # Which waivers could match in this file and whether they did; taken out of the entry before it is written
     dJsonEntry[WAIVER_USE] = oRules.waiver_use

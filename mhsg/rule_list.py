@@ -440,7 +440,9 @@ class rule_list:
                     dTemp["severity"] = oRule.get_report_severity().name
                     dTemp["solution"] = oViolation.get_solution()
                     dReturn["violations"].append(dTemp)
-        dReturn["waived"] = self.extract_waived()
+        lWaived = self.extract_waived()
+        if lWaived:
+            dReturn["waived"] = lWaived
         return dReturn
 
     def extract_waived(self):
