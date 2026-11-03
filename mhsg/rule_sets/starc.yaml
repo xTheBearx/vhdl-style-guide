@@ -1,0 +1,3264 @@
+# STARC RTL Design Style Guide for Verilog HDL.
+#
+# Each numbered item of the guide is a check, labelled with its number, for example "STARC-2.1.5.1 (rule)".
+# Titles are short paraphrases; the guide itself has the full text and the reasons.
+#
+# The severity follows the item's level in the guide:
+#   Rule              Error
+#   Recommendation 1  Warning
+#   Recommendation 2  Note
+#   Recommendation 3  Note
+#   Suggestion        Note
+#
+# Checks without rules record their status:
+#   planned  a per-file rule is planned
+#   design   needs design analysis of the whole design, planned
+#   manual   synthesis and timing scripts, design management or judgement: left to review
+#
+# The guide is for Verilog; most of its items apply to SystemVerilog as they are. Items the guide marks as Verilog
+# only say so in their note.
+
+name: STARC
+prefix: STARC
+version: '1'
+title: RTL Design Style Guide for Verilog HDL
+source: STARC (Semiconductor Technology Academic Research Center), RTL Design Style Guide for Verilog HDL, Second Version,
+  2006
+checks:
+  1.1.1.1:
+    title: Name each RTL file after the module it holds, with a .v extension
+    level: Recommendation 2
+    severity: Note
+    status: planned
+    note: 'Limits: file name pattern <module>.v. Verible: module-filename.'
+  1.1.1.2:
+    title: 'Identifiers: letters, digits and underscore only; first character must be a letter'
+    level: Rule
+    severity: Error
+    status: planned
+    note: 'Limits: identifier regex ^[A-Za-z][A-Za-z0-9_]*$.'
+  1.1.1.3:
+    title: Never use Verilog, SystemVerilog or VHDL keywords as identifiers
+    level: Rule
+    severity: Error
+    status: planned
+    note: 'Limits: reserved word sets verilog_ieee1364, systemverilog_ieee1800, vhdl_ieee1076.'
+  1.1.1.4:
+    title: No names starting with VDD, VSS, VCC, GND or VREF, in any letter case
+    level: Rule
+    severity: Error
+    status: planned
+    note: 'Limits: forbidden prefixes VDD, VSS, VCC, GND, VREF; case insensitive yes.'
+  1.1.1.5:
+    title: Names must not differ only by upper/lower case
+    level: Rule
+    severity: Error
+    status: planned
+  1.1.1.6:
+    title: No trailing underscore on top-level ports or module names; no consecutive underscores
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  1.1.1.7:
+    title: Mark active-low signals with a suffix such as _X or _N
+    level: Recommendation 2
+    severity: Note
+    status: planned
+    note: 'Limits: active low suffixes _X, _N.'
+  1.1.1.8:
+    title: Instance name = module name; repeated instances become <module>_<number>
+    level: Recommendation 3
+    severity: Note
+    status: planned
+    note: 'Limits: instance name pattern <module>_<n>.'
+  1.1.1.9:
+    title: 'Top-level module and port names: at most 16 characters, not case-distinguished'
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: 'Limits: max length 16.'
+  1.1.1.10:
+    title: Do not reuse names of cells in the target ASIC library for instances or modules
+    level: Rule
+    severity: Error
+    status: planned
+    note: 'Limits: library cell names none.'
+  1.1.2.1:
+    title: Module and instance names must be 2 to 32 characters long
+    level: Rule
+    severity: Error
+    status: planned
+    note: 'Limits: min length 2; max length 32.'
+  1.1.2.2:
+    title: Prefix the top-level block name with a hierarchy identification character
+    level: Recommendation 3
+    severity: Note
+    status: design
+  1.1.2.3:
+    title: A sub-block's hierarchy ID extends its parent's hierarchy ID
+    level: Recommendation 3
+    severity: Note
+    status: design
+  1.1.2.4:
+    title: Output port names begin with the block's hierarchy ID followed by an underscore
+    level: Recommendation 3
+    severity: Note
+    status: design
+    note: 'Limits: output port prefix <hier_id>_.'
+  1.1.2.5:
+    title: Ports and internal signals should follow distinguishable naming conventions
+    level: Suggestion
+    severity: Note
+    status: planned
+  1.1.2.6:
+    title: Nets driven by an output port keep that port's name in the parent
+    level: Recommendation 2
+    severity: Note
+    status: design
+  1.1.3.1:
+    title: Internal signal names should be distinguishable from port names by convention
+    level: Suggestion
+    severity: Note
+    status: planned
+  1.1.3.2:
+    title: Give internal signals meaningful, descriptive names
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.1.3.3:
+    title: 'Signal, port, parameter, macro and function names: 2 to 40 characters'
+    level: Rule
+    severity: Error
+    status: planned
+    note: 'Limits: min length 2; max length 40.'
+  1.1.4.1:
+    title: 'Include files: .h/.vh/.inc for RTL; .h/.inc/.ht/.tsk for testbenches'
+    level: Recommendation 2
+    severity: Note
+    status: planned
+    note: 'Verilog only. Limits: rtl include extensions .h, .vh, .inc; tb include extensions .h, .inc, .ht, .tsk.'
+  1.1.4.2:
+    title: Parameters use a naming convention distinct from signals
+    level: Recommendation 3
+    severity: Note
+    status: planned
+    note: 'Verible: parameter-name-style.'
+  1.1.4.3:
+    title: Do not reuse a parameter name in different modules
+    level: Recommendation 3
+    severity: Note
+    status: design
+  1.1.4.4:
+    title: Use a `define only inside the module where it is defined
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: Verilog only.
+  1.1.4.5:
+    title: Prefix module-local parameters with the hierarchy ID characters
+    level: Suggestion
+    severity: Note
+    status: planned
+  1.1.4.6:
+    title: Do not drive output ports directly with constant values
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  1.1.4.7:
+    title: Parameterize port widths of modules intended for reuse
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  1.1.4.8:
+    title: Write parameter values with an explicit base ('b, 'h, 'd, 'o)
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: Verilog only.
+  1.1.4.9:
+    title: Give an explicit width to constants wider than 32 bits
+    level: Rule
+    severity: Error
+    status: planned
+    note: 'Verilog only. Limits: max unsized bits 32.'
+  1.1.5.1:
+    title: Register output names should hint at their clock domain or source register
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  1.1.5.2:
+    title: 'Base names: CLK/CK for clocks, RST_X/RESET_X for resets, EN for enables, plus suffixes'
+    level: Recommendation 3
+    severity: Note
+    status: planned
+    note: 'Limits: clock base names CLK, CK; reset base names RST_X, RESET_X; enable base names EN.'
+  1.1.5.3:
+    title: Choose names that identify the clock
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.1.5.4:
+    title: Choose names that identify the register
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.2.1.1:
+    title: Use one clock and one active edge wherever possible
+    level: Recommendation 1
+    severity: Warning
+    status: design
+  1.2.1.2:
+    title: Never build RS latches or flip-flops out of gate primitives
+    level: Rule
+    severity: Error
+    status: planned
+  1.2.1.3:
+    title: No combinational feedback loops
+    level: Rule
+    severity: Error
+    status: design
+  1.3.1.1:
+    title: Synchronous-reset coding may synthesize to logic that does not reset reliably
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.3.1.2:
+    title: Prefer asynchronous reset for initializing registers
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  1.3.1.3:
+    title: Use asynchronous set/reset pins only for the initial reset
+    level: Recommendation 1
+    severity: Warning
+    status: design
+  1.3.1.4:
+    title: Put synchronously-reset registers in their own hierarchy level
+    level: Suggestion
+    severity: Note
+    status: planned
+  1.3.1.5:
+    title: Do not use tool-specific synchronous-reset synthesis directives
+    level: Recommendation 3
+    severity: Note
+    status: planned
+    note: 'Limits: forbidden pragmas sync_set_reset.'
+  1.3.1.6:
+    title: One reset net must not feed both asynchronous and synchronous resets
+    level: Rule
+    severity: Error
+    status: design
+  1.3.1.7:
+    title: No flip-flop with both asynchronous set and asynchronous reset
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  1.3.2.1:
+    title: No logic on reset lines inside local modules; generate resets in a dedicated module
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  1.3.2.2:
+    title: Only the initial reset may drive flip-flop asynchronous reset pins
+    level: Recommendation 1
+    severity: Warning
+    rules:
+    - design_014
+  1.3.2.3:
+    title: Optimize with the timing of the reset source signal in mind
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.3.3.1:
+    title: Board-level reset wiring can cause malfunctions if not handled carefully
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.3.3.2:
+    title: External initial reset may need synchronization or a noise filter
+    level: Recommendation 3
+    severity: Note
+    status: design
+  1.3.3.3:
+    title: If reset arrives before clocks run, use asynchronous reset plus a noise filter
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.4.1.1:
+    title: Generate clocks in separate modules; group gated/multiplied clocks at top level
+    level: Recommendation 1
+    severity: Warning
+    status: design
+  1.4.1.2:
+    title: Do not run logic synthesis on clock networks
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.4.2.1:
+    title: Only dummy buffers on clock trees; no other primitive cells
+    level: Suggestion
+    severity: Note
+    status: design
+  1.4.2.2:
+    title: Balance each clock tree according to the number of sinks
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.4.3.1:
+    title: Avoid inverters on clock lines, gated clocks and mixed-edge flip-flops
+    level: Recommendation 2
+    severity: Note
+    rules:
+    - design_012
+  1.4.3.2:
+    title: A flip-flop output must not drive another flip-flop's clock
+    level: Recommendation 1
+    severity: Warning
+    rules:
+    - design_013
+  1.4.3.3:
+    title: Clock gating is an effective way to reduce power
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.4.3.4:
+    title: Clocks may drive only flip-flop clock pins, not data or logic
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  1.4.3.5:
+    title: Never route clocks to black boxes, bidirectional pins or reset lines
+    level: Recommendation 3
+    severity: Note
+    status: design
+  1.4.3.6:
+    title: Avoid negative-edge-triggered flip-flops
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  1.4.4.1:
+    title: Where possible, give each clock domain its own hierarchical block
+    level: Suggestion
+    severity: Note
+    status: design
+  1.4.4.2:
+    title: Constrain multiple clocks in one block with integer-multiple periods
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.5.1.1:
+    title: No combinational logic on signals crossing between asynchronous clock domains
+    level: Rule
+    severity: Error
+    rules:
+    - design_008
+    - design_009
+  1.5.1.2:
+    title: No logic between the first and second synchronizer flip-flops
+    level: Recommendation 1
+    severity: Warning
+    status: design
+  1.5.1.3:
+    title: The first synchronizer flip-flop must not sit in a feedback loop
+    level: Rule
+    severity: Error
+    status: design
+  1.5.1.4:
+    title: Synchronize noisy external chip inputs against metastability
+    level: Recommendation 2
+    severity: Note
+    status: design
+  1.5.2.1:
+    title: Insert an inverted-clock latch at asynchronous interfaces
+    level: Recommendation 3
+    severity: Note
+    status: design
+  1.5.2.2:
+    title: 'Technique: passing data into a faster clock domain'
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.5.2.3:
+    title: 'Technique: passing data into a slower clock domain'
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.5.2.4:
+    title: 'Technique: double-register signals at a CPU interface'
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.5.3.1:
+    title: Use a FIFO between asynchronous clocks of equal period
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.5.3.2:
+    title: Use frame memory between asynchronous clocks of different periods
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.5.4.1:
+    title: Add jitter models at asynchronous interfaces in verification
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  1.5.4.2:
+    title: Repeat RTL simulation with varied clock periods
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  1.5.5.1:
+    title: Guarantee setup/hold margins (synchronous RAM interface)
+    level: Rule
+    severity: Error
+    status: manual
+  1.5.5.2:
+    title: Synchronous RAM hold time is long; countermeasures are needed
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.5.5.3:
+    title: Place RAMs at the top level where possible
+    level: Suggestion
+    severity: Note
+    status: design
+  1.5.5.4:
+    title: Wrap RAMs in a generic fixed-I/O module to absorb vendor differences
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.6.1.1:
+    title: Keep each hierarchy level at 40,000 gates or fewer; smaller at high frequency
+    level: Recommendation 2
+    severity: Note
+    status: design
+    note: 'Limits: max gates per level 40000.'
+  1.6.1.2:
+    title: Use 10,000-40,000-gate basic blocks; no logic above them except CTS buffers
+    level: Recommendation 1
+    severity: Warning
+    status: design
+    note: 'Limits: basic block min gates 10000; basic block max gates 40000.'
+  1.6.1.3:
+    title: Partitioning below basic blocks is left to the designer
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.6.1.4:
+    title: Top level holds only clock/reset generators, RAM, ROM, I/O cells and top glue RTL
+    level: Rule
+    severity: Error
+    status: design
+    note: 'Limits: allowed top level blocks clock_gen, reset_gen, ram, rom, io_cells, top_rtl.'
+  1.6.2.1:
+    title: 'Basic blocks: combinational inputs, registered (flip-flop) outputs'
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  1.6.2.2:
+    title: Otherwise, a timing path should span at most two blocks
+    level: Recommendation 1
+    severity: Warning
+    status: design
+    note: 'Limits: max blocks per path 2.'
+  1.6.2.3:
+    title: These partition limits do not apply below basic blocks
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.6.3.1:
+    title: Keep speed-critical paths within two sub-blocks of a basic block
+    level: Suggestion
+    severity: Note
+    status: design
+    note: 'Limits: max subblocks per critical path 2.'
+  1.6.3.2:
+    title: With speed problems, stay within three sub-blocks
+    level: Recommendation 3
+    severity: Note
+    status: design
+    note: 'Limits: max subblocks per critical path 3.'
+  1.6.4.1:
+    title: Modules above basic blocks contain only instances and interconnect, no logic
+    level: Rule
+    severity: Error
+    status: planned
+  1.6.4.2:
+    title: On critical paths, even sub-block parents should contain only connections
+    level: Recommendation 3
+    severity: Note
+    status: design
+  1.6.4.3:
+    title: A ~40,000-gate basic block should have at most 500 I/O ports
+    level: Recommendation 2
+    severity: Note
+    status: planned
+    note: 'Limits: max ports 500; applies at gates 40000.'
+  1.6.5.1:
+    title: Datapath and controller use different styles; keep them separate
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.6.5.2:
+    title: Separating datapath and controller allows different synthesis strategies
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.6.6.1:
+    title: Instantiate ASIC I/O cells only at top level or in a dedicated I/O level
+    level: Recommendation 3
+    severity: Note
+    status: design
+  1.6.6.2:
+    title: Very large ASICs cannot be synthesized flat from the top
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.6.6.3:
+    title: For high-drive outputs of 200k-800k-gate levels, use a buffer-only module
+    level: Suggestion
+    severity: Note
+    status: design
+    note: 'Limits: level gates min 200000; level gates max 800000.'
+  1.7.1.1:
+    title: Do not use gated clocks in FPGA implementations
+    level: Recommendation 1
+    severity: Warning
+    rules:
+    - design_012
+  1.7.1.2:
+    title: Keep FPGA/ASIC-specific parts outside the core description
+    level: Suggestion
+    severity: Note
+    status: manual
+  1.7.1.3:
+    title: Select FPGA- or ASIC-specific code with `ifdef
+    level: Suggestion
+    severity: Note
+    status: manual
+  2.1.1.1:
+    title: Standardize on always blocks or function+assign for combinational logic
+    level: Suggestion
+    severity: Note
+    status: manual
+    note: Verilog only.
+  2.1.1.2:
+    title: Inside functions, cover every branch condition completely (full case/if)
+    level: Rule
+    severity: Error
+    status: planned
+    note: Verilog only.
+  2.1.1.3:
+    title: Use a syntax/lint checker to catch mistakes
+    level: Suggestion
+    severity: Note
+    status: manual
+    note: Verilog only.
+  2.1.2.1:
+    title: Do not use function calls for async-reset logic in flip-flop always blocks
+    level: Rule
+    severity: Error
+    status: planned
+    note: Verilog only.
+  2.1.2.2:
+    title: No non-blocking assignments inside functions
+    level: Rule
+    severity: Error
+    status: planned
+    note: Verilog only.
+  2.1.2.3:
+    title: Every value a function uses must be a declared input argument
+    level: Rule
+    severity: Error
+    status: planned
+    note: Verilog only.
+  2.1.2.4:
+    title: Do not use tasks in RTL
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: Verilog only.
+  2.1.2.5:
+    title: No clock-edge event controls inside tasks
+    level: Rule
+    severity: Error
+    status: planned
+    note: Verilog only.
+  2.1.3.1:
+    title: Function call argument widths must match the input declarations
+    level: Rule
+    severity: Error
+    status: planned
+    note: Verilog only.
+  2.1.3.2:
+    title: Function return width must match the width of the assigned target
+    level: Rule
+    severity: Error
+    status: planned
+    note: Verilog only.
+  2.1.3.3:
+    title: Return several values from a function via concatenation
+    level: Suggestion
+    severity: Note
+    status: manual
+    note: Verilog only.
+  2.1.3.4:
+    title: A function should end by assigning its return value
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  2.1.3.5:
+    title: Functions must not assign module-level (global) signals
+    level: Rule
+    severity: Error
+    status: planned
+    note: Verilog only.
+  2.1.4.1:
+    title: Operators of equal precedence evaluate left to right
+    level: Suggestion
+    severity: Note
+    status: manual
+    note: Verilog only.
+  2.1.4.2:
+    title: Prefer bitwise operators to logical ones, even for single-bit expressions
+    level: Suggestion
+    severity: Note
+    status: planned
+    note: Verilog only.
+  2.1.4.3:
+    title: Equation-level code can save area and improve speed
+    level: Suggestion
+    severity: Note
+    status: manual
+  2.1.4.4:
+    title: Complex logic written as equations hurts readability
+    level: Suggestion
+    severity: Note
+    status: manual
+  2.1.4.5:
+    title: Do not apply logical NOT, AND or OR operators to multi-bit vectors
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: Verilog only.
+  2.1.4.6:
+    title: Watch result widths when using reduction operators
+    level: Recommendation 3
+    severity: Note
+    status: planned
+    note: Verilog only.
+  2.1.5.1:
+    title: 'Do not nest the conditional operator ?: (single level only)'
+    level: Recommendation 3
+    severity: Note
+    status: planned
+    note: 'Verilog only. Limits: max ternary nesting 1.'
+  2.1.5.2:
+    title: 'With an x select, ?: merges both branches bitwise, unlike if'
+    level: Suggestion
+    severity: Note
+    status: manual
+    note: Verilog only.
+  2.1.5.3:
+    title: 'Conditions of if and ?: should be 1-bit, not vectors'
+    level: Recommendation 2
+    severity: Note
+    status: planned
+    note: Verilog only.
+  2.1.6.1:
+    title: Declare one-dimensional vectors as [MSB:LSB] (descending)
+    level: Recommendation 2
+    severity: Note
+    status: planned
+    note: 'Verible: packed-dimensions-range-ordering.'
+  2.1.6.2:
+    title: The LSB index of a vector should be 0
+    level: Recommendation 3
+    severity: Note
+    status: planned
+    note: 'Limits: lsb index 0.'
+  2.1.6.3:
+    title: Index arrays with plain signal names, not expressions
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  2.1.6.4:
+    title: Array index range should match the declared bounds
+    level: Recommendation 2
+    severity: Note
+    status: planned
+  2.1.6.5:
+    title: Never use x or z in an array index
+    level: Rule
+    severity: Error
+    status: planned
+  2.2.1.1:
+    title: Assign every output on all paths of combinational blocks to avoid latches
+    level: Rule
+    severity: Error
+    status: planned
+  2.2.1.2:
+    title: Review lint and synthesis warnings for inferred latches
+    level: Suggestion
+    severity: Note
+    status: manual
+  2.2.2.1:
+    title: Combinational sensitivity lists must contain every signal read
+    level: Rule
+    severity: Error
+    status: planned
+  2.2.2.2:
+    title: Keep constants and unused signals out of sensitivity lists
+    level: Recommendation 2
+    severity: Note
+    status: planned
+  2.2.2.3:
+    title: An always block has exactly one event control
+    level: Rule
+    severity: Error
+    status: planned
+  2.2.2.4:
+    title: Check sensitivity lists with an RTL lint tool, not the synthesizer
+    level: Suggestion
+    severity: Note
+    status: manual
+  2.2.3.1:
+    title: Do not mix blocking and non-blocking assignments in combinational always blocks
+    level: Rule
+    severity: Error
+    status: planned
+    note: Verilog only.
+  2.2.3.2:
+    title: No default-then-override non-blocking assignments to one signal in combinational blocks
+    level: Rule
+    severity: Error
+    status: planned
+    note: Verilog only.
+  2.2.3.3:
+    title: Do not assign the same signal more than once in a sequential always block
+    level: Rule
+    severity: Error
+    status: planned
+    note: Verilog only.
+  2.3.1.1:
+    title: Use non-blocking assignments to infer flip-flops
+    level: Rule
+    severity: Error
+    status: planned
+    note: 'Verible: always-ff-non-blocking.'
+  2.3.1.2:
+    title: Use only synthesizable flip-flop coding templates
+    level: Rule
+    severity: Error
+    status: planned
+  2.3.1.3:
+    title: Add a (unit) delay to flip-flop assignments
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  2.3.1.4:
+    title: Use flip-flop delay values only inside always blocks
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  2.3.1.5:
+    title: Delay values must be non-negative integers
+    level: Rule
+    severity: Error
+    status: planned
+  2.3.1.6:
+    title: Reset edge (posedge/negedge) must match the reset polarity tested
+    level: Rule
+    severity: Error
+    status: planned
+  2.3.1.7:
+    title: A flip-flop must not have both asynchronous set and reset
+    level: Rule
+    severity: Error
+    status: planned
+  2.3.2.1:
+    title: Blocking vs non-blocking assignment can change the inferred flip-flop circuit
+    level: Suggestion
+    severity: Note
+    status: manual
+    note: Verilog only.
+  2.3.2.2:
+    title: Do not mix blocking and non-blocking assignments in sequential always blocks
+    level: Rule
+    severity: Error
+    status: planned
+    note: Verilog only.
+  2.3.3.1:
+    title: One always block must not use different clock edges
+    level: Rule
+    severity: Error
+    status: planned
+  2.3.3.2:
+    title: One always block must not use two clocks with the same edge
+    level: Rule
+    severity: Error
+    status: planned
+  2.3.4.1:
+    title: Do not set flip-flop initial values in initial blocks
+    level: Rule
+    severity: Error
+    status: planned
+    note: Verilog only.
+  2.3.4.2:
+    title: No initial blocks in RTL; synthesis ignores them
+    level: Rule
+    severity: Error
+    status: planned
+  2.3.5.1:
+    title: Avoid flip-flops whose data input is a constant
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  2.3.6.1:
+    title: Do not mix reset and non-reset flip-flops in one always block
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  2.3.6.2:
+    title: 'Asynchronous resets: single bit, active low, coded with negedge'
+    level: Recommendation 3
+    severity: Note
+    status: planned
+    note: 'Limits: reset active level low; reset edge negedge.'
+  2.4.1.1:
+    title: Keep latch inference clearly separate from combinational logic
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  2.4.1.2:
+    title: Infer latches only inside dedicated latch-only modules
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  2.4.1.3:
+    title: No latches with asynchronous set or reset
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  2.4.1.4:
+    title: No combinational feedback loops through latches
+    level: Rule
+    severity: Error
+    status: design
+  2.4.1.5:
+    title: At most two latch stages on the same clock phase
+    level: Recommendation 1
+    severity: Warning
+    status: design
+    note: 'Limits: max latch stages same phase 2.'
+  2.5.1.1:
+    title: Place tri-state buffers in dedicated modules
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  2.5.1.2:
+    title: Tri-state enable should be a plain signal, not a logic expression
+    level: Recommendation 2
+    severity: Note
+    status: planned
+  2.5.1.3:
+    title: Infer tri-state buffers by assigning 'z'
+    level: Suggestion
+    severity: Note
+    status: manual
+  2.5.1.4:
+    title: At most five tri-state drivers per bus
+    level: Recommendation 2
+    severity: Note
+    status: design
+    note: 'Limits: max tristate drivers 5.'
+  2.5.1.5:
+    title: Never connect multiple non-tri-state drivers to one net
+    level: Rule
+    severity: Error
+    status: design
+  2.5.1.6:
+    title: Do not connect inout ports directly to input or output ports
+    level: Rule
+    severity: Error
+    status: design
+  2.5.1.7:
+    title: Do not use tri-state signals in if conditions
+    level: Recommendation 2
+    severity: Note
+    status: planned
+  2.5.1.8:
+    title: Do not use tri-state signals as case selectors unless default assigns x
+    level: Recommendation 2
+    severity: Note
+    status: planned
+  2.5.1.9:
+    title: Do not use tri-state signals as casex/casez selectors
+    level: Recommendation 2
+    severity: Note
+    status: planned
+  2.5.2.1:
+    title: Put the tri-state driver and the bidirectional-bus input cell in separate blocks
+    level: Recommendation 2
+    severity: Note
+    status: design
+  2.5.2.2:
+    title: Synthesis may remove masking logic, so x can still propagate
+    level: Suggestion
+    severity: Note
+    status: manual
+  2.5.2.3:
+    title: Remove bus holders temporarily for RTL simulation
+    level: Suggestion
+    severity: Note
+    status: manual
+  2.6.1.1:
+    title: Write RTL with the intended hardware structure in mind
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  2.6.1.2:
+    title: Factor logic used in more than two places into an intermediate signal
+    level: Recommendation 2
+    severity: Note
+    status: planned
+    note: 'Limits: max duplicate uses 2.'
+  2.6.1.3:
+    title: Aim for at most five outputs per always block; never more than 15
+    level: Recommendation 3
+    severity: Note
+    status: planned
+    note: 'Limits: max outputs 5; hard max outputs 15.'
+  2.6.1.4:
+    title: Keep always blocks to 300 lines or fewer
+    level: Recommendation 3
+    severity: Note
+    status: planned
+    note: 'Limits: max lines 300.'
+  2.6.2.1:
+    title: At most one top-level if or case statement per always block
+    level: Rule
+    severity: Error
+    status: planned
+  2.6.2.2:
+    title: Signals assigned in an always block must not appear in its own sensitivity list
+    level: Rule
+    severity: Error
+    status: planned
+  2.7.1.1:
+    title: Test timing-critical or frequently toggling signals first in if chains
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  2.7.1.2:
+    title: Avoid unnecessary priority logic
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  2.7.1.3:
+    title: Combinational if chains must end in a plain else, not else-if
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  2.7.2.1:
+    title: Merge if branches whose bodies are identical
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  2.7.2.2:
+    title: Do not write unreachable conditions
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  2.7.2.3:
+    title: Avoid empty branches (e.g. a case item with only ';')
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  2.7.3.1:
+    title: if nesting depth 7 or less; never above 15
+    level: Recommendation 3
+    severity: Note
+    status: planned
+    note: 'Limits: max if nesting 7; hard max if nesting 15.'
+  2.7.3.2:
+    title: Deeply nested if/else pairing is hard to follow
+    level: Suggestion
+    severity: Note
+    status: manual
+  2.7.3.3:
+    title: Indent nested ifs consistently to avoid pairing mistakes
+    level: Suggestion
+    severity: Note
+    status: planned
+  2.7.3.4:
+    title: Merge if statements that can be combined
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  2.7.4.1:
+    title: A single statement need not be wrapped in begin/end
+    level: Suggestion
+    severity: Note
+    status: planned
+    note: Verilog only.
+  2.7.4.2:
+    title: Wrap multiple statements in begin/end
+    level: Suggestion
+    severity: Note
+    status: planned
+    note: 'Verilog only. Verible: explicit-begin.'
+  2.7.4.3:
+    title: No fork/join in RTL
+    level: Rule
+    severity: Error
+    status: planned
+    note: Verilog only.
+  2.8.1.1:
+    title: case suits decoders/encoders with many branches
+    level: Suggestion
+    severity: Note
+    status: manual
+  2.8.1.2:
+    title: Well-written case statements yield faster logic than if chains
+    level: Suggestion
+    severity: Note
+    status: manual
+  2.8.1.3:
+    title: Case items must not overlap
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  2.8.1.4:
+    title: Every case statement needs a default branch
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: 'Verible: case-missing-default.'
+  2.8.1.5:
+    title: Do not use tool-specific full_case directives
+    level: Rule
+    severity: Error
+    status: planned
+    note: 'Verilog only. Limits: forbidden pragmas full_case.'
+  2.8.1.6:
+    title: Case item widths and coverage must match the selector width
+    level: Recommendation 2
+    severity: Note
+    status: planned
+    note: Verilog only.
+  2.8.2.1:
+    title: Split case tables exceeding 32 I/Os (about 20 inputs, 12 outputs)
+    level: Recommendation 3
+    severity: Note
+    status: planned
+    note: 'Limits: max table io 32; max table inputs 20; max table outputs 12.'
+  2.8.2.2:
+    title: At most 200 items per case statement
+    level: Recommendation 3
+    severity: Note
+    status: planned
+    note: 'Limits: max case items 200.'
+  2.8.2.3:
+    title: Restructure truth tables for HDL before coding them as case
+    level: Suggestion
+    severity: Note
+    status: manual
+  2.8.3.1:
+    title: Express don't-care by assigning x in the default branch
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  2.8.3.2:
+    title: x in default branches propagates in simulation even if not truly don't-care
+    level: Suggestion
+    severity: Note
+    status: manual
+  2.8.3.3:
+    title: Prevent latches with a default branch, not a full_case pragma
+    level: Suggestion
+    severity: Note
+    status: planned
+    note: Verilog only.
+  2.8.3.4:
+    title: Signals that may be assigned x (don't-care) must not feed if conditions
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  2.8.3.5:
+    title: The default branch must be the last case item
+    level: Rule
+    severity: Error
+    status: planned
+    note: Verilog only.
+  2.8.3.6:
+    title: Don't-care signals not used as case selectors unless default assigns x
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  2.8.3.7:
+    title: Don't-care signals not used as casex selectors
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  2.8.4.1:
+    title: Complex casex statements degrade circuit quality
+    level: Suggestion
+    severity: Note
+    status: manual
+    note: Verilog only.
+  2.8.4.2:
+    title: Complex casex statements hurt readability
+    level: Suggestion
+    severity: Note
+    status: manual
+    note: Verilog only.
+  2.8.4.3:
+    title: Avoid casex and casez
+    level: Recommendation 3
+    severity: Note
+    status: planned
+    note: Verilog only.
+  2.8.4.4:
+    title: Do not scatter per-bit x wildcards in casex items
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: Verilog only.
+  2.8.5.1:
+    title: Do not use tool-specific parallel_case directives
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: 'Verilog only. Limits: forbidden pragmas parallel_case.'
+  2.8.5.2:
+    title: Case selector must not be a constant (e.g. case (1'b1))
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: Verilog only.
+  2.8.5.3:
+    title: Case item labels must be constants, not variables or expressions
+    level: Rule
+    severity: Error
+    status: planned
+    note: Verilog only.
+  2.8.5.4:
+    title: Case selector must not contain logic or arithmetic operations
+    level: Recommendation 2
+    severity: Note
+    status: planned
+    note: Verilog only.
+  2.8.6.1:
+    title: In mixed nested if/case, prefer fewer conditions with more matches
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  2.9.1.1:
+    title: Use for loops only for simple repetition that creates no priority
+    level: Recommendation 2
+    severity: Note
+    status: planned
+  2.9.1.2:
+    title: Loop bounds must be constant; never modify the loop variable in the body
+    level: Rule
+    severity: Error
+    status: planned
+  2.9.2.1:
+    title: Arithmetic inside loops only on the loop variable and constants
+    level: Rule
+    severity: Error
+    status: planned
+  2.9.2.2:
+    title: Logical/relational operations in loops only on loop variable and constants
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  2.9.2.3:
+    title: 'Loops doing other logical/relational operations: at most 10 iterations'
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: 'Limits: max loop iterations 10.'
+  2.9.2.4:
+    title: Use separate for loops for the reset branch and the functional logic
+    level: Rule
+    severity: Error
+    status: planned
+  2.10.1.1:
+    title: Keep operator precedence in mind
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  2.10.1.2:
+    title: Parenthesize mixed logical operations even when precedence is clear
+    level: Recommendation 2
+    severity: Note
+    status: planned
+  2.10.1.3:
+    title: Parenthesize expressions with two or more arithmetic operators
+    level: Recommendation 2
+    severity: Note
+    status: planned
+  2.10.1.4:
+    title: Never compare against x or z
+    level: Rule
+    severity: Error
+    status: planned
+  2.10.1.5:
+    title: Assign x only in case default branches
+    level: Rule
+    severity: Error
+    status: planned
+  2.10.1.6:
+    title: Do not use literals containing x or z
+    level: Rule
+    severity: Error
+    status: planned
+  2.10.1.7:
+    title: Do not use RAM outputs directly in if conditions
+    level: Recommendation 1
+    severity: Warning
+    status: design
+  2.10.1.8:
+    title: Do not use RAM outputs as case selectors unless default assigns x
+    level: Recommendation 1
+    severity: Warning
+    status: design
+  2.10.2.1:
+    title: Logical results (true/false) can be used as logic values to simplify code
+    level: Suggestion
+    severity: Note
+    status: manual
+    note: Verilog only.
+  2.10.2.2:
+    title: Logical operators always yield a 1-bit result
+    level: Suggestion
+    severity: Note
+    status: manual
+    note: Verilog only.
+  2.10.3.1:
+    title: Operands of relational operators must have equal widths
+    level: Recommendation 2
+    severity: Note
+    status: planned
+    note: Verilog only.
+  2.10.3.2:
+    title: Bitwise-operator operands should match the assignment target width
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: Verilog only.
+  2.10.3.3:
+    title: The right-hand side of an assignment must not be wider than the left
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: Verilog only.
+  2.10.3.4:
+    title: The right-hand side of an assignment should not be narrower than the left
+    level: Recommendation 2
+    severity: Note
+    status: planned
+    note: Verilog only.
+  2.10.3.5:
+    title: Write constants with an explicit base ('d, 'b, 'h, 'o)
+    level: Recommendation 2
+    severity: Note
+    status: planned
+    note: Verilog only.
+  2.10.3.6:
+    title: Constants in conditional expressions must be sized
+    level: Rule
+    severity: Error
+    status: planned
+    note: Verilog only.
+  2.10.3.7:
+    title: A literal's width must match its digits (e.g. 2'b needs exactly 2 bits)
+    level: Recommendation 2
+    severity: Note
+    status: planned
+    note: 'Verilog only. Verible: [''undersized-binary-literal'', ''truncated-numeric-literal''].'
+  2.10.4.1:
+    title: Use only reg, wire, tri and integer data types
+    level: Rule
+    severity: Error
+    status: planned
+    note: 'Verilog only. Limits: allowed types reg, wire, tri, integer.'
+  2.10.4.2:
+    title: integer is a 32-bit type
+    level: Suggestion
+    severity: Note
+    status: manual
+    note: Verilog only.
+  2.10.4.3:
+    title: Check widths when assigning integers to reg or wire
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: Verilog only.
+  2.10.4.4:
+    title: Be careful comparing integers with reg/wire values
+    level: Suggestion
+    severity: Note
+    status: planned
+    note: Verilog only.
+  2.10.4.5:
+    title: Never assign a negative value to an integer
+    level: Rule
+    severity: Error
+    status: planned
+    note: Verilog only.
+  2.10.4.6:
+    title: Never assign a negative value to reg or wire signals
+    level: Recommendation 2
+    severity: Note
+    status: planned
+    note: Verilog only.
+  2.10.5.1:
+    title: Wide arithmetic/relational operators (8+ bits) create large logic
+    level: Suggestion
+    severity: Note
+    status: manual
+  2.10.5.2:
+    title: Synthesis can share arithmetic and relational operators
+    level: Suggestion
+    severity: Note
+    status: manual
+  2.10.5.3:
+    title: Do not code three or more arithmetic operations meant to share one resource
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: 'Limits: max shared operations 2.'
+  2.10.5.4:
+    title: Do not rely heavily on automatic resource sharing
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  2.10.5.5:
+    title: 'No arithmetic inside ?: operands of an assignment (blocks sharing)'
+    level: Recommendation 2
+    severity: Note
+    status: planned
+  2.10.5.6:
+    title: Inspect synthesized logic whenever resources are shared
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  2.10.6.1:
+    title: Size arithmetic result signals to hold the carry-out
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  2.10.6.2:
+    title: Handle sign extension and operand widths in signed arithmetic
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  2.10.6.3:
+    title: Do not mix signed and unsigned operands in one statement
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  2.10.6.4:
+    title: Describe datapath structure with continuous assignments
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  2.10.6.5:
+    title: Do not infer large multipliers with '*'; build them explicitly
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: 'Limits: max multiplier width configurable.'
+  2.10.6.6:
+    title: One arithmetic operation per line, except A+B+1-bit carry-in
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  2.10.7.1:
+    title: No arithmetic in if conditions
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  2.10.7.2:
+    title: Hoist common expressions out of conditional branches
+    level: Recommendation 2
+    severity: Note
+    status: planned
+  2.10.8.1:
+    title: Operands of / and % must be plain signals, not expressions
+    level: Rule
+    severity: Error
+    status: planned
+  2.10.8.2:
+    title: Dividend of / or % at most 12 bits
+    level: Rule
+    severity: Error
+    status: planned
+    note: 'Limits: max dividend bits 12.'
+  2.10.8.3:
+    title: Divisor of / or % at most 8 bits, except powers of two
+    level: Rule
+    severity: Error
+    status: planned
+    note: 'Limits: max divisor bits 8.'
+  2.10.8.4:
+    title: Minimize operand widths of division and modulus
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  2.11.1.1:
+    title: Prefer Moore machines; either style is fine with registered outputs
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  2.11.1.2:
+    title: Encode states to minimize bit changes per transition (Gray code)
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  2.11.1.3:
+    title: Define state encodings with parameters
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  2.11.1.4:
+    title: At most 60 states per state machine
+    level: Recommendation 2
+    severity: Note
+    status: planned
+    note: 'Limits: max states 60.'
+  2.11.1.5:
+    title: Split state machines above 60 states into two
+    level: Recommendation 3
+    severity: Note
+    status: planned
+    note: 'Limits: max states 60.'
+  2.11.2.1:
+    title: Put each state machine in its own module
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  2.11.3.1:
+    title: Separating state register and next-state/output case eases verification
+    level: Suggestion
+    severity: Note
+    status: manual
+  2.11.3.2:
+    title: Merging state register and output case gives registered outputs
+    level: Suggestion
+    severity: Note
+    status: manual
+  2.11.4.1:
+    title: 'Choose encoding: Gray by default, one-hot for speed (+20-30% area, ~15 states)'
+    level: Recommendation 3
+    severity: Note
+    status: manual
+    note: 'Limits: one hot area overhead pct 20-30; one hot states up to 15.'
+  2.11.4.2:
+    title: Use parameters so state encoding can be changed easily
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  3.1.1.1:
+    title: Build shared, reusable subprograms
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  3.1.1.2:
+    title: Build reusable component libraries
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  3.1.1.3:
+    title: Standardize design data so libraries can be reused
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  3.1.1.4:
+    title: Third-party IP can be bought in
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.1.2.1:
+    title: Follow the basic naming conventions (section 1.1)
+    level: Rule
+    severity: Error
+    status: planned
+  3.1.2.2:
+    title: Avoid technology-dependent code (e.g. instantiated library cells)
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  3.1.2.3:
+    title: Keep the clocking scheme simple
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  3.1.2.4:
+    title: Comment code so it is easy to understand
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  3.1.2.5:
+    title: Code with the circuit structure in mind
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  3.1.2.6:
+    title: Parameterize wherever possible
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  3.1.2.7:
+    title: No embedded synthesis scripts in the source code
+    level: Rule
+    severity: Error
+    status: planned
+    note: 'Limits: forbidden pragmas dc_script_begin, dc_script_end.'
+  3.1.3.1:
+    title: Use one consistent order for port declarations, port lists and instance connections
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  3.1.3.2:
+    title: 'Port order: clock, reset, inputs, outputs, inout ports'
+    level: Recommendation 2
+    severity: Note
+    status: planned
+    note: 'Limits: port order clock, reset, input, output, inout.'
+  3.1.3.3:
+    title: Declare sequential and combinational regs in separate groups
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  3.1.3.4:
+    title: One signal per port/reg/wire declaration line, each commented
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  3.1.4.1:
+    title: Good signal names are key to RTL readability
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.1.4.2:
+    title: Use consistent indentation in always/if/case; two spaces is standard
+    level: Suggestion
+    severity: Note
+    rules:
+    - sv_indent_001
+    configuration:
+      sv_indent_001:
+        indent_size: 2
+    note: 'Limits: indent spaces 2.'
+  3.1.4.3:
+    title: Use spaces, not tabs
+    level: Recommendation 3
+    severity: Note
+    rules:
+    - whitespace_002
+    - sv_indent_001
+    note: 'Verible: no-tabs.'
+  3.1.4.4:
+    title: At most one assignment per line
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  3.1.4.5:
+    title: Lines at most about 110 characters
+    level: Recommendation 3
+    severity: Note
+    rules:
+    - length_001
+    configuration:
+      length_001:
+        length: 110
+    note: 'Limits: max line length 110. Verible: line-length.'
+  3.1.5.1:
+    title: Parameterize module port widths where possible
+    level: Suggestion
+    severity: Note
+    status: planned
+  3.1.5.2:
+    title: Set widths via parameters or text macros
+    level: Suggestion
+    severity: Note
+    status: planned
+  3.1.5.3:
+    title: Give parameters default values
+    level: Suggestion
+    severity: Note
+    status: planned
+  3.1.6.1:
+    title: Parameter values may be selected with `ifdef
+    level: Suggestion
+    severity: Note
+    status: manual
+    note: Verilog only.
+  3.1.6.2:
+    title: '`ifdef macros can switch between simulation and circuit code'
+    level: Suggestion
+    severity: Note
+    status: manual
+    note: Verilog only.
+  3.2.1.1:
+    title: Store each function library in its own directory
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  3.2.1.2:
+    title: Only designated administrators may modify function libraries
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  3.2.1.3:
+    title: Keep tool setup files in a common directory too
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  3.2.2.1:
+    title: Express constants as parameters where possible
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  3.2.2.2:
+    title: Put design-wide global parameters in a separate file
+    level: Recommendation 3
+    severity: Note
+    status: design
+  3.2.2.3:
+    title: Load parameter files with `include
+    level: Recommendation 3
+    severity: Note
+    status: planned
+    note: Verilog only.
+  3.2.2.4:
+    title: '`include paths must be relative (e.g. ../include/common.h)'
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: Verilog only.
+  3.2.2.5:
+    title: Do not nest text macros
+    level: Recommendation 2
+    severity: Note
+    status: planned
+  3.2.2.6:
+    title: Separate project-wide include files from personal ones
+    level: Suggestion
+    severity: Note
+    status: manual
+    note: Verilog only.
+  3.2.2.7:
+    title: Use parameter, not `define, for project-wide constants
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  3.2.3.1:
+    title: Connect instance ports by name, never by position
+    level: Rule
+    severity: Error
+    status: planned
+  3.2.3.2:
+    title: Net width must match the width of the instance port it connects to
+    level: Rule
+    severity: Error
+    status: design
+  3.2.4.1:
+    title: 'Override lower-level parameters with #(...) at instantiation'
+    level: Suggestion
+    severity: Note
+    status: planned
+    note: Verilog only.
+  3.2.4.2:
+    title: When overriding, specify all of the lower module's parameters
+    level: Suggestion
+    severity: Note
+    status: design
+    note: Verilog only.
+  3.2.4.3:
+    title: Do not use defparam
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: 'Verilog only. Verible: forbid-defparam.'
+  3.2.5.1:
+    title: Logic-level library selectors improve speed
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.2.5.2:
+    title: Use logic-level library modules for large multipliers/dividers
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.2.5.3:
+    title: Library modules for multi-operand arithmetic improve speed and area
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.2.5.4:
+    title: Use dedicated tools for multipliers and multi-operand arithmetic
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.3.1.1:
+    title: Clocks must be directly controllable from primary inputs
+    level: Rule
+    severity: Error
+    status: design
+  3.3.1.2:
+    title: With selectable clock systems, fix one choice throughout test
+    level: Rule
+    severity: Error
+    status: design
+  3.3.1.3:
+    title: Do not use random-logic outputs as clocks
+    level: Recommendation 1
+    severity: Warning
+    status: design
+  3.3.1.4:
+    title: Flip-flop resets must be directly controllable from a primary input
+    level: Rule
+    severity: Error
+    status: design
+  3.3.2.1:
+    title: Plan dedicated test circuits for async logic and hard macros
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  3.3.2.2:
+    title: Do not connect clock, reset or tri-state outputs to black boxes
+    level: Recommendation 3
+    severity: Note
+    status: design
+  3.3.2.3:
+    title: Black-box outputs must not drive clock, reset or tri-state enable pins
+    level: Rule
+    severity: Error
+    status: design
+  3.3.3.1:
+    title: A clock must never feed a flip-flop D input
+    level: Rule
+    severity: Error
+    status: planned
+  3.3.3.2:
+    title: Do not tie flip-flop inputs to constant 0/1
+    level: Recommendation 2
+    severity: Note
+    status: planned
+  3.3.4.1:
+    title: No feedback loops through latches
+    level: Rule
+    severity: Error
+    status: design
+  3.3.4.2:
+    title: Make latches transparent during test
+    level: Recommendation 1
+    severity: Warning
+    status: design
+  3.3.4.3:
+    title: Use single-stage latches clocked by the inverted clock
+    level: Recommendation 2
+    severity: Note
+    status: design
+  3.3.4.4:
+    title: For more than two latch stages (two-phase), add designer-written fault patterns
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  3.3.5.1:
+    title: In test mode, bring clocks of different phases to one phase
+    level: Recommendation 1
+    severity: Warning
+    status: design
+  3.3.5.2:
+    title: Flip-flop-derived clocks need a test-mode selector
+    level: Recommendation 1
+    severity: Warning
+    status: design
+  3.3.5.3:
+    title: 'OR-gated clocks: force the gating signal with an AND in test'
+    level: Recommendation 1
+    severity: Warning
+    status: design
+  3.3.5.4:
+    title: 'AND-gated clocks: force the gating signal with an OR in test'
+    level: Recommendation 1
+    severity: Warning
+    status: design
+  3.3.5.5:
+    title: 'Latch-output clock gating: OR scan-select into the stage before the latch'
+    level: Recommendation 2
+    severity: Note
+    status: design
+  3.3.5.6:
+    title: 'Flip-flop-output clock gating: force with AND after the flip-flop'
+    level: Recommendation 2
+    severity: Note
+    status: design
+  3.3.5.7:
+    title: 'Latch output used as clock: force with OR on the latch clock input'
+    level: Recommendation 2
+    severity: Note
+    status: design
+  3.3.5.8:
+    title: Put clock-generation modules at top level so DFT logic can be added
+    level: Recommendation 3
+    severity: Note
+    status: design
+  3.3.6.1:
+    title: Block random logic driving async set/reset during test
+    level: Rule
+    severity: Error
+    status: design
+  3.3.6.2:
+    title: Keep clock and reset networks separate
+    level: Rule
+    severity: Error
+    status: design
+  3.3.6.3:
+    title: A flip-flop output must not directly drive an async set/reset pin
+    level: Rule
+    severity: Error
+    status: design
+  3.3.6.4:
+    title: A latch output must not directly drive a flip-flop async set/reset
+    level: Rule
+    severity: Error
+    status: design
+  3.3.6.5:
+    title: Put reset-generation modules at top level so DFT logic can be added
+    level: Recommendation 3
+    severity: Note
+    status: design
+  3.3.7.1:
+    title: Prevent skew between different clocks (during test)
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  3.3.7.2:
+    title: Insert an inverted-clock latch on transfers between asynchronous clocks
+    level: Recommendation 3
+    severity: Note
+    status: design
+  3.3.8.1:
+    title: Tri-state enables must be fixable from a primary input
+    level: Recommendation 2
+    severity: Note
+    status: design
+  3.3.8.2:
+    title: Tri-state enables come from inputs or an input-controlled decoder
+    level: Recommendation 3
+    severity: Note
+    status: design
+  3.3.8.3:
+    title: Fix the direction of external bidirectional pins during scan shift
+    level: Recommendation 3
+    severity: Note
+    status: design
+  3.3.9.1:
+    title: Use boundary scan on I/O of hard macros and async blocks
+    level: Recommendation 1
+    severity: Warning
+    status: design
+  3.3.9.2:
+    title: 'Alternative: bypass I/O instead of boundary scan'
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.3.9.3:
+    title: Consider fault coverage on RAM I/O
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  3.3.9.4:
+    title: Plan a test system for large ASICs
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.3.9.5:
+    title: Boundary-scan blocks above a certain size in large ASICs
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.4.1.1:
+    title: In standard ASICs, place gated clocks only at the top level
+    level: Rule
+    severity: Error
+    status: design
+  3.4.1.2:
+    title: Use EDA tools for fine-grained clock gating
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.4.2.1:
+    title: Divide clocks to lower operating speed and power
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.4.2.2:
+    title: Apply clock division with parallelism in the datapath
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.4.2.3:
+    title: Use a few enables to stop idle circuits frequently
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.4.3.1:
+    title: Partition clock lines to reduce power
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.4.4.1:
+    title: Deassert RAM chip-select when not accessing it
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.5.1.1:
+    title: Separate directories for RTL, synthesis scripts, synthesis results and simulation results
+    level: Rule
+    severity: Error
+    status: manual
+  3.5.1.2:
+    title: Do not store test vectors in RTL directories
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  3.5.1.3:
+    title: Archive compact copies of design directories for versioning
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  3.5.1.4:
+    title: Reference files by relative paths
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  3.5.2.1:
+    title: File references use relative paths via the master directory
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  3.5.2.2:
+    title: RTL file name is the module name plus .v
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: 'Verible: module-filename.'
+  3.5.2.3:
+    title: Testbench files named *_tb.v, *_test.v or *.vt
+    level: Recommendation 3
+    severity: Note
+    status: planned
+    note: 'Limits: testbench file patterns *_tb.v, *_test.v, *.vt.'
+  3.5.2.4:
+    title: Gate-level netlists named <module>.v or <module>.vnet
+    level: Recommendation 3
+    severity: Note
+    status: manual
+    note: 'Limits: netlist file patterns <module>.v, <module>.vnet.'
+  3.5.2.5:
+    title: 'Include file extensions: .h/.vh/.inc (RTL), .h/.inc/.ht/.tsk (testbench)'
+    level: Recommendation 2
+    severity: Note
+    status: planned
+    note: 'Verilog only. Limits: rtl include extensions .h, .vh, .inc; tb include extensions .h, .inc, .ht, .tsk.'
+  3.5.2.6:
+    title: UNIX run scripts end in .run
+    level: Recommendation 3
+    severity: Note
+    status: manual
+    note: 'Limits: extension .run.'
+  3.5.2.7:
+    title: Verilog simulation scripts end in .v_scr
+    level: Recommendation 3
+    severity: Note
+    status: manual
+    note: 'Limits: extension .v_scr.'
+  3.5.2.8:
+    title: Lint scripts end in .l_scr
+    level: Recommendation 3
+    severity: Note
+    status: manual
+    note: 'Limits: extension .l_scr.'
+  3.5.2.9:
+    title: Synthesis scripts end in .scr
+    level: Recommendation 3
+    severity: Note
+    status: manual
+    note: 'Limits: extension .scr.'
+  3.5.2.10:
+    title: Synthesis, simulation and layout logs end in .log
+    level: Recommendation 3
+    severity: Note
+    status: manual
+    note: 'Limits: extension .log.'
+  3.5.2.11:
+    title: Lint logs end in .l_log
+    level: Recommendation 3
+    severity: Note
+    status: manual
+    note: 'Limits: extension .l_log.'
+  3.5.2.12:
+    title: Synthesis reports end in .rep, .tim or .ara
+    level: Recommendation 3
+    severity: Note
+    status: manual
+    note: 'Limits: extensions .rep, .tim, .ara.'
+  3.5.2.13:
+    title: SDF files end in .sdf
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+    note: 'Limits: extension .sdf.'
+  3.5.2.14:
+    title: EDIF files end in .edif or .edf
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+    note: 'Limits: extensions .edif, .edf.'
+  3.5.2.15:
+    title: Synthesis database files end in .db
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+    note: 'Limits: extension .db.'
+  3.5.3.1:
+    title: File header gives circuit name, function, author and creation date
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: 'Limits: required header fields circuit_name, function, author, creation_date.'
+  3.5.3.2:
+    title: On reuse, header records who changed what
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: 'Limits: required header fields modified_by, modification.'
+  3.5.3.3:
+    title: Use a standard file header template
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: 'Limits: header template configurable.'
+  3.5.3.4:
+    title: Consider CVS when needed
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  3.5.4.1:
+    title: With several designers, separate master data from personal work data
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  3.5.4.2:
+    title: CVS can manage file versions
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.5.5.1:
+    title: Back up files
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  3.5.5.2:
+    title: Back up all design directories periodically
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  3.5.6.1:
+    title: Comment liberally for readability
+    level: Recommendation 2
+    severity: Note
+    status: planned
+  3.5.6.2:
+    title: Comment the purpose and content of operations
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  3.5.6.3:
+    title: Declare each port/signal on its own line with a comment
+    level: Recommendation 2
+    severity: Note
+    status: planned
+  3.5.6.4:
+    title: Write comments in English where possible
+    level: Recommendation 2
+    severity: Note
+    status: planned
+  3.5.6.5:
+    title: Some tools cannot read non-English comments
+    level: Suggestion
+    severity: Note
+    status: planned
+  3.5.6.6:
+    title: If Japanese text is needed, EUC encoding causes fewest problems
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: 'Limits: non ascii encoding EUC-JP.'
+  3.5.6.7:
+    title: Use // line comments
+    level: Recommendation 3
+    severity: Note
+    status: planned
+  3.5.7.1:
+    title: RTL can be version-managed with CVS
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.5.7.2:
+    title: CVS suits source files but not complete design data sets
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.5.8.1:
+    title: Create a CVS repository with cvs init
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.5.8.2:
+    title: Retrieve files with cvs checkout
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.5.8.3:
+    title: Add files with cvs add and cvs commit
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.5.8.4:
+    title: Remove files with cvs remove and cvs commit
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.5.8.5:
+    title: Refresh a working copy with cvs update
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.5.9.1:
+    title: 'CVS feature: tagging and version management'
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.5.9.2:
+    title: 'CVS feature: automatic mail on commit'
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.5.9.3:
+    title: 'CVS feature: handling binary files'
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.5.9.4:
+    title: 'CVS feature: keyword substitution'
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.5.10.1:
+    title: Show file version status with cvs status
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.5.10.2:
+    title: Show detailed version history with cvs log
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.5.11.1:
+    title: 'Bug tracking: define entry, assignment, resolution and confirmation steps'
+    level: Suggestion
+    severity: Note
+    status: manual
+  3.5.11.2:
+    title: 'Bug tracking: notify by email and keep a tabular summary'
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.1.1.1:
+    title: Structure testbenches hierarchically or with tasks/functions
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  4.1.1.2:
+    title: Define testbench timing with parameters or text macros
+    level: Recommendation 2
+    severity: Note
+    status: planned
+  4.1.2.1:
+    title: Use parameters instead of hard-coded numbers in test code
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  4.1.2.2:
+    title: Drive testbench stimulus with blocking assignments
+    level: Suggestion
+    severity: Note
+    status: planned
+  4.1.2.3:
+    title: fork/join blocks at most 5 lines
+    level: Recommendation 2
+    severity: Note
+    status: planned
+    note: 'Verilog only. Limits: max fork join lines 5.'
+  4.1.2.4:
+    title: Declare time units with `timescale
+    level: Recommendation 2
+    severity: Note
+    status: planned
+    note: Verilog only.
+  4.1.3.1:
+    title: Apply stimulus offset from the rising clock edge
+    level: Rule
+    severity: Error
+    status: planned
+  4.1.3.2:
+    title: When falling edges are used, offset stimulus from them as well
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  4.1.4.1:
+    title: Never drive one signal from several initial blocks
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: Verilog only.
+  4.1.4.2:
+    title: Drive each signal from a single procedural block
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: Verilog only.
+  4.1.5.1:
+    title: Apply test vectors synchronized to the clock
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  4.1.5.2:
+    title: Synchronize to clocks with event controls
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.1.6.1:
+    title: Do not compute clock periods inside always blocks
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  4.1.7.1:
+    title: Generate each clock in its own block
+    level: Recommendation 2
+    severity: Note
+    status: planned
+  4.1.8.1:
+    title: Sample signals at a different time from when they are driven
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  4.1.8.2:
+    title: Make sampling and driving points explicit in edge-based testbenches
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.1.8.3:
+    title: Watch for time-zero event races in edge-based testbenches
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  4.1.8.4:
+    title: Avoid edge events on non-clock signals in testbenches
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  4.1.8.5:
+    title: Take care with asynchronous reset timing in testbenches
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  4.1.9.1:
+    title: Beware of races when simulating between asynchronous clocks
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.1.9.2:
+    title: Use non-blocking assignments for transfers between asynchronous clocks in simulation
+    level: Recommendation 2
+    severity: Note
+    status: planned
+  4.1.9.3:
+    title: Vary delay values to expose races
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.1.10.1:
+    title: Use handshakes when cycle counts are unknown
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  4.1.11.1:
+    title: Write result files with $fstrobe rather than $fdisplay
+    level: Suggestion
+    severity: Note
+    status: planned
+    note: Verilog only.
+  4.1.11.2:
+    title: Report errors with $display or $fdisplay
+    level: Suggestion
+    severity: Note
+    status: manual
+    note: Verilog only.
+  4.2.1.1:
+    title: Use tasks to make testbenches efficient and structured
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.2.1.2:
+    title: Build application tasks from basic tasks
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  4.2.2.1:
+    title: Model bus-level operations as tasks
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.2.2.2:
+    title: Calling tasks avoids detailed waveform coding and aids debugging
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.2.2.3:
+    title: Commercial bus functional models can be used
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.2.3.1:
+    title: Task arguments are optional
+    level: Suggestion
+    severity: Note
+    status: manual
+    note: Verilog only.
+  4.2.3.2:
+    title: Stimulus-generating tasks should not declare output arguments
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+  4.2.3.3:
+    title: Tasks can have multiple inputs and outputs
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.2.3.4:
+    title: Do not pass continuously observed signals as task input arguments
+    level: Recommendation 1
+    severity: Warning
+    status: planned
+    note: Verilog only.
+  4.3.1.1:
+    title: Write test specifications and use them as a checklist
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  4.3.1.2:
+    title: Early RTL debug relies on waveform inspection
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.3.1.3:
+    title: Generate expected values with an HDL model and compare automatically
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  4.3.1.4:
+    title: If HDL expected values are hard, compare against previous results
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  4.3.1.5:
+    title: Check gate-level simulation results match RTL simulation
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  4.3.2.1:
+    title: Use test specifications to organize verification and find gaps
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  4.3.2.2:
+    title: State test items simply
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  4.3.2.3:
+    title: Write test specifications before verification starts
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  4.3.3.1:
+    title: Link each test item to its testbench code
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  4.3.3.2:
+    title: State what each test item must confirm
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  4.3.3.3:
+    title: Record circuit revisions
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  4.3.3.4:
+    title: List all conceivable test items, even if not all can be run
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.3.3.5:
+    title: Prioritize tests
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.3.3.6:
+    title: Track bug-curve graphs
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.3.4.1:
+    title: Judge results by comparison with previous results, not only waveforms
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  4.3.4.2:
+    title: Use batch files to run many simulations
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.3.5.1:
+    title: Diff simulation output against previous/expected results
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  4.3.5.2:
+    title: Compare gate-level with RTL simulation results
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.3.5.3:
+    title: Previous results are not always right, but confidence grows over time
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.3.6.1:
+    title: Compare against expected values during simulation and stop on mismatch
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.3.6.2:
+    title: Comparing against don't-care values needs special handling
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  4.3.7.1:
+    title: Verify whole-system function with behavioural models
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.3.7.2:
+    title: 'Behavioural modelling option: untimed event-only description'
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.3.7.3:
+    title: 'Behavioural modelling option: cycle-accurate description'
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.3.7.4:
+    title: 'Behavioural modelling option: system verification in C'
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.3.8.1:
+    title: 'Large designs: FPGA-based hardware debugging'
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.3.8.2:
+    title: 'Large designs: hardware emulators'
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.3.8.3:
+    title: 'Large designs: co-simulation'
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.3.8.4:
+    title: 'Large designs: formal/model/property checking tools'
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.3.9.1:
+    title: Keep functional and fault-detection patterns separate
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  4.3.10.1:
+    title: Use random stimulus for functional verification
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.3.11.1:
+    title: Switch debug code in and out with `ifdef
+    level: Suggestion
+    severity: Note
+    status: manual
+    note: Verilog only.
+  4.3.11.2:
+    title: Switch testbench variants with `ifdef
+    level: Suggestion
+    severity: Note
+    status: manual
+    note: Verilog only.
+  4.3.11.3:
+    title: Fence non-synthesizable debug code in RTL with translate_off/on
+    level: Suggestion
+    severity: Note
+    status: planned
+    note: 'Verilog only. Limits: required pragmas translate_off, translate_on.'
+  4.4.1.1:
+    title: Both RTL and gate-level verification are required
+    level: Rule
+    severity: Error
+    status: manual
+  4.4.1.2:
+    title: Gate-level runs of large designs can cover only part of the RTL patterns
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.4.1.3:
+    title: Use unit-delay gate simulation for large designs
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.4.1.4:
+    title: Use formal equivalence checking
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.4.2.1:
+    title: x handling differs between RTL and gate level
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.4.2.2:
+    title: No flip-flop may remain x after the initial reset is released
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  4.4.2.3:
+    title: Synchronous-reset code may synthesize to logic with undetermined values
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.4.2.4:
+    title: if statements do not propagate x the way gates do
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.4.2.5:
+    title: x/z propagation differs among case, casex and casez
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.4.3.1:
+    title: Remove race conditions
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  4.4.3.2:
+    title: Verify asynchronous parts with gate-level simulation
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  4.4.3.3:
+    title: Use static timing analysis
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  4.4.4.1:
+    title: Ensure sensitivity lists are complete
+    level: Suggestion
+    severity: Note
+    status: planned
+  4.4.4.2:
+    title: Incomplete sensitivity lists cause RTL/gate mismatches
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.4.4.3:
+    title: Library and tool bugs can also cause mismatches
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.5.1.1:
+    title: Run static timing analysis, not just gate-level simulation
+    level: Rule
+    severity: Error
+    status: manual
+  4.5.1.2:
+    title: Run timing analysis both before and after layout
+    level: Rule
+    severity: Error
+    status: manual
+  4.5.1.3:
+    title: Reuse synthesis constraints for pre-layout STA
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  4.5.1.4:
+    title: One set of constraints can serve synthesis and layout
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.5.1.5:
+    title: Check max and min delay violations in all operating modes with STA
+    level: Rule
+    severity: Error
+    status: manual
+  4.5.1.6:
+    title: 'Post-layout STA: set_propagated_clock on all clocks'
+    level: Rule
+    severity: Error
+    status: manual
+  4.5.2.1:
+    title: Analyze timing in normal, scan and BIST modes
+    level: Rule
+    severity: Error
+    status: manual
+  4.5.2.2:
+    title: Analyze every clock mode when clock frequencies are selectable
+    level: Rule
+    severity: Error
+    status: manual
+  4.5.2.3:
+    title: Simulate timing paths STA does not cover
+    level: Rule
+    severity: Error
+    status: manual
+  4.5.2.4:
+    title: Use set_max_time_borrow for latch-based designs
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  4.5.2.5:
+    title: STA does not sensitize paths through flip-flop reset pins
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.5.3.1:
+    title: Do max and min delay analysis in every mode
+    level: Rule
+    severity: Error
+    status: manual
+  4.5.3.2:
+    title: Leave skew margin for delay variation
+    level: Rule
+    severity: Error
+    status: manual
+  4.5.4.1:
+    title: Review all timing violations
+    level: Rule
+    severity: Error
+    status: manual
+  4.5.4.2:
+    title: Specify multicycle and false paths precisely
+    level: Rule
+    severity: Error
+    status: manual
+  4.5.4.3:
+    title: Apply false/multicycle paths carefully and pin-to-pin
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  4.5.4.4:
+    title: Design with as few multicycle and false paths as possible
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.5.4.5:
+    title: At top level, analyze in-to-reg, reg-to-out and in-to-out paths separately
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.5.4.6:
+    title: Validate user multicycle/false paths with a dedicated tool
+    level: Suggestion
+    severity: Note
+    status: manual
+  4.5.5.1:
+    title: Set output loads and input transition times
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  4.5.5.2:
+    title: Apply create_clock only at clock roots
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  4.5.5.3:
+    title: Use create_generated_clock for divided clocks
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  4.5.5.4:
+    title: Apply set_false_path -hold on asynchronous clock-domain crossings
+    level: Rule
+    severity: Error
+    status: manual
+  4.5.5.5:
+    title: Mind setup constraints on asynchronous clock-domain crossings
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.1.1.1:
+    title: Run dc_shell in batch mode from script files
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.1.1.2:
+    title: Use the GUI only for viewing schematics or trial optimization
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.1.1.3:
+    title: Keep standard scripts so optimization runs error-free
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.1.4.1:
+    title: Synthesize with the Max operating condition only
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.1.4.2:
+    title: Do not check hold with Min after synthesizing only for Max
+    level: Rule
+    severity: Error
+    status: manual
+  5.1.5.1:
+    title: Set a wire-load model per basic block
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  5.1.5.2:
+    title: Use one min wire-load model uniformly across levels
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.1.6.1:
+    title: With no phase-shifted clocks, rising edge at time 0
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.1.6.2:
+    title: Use no fractional values for clock edge times
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  5.1.6.3:
+    title: Find missing clock definitions with derive_clocks
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.1.6.4:
+    title: Attach create_clock to top-level input ports or primitive cell pins
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.1.7.1:
+    title: Always give -clock with set_input_delay/set_output_delay
+    level: Rule
+    severity: Error
+    status: manual
+  5.1.8.1:
+    title: Always set set_driving_cell for basic-block optimization (not chip level)
+    level: Rule
+    severity: Error
+    status: manual
+  5.1.8.2:
+    title: Mark asynchronous reset nets with set_ideal_network
+    level: Rule
+    severity: Error
+    status: manual
+  5.1.8.3:
+    title: Take care with constraints on clock and reset nets
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.1.10.1:
+    title: Normally use set_max_area 0
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+    note: 'Limits: max area 0.'
+  5.1.10.2:
+    title: set_max_area 0 can greatly lengthen runtime on large designs
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.1.11.1:
+    title: Use compile -incremental for hierarchical and post-ungroup optimization
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.1.11.2:
+    title: Combine -incremental with -map_effort high
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.1.12.4.1:
+    title: Check wire area, not just gate area, in report_area
+    level: Rule
+    severity: Error
+    status: manual
+  5.2.1.1.1:
+    title: Take care defining clocks with different phases
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  5.2.1.1.2:
+    title: Take care defining asynchronous clocks
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  5.2.1.2.1:
+    title: Gated clocks need no separate clock definition
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.2.1.3.1:
+    title: Define internal clocks with create_generated_clock
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  5.2.1.3.2:
+    title: Create generated clocks inside a clock-generator module
+    level: Recommendation 1
+    severity: Warning
+    status: design
+  5.2.1.3.3:
+    title: Confirm all clocks are defined using derive_clocks
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.2.1.4.1:
+    title: Set set_clock_transition after clock-tree buffers are inserted
+    level: Rule
+    severity: Error
+    status: manual
+  5.2.1.5.1:
+    title: Use set_propagated_clock for post-layout analysis
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.2.1.6.1:
+    title: set_clock_gating_check flags badly structured clock gating
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.2.1.6.2:
+    title: set_clock_gating_check constrains clock-gating logic timing
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.2.1.7.1:
+    title: Specify estimated clock network latency
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.2.1.7.2:
+    title: Do not use set_clock_latency -source during synthesis
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.2.2.1:
+    title: Specify false paths pin-to-pin; keep them few (about 5)
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+    note: 'Limits: max false path specs approx 5.'
+  5.2.4.1:
+    title: Use set_clock_uncertainty -from/-to for inter-clock skew
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.2.4.2:
+    title: Log a MIN timing report before compiling with set_fix_hold
+    level: Rule
+    severity: Error
+    status: manual
+  5.2.4.3:
+    title: For hold fixing, review input-to-output paths and inter-clock paths
+    level: Not levelled
+    severity: Note
+    status: manual
+  5.2.5.1:
+    title: Apply set_max_transition design-wide if the library lacks max_capacitance
+    level: Rule
+    severity: Error
+    status: manual
+  5.2.5.2:
+    title: Use set_max_fanout or set_max_capacitance on inputs for large levels
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.2.6.1:
+    title: Use set_case_analysis on flip-flops clocked by selectable clocks
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.2.6.2:
+    title: Time scan logic in both normal and test modes
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  5.2.7.1:
+    title: set_isolate_ports inserts buffers at ports
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.2.8.1:
+    title: propagate_constraints lifts lower-level constraints to the current design
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.2.8.2:
+    title: Propagation may turn -from/-to into -through
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.2.8.3:
+    title: Verify constraints propagated as intended
+    level: Rule
+    severity: Error
+    status: manual
+  5.3.1.2.1:
+    title: Use dont_touch only for async logic, tri-states and fixed-drive buffers
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.3.1.2.2:
+    title: Avoid hierarchical synthesis that dont_touches lower levels
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.3.1.3.1:
+    title: Ungroup levels at and below basic-block sub-levels
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.3.1.3.2:
+    title: Never ungroup above basic blocks
+    level: Rule
+    severity: Error
+    status: manual
+  5.3.1.4.1:
+    title: Base hierarchical synthesis on incremental compile
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  5.3.1.4.2:
+    title: Always run incremental compile after ungrouping
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.3.1.5.1:
+    title: Mark async reset and scan-enable nets ideal
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.3.1.5.2:
+    title: Mark gated clock nets ideal with set_ideal_network
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  5.3.1.5.3:
+    title: Use set_ideal_network with care
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.3.1.5.4:
+    title: Remove buffers on high-fanout nets with clean_buffer_tree
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.3.1.5.5:
+    title: Do not use set_dont_touch_network
+    level: Rule
+    severity: Error
+    status: manual
+  5.3.1.6.1:
+    title: Use remove_unconnected_ports when not ungrouping basic blocks
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.3.2.1:
+    title: Run flattening with -effort high
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.3.2.2:
+    title: Flatten only up to about 2,000 gates for runtime
+    level: Suggestion
+    severity: Note
+    status: manual
+    note: 'Limits: max flatten gates 2000.'
+  5.3.3.1:
+    title: Boolean structuring helps reduce area
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.4.1.1:
+    title: Synthesize bottom-up starting from basic blocks
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  5.4.1.2:
+    title: Ungroup all levels below each basic block
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.4.1.3:
+    title: Optimize logic area first
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.4.1.4:
+    title: Too many high-drive cells hurt layout
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.4.1.5:
+    title: Library needs wire-area data; dont_use cells with six or more inputs
+    level: Suggestion
+    severity: Note
+    status: manual
+    note: 'Limits: dont use min cell inputs 6.'
+  5.4.1.6:
+    title: Adjust drive strength during layout
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.4.1.7:
+    title: Up to 200,000 gates, do hierarchical synthesis with compile -inc
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+    note: 'Limits: max gates 200000.'
+  5.4.1.8:
+    title: For chip-level optimization, check paths touching I/O ports
+    level: Rule
+    severity: Error
+    status: manual
+  5.4.2.1:
+    title: Boolean structuring with high area effort helps area optimization
+    level: Recommendation 3
+    severity: Note
+    status: manual
+  5.4.2.2:
+    title: 'For area: compile without timing constraints, then optimize incrementally'
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  5.4.2.3:
+    title: Begin optimization with area
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  5.4.3.1:
+    title: High-effort flattening helps FSMs and big case logic up to ~2,000 gates
+    level: Recommendation 2
+    severity: Note
+    status: manual
+    note: 'Limits: max flatten gates 2000.'
+  5.4.3.2:
+    title: 'Simplest speed step: incremental compile with high map effort'
+    level: Recommendation 2
+    severity: Note
+    status: manual
+  5.4.3.3:
+    title: dont_use non-power cells helps speed optimization
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.4.3.4:
+    title: Use group_path for specific problem paths
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.4.3.5:
+    title: Watch area growth during speed optimization
+    level: Rule
+    severity: Error
+    status: manual
+  5.4.4.1:
+    title: Do not use set_max_delay
+    level: Rule
+    severity: Error
+    status: manual
+  5.4.4.2:
+    title: Constrain combinational blocks with a virtual clock
+    level: Rule
+    severity: Error
+    status: manual
+  5.4.4.3:
+    title: Without flattening, do not optimize blocks under 1,000 gates
+    level: Recommendation 2
+    severity: Note
+    status: manual
+    note: 'Limits: min gates 1000.'
+  5.4.5.1:
+    title: Begin optimization at basic blocks of 10,000-40,000 gates
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+    note: 'Limits: basic block min gates 10000; basic block max gates 40000.'
+  5.4.5.2:
+    title: Optimize sub-blocks only when special handling such as flattening is needed
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.4.5.3:
+    title: Ungroup or strip unconnected ports in sub-blocks and DW01 levels
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.4.5.4:
+    title: Up to 200,000 gates, hierarchical optimization uses compile -incremental
+    level: Rule
+    severity: Error
+    status: manual
+    note: 'Limits: max gates 200000.'
+  5.4.5.5:
+    title: From 200,000 gates up, use partitioned optimization (no characterize)
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+    note: 'Limits: min gates 200000.'
+  5.4.5.6:
+    title: Above 200,000 gates use compile -top; cap at 1.5 million gates
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+    note: 'Limits: min gates 200000; max gates 1500000.'
+  5.5.1:
+    title: Apply characterize on top of hierarchical synthesis only if constraints fail
+    level: Rule
+    severity: Error
+    status: manual
+  5.5.2:
+    title: Skip characterize if speed misses by more than 10%
+    level: Rule
+    severity: Error
+    status: manual
+    note: 'Limits: max speed violation pct 10.'
+  5.5.3:
+    title: Remove unconnected ports when running characterize
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.5.4:
+    title: Do not characterize circuits containing latches
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.6.1:
+    title: Compile without a clock period to get ripple adders/subtractors
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.6.2:
+    title: Do not select arithmetic implementations (e.g. ripple/CLA) via RTL directives
+    level: Rule
+    severity: Error
+    status: planned
+  5.6.3:
+    title: Ungroup or remove unconnected ports before compile -inc on operator logic
+    level: Recommendation 1
+    severity: Warning
+    status: manual
+  5.6.4:
+    title: Use tool features to merge multiple arithmetic operators
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.8.1.1:
+    title: Some Tcl commands differ in name/behaviour from dc_shell ones
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.8.1.2:
+    title: Tcl syntax governs substitution and expressions
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.8.1.3:
+    title: Tcl command and variable names are case-sensitive
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.8.1.4:
+    title: Command names can be abbreviated
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.8.1.5:
+    title: Tcl offers procedures and local variables
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.8.1.6:
+    title: Tcl mode adds the collection data structure
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.8.1.7:
+    title: Recent Design Compiler versions start in Tcl mode
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.8.2.1:
+    title: Lists and collections use different commands
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.8.2.2:
+    title: Convert collection handles to names with get_object_name
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.8.3.1:
+    title: Translate dc_shell scripts with dc-transcript
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.8.3.2:
+    title: dc-transcript also converts .synopsys_dc.setup
+    level: Suggestion
+    severity: Note
+    status: manual
+  5.8.3.3:
+    title: Keep scripts simple rather than mirroring translator output
+    level: Suggestion
+    severity: Note
+    status: manual
