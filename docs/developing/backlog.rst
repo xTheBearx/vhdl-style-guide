@@ -64,10 +64,6 @@ under way: the entries below.
 * **Indentation not checked yet**: continuation lines, lists aligned after their bracket, the contents of
   expressions (multi-line assignment patterns, randomize with blocks), preprocessor directives and inactive
   :code:`\`ifdef` branches. Verible's formatter has rules for each; they need studying before mhsg checks them.
-* **Double indentation of port and parameter lists**: Verible's formatter indents port declarations, named
-  parameters and named ports by its wrap width, twice the indent by default; part of ibex does so. sv_indent_001
-  uses one level; an option could allow two.
-* **begin on its own line** is put at the level of the statement it belongs to; some code indents it one level more.
 * **Inactive** :code:`\`ifdef` **branches and macro arguments** are kept as unclassified tokens (about 11% of the
   tokens of ibex, common_cells and picorv32, most in the arguments of macros such as :code:`\`ASSERT` and
   :code:`\`uvm_info`), so rules do not check them. Parsing each branch with its defines set, and macro arguments
