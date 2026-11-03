@@ -49,6 +49,7 @@ class rule_009(Rule):
             for oProcess in oArchitecture.processes:
                 if not model.is_combinational(oProcess):
                     continue
+
                 def fStatic(lCondition, oArchitecture=oArchitecture, oProcess=oProcess):
                     # Only names known to be constants or generics make a condition static
                     return all(signal_kind(oFile, oArchitecture, s, oProcess.index) == "other" for s in model.names(lCondition))

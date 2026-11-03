@@ -217,11 +217,14 @@ def get_differential_pairs(lElements, lSuffixes):
     return dReturn
 
 
-def clock_reset_rank(sName, lClockWords=CLOCK_WORDS, lResetWords=RESET_WORDS, lQualifierWords=QUALIFIER_WORDS):
+def clock_reset_rank(sName, lClockWords=None, lResetWords=None, lQualifierWords=None):
     """
-    Returns 0 for a clock name, 1 for a reset name and 2 for any other name.
+    Returns 0 for a clock name, 1 for a reset name and 2 for any other name, using the default word lists unless others are given.
     The name is split into words at underscores; a qualifier word such as en makes it neither.
     """
+    lClockWords = CLOCK_WORDS if lClockWords is None else lClockWords
+    lResetWords = RESET_WORDS if lResetWords is None else lResetWords
+    lQualifierWords = QUALIFIER_WORDS if lQualifierWords is None else lQualifierWords
     lWords = [sWord for sWord in sName.lower().split("_") if sWord != ""]
     if any_word_matches(lWords, lQualifierWords):
         return 2

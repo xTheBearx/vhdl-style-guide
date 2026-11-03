@@ -59,7 +59,7 @@ class rule_003(Rule):
 def connections(oInstance, lPorts):
     """Returns the actual of each connected port of an instance by port name; positional associations follow the port order."""
     dReturn = {}
-    for iPosition, (sFormal, sActual, iLine) in enumerate(oInstance.associations):
+    for iPosition, (sFormal, sActual, _) in enumerate(oInstance.associations):
         if sFormal is None:
             if iPosition < len(lPorts):
                 dReturn[lPorts[iPosition][0]] = sActual

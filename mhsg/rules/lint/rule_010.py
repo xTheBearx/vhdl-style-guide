@@ -53,10 +53,14 @@ class rule_010(Rule):
                 lDeclarations = oDeclarations.find(oDriver.base, oDriver.index)
                 oKey = lDeclarations[0].index if lDeclarations else oDriver.base
                 dDrivers.setdefault(oKey, []).append(oDriver)
-            for sBase, lDrivers in dDrivers.items():
+            for lDrivers in dDrivers.values():
                 for iDriver, oDriver in enumerate(lDrivers):
                     for oOther in lDrivers[:iDriver]:
-                        if oOther.owner is not oDriver.owner and model.same_conditional_generates(oOther.generate, oDriver.generate, oModel.dGenerateConditions) and conflict(oOther, oDriver):
+                        if (
+                            oOther.owner is not oDriver.owner
+                            and model.same_conditional_generates(oOther.generate, oDriver.generate, oModel.dGenerateConditions)
+                            and conflict(oOther, oDriver)
+                        ):
                             self.report(oFile, oDriver.index, f"Signal {oDriver.target} is also driven by {oOther.description} on line {oOther.line}")
                             break
 
@@ -83,16 +87,40 @@ def drivers(oArchitecture, oFile):
         for oAssignment in model.assignments(oProcess.statements):
             if oAssignment.target not in dSeen:
                 dSeen[oAssignment.target] = True
-                lReturn.append(Driver(oProcess, sDescription, oAssignment.target, oAssignment.base, oAssignment.indexed, oAssignment.static_index, oAssignment.index, oAssignment.line))
+                lReturn.append(
+                    Driver(
+                        oProcess,
+                        sDescription,
+                        oAssignment.target,
+                        oAssignment.base,
+                        oAssignment.indexed,
+                        oAssignment.static_index,
+                        oAssignment.index,
+                        oAssignment.line,
+                    ),
+                )
     for oAssignment in oArchitecture.assignments:
-        lReturn.append(Driver(oAssignment, "a concurrent assignment", oAssignment.target, oAssignment.base, oAssignment.indexed, oAssignment.static_index, oAssignment.index, oAssignment.line))
+        lReturn.append(
+            Driver(
+                oAssignment,
+                "a concurrent assignment",
+                oAssignment.target,
+                oAssignment.base,
+                oAssignment.indexed,
+                oAssignment.static_index,
+                oAssignment.index,
+                oAssignment.line,
+            ),
+        )
     for oInstance in oArchitecture.instances:
         lPorts = unit_ports(oFile, oInstance) or []
         dModes = dict(lPorts)
         for iPosition, (sFormal, sActual, iLine) in enumerate(oInstance.associations):
             sPort = sFormal if sFormal is not None else (lPorts[iPosition][0] if iPosition < len(lPorts) else None)
             if dModes.get(sPort) in ("out", "inout", "buffer") and sActual != "open" and model.reName.match(sActual or ""):
-                lReturn.append(Driver(oInstance, "instance " + oInstance.label, sActual, model.base_name(sActual), "." in sActual, True, oInstance.index, iLine))
+                lReturn.append(
+                    Driver(oInstance, "instance " + oInstance.label, sActual, model.base_name(sActual), "." in sActual, True, oInstance.index, iLine),
+                )
     return lReturn
 
 

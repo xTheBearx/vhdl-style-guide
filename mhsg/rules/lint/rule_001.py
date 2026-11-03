@@ -49,6 +49,10 @@ class rule_001(Rule):
                         if not isinstance(oStatement, model.Assignment) or oStatement.kind != "signal":
                             continue
                         if oStatement.target in dFirst:
-                            self.report(oFile, oStatement.index, f"Signal {oStatement.target} is also assigned on line {dFirst[oStatement.target]} in the same statement region")
+                            self.report(
+                                oFile,
+                                oStatement.index,
+                                f"Signal {oStatement.target} is also assigned on line {dFirst[oStatement.target]} in the same statement region",
+                            )
                         else:
                             dFirst[oStatement.target] = oStatement.line

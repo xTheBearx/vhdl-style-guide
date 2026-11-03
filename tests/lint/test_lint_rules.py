@@ -27,8 +27,17 @@ dExpected = {
     4: (3, [(25, "Output port out1 of instance u_bad is not connected"), (33, "Output port out2 of instance u_positional is not connected")]),
     5: (5, [(8, "Add a when others choice to the case statement")]),
     6: (5, [(13, 'Choice "000" is already covered on line 9')]),
-    7: (5, [(15, 'Choice "10X" contains a metavalue and is never reached in hardware'), (21, 'Choice "0-Z" contains a metavalue and is never reached in hardware')]),
-    8: (8, [(11, "Signal gated_in_s is assigned and read in the same combinational process"), (7, "Signal count is assigned from an expression that reads it")]),
+    7: (
+        5,
+        [
+            (15, 'Choice "10X" contains a metavalue and is never reached in hardware'),
+            (21, 'Choice "0-Z" contains a metavalue and is never reached in hardware'),
+        ],
+    ),
+    8: (
+        8,
+        [(11, "Signal gated_in_s is assigned and read in the same combinational process"), (7, "Signal count is assigned from an expression that reads it")],
+    ),
     9: (
         9,
         [

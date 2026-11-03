@@ -11,7 +11,20 @@ from mhsg.lint import model
 
 def condition(sCondition):
     """Returns the tokens of an if condition."""
-    oFile = vhdlFile.vhdlFile(["", "architecture a of e is", "begin", "  process is", "  begin", f"    if {sCondition} then", "      null;", "    end if;", "  end process;", "end architecture;"])
+    oFile = vhdlFile.vhdlFile(
+        [
+            "",
+            "architecture a of e is",
+            "begin",
+            "  process is",
+            "  begin",
+            f"    if {sCondition} then",
+            "      null;",
+            "    end if;",
+            "  end process;",
+            "end architecture;",
+        ],
+    )
     oIf = oFile.get_lint_model().architectures[0].processes[0].statements[0]
     return oIf.branches[0][0]
 

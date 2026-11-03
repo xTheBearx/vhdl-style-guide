@@ -127,17 +127,29 @@ class test_rule_set(unittest.TestCase):
 
 class test_lint_command_line(unittest.TestCase):
     def run_mhsg(self, lArguments):
-        oResult = subprocess.run([*utils.mhsg_exec(), "-f", sLintInput, "-of", "syntastic", *lArguments], cwd=sRoot, capture_output=True, text=True, check=False)
+        oResult = subprocess.run(
+            [*utils.mhsg_exec(), "-f", sLintInput, "-of", "syntastic", *lArguments],
+            cwd=sRoot,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
         return oResult.stdout.splitlines()
 
     def test_lint_only_labels(self):
         lOutput = self.run_mhsg(["--lint_only"])
-        self.assertIn(f"WARNING: {sLintInput}(9)DO254-SS4 (lint_009) -- Signal out1 is not assigned on every path of the combinational process, which infers a latch", lOutput)
+        self.assertIn(
+            f"WARNING: {sLintInput}(9)DO254-SS4 (lint_009) -- Signal out1 is not assigned on every path of the combinational process, which infers a latch",
+            lOutput,
+        )
         self.assertFalse(any("process_035" in s for s in lOutput))
 
     def test_lint_without_rule_set(self):
         lOutput = self.run_mhsg(["--lint_only", "--rule_set", "none"])
-        self.assertIn(f"ERROR: {sLintInput}(9)lint_009 -- Signal out1 is not assigned on every path of the combinational process, which infers a latch", lOutput)
+        self.assertIn(
+            f"ERROR: {sLintInput}(9)lint_009 -- Signal out1 is not assigned on every path of the combinational process, which infers a latch",
+            lOutput,
+        )
 
     def test_style_run_has_no_lint(self):
         lOutput = self.run_mhsg(["-ap"])
@@ -166,7 +178,7 @@ sFixInput = "\n".join(
         "",
         "END architecture rtl;",
         "",
-    ]
+    ],
 )
 
 
@@ -176,7 +188,13 @@ class test_lint_fix(unittest.TestCase):
             sFileName = os.path.join(sDirectory, "fix.vhd")
             with open(sFileName, "w", encoding="utf-8") as oFile:
                 oFile.write(sFixInput)
-            oResult = subprocess.run([*utils.mhsg_exec(), "-f", sFileName, "--fix", "-of", "syntastic", *lArguments], cwd=sRoot, capture_output=True, text=True, check=False)
+            oResult = subprocess.run(
+                [*utils.mhsg_exec(), "-f", sFileName, "--fix", "-of", "syntastic", *lArguments],
+                cwd=sRoot,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
             with open(sFileName, encoding="utf-8") as oFile:
                 return oFile.read().splitlines(), oResult.stdout
 

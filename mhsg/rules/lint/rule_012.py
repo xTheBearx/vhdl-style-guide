@@ -52,17 +52,17 @@ class rule_012(Rule):
     def check(self, oModel, oFile):
         for oArchitecture in oModel.architectures:
             for oProcess in oArchitecture.processes:
-                oClock = oProcess.clock
-                if oClock is None:
+                oClocking = oProcess.clock
+                if oClocking is None:
                     continue
-                setReset = {o.base for o in model.assignments(oClock.reset_branch)}
+                setReset = {o.base for o in model.assignments(oClocking.reset_branch)}
                 lReported = []
-                for oAssignment in model.assignments(oClock.clock_branch):
+                for oAssignment in model.assignments(oClocking.clock_branch):
                     if not oAssignment.static_index or oAssignment.base in setReset or oAssignment.base in lReported:
                         continue
                     lReported.append(oAssignment.base)
-                    if oClock.reset is None or (oClock.reset.style == "async" and not oClock.reset_branch and oClock.reset.name is None):
+                    if oClocking.reset is None or (oClocking.reset.style == "async" and not oClocking.reset_branch and oClocking.reset.name is None):
                         self.report(oFile, oAssignment.index, f"Register {oAssignment.base} has no reset; the process has none")
                     else:
-                        sReset = oClock.reset.name or "the reset"
+                        sReset = oClocking.reset.name or "the reset"
                         self.report(oFile, oAssignment.index, f"Register {oAssignment.base} is not assigned when {sReset} is active")

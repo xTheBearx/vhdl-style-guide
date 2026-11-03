@@ -16,7 +16,28 @@ from mhsg.token import mode as token_mode
 reName = re.compile(r"[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)*$", re.IGNORECASE)
 
 # Reserved words that can appear inside an index or slice
-INDEX_KEYWORDS = {"to", "downto", "others", "and", "or", "not", "xor", "nand", "nor", "xnor", "mod", "rem", "abs", "sll", "srl", "sla", "sra", "rol", "ror", "open"}
+INDEX_KEYWORDS = {
+    "to",
+    "downto",
+    "others",
+    "and",
+    "or",
+    "not",
+    "xor",
+    "nand",
+    "nor",
+    "xnor",
+    "mod",
+    "rem",
+    "abs",
+    "sll",
+    "srl",
+    "sla",
+    "sra",
+    "rol",
+    "ror",
+    "open",
+}
 
 TRIVIA = (parser.whitespace, parser.carriage_return, parser.blank_line, parser.comment)
 
@@ -58,8 +79,28 @@ def is_trivia(oToken):
 
 # Attributes whose value does not depend on the value of their prefix, such as a'length
 STATIC_ATTRIBUTES = {
-    "length", "range", "reverse_range", "left", "right", "high", "low", "ascending", "element", "subtype", "base",
-    "image", "value", "pos", "val", "succ", "pred", "leftof", "rightof", "simple_name", "instance_name", "path_name",
+    "length",
+    "range",
+    "reverse_range",
+    "left",
+    "right",
+    "high",
+    "low",
+    "ascending",
+    "element",
+    "subtype",
+    "base",
+    "image",
+    "value",
+    "pos",
+    "val",
+    "succ",
+    "pred",
+    "leftof",
+    "rightof",
+    "simple_name",
+    "instance_name",
+    "path_name",
 }
 
 NAME_KINDS = (("parser", "todo"), ("todo", "name"), ("association_element", "actual_part"))
@@ -760,37 +801,37 @@ def find_clock(oProcess):
     for oStatement in oProcess.statements:
         if not isinstance(oStatement, If):
             continue
-        for iBranch, (lCondition, lBranch, iLine, iIndex) in enumerate(oStatement.branches):
+        for iBranch, (lCondition, lBranch, _, _) in enumerate(oStatement.branches):
             lEdges = edges(lCondition or [])
             if not lEdges:
                 continue
-            oClock = Clock(*lEdges[0])
-            oClock.clock_branch = lBranch
+            oClocking = Clock(*lEdges[0])
+            oClocking.clock_branch = lBranch
             if iBranch > 0:
                 lResetCondition, lResetBranch, iResetLine, iResetIndex = oStatement.branches[0]
-                oClock.async_conditions = [tBranch[0] or [] for tBranch in oStatement.branches[:iBranch]]
-                oClock.reset_branch = lResetBranch
+                oClocking.async_conditions = [tBranch[0] or [] for tBranch in oStatement.branches[:iBranch]]
+                oClocking.reset_branch = lResetBranch
                 tReset = reset_condition(lResetCondition or [])
                 sName, sLevel = tReset if tReset is not None else (None, None)
-                oClock.reset = Reset(sName, sLevel, "async", iResetLine, iResetIndex)
+                oClocking.reset = Reset(sName, sLevel, "async", iResetLine, iResetIndex)
             else:
-                find_sync_reset(oClock)
-            return oClock
+                find_sync_reset(oClocking)
+            return oClocking
     return None
 
 
-def find_sync_reset(oClock):
+def find_sync_reset(oClocking):
     """Records a synchronous reset: an if statement first in the clock branch that tests one signal whose name looks like a reset."""
     from mhsg.rules.port.rule_028 import is_reset_name
 
-    lStatements = [o for o in oClock.clock_branch]
+    lStatements = [o for o in oClocking.clock_branch]
     if not lStatements or not isinstance(lStatements[0], If):
         return
     lCondition, lBranch, iLine, iIndex = lStatements[0].branches[0]
     tReset = reset_condition(lCondition or [])
     if tReset is not None and is_reset_name(tReset[0]):
-        oClock.reset = Reset(tReset[0], tReset[1], "sync", iLine, iIndex)
-        oClock.reset_branch = lBranch
+        oClocking.reset = Reset(tReset[0], tReset[1], "sync", iLine, iIndex)
+        oClocking.reset_branch = lBranch
 
 
 def has_edge(oProcess):
@@ -853,6 +894,7 @@ def same_conditional_generates(tFirst, tSecond, dConditions):
     Returns True if two generate contexts are in the same branches of the same if and case generate statements.
     Statements in different conditional generates may or may not both exist, which only elaboration can tell.
     """
+
     def conditional(tContext):
         return {(iGenerate, iBranch) for iGenerate, iBranch in tContext if iGenerate in dConditions or iBranch != 0}
 

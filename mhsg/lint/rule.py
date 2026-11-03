@@ -48,7 +48,7 @@ def signal_kind(oFile, oArchitecture, sName, iIndex):
     if lDeclarations:
         sKind = lDeclarations[0].kind
         return sKind if sKind in SIGNAL_KINDS else "other"
-    for sPort, sMode in entity_ports(oFile, oArchitecture):
+    for sPort, _ in entity_ports(oFile, oArchitecture):
         if sPort == sName:
             return "port"
     return None

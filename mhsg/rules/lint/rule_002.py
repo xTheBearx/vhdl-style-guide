@@ -57,11 +57,11 @@ class rule_002(Rule):
                     self.check_combinational(oArchitecture, oProcess, oFile)
 
     def check_clocked(self, oArchitecture, oProcess, oFile):
-        oClock = oProcess.clock
-        lControls = unique(s.split(".")[0] for lCondition in oClock.async_conditions for s in model.names(lCondition))
+        oClocking = oProcess.clock
+        lControls = unique(s.split(".")[0] for lCondition in oClocking.async_conditions for s in model.names(lCondition))
         # The reset is needed unless it is known not to be a signal; other names tested only if they are known signals
-        sReset = oClock.reset.name if oClock.reset is not None else None
-        lNeeded = [oClock.name]
+        sReset = oClocking.reset.name if oClocking.reset is not None else None
+        lNeeded = [oClocking.name]
         for sName in lControls:
             sKind = signal_kind(oFile, oArchitecture, sName, oProcess.index)
             if sKind in ("signal", "port") or (sName == sReset and sKind is None):
@@ -70,7 +70,7 @@ class rule_002(Rule):
             if sName not in oProcess.sensitivity:
                 self.report(oFile, oProcess.index, f"Add {sName} to the sensitivity list")
         for sName in unique(oProcess.sensitivity):
-            if sName != oClock.name and sName not in lControls:
+            if sName != oClocking.name and sName not in lControls:
                 self.report(oFile, oProcess.index, f"Remove {sName} from the sensitivity list of the clocked process")
 
     def check_combinational(self, oArchitecture, oProcess, oFile):
