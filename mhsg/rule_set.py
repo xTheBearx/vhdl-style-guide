@@ -71,13 +71,19 @@ class RuleSet:
         dSeverities = {}
         setListed = set()
         lChecks = [(oRuleSet, oCheck) for oRuleSet in self.all_sets() for oCheck in oRuleSet.checks]
+        # A rule set can name the rules of several languages; those of other languages than the file's are left out
+        sOtherLanguages = getattr(oRuleList, "other_language_rules", set())
         for oRuleSet, oCheck in lChecks:
             for sRule, dAttributes in oCheck.configuration.items():
+                if sRule in sOtherLanguages:
+                    continue
                 oRule = get_rule(dRules, sRule, oRuleSet)
                 for sAttribute, oValue in (dAttributes or {}).items():
                     set_attribute(oRule, sAttribute, oValue, oSeverityList, oRuleSet)
                 setListed.add(oRule.get_unique_id())
             for sRule in oCheck.rules + rules_in_groups(oRuleList, oCheck.groups):
+                if sRule in sOtherLanguages:
+                    continue
                 oRule = get_rule(dRules, sRule, oRuleSet)
                 if oCheck.enable:
                     oRule.disable = False
@@ -117,12 +123,17 @@ def apply(oRuleList, oConfig):
 def configure_lint_mode(oConfig, commandLineArguments):
     """
     Sets the lint mode and rule set from the command line, or from the lint, lint_only and rule_set keys of the configuration.
-    The command line takes precedence. Lint mode uses the do254 rule set unless another one, or none, is given.
+    The command line takes precedence. Lint mode uses the do254 rule set unless another one, or none, is given; giving
+    a rule set turns lint mode on.
     """
     dConfig = oConfig.dConfig or {}
+    sChosenRuleSet = getattr(commandLineArguments, "rule_set", None) or dConfig.get("rule_set")
     if getattr(commandLineArguments, "lint_only", False) or dConfig.get("lint_only", False):
         oConfig.lint_mode = "lint_only"
     elif getattr(commandLineArguments, "lint", False) or dConfig.get("lint", False):
+        oConfig.lint_mode = "lint"
+    elif sChosenRuleSet is not None and sChosenRuleSet.lower() != "none":
+        # Choosing a rule set, such as starc, runs it with the style rules
         oConfig.lint_mode = "lint"
     if oConfig.lint_mode is None:
         return
@@ -212,6 +223,13 @@ STATUS_TEXT = {
 }
 
 
+def escape(sText):
+    """Escapes the characters reStructuredText reads as markup, such as the backtick of `define."""
+    for sCharacter in ("\\", "`", "*", "|", "_"):
+        sText = sText.replace(sCharacter, "\\" + sCharacter)
+    return sText
+
+
 def coverage_table(oRuleSet):
     """Returns a reStructuredText table of the checks of a rule set: severity, status and the rules that implement them."""
     lRows = [("Check", "Title", "Severity", "Status", "Rules")]
@@ -222,7 +240,7 @@ def coverage_table(oRuleSet):
             sStatus = "Implemented, enable after configuring"
         elif oCheck.status == "implemented" and oCheck.rules and all(s.startswith("design_") for s in oCheck.rules):
             sStatus = "Implemented, design analysis"
-        lRows.append((oRuleSet.prefix + "-" + oCheck.id, oCheck.title, oCheck.severity or "", sStatus, ", ".join(lRules)))
+        lRows.append((oRuleSet.prefix + "-" + oCheck.id, escape(oCheck.title), oCheck.severity or "", sStatus, ", ".join(lRules)))
     lWidths = [max(len(tRow[i]) for tRow in lRows) for i in range(5)]
     sRule = "+" + "+".join("-" * (i + 2) for i in lWidths) + "+"
     lLines = [sRule]

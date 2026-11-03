@@ -3,11 +3,11 @@
 Lint Mode
 =========
 
-Besides style, MHSG can check VHDL for design problems such as latches, multiple drivers or incomplete case statements.
+Besides style, MHSG can check VHDL and SystemVerilog for design problems such as latches, multiple drivers or incomplete case statements.
 These lint checks only report; they never change the code.
 
 The checks are grouped in rule sets, which map the checks of a coding standard to the MHSG rules that implement them.
-There are three built in rule sets:
+There are four built in rule sets:
 
 * **do254** implements the coding standards of the DO-254 Users Group position paper
   *Best Practice VHDL Coding Standards for DO-254 Programs* (DO254-UG-001 Rev 1a).
@@ -15,6 +15,8 @@ There are three built in rule sets:
   state machines, traceability, and the `HDLbits VHDL coding guidelines <https://www.hdlbits.com/guides/>`_.
   Where those conflict with DO-254, DO-254 wins; for example every register needs a reset.
 * **cdc** holds the clock domain crossing, clock and reset checks of design analysis, see :doc:`design_analysis`.
+* **starc** follows the STARC *RTL Design Style Guide for Verilog HDL* for Verilog and SystemVerilog files, see
+  `The STARC rule set`_.
 
 Running lint mode
 -----------------
@@ -33,7 +35,8 @@ Running lint mode
 | --lint_only  | Runs only the rules of the rule set: its lint checks and the style rules it reuses.      |
 +--------------+------------------------------------------------------------------------------------------+
 | --rule_set   | The rule set: a built in name (default **do254**), the path of a YAML file, or **none**  |
-|              | for every lint rule with its own severity and no labels.                                 |
+|              | for every lint rule with its own severity and no labels. Giving a rule set turns on      |
+|              | lint mode, as **--lint** does.                                                           |
 +--------------+------------------------------------------------------------------------------------------+
 
 The same can be set in a configuration file:
@@ -171,3 +174,26 @@ Two checks need settings for your project: REQ needs the pattern of your require
 and FSMSAFE checks synthesis attributes only when its :code:`attributes` option lists them.
 
 .. include:: do254_plus_coverage.rst
+
+The STARC rule set
+------------------
+
+This table is generated from :code:`mhsg/rule_sets/starc.yaml`. Each numbered item of the STARC
+*RTL Design Style Guide for Verilog HDL* (Second Version, 2006) is a check labelled with its number, such as
+STARC-2.1.5.1, with a short paraphrase of the item as its title; the guide has the full text and the reasons.
+Choose it for Verilog and SystemVerilog files:
+
+.. code-block:: text
+
+   $ mhsg -f rtl/*.sv --rule_set starc
+
+The severity follows the level of the item in the guide: a Rule is an error, Recommendation 1 a warning,
+Recommendation 2 and 3 and Suggestions notes. The set uses the guide's own limits where a rule implements them:
+lines of up to 110 characters and indentation of 2 spaces. A configuration file can change them, as for any rule.
+
+Most items are not implemented yet: the per-file checks are planned with the SystemVerilog rules, the clock and reset
+checks with design analysis of Verilog designs, and the items about synthesis and timing scripts, design management
+or judgement are left to review. Items the rules of VHDL design analysis already check, such as clock domain
+crossings and gated clocks, are labelled in design analysis of VHDL designs too.
+
+.. include:: starc_coverage.rst

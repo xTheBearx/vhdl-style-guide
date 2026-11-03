@@ -42,6 +42,13 @@ The rules that apply to every language check SystemVerilog files as well:
 
 The other rules are VHDL rules and are skipped for SystemVerilog files.
 
+Profiles
+########
+
+The **starc** rule set follows the STARC *RTL Design Style Guide for Verilog HDL*: :code:`--rule_set starc` labels
+findings with the guide's item numbers and uses its limits, such as lines of 110 characters and 2-space indentation.
+See :doc:`lint`.
+
 Indentation
 ###########
 

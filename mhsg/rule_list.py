@@ -138,8 +138,11 @@ class rule_list:
         for iDirectory, sDirectory in enumerate(config.get_local_rule_directories(sLocalRulesDirectory)):
             self.rules.extend(load_local_rules(sDirectory, iDirectory))
         # Only the rules for the language of the file, unless the rules of every language are listed, as for -oc and -rc
+        # The rules of other languages, which a rule set may name
+        self.other_language_rules = set()
         if not bAllLanguages:
             sLanguageName = getattr(oVhdlFile, "language", language.VHDL)
+            self.other_language_rules = {o.get_unique_id() for o in self.rules if sLanguageName not in getattr(o, "languages", (language.VHDL,))}
             self.rules = [o for o in self.rules if sLanguageName in getattr(o, "languages", (language.VHDL,))]
         self.iNumberRulesRan = 0
         self.lastPhaseRan = 0

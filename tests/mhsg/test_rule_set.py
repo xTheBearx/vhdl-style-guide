@@ -5,6 +5,7 @@ Tests for rule sets and lint mode.
 
 import os
 import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -179,7 +180,7 @@ class test_lint_command_line(unittest.TestCase):
 
     def test_unknown_rule_set(self):
         lOutput = self.run_mhsg(["--lint", "--rule_set", "nothing"])
-        self.assertEqual(["ERROR: rule set nothing is not a built in rule set (cdc, do254, do254_plus) or a file"], lOutput)
+        self.assertEqual(["ERROR: rule set nothing is not a built in rule set (cdc, do254, do254_plus, starc) or a file"], lOutput)
 
 
 sFixInput = "\n".join(
@@ -251,7 +252,77 @@ class test_rule_set_documentation(unittest.TestCase):
                 self.assertEqual(rule_set.coverage_table(rule_set.load(sName)), oFile.read())
 
     def test_every_check_has_a_status(self):
-        for oCheck in rule_set.load("do254").checks + rule_set.load("do254_plus").checks:
+        for oCheck in rule_set.load("do254").checks + rule_set.load("do254_plus").checks + rule_set.load("starc").checks:
             with self.subTest(oCheck.id):
                 self.assertIn(oCheck.status, rule_set.STATUS_TEXT)
                 self.assertTrue(oCheck.title)
+
+
+def run_on_text(sText, sName, lArguments):
+    """
+    Runs mhsg on a file holding sText with the default configuration, rather than the settings of the VHDL test files;
+    returns (exit status, output lines).
+    """
+    with tempfile.TemporaryDirectory() as sTemporary:
+        sFile = os.path.join(sTemporary, sName)
+        with open(sFile, "w", encoding="utf-8") as oFile:
+            oFile.write(sText)
+        oResult = subprocess.run(
+            [sys.executable, "bin/mhsg", "-f", sFile, "-of", "syntastic", *lArguments],
+            cwd=sRoot,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    return oResult.returncode, [s.replace(sFile, sName) for s in oResult.stdout.splitlines()]
+
+
+class test_starc(unittest.TestCase):
+    def test_levels_and_severities(self):
+        oRuleSet = rule_set.load("starc")
+        self.assertEqual("STARC", oRuleSet.prefix)
+        self.assertEqual(613, len(oRuleSet.checks))
+        dChecks = {o.id: o for o in oRuleSet.checks}
+        self.assertEqual("Error", dChecks["1.1.1.2"].severity)
+        self.assertEqual("Warning", dChecks["1.1.1.6"].severity)
+        self.assertEqual("Note", dChecks["1.1.1.1"].severity)
+        self.assertEqual(["length_001"], dChecks["3.1.4.5"].rules)
+
+    def test_systemverilog(self):
+        sText = "module m;\n  logic a;\n\tlogic b;\n  assign a = " + "b" * 90 + ";\n  assign a = " + "b" * 110 + ";\nendmodule\n"
+        iStatus, lOutput = run_on_text(sText, "m.sv", ["--rule_set", "starc"])
+        self.assertEqual(
+            [
+                "WARNING: m.sv(3)STARC-3.1.4.2/STARC-3.1.4.3 (sv_indent_001) -- Use 2 spaces for indent",
+                "WARNING: m.sv(5)STARC-3.1.4.5 (length_001) -- Reduce line to less than 110 characters",
+            ],
+            lOutput,
+        )
+        # Notes and warnings do not fail the run
+        self.assertEqual(0, iStatus)
+
+    def test_vhdl(self):
+        sText = "\nentity e is\nend entity e;\n"
+        self.assertEqual((0, []), run_on_text(sText, "e.vhd", ["--rule_set", "starc"]))
+
+
+class test_rule_sets_and_languages(unittest.TestCase):
+    def test_do254_on_systemverilog(self):
+        # The VHDL rules of the default rule set are left out for a SystemVerilog file
+        self.assertEqual((0, []), run_on_text("module m;\nendmodule\n", "m.sv", ["--lint"]))
+
+    def test_unknown_rule_still_fails(self):
+        oRules = rule_list.rule_list(vhdlFile.vhdlFile([""]), None)
+        oRuleSet = rule_set.RuleSet({"name": "bad", "checks": {"X": {"rules": ["nothing_001"]}}}, "bad.yaml")
+        with self.assertRaises(exceptions.ConfigurationError):
+            oRuleSet.apply(oRules, severity.create_list({}))
+
+    def test_rule_set_turns_on_lint(self):
+        oResult = subprocess.run(
+            [*utils.mhsg_exec(), "-f", sLintInput, "-of", "syntastic", "--rule_set", "do254"],
+            cwd=sRoot,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertTrue(any("DO254-SS4 (lint_009)" in s for s in oResult.stdout.splitlines()))
