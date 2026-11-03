@@ -60217,7 +60217,7 @@
       "groups": [
         "structure"
       ],
-      "summary": "This rule checks `include names a file by a relative path, as the STARC guide asks (3.2.2.4). It is disabled by default; the starc rule set enables it.",
+      "summary": "This rule checks that include directives name files by relative paths, as the STARC guide asks (3.2.2.4). It is disabled by default; the starc rule set enables it.",
       "documentation": "sv_file_rules.rst",
       "options": [
         {
@@ -61375,7 +61375,7 @@
       "groups": [
         "naming"
       ],
-      "summary": "This rule checks that macro names match pattern, a regular expression, by default [A-Z_0-9]+, as Verible's macro-name-style rule does; macros named uvm_ or UVM_ may be lower case.",
+      "summary": "This rule checks that macro names match pattern, a regular expression, by default [A-Z_0-9]+, as Verible's macro-name-style rule does; macros whose names start with uvm_ or UVM_ may be lower case.",
       "documentation": "sv_naming_rules.rst",
       "options": [
         {
