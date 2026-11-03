@@ -130,6 +130,7 @@ The rules length_001, length_002, length_004, whitespace_001 and whitespace_002 
    sv_generate_rules.rst
    sv_indent_rules.rst
    sv_label_rules.rst
+   sv_lint_rules.rst
    sv_literal_rules.rst
    sv_module_rules.rst
    sv_naming_rules.rst

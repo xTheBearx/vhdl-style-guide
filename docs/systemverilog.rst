@@ -69,6 +69,24 @@ what a Verible lint rule checks, its alias is the Verible rule's name.
 
 The **starc** rule set enables the rules of the STARC guide that are disabled by default.
 
+Lint
+####
+
+In lint mode, see :doc:`lint`, slang elaborates each file and analyzes its procedures. :code:`sv_lint_001` to
+:code:`sv_lint_010` report what it finds: widths that do not match, latches, multiple drivers, implicit nets,
+unused and undriven declarations, duplicate case items and signedness, with slang's own messages; an incomplete
+sensitivity list; and any other warning of slang. The **do254** and **starc** rule sets label them with the checks
+they implement:
+
+.. code-block:: text
+
+   $ mhsg -f rtl/fifo.sv --lint_only
+   WARNING: rtl/fifo.sv(16)DO254-SS4 (sv_lint_002) -- Latch inferred for 'l_o' because it is not assigned on all control paths
+
+A file is elaborated on its own, so the modules, packages and macros of other files are unknown. slang leaves out
+the warnings that would follow from them, and mhsg leaves out unused, undriven and implicit signals in a file that
+uses anything defined elsewhere, as a signal driven or read there would look undriven or unused.
+
 Syntax errors
 #############
 

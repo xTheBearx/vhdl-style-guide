@@ -225,6 +225,16 @@ Rules on the design of SystemVerilog and Verilog code that only the designer can
 * `sv_generate_002 <sv_generate_rules.html#sv-generate-002>`_
 * `sv_generate_003 <sv_generate_rules.html#sv-generate-003>`_
 * `sv_generate_005 <sv_generate_rules.html#sv-generate-005>`_
+* `sv_lint_001 <sv_lint_rules.html#sv-lint-001>`_
+* `sv_lint_002 <sv_lint_rules.html#sv-lint-002>`_
+* `sv_lint_003 <sv_lint_rules.html#sv-lint-003>`_
+* `sv_lint_004 <sv_lint_rules.html#sv-lint-004>`_
+* `sv_lint_005 <sv_lint_rules.html#sv-lint-005>`_
+* `sv_lint_006 <sv_lint_rules.html#sv-lint-006>`_
+* `sv_lint_007 <sv_lint_rules.html#sv-lint-007>`_
+* `sv_lint_008 <sv_lint_rules.html#sv-lint-008>`_
+* `sv_lint_009 <sv_lint_rules.html#sv-lint-009>`_
+* `sv_lint_010 <sv_lint_rules.html#sv-lint-010>`_
 * `sv_literal_002 <sv_literal_rules.html#sv-literal-002>`_
 * `sv_literal_003 <sv_literal_rules.html#sv-literal-003>`_
 * `sv_literal_004 <sv_literal_rules.html#sv-literal-004>`_

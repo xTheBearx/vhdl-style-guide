@@ -422,5 +422,44 @@ class test_rules(unittest.TestCase):
             oResult = subprocess.run([sys.executable, "bin/mhsg", "-f", sCopy, "-of", "syntastic"], cwd=sRoot, capture_output=True, text=True, check=False)
         self.assertEqual([f"ERROR: {sCopy}(2)sv_syntax_001 -- Syntax error: expected expression"], oResult.stdout.splitlines())
 
+    def test_lint(self):
+        _, lOutput, _ = self.run_mhsg(["--lint_only", "--rule_set", "none"], "lint.sv")
+        self.assertEqual(
+            [
+                "ERROR: lint.sv(13)sv_lint_005 -- Variable 'spare' is assigned but its value is never used",
+                "ERROR: lint.sv(14)sv_lint_001 -- Implicit conversion truncates from 8 to 4 bits",
+                "ERROR: lint.sv(16)sv_lint_002 -- Latch inferred for 'l_o' because it is not assigned on all control paths",
+                "ERROR: lint.sv(19)sv_lint_003 -- Cannot mix continuous and procedural assignments to variable 'm_o'",
+                "ERROR: lint.sv(20)sv_lint_004 -- Implicit net 'implicit_net' created",
+                "ERROR: lint.sv(20)sv_lint_005 -- Implicit net 'implicit_net' is unused elsewhere",
+                "ERROR: lint.sv(21)sv_lint_008 -- Add b_i to the sensitivity list, or use always_comb",
+                "ERROR: lint.sv(25)sv_lint_006 -- 'case' statement contains duplicate items for value '4'b1' (the second one will never be matched)",
+                "ERROR: lint.sv(30)sv_lint_007 -- Comparison of differently signed types ('logic[3:0]' and 'int')",
+            ],
+            lOutput,
+        )
+
+    def test_lint_do254(self):
+        # The default rule set of lint mode labels the SystemVerilog rules with the DO-254 checks they implement
+        _, lOutput, _ = self.run_mhsg(["--lint_only"], "lint.sv")
+        self.assertIn("WARNING: lint.sv(16)DO254-SS4 (sv_lint_002) -- Latch inferred for 'l_o' because it is not assigned on all control paths", lOutput)
+        self.assertIn("ERROR: lint.sv(19)DO254-SS6 (sv_lint_003) -- Cannot mix continuous and procedural assignments to variable 'm_o'", lOutput)
+
+    def test_lint_file_using_other_files(self):
+        # A file using a module, package or macro of another file is not checked for undriven, unused or implicit
+        # signals: one driven or read there would look undriven or unused
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sCopy = os.path.join(sTemporary, "top.sv")
+            with open(sCopy, "w", encoding="utf-8") as oFile:
+                oFile.write("module top (input logic a_i, output logic y_o);\n    logic spare;\n    sub u_sub (.a(a_i), .y(y_o));\nendmodule\n")
+            oResult = subprocess.run(
+                [sys.executable, "bin/mhsg", "-f", sCopy, "-of", "syntastic", "--lint_only", "--rule_set", "none"],
+                cwd=sRoot,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+        self.assertEqual([], oResult.stdout.splitlines())
+
     def test_sample_is_clean(self):
         self.assertEqual((0, []), self.run_mhsg([], "sample.sv")[:2])

@@ -27,7 +27,7 @@ from pyslang.parsing import (  # pylint: disable=import-error
 from pyslang.syntax import SyntaxNode, SyntaxTree  # pylint: disable=import-error
 
 from mhsg import parser, token_map
-from mhsg.svFile import indent, tokens
+from mhsg.svFile import indent, lint, tokens
 
 # mhsg.vhdlFile exports the class vhdlFile under the name of its module
 vhdl = importlib.import_module("mhsg.vhdlFile.vhdlFile")
@@ -75,6 +75,7 @@ class svFile(vhdl.vhdlFile):
         self.lAllObjects, (self.syntax_tree, self.source_manager), self.dNodes = build_tokens(sText, self.filename or "source.sv", bTree=True)
         self.dTokenAtOffset = {o.offset: o for o in self.lAllObjects if getattr(o, "offset", None) is not None}
         self.syntax_errors = syntax_errors(self.syntax_tree)
+        self.lint_model = None
         vhdl.set_code_tags(self.lAllObjects)
         self.oTokenMap = self.build_token_map()
 
@@ -109,8 +110,10 @@ class svFile(vhdl.vhdlFile):
         return build_token_map(self.lAllObjects)
 
     def get_lint_model(self):
-        """SystemVerilog has no per-file lint model yet."""
-        return None
+        """The lint model of the file as it is now, made the first time a lint rule asks for it."""
+        if self.lint_model is None:
+            self.lint_model = lint.LintModel(self.syntax_tree)
+        return self.lint_model
 
     def set_indent_map(self, dIndentMap):
         """Indentation of SystemVerilog is not configured yet."""
