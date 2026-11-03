@@ -79,6 +79,7 @@ files with pyslang and running the language neutral rules, is done; see :doc:`..
   defines set would let rules check them.
 * **Include files and defines from the command line**: files are parsed on their own; a macro defined in another file
   is not expanded, which is fine for style rules but not for lint.
+* **Code tags in block comments**: :code:`/* mhsg_off */` is not recognized; only :code:`//` comments are.
 * **Lint and design analysis** of SystemVerilog (Verilator, yosys-slang) are later steps of the plan.
 * **Real-world SystemVerilog check**: ibex, common_cells and picorv32 (914 files) were checked by hand; they should be
   added to :code:`scripts/real_world_designs.yaml` once it can hold SystemVerilog projects.
