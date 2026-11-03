@@ -17,6 +17,8 @@ FLIP_FLOP_TYPES = {"$dff", "$dffe", "$adff", "$adffe", "$sdff", "$sdffe", "$sdff
 reLocation = re.compile(r"^\s*/\* (\S+):(\d+):(\d+)\s+\*/")
 reModule = re.compile(r"^module (\S+)")
 reInstanceOutput = re.compile(r"\bn(\d+)_[a-z]+\b\s*(?:<=|=)")
+# An instance of a module: the module name, the instance name and an opening parenthesis
+reModuleInstance = re.compile(r"^\s+[A-Za-z_\\][^\s(]*\s+([A-Za-z_\\][^\s(]*)\s*\($")
 
 
 class Location:
@@ -48,6 +50,9 @@ def read_locations(sVerilogFile):
                 continue
             for oInstance in reInstanceOutput.finditer(sLine):
                 dReturn.setdefault((sModule, oInstance.group(1)), oLocation)
+            oMatch = reModuleInstance.match(sLine)
+            if oMatch:
+                dReturn.setdefault((sModule, "instance " + oMatch.group(1)), oLocation)
             if sLine.strip() == "" or sLine.startswith("endmodule"):
                 oLocation = None
     return dReturn
@@ -85,20 +90,39 @@ class Netlist:
 
     def location(self, sModule, sCell):
         """Returns the Location of a cell, or None if it is not known."""
-        return self.locations.get((module_name(sModule), sCell.lstrip("\\").split(".")[-1]))
+        sName = sCell.lstrip("\\")
+        oReturn = self.locations.get((module_name(sModule), sName.split(".")[-1]))
+        if oReturn is None:
+            # GHDL writes the instance data_ram_gen:1.data_ram_inst as data_ram_gen_n1_data_ram_inst
+            oReturn = self.locations.get((module_name(sModule), "instance " + verilog_instance_name(sName)))
+        return oReturn
 
     def bit_name(self, sModule, iBit):
-        """Returns the name of the signal or port a bit belongs to, preferring names written in the VHDL."""
+        """
+        Returns the name of the signal or port a bit belongs to, preferring names written in the VHDL, and among
+        them a signal of the architecture over a port it drives, such as busy_r over busy for busy <= busy_r.
+        """
+        lNames = self.bit_names(sModule, iBit)
+        return lNames[0] if lNames else None
+
+    def bit_names(self, sModule, iBit):
+        """Returns the names of the signals and ports a bit belongs to, best first, see bit_name."""
         dModule = self.modules.get(sModule, {})
-        sReturn = None
-        for sName, dPort in dModule.get("ports", {}).items():
-            if iBit in dPort.get("bits", []):
-                return sName
+        dPorts = dModule.get("ports", {})
+        lReturn = []
         for sName, dNet in dModule.get("netnames", {}).items():
             if iBit in dNet.get("bits", []) and not dNet.get("hide_name"):
-                if sReturn is None or (sReturn.startswith("$") and not sName.startswith("$")):
-                    sReturn = sName
-        return sReturn
+                lReturn.append(sName)
+        for sName, dPort in dPorts.items():
+            if iBit in dPort.get("bits", []) and sName not in lReturn:
+                lReturn.append(sName)
+        lReturn.sort(key=lambda s: (s.startswith("$"), s in dPorts, s))
+        return lReturn
+
+
+def verilog_instance_name(sName):
+    """Returns the name GHDL gives an instance in Verilog: generate indexes become _nN and dots underscores."""
+    return re.sub(r":(-?\d+)", lambda o: "_n" + o.group(1).replace("-", "m"), sName).replace(".", "_")
 
 
 def module_name(sModule):

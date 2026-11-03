@@ -92,3 +92,28 @@ When to run it
 A full run takes a few hours (a single fix of a large package can take several minutes), so it is not part of the unit tests.
 Use :code:`--project` to check one project.
 Run it before a release, and after changes to the parser or to rules with fixes that move tokens between lines.
+
+Design analysis check
+=====================
+
+:code:`scripts/real_world_design_check.py` runs design analysis, see :doc:`../design_analysis`, on configurations of
+the synthesizable projects: three configurations of neorv32 and 56 entities of Open Logic, each with realistic generics.
+It needs GHDL, Yosys and the GHDL plugin for Yosys.
+
+.. code-block:: bash
+
+   $ python scripts/real_world_design_check.py
+   $ python scripts/real_world_design_check.py --design neorv32_top
+
+The designs are listed in :code:`scripts/real_world_designs.yaml`, each with the findings that were reviewed and
+are expected, and a comment that explains each one:
+
+.. code-block:: yaml
+
+   known:
+   # Real: RstOutI_Sync is assigned in the reset branch only and never read
+   - src/base/vhdl/olo_base_cc_status.vhd(83)design_006 -- Register rstouti_sync in olo_base_cc_status is never used
+
+The check exits with status 1 when a design has a finding that is not known, or when design analysis does not run.
+Known findings that are no longer found are reported, so the list can be updated.
+Run it when a change touches the design rules or the netlist analysis.

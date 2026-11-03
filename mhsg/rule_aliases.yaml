@@ -274,6 +274,11 @@ delay_mechanism_501: delay_mechanism_inertial_keyword_case
 delay_mechanism_502: delay_mechanism_reject_keyword_case
 design_001: design_ghdl_error
 design_002: design_latch
+design_003: design_combinational_loop
+design_004: design_multiple_drivers
+design_005: design_constant_register
+design_006: design_unused_logic
+design_007: design_logic_depth
 element_association_100: element_association_space_between_others_and_arrow
 element_association_101: element_association_space_after_arrow
 element_association_102: element_association_space_before_arrow

@@ -3,6 +3,7 @@
 Base class of the design rules, which check the elaborated design instead of one file.
 """
 
+from mhsg.design import netlist
 from mhsg.lint.rule import Rule as LintRule
 
 
@@ -34,3 +35,23 @@ class Rule(LintRule):
 
     def check_design(self, oContext):
         return []
+
+    def locate(self, oContext, sModule, lCells, sSignal=None, bLast=False):
+        """
+        Returns (file, line) for a finding about cells of a module: the first cell with a known location, refined to
+        the first assignment of the signal when it is given, or the last with bLast. (None, 0) if no cell has a location.
+        """
+        for sCell in lCells:
+            oLocation = oContext.netlist.location(sModule, sCell)
+            if oLocation is not None:
+                return oContext.refine(oLocation, sSignal, bLast)
+        return None, 0
+
+
+def display_name(sName):
+    """Returns a net name as written in the VHDL: without the backslash Yosys adds and in lower case."""
+    return sName.lstrip("\\") if sName else sName
+
+
+def module_text(sModule):
+    return netlist.module_name(sModule)

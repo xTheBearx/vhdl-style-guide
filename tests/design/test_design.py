@@ -10,8 +10,8 @@ import subprocess
 import tempfile
 import unittest
 
-from mhsg import exceptions
-from mhsg.design import analysis, netlist, project, runner
+from mhsg import exceptions, vhdlFile
+from mhsg.design import analysis, graph, netlist, project, runner, top
 from tests import utils
 
 sTestDir = os.path.dirname(os.path.abspath(__file__))
@@ -39,8 +39,24 @@ class test_project(unittest.TestCase):
         self.assertEqual("latch_top", oDesign.top)
         self.assertEqual("08", oDesign.standard)
         self.assertEqual("work", oDesign.top_library)
-        self.assertEqual(["clean.vhd", "latch.vhd", "undeclared.vhd"], [os.path.basename(s) for s in oDesign.all_files()])
+        self.assertEqual(sorted(s for s in os.listdir(sTestDir) if s.endswith(".vhd")), [os.path.basename(s) for s in oDesign.all_files()])
         self.assertEqual({"WIDTH": 8}, oDesign.generics)
+
+    def test_exclude_and_work_directory(self):
+        oDesign = project.from_configuration(
+            {
+                "design": {
+                    "top": "latch_top",
+                    "work_directory": "build/design",
+                    "libraries": [{"name": "work", "files": [os.path.join(sTestDir, "*.vhd")], "exclude": ["*/un*.vhd", "*/depth.vhd"]}],
+                },
+            },
+        )
+        lFiles = [os.path.basename(s) for s in oDesign.all_files()]
+        self.assertNotIn("undeclared.vhd", lFiles)
+        self.assertNotIn("depth.vhd", lFiles)
+        self.assertIn("latch.vhd", lFiles)
+        self.assertEqual("build/design", oDesign.work_directory)
 
     def test_files_from(self):
         with tempfile.TemporaryDirectory() as sDirectory:
@@ -121,13 +137,113 @@ class test_netlist(unittest.TestCase):
         self.assertEqual((None, 0), oContext.refine(None, "q"))
 
 
+class test_top(unittest.TestCase):
+    def design(self, dGenerics):
+        return project.from_configuration(
+            {"design": {"top": "real_top", "libraries": [{"name": "work", "files": [os.path.join(sTestDir, "real_generic.vhd")]}], "generics": dGenerics}},
+        )
+
+    def test_missing_and_unknown_generics(self):
+        oDesign = self.design({"WIDTH": 8, "SPEED": 1})
+        self.assertEqual([("FREQ_HZ", 6)], [(sName, iLine) for sFile, iLine, sName in top.missing_generics(oDesign)])
+        self.assertEqual(["SPEED"], [sName for sFile, iLine, sName in top.unknown_generics(oDesign)])
+        self.assertEqual([], top.missing_generics(self.design({"FREQ_HZ": 1.0e6, "WIDTH": 8})))
+
+    def test_patch_real_generics(self):
+        oDesign = self.design({"FREQ_HZ": 100.0e6, "RATE_HZ": 2000, "WIDTH": 8})
+        with tempfile.TemporaryDirectory() as sDirectory:
+            sOriginal, sCopy, lPatched = top.patch_real_generics(oDesign, sDirectory)
+            with open(sCopy, encoding="utf-8") as oFile:
+                lCopy = oFile.read().splitlines()
+        with open(sOriginal, encoding="utf-8") as oFile:
+            lOriginal = oFile.read().splitlines()
+        self.assertEqual(["FREQ_HZ", "RATE_HZ"], lPatched)
+        # Every line stays in place, so findings in the copy have the lines of the original
+        self.assertEqual(len(lOriginal), len(lCopy))
+        self.assertEqual("    FREQ_HZ : real := 100000000.0;", lCopy[5])
+        self.assertEqual("    RATE_HZ : real     := 2000.0;", lCopy[6])
+        self.assertEqual(lOriginal[7:], lCopy[7:])
+        self.assertIn("WIDTH=8", " ".join(runner.elaboration_options(oDesign, sDirectory, lPatched)))
+        self.assertNotIn("FREQ_HZ", " ".join(runner.elaboration_options(oDesign, sDirectory, lPatched)))
+
+    def test_real_literal(self):
+        self.assertEqual("100000000.0", top.real_literal(1e8))
+        self.assertEqual("1.0e+20", top.real_literal(1e20))
+        self.assertEqual("2.5", top.real_literal("2.5"))
+
+    def test_generic_declarations(self):
+        lLines, _ = vhdlFile.utils.read_vhdlfile(os.path.join(sTestDir, "real_generic.vhd"))
+        lDeclarations = top.generic_declarations(vhdlFile.vhdlFile(lLines), "real_top")
+        self.assertEqual([["FREQ_HZ"], ["RATE_HZ"], ["WIDTH"]], [[s for s, i in d["names"]] for d in lDeclarations])
+        self.assertEqual(["real", "real", "positive"], [d["type"] for d in lDeclarations])
+        self.assertEqual([False, True, False], [d["default"] is not None for d in lDeclarations])
+
+
+class test_graph(unittest.TestCase):
+    def test_strongly_connected(self):
+        dEdges = {1: [2], 2: [3], 3: [2], 4: [1], 5: [5]}
+        lComponents = graph.strongly_connected([1, 2, 3, 4, 5], lambda i: dEdges.get(i, []))
+        self.assertEqual([[2, 3], [1], [4], [5]], [sorted(l) for l in lComponents])
+
+    def module(self, dCells, dPorts=None):
+        dModule = {"ports": dPorts or {}, "cells": dCells, "netnames": {}}
+        oDesign = graph.DesignGraph(netlist.Netlist({"modules": {"m": dModule}}, {}))
+        return oDesign.graph("m")
+
+    def test_bit_level_dependencies(self):
+        oModule = self.module(
+            {
+                "add": {"type": "$add", "connections": {"A": [2, 3], "B": [4, 5], "Y": [6, 7]}},
+                "mux": {"type": "$mux", "connections": {"A": [2, 3], "B": [4, 5], "S": [8], "Y": [9, 10]}},
+                "ff": {"type": "$dff", "connections": {"CLK": [1], "D": [6, 7], "Q": [11, 12]}},
+            },
+        )
+        # A carry moves to the more significant bits only
+        self.assertEqual([2, 4], sorted(oModule.comb_drivers(6)))
+        self.assertEqual([2, 3, 4, 5], sorted(oModule.comb_drivers(7)))
+        self.assertEqual([3, 5, 8], sorted(oModule.comb_drivers(10)))
+        # A register breaks the path
+        self.assertEqual([], oModule.comb_drivers(11))
+
+    def test_loops_and_latches(self):
+        # A multiplexer feeding back to itself is a latch, not a loop; two cells feeding each other are a loop
+        oModule = self.module(
+            {
+                "latch": {"type": "$mux", "connections": {"A": [2], "B": [3], "S": [4], "Y": [2]}},
+                "a": {"type": "$and", "connections": {"A": [5], "B": [3], "Y": [6]}},
+                "b": {"type": "$or", "connections": {"A": [6], "B": [4], "Y": [5]}},
+            },
+        )
+        self.assertEqual([[5, 6]], [sorted(l) for l in oModule.loops()])
+
+    def test_register_value(self):
+        oModule = self.module(
+            {
+                "hold": {"type": "$mux", "connections": {"A": [3], "B": ["0"], "S": [4], "Y": [5]}},
+                "stuck": {"type": "$adff", "parameters": {"ARST_VALUE": "0"}, "connections": {"CLK": [1], "ARST": [2], "D": [5], "Q": [3]}},
+                "once": {"type": "$adff", "parameters": {"ARST_VALUE": "0"}, "connections": {"CLK": [1], "ARST": [2], "D": ["1"], "Q": [6]}},
+                "data": {"type": "$dff", "connections": {"CLK": [1], "D": [4], "Q": [7]}},
+            },
+        )
+        self.assertEqual("0", oModule.register_value("stuck", 0))
+        self.assertIsNone(oModule.register_value("once", 0))
+        self.assertIsNone(oModule.register_value("data", 0))
+
+    def test_verilog_instance_name(self):
+        self.assertEqual("data_ram_gen_n1_data_ram_inst", netlist.verilog_instance_name("data_ram_gen:1.data_ram_inst"))
+        self.assertEqual("u_core", netlist.verilog_instance_name("u_core"))
+
+
 @unittest.skipUnless(tools_installed(), "GHDL, Yosys and the GHDL plugin are not installed")
 class test_design_analysis(unittest.TestCase):
-    def run_design(self, sTop, sFile, lArguments=()):
+    def run_design(self, sTop, sFile, lArguments=(), dGenerics=None, dRules=None):
         with tempfile.TemporaryDirectory() as sDirectory:
             sConfiguration = os.path.join(sDirectory, "design.yaml")
+            dDesign = {"top": sTop, "libraries": [{"name": "work", "files": [os.path.join(sTestDir, sFile)]}]}
+            if dGenerics:
+                dDesign["generics"] = dGenerics
             with open(sConfiguration, "w", encoding="utf-8") as oFile:
-                json.dump({"design": {"top": sTop, "libraries": [{"name": "work", "files": [os.path.join(sTestDir, sFile)]}]}}, oFile)
+                json.dump({"design": dDesign, "rule": dRules or {}}, oFile)
             oResult = subprocess.run(
                 [*utils.mhsg_exec(), "--design", "-c", sConfiguration, "-of", "syntastic", *lArguments],
                 cwd=sRoot,
@@ -155,6 +271,61 @@ class test_design_analysis(unittest.TestCase):
         self.assertEqual(1, iStatus)
         self.assertEqual(1, len(lOutput))
         self.assertIn("undeclared.vhd(14)design_001 -- GHDL analysis error: no declaration for", lOutput[0])
+
+    def findings(self, sTop, sFile, **dOptions):
+        """Returns the findings as (file name, line, rule, message)."""
+        _, lOutput = self.run_design(sTop, sFile, **dOptions)
+        lReturn = []
+        for sLine in lOutput:
+            sLocation, sMessage = sLine.split(": ", 1)[1].split(" -- ", 1)
+            sFile, sRest = sLocation.split("(", 1)
+            sLineNumber, sRule = sRest.split(")", 1)
+            lReturn.append((os.path.basename(sFile), int(sLineNumber), sRule, sMessage))
+        return lReturn
+
+    def test_combinational_loops(self):
+        self.assertEqual(
+            [
+                ("loop.vhd", 40, "design_003", "Combinational loop through a, b in loop_top"),
+                ("loop.vhd", 45, "design_003", "Combinational loop through e, f in loop_top and instance u_pass"),
+            ],
+            self.findings("loop_top", "loop.vhd"),
+        )
+
+    def test_multiple_drivers(self):
+        # The bidirectional pin is not reported
+        self.assertEqual(
+            [("multiple_drivers.vhd", 37, "design_004", "Signal shared_net in md_top has 2 drivers: u_first, u_second")],
+            self.findings("md_top", "multiple_drivers.vhd"),
+        )
+
+    def test_registers(self):
+        # ready_r changes once after reset and q_r has an enable: neither is reported
+        self.assertEqual(
+            [
+                ("registers.vhd", 24, "design_006", "Signal missing in registers_top is read but never assigned"),
+                ("registers.vhd", 33, "design_006", "Register count in registers_top is never used"),
+                ("registers.vhd", 37, "design_005", "Register busy_r in registers_top never changes: it is always 0"),
+            ],
+            self.findings("registers_top", "registers.vhd"),
+        )
+
+    def test_logic_depth(self):
+        # Two levels in the adder entity and one in the top: the path is reported once, where it ends
+        self.assertEqual(
+            [("depth.vhd", 53, "design_007", "Path of 3 logic levels to register q in depth_top, more than 2")],
+            self.findings("depth_top", "depth.vhd", dRules={"design_007": {"maximum_depth": 2}}),
+        )
+        self.assertEqual([], self.findings("depth_top", "depth.vhd"))
+
+    def test_generics(self):
+        lFindings = self.findings("real_top", "real_generic.vhd", dGenerics={"WIDTH": 4})
+        self.assertEqual(
+            [("real_generic.vhd", 6, "design_001", "Design configuration error: generic FREQ_HZ of real_top has no default value; set it under generics")],
+            lFindings,
+        )
+        # A real generic is set in a copy of the file, and findings still name the original
+        self.assertEqual([], self.findings("real_top", "real_generic.vhd", dGenerics={"WIDTH": 4, "FREQ_HZ": 100.0e6}))
 
     def test_missing_design_section(self):
         oResult = subprocess.run([*utils.mhsg_exec(), "--design", "-of", "syntastic"], cwd=sRoot, capture_output=True, text=True, check=False)

@@ -4,10 +4,11 @@ Runs design analysis: GHDL and Yosys on the design described in the configuratio
 Findings are reported per VHDL file in the same formats as the other checks.
 """
 
+import contextlib
 import tempfile
 
 from mhsg import report, rule_list, rule_set, severity, vhdlFile
-from mhsg.design import netlist, project, runner, tools
+from mhsg.design import graph, netlist, project, runner, tools, top
 from mhsg.lint import model
 
 
@@ -19,6 +20,13 @@ class Context:
         self.result = oResult
         self.netlist = oNetlist
         self._dFiles = {}
+        self._oGraph = None
+
+    def graph(self):
+        """Returns the DesignGraph of the netlist, built once for all rules, or None without a netlist."""
+        if self._oGraph is None and self.netlist is not None:
+            self._oGraph = graph.DesignGraph(self.netlist)
+        return self._oGraph
 
     def vhdl_file(self, sFileName):
         """Returns the parsed VHDL file, or None if it cannot be read or parsed."""
@@ -30,23 +38,30 @@ class Context:
                 self._dFiles[sFileName] = None
         return self._dFiles[sFileName]
 
-    def refine(self, oLocation, sSignal):
+    def refine(self, oLocation, sSignal, bLast=False):
         """
         Returns (file, line) for a cell: the line of the first assignment to the signal in the process that holds
-        the location, which is more precise than the process or if statement GHDL points at, or the location itself.
+        the location, or the last one with bLast, which is more precise than the process or if statement GHDL points
+        at, or the location itself.
         """
         if oLocation is None:
             return None, 0
         oFile = self.vhdl_file(oLocation.file) if sSignal else None
         if oFile is not None:
-            sBase = sSignal.lower().split("[")[0]
+            # Names carry generate labels before the signal, such as gen_fifo.memory, and record fields after it,
+            # such as ctrl_o.cpu_priv: try the parts from the last
+            lParts = list(reversed(sSignal.lower().split("[")[0].split(".")))
             for oArchitecture in oFile.get_lint_model().architectures:
                 for oProcess in oArchitecture.processes:
                     if not oProcess.line <= oLocation.line <= oProcess.end_line:
                         continue
-                    for oAssignment in model.assignments(oProcess.statements):
-                        if oAssignment.base == sBase:
-                            return oLocation.file, oAssignment.line
+                    lAssignments = list(model.assignments(oProcess.statements))
+                    if bLast:
+                        lAssignments.reverse()
+                    for sBase in lParts:
+                        for oAssignment in lAssignments:
+                            if oAssignment.base == sBase:
+                                return oLocation.file, oAssignment.line
         return oLocation.file, oLocation.line
 
 
@@ -66,14 +81,38 @@ def run(commandLineArguments, oConfig):
     oDesign = project.from_configuration(oConfig.dConfig)
     oTools = tools.find()
     _, lRules = design_rules(oConfig, commandLineArguments.local_rules)
-    with tempfile.TemporaryDirectory(prefix="mhsg_design_") as sWorkDirectory:
-        oResult = runner.run(oDesign, oTools, sWorkDirectory)
+    if oDesign.work_directory:
+        oWorkDirectory = contextlib.nullcontext(oDesign.work_directory)
+    else:
+        oWorkDirectory = tempfile.TemporaryDirectory(prefix="mhsg_design_")
+    with oWorkDirectory as sWorkDirectory:
+        oResult = configuration_result(oDesign)
+        if oResult is None:
+            oResult = runner.run(oDesign, oTools, sWorkDirectory)
         oNetlist = None
         if oResult.netlist is not None:
             oNetlist = netlist.Netlist(oResult.netlist, netlist.read_locations(oResult.verilog_file))
         oContext = Context(oDesign, oResult, oNetlist)
         lFindings = [(oRule, oFinding) for oRule in lRules for oFinding in oRule.check_design(oContext)]
     return print_report(oDesign, oResult, lFindings, oConfig, commandLineArguments.output_format, len(lRules))
+
+
+def configuration_result(oDesign):
+    """Returns a failed Result for generics of the top entity that need a value, or None if the design can run."""
+    lMessages = [
+        runner.Message(sFile, iLine, 0, "error", f"generic {sName} of {oDesign.top} has no default value; set it under generics", "configuration")
+        for sFile, iLine, sName in top.missing_generics(oDesign)
+    ]
+    lMessages += [
+        runner.Message(sFile, iLine, 0, "error", f"{oDesign.top} has no generic {sName}, which is set under generics", "configuration")
+        for sFile, iLine, sName in top.unknown_generics(oDesign)
+    ]
+    if not lMessages:
+        return None
+    oResult = runner.Result()
+    oResult.failed_stage = "configuration"
+    oResult.messages = lMessages
+    return oResult
 
 
 def print_report(oDesign, oResult, lFindings, oConfig, sOutputFormat, iRules):
