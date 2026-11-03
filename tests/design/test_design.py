@@ -409,20 +409,68 @@ class test_design_analysis(unittest.TestCase):
         )
 
     def test_reconvergence(self):
-        # The gray-coded bus and the edge detector on one synchronized signal are not reported
-        self.assertEqual(
-            [("reconvergence.vhd", 53, "design_016", "mode_a, start_a from clk_a are synchronized separately and meet again in go_b (clk_b)")],
-            self.findings("reconvergence_top", "reconvergence.vhd"),
-        )
+        # Reported: two signals meeting directly, one signal through two synchronizers, a meeting after more registers,
+        # and a flag set and cleared by two signals. Not reported: the gray-coded bus, the edge detector on one signal,
+        # the register after a meeting, and the registers behind a synchronous reset, unless follow_resets is set.
+        lExpected = [
+            (
+                "reconvergence.vhd",
+                71,
+                "design_016",
+                "Separately synchronized mode_a (by mode_meta) and start_a (by start_meta) from clk_a meet again in go_b (clk_b)",
+            ),
+            (
+                "reconvergence.vhd",
+                82,
+                "design_016",
+                "Separately synchronized flag_a (by first1_b) and flag_a (by second1_b) from clk_a meet again in differ_b (clk_b)",
+            ),
+            (
+                "reconvergence.vhd",
+                88,
+                "design_016",
+                "Separately synchronized mode_a (by mode_meta) and start_a (by start_meta) from clk_a meet again in late_b (clk_b)",
+            ),
+            (
+                "reconvergence.vhd",
+                93,
+                "design_016",
+                "Separately synchronized mode_a (by mode_meta) and start_a (by start_meta) from clk_a meet again in busy_b (clk_b)",
+            ),
+        ]
+        self.assertEqual(lExpected, self.findings("reconvergence_top", "reconvergence.vhd"))
+        lResets = [
+            (
+                "reconvergence.vhd",
+                101,
+                "design_016",
+                "Separately synchronized rst_a (by rst_meta) and start_a (by start_meta) from clk_a meet again in count1_b (clk_b)",
+            ),
+            (
+                "reconvergence.vhd",
+                102,
+                "design_016",
+                "Separately synchronized rst_a (by rst_meta) and start_a (by start_meta) from clk_a meet again in count2_b (clk_b)",
+            ),
+        ]
+        self.assertEqual(lExpected + lResets, self.findings("reconvergence_top", "reconvergence.vhd", dRules={"design_016": {"follow_resets": True}}))
         with tempfile.TemporaryDirectory() as sDirectory:
             sJson = os.path.join(sDirectory, "cdc.json")
             self.run_design("reconvergence_top", "reconvergence.vhd", ["--cdc_report", sJson])
             with open(sJson, encoding="utf-8") as oFile:
                 dReport = json.load(oFile)
         self.assertEqual(
-            [{"signals": [{"signal": "mode_a", "clock": "clk_a"}, {"signal": "start_a", "clock": "clk_a"}], "clock": "clk_b", "registers": ["go_b"]}],
-            [{k: v for k, v in d.items() if k != "location"} for d in dReport["reconvergences"]],
+            {
+                "synchronizers": [
+                    {"signal": "mode_a", "synchronizer": "mode_meta", "clock": "clk_a"},
+                    {"signal": "start_a", "synchronizer": "start_meta", "clock": "clk_a"},
+                ],
+                "clock": "clk_b",
+                "points": ["go_b"],
+            },
+            {k: v for k, v in [d for d in dReport["reconvergences"] if d["points"] == ["go_b"]][0].items() if k != "location"},
         )
+        self.assertEqual(["count1_b", "count2_b"], [d["points"][0] for d in dReport["reconvergences_through_resets"]])
 
     def test_black_boxes(self):
         # A component without an entity is a black box: the clock comes from its output, it is not undriven

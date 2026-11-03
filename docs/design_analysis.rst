@@ -158,10 +158,18 @@ A register of another, asynchronous domain is a crossing, classified as:
 +--------------------------------+---------------------------------------------------------------------------------+
 
 **Reconvergence.** Signals synchronized separately from one clock domain can arrive in different cycles of the
-destination clock. A register whose inputs combine two or more of them, through logic of its own domain, can see a
-state the source never had; design_016 reports it. The bits of one bus count as one signal, since a gray-coded bus is
-meant to be combined and design_009 reports other buses. A signal combined with a delayed copy of itself, as in an
-edge detector, is one signal.
+destination clock, and two synchronizers of the same signal can disagree for a cycle. Logic that combines them can see
+a state the source never had. Every synchronizer tags its output, and the tags follow the signal forward through logic,
+registers, memories and feedback loops such as state machines in the destination domain. Where tags of two
+synchronizers from the same source domain first meet, at a register, a memory, a black box input or an output,
+design_016 reports a reconvergence; registers further on are not reported again. The search is structural, so it finds
+every meeting, whether or not a test exercises it.
+
+* The bits of one bus share a tag: a gray-coded bus is meant to be combined, and design_009 reports other buses.
+* A signal combined with a delayed copy of itself, as in an edge detector, carries one tag.
+* A synchronous reset, an input that loads a constant into two or more registers, is a reset path rather than data
+  and is not followed, unless design_016 has :code:`follow_resets: true`. A set or clear of a single register is
+  followed. The crossing report lists the meetings through resets either way.
 
 Data that crosses through a memory, as in an asynchronous FIFO, is not a crossing: the FIFO is safe when its pointers
 cross safely, which the analysis checks.
@@ -237,8 +245,8 @@ Limitations
   signals, which a netlist cannot show. Checks for those are planned for the per-file lint.
 * Findings depend on the generics: logic that a generic disables may be constant or unused. Each finding names the
   entity with its generics, as GHDL names it, such as :code:`neorv32_cpu_regfile_5_3`.
-* Reconvergence is checked through logic up to the first register in the destination domain, not across further
-  registers. Reset domain crossings through logic are not checked yet.
+* What a black box does with its inputs is not known, so reconvergence counts only the logic before it.
+  Reset domain crossings through logic are not checked yet.
 * A black box is assumed to have no path from its inputs to its outputs, so a crossing through one is not found;
   name its clock outputs under clocks.
 * Formal reachability is planned.

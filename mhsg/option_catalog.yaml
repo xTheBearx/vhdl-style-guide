@@ -234,6 +234,10 @@ options:
     type: boolean
     label: Fixable
     description: "When false, the rule still reports violations but --fix does not change the code."
+  follow_resets:
+    type: boolean
+    label: Follow synchronous resets
+    description: Also report signals that meet through a synchronous reset, an input that loads a constant into two or more registers.
   footer_alignment:
     type: enum
     values: [left, center, right]

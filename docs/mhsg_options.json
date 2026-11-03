@@ -3003,6 +3003,11 @@
       "label": "Fixable",
       "description": "When false, the rule still reports violations but --fix does not change the code."
     },
+    "follow_resets": {
+      "type": "boolean",
+      "label": "Follow synchronous resets",
+      "description": "Also report signals that meet through a synchronous reset, an input that loads a constant into two or more registers."
+    },
     "footer_alignment": {
       "type": "enum",
       "label": "Footer alignment",
@@ -19313,7 +19318,7 @@
       "groups": [
         "design"
       ],
-      "summary": "This rule reports signals synchronized separately from one clock domain that meet again in logic.",
+      "summary": "This rule reports signals synchronized separately from one clock domain that meet again.",
       "documentation": "design_rules.rst",
       "options": [
         {
@@ -19350,6 +19355,11 @@
           "name": "user_error_message",
           "default": "",
           "definition": "user_error_message"
+        },
+        {
+          "name": "follow_resets",
+          "default": false,
+          "definition": "follow_resets"
         }
       ]
     },
