@@ -5,7 +5,7 @@ from mhsg.rules.sv_spacing import ALWAYS_KEYWORDS, Rule, kind
 
 class rule_006(Rule):
     """
-    This rule checks for no space between @ and its parenthesis or *, and one space between an always keyword
+    This rule checks for no space between @ and its parenthesis or :code:`*`, and one space between an always keyword
     and @, as Verible's formatter does.
 
     **Violation**

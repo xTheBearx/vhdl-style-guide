@@ -197,3 +197,20 @@ With multiple options available, the user is required to make the decision.
 * `type_602 <type_rules.html#type-602>`_
 * `variable_012 <variable_rules.html#variable-012>`_
 * `variable_600 <variable_rules.html#variable-600>`_
+
+SystemVerilog
+-------------
+
+Rules on the design of SystemVerilog and Verilog code that only the designer can change.
+
+* `sv_always_003 <sv_always_rules.html#sv-always-003>`_
+* `sv_always_004 <sv_always_rules.html#sv-always-004>`_
+* `sv_case_001 <sv_case_rules.html#sv-case-001>`_
+* `sv_case_002 <sv_case_rules.html#sv-case-002>`_
+* `sv_generate_001 <sv_generate_rules.html#sv-generate-001>`_
+* `sv_generate_002 <sv_generate_rules.html#sv-generate-002>`_
+* `sv_generate_003 <sv_generate_rules.html#sv-generate-003>`_
+* `sv_generate_005 <sv_generate_rules.html#sv-generate-005>`_
+* `sv_module_001 <sv_module_rules.html#sv-module-001>`_
+* `sv_module_002 <sv_module_rules.html#sv-module-002>`_
+* `sv_statement_001 <sv_statement_rules.html#sv-statement-001>`_
