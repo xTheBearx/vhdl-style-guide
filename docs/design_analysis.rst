@@ -249,7 +249,8 @@ A waiver names the destination register of a crossing, as the report names it, o
 A waiver without a justification is reported by design_008.
 
 **Report.** :code:`--cdc_report FILE` writes every clock and crossing, with its status, sources and location, and
-the reset findings: as JSON for a file ending in .json, otherwise as text:
+the reset findings: as JSON for a file ending in .json, otherwise as text. It ends with the record of the run, the
+versions of MHSG, GHDL and Yosys and the configuration used (see :ref:`the record of the run <run_record>`):
 
 .. code-block:: text
 
@@ -266,6 +267,11 @@ the reset findings: as JSON for a file ending in .json, otherwise as text:
        gray-coded bus: 6 bits of i_cc_rd_wr.regin, gray coded
        at src/base/vhdl/olo_base_cc_bits.vhd:125
      ...
+
+   Run
+     Tools: mhsg 3.36.0, Python 3.12.3, pyslang 12.1.0, GHDL 4.1.0 (Ubuntu 4.1.0+dfsg-0ubuntu2) [Dunoon edition], Yosys 0.33 (git sha1 2584903a060)
+     Configuration: design.yaml (sha256 9c41e7...)
+     Command line: --design -c design.yaml --cdc_report cdc.txt
 
 **Rule set.** The **cdc** rule set labels these checks CDC-001 to CDC-009; **do254** maps them to CDC1, SS8 to SS12
 and SS15:

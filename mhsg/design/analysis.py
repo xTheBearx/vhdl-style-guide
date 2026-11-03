@@ -9,7 +9,7 @@ import importlib
 import json
 import tempfile
 
-from mhsg import language, report, rule_list, rule_set, severity, vhdlFile
+from mhsg import language, provenance, report, rule_list, rule_set, severity, vhdlFile
 from mhsg.design import (
     black_box,
     cdc,
@@ -171,6 +171,7 @@ def run(commandLineArguments, oConfig):
     """Runs design analysis and prints its report. Returns the exit status: 1 for errors, else 0."""
     oDesign = project.from_configuration(oConfig.dConfig)
     oTools = tools.find(bGhdl=oDesign.language != "systemverilog")
+    dRecord = provenance.record(commandLineArguments, oConfig, oTools)
     _, lRules = design_rules(oConfig, commandLineArguments.local_rules)
     if oDesign.work_directory:
         oWorkDirectory = contextlib.nullcontext(oDesign.work_directory)
@@ -189,13 +190,32 @@ def run(commandLineArguments, oConfig):
             oNetlist = netlist.Netlist(oResult.netlist, dLocations, lFiles)
         oContext = Context(oDesign, oResult, oNetlist)
         lFindings = [(oRule, oFinding) for oRule in lRules for oFinding in oRule.check_design(oContext)]
-        write_cdc_report(getattr(commandLineArguments, "cdc_report", None), oContext)
+        write_cdc_report(getattr(commandLineArguments, "cdc_report", None), oContext, dRecord)
         write_black_box_template(getattr(commandLineArguments, "black_box_template", None), oContext)
-    return print_report(oDesign, oResult, lFindings, oConfig, commandLineArguments.output_format, len(lRules))
+    iStatus, lRunInfo = print_report(oDesign, oResult, lFindings, oConfig, commandLineArguments.output_format, len(lRules))
+    if getattr(commandLineArguments, "json", None):
+        with open(commandLineArguments.json, "w", encoding="utf-8") as oFile:
+            # The entries of the files have the keys of those --json writes for the files of a run
+            lFiles = [
+                {
+                    "file_path": d["filename"],
+                    "violations": [
+                        {"rule": v["rule"], "linenumber": int(v["lineNumber"]), "severity": v["severity"]["name"], "solution": v["solution"]}
+                        for v in d["violations"]
+                    ],
+                }
+                for d in lRunInfo
+            ]
+            json.dump({"files": lFiles, "run": dRecord}, oFile, indent=2)
+            oFile.write("\n")
+    return iStatus
 
 
-def write_cdc_report(sFileName, oContext):
-    """Writes the clock domain crossing report, as JSON for a .json file name and as text otherwise."""
+def write_cdc_report(sFileName, oContext, dRecord=None):
+    """
+    Writes the clock domain crossing report, as JSON for a .json file name and as text otherwise, with the record of
+    the run: the versions of the tools and the configuration.
+    """
     if not sFileName:
         return
     oAnalysis = oContext.cdc()
@@ -205,6 +225,9 @@ def write_cdc_report(sFileName, oContext):
     else:
         dReport = oAnalysis.report()
         sText = cdc.report_text(dReport)
+    if dRecord is not None:
+        dReport = {**dReport, "run": dRecord}
+        sText = sText.rstrip("\n") + "\n\nRun\n" + "".join(f"  {s}\n" for s in provenance.summary(dRecord))
     with open(sFileName, "w", encoding="utf-8") as oFile:
         if sFileName.lower().endswith(".json"):
             json.dump(dReport, oFile, indent=2)
@@ -245,11 +268,13 @@ def configuration_result(oDesign):
 
 def print_report(oDesign, oResult, lFindings, oConfig, sOutputFormat, iRules):
     dByFile = {}
+    lRunInfo = []
     for oRule, oFinding in lFindings:
         dByFile.setdefault(oFinding.file or oDesign.top, []).append((oRule, oFinding))
     bErrors = oResult.failed_stage is not None
     for sFile in sorted(dByFile):
         dRunInfo = run_info(sFile, dByFile[sFile], oConfig.severity_list, iRules)
+        lRunInfo.append(dRunInfo)
         bErrors = bErrors or any(d["severity"]["type"] == severity.error_type for d in dRunInfo["violations"])
         sOutputStd, sOutputErr = format_report(dRunInfo, sOutputFormat)
         if sOutputStd:
@@ -258,7 +283,7 @@ def print_report(oDesign, oResult, lFindings, oConfig, sOutputFormat, iRules):
             print(sOutputErr)
     if not dByFile and sOutputFormat != "syntastic":
         print(f"Design analysis of {oDesign.top}: no findings ({iRules} design rules checked)")
-    return 1 if bErrors else 0
+    return (1 if bErrors else 0), lRunInfo
 
 
 def run_info(sFile, lFindings, oSeverityList, iRules):
