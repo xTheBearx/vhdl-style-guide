@@ -4,6 +4,8 @@
 # default severity. Checks without rules record their status:
 #   planned  a per-file lint rule is planned
 #   design   needs design analysis of the whole design (GHDL and Yosys), planned
+#
+# Rules named design_ run only in design analysis, with --design.
 #   manual   left to manual code review
 #
 # Rules are labelled with the check in reports, for example "DO254-CP2 (lint_001)".
@@ -21,7 +23,7 @@ checks:
   CP1:
     title: Avoid incorrect VHDL type usage
     severity: Error
-    status: design
+    rules: [design_001]
   CP2:
     title: Avoid duplicate signal assignments
     severity: Warning
@@ -70,7 +72,7 @@ checks:
   CP13:
     title: Declare objects before use
     severity: Error
-    status: design
+    rules: [design_001]
   CP14:
     title: Avoid unused declarations
     severity: Warning
@@ -99,7 +101,7 @@ checks:
   SS4:
     title: Avoid latch inference
     severity: Warning
-    rules: [lint_009]
+    rules: [lint_009, design_002]
   SS5:
     title: Avoid multiple waveforms
     severity: Error

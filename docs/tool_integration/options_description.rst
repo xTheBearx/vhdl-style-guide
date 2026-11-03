@@ -122,4 +122,6 @@ Some settings have a type of their own:
 
 * **file_rule_list**: a list of single key objects, which map a file name or pattern to a configuration with a :code:`rule` key. See :code:`file_rules` in :doc:`../configuring_overview`.
 * **severity_map**: an object which maps the name of a custom severity to an object with a :code:`type` key, :code:`error` or :code:`warning`.
+* **design_library_list**: a list of objects with a :code:`name` key and a :code:`files` list of files and glob patterns, or a :code:`files_from` file listing them. See :doc:`../design_analysis`.
+* **generic_map**: an object which maps generic names to values.
 * **indent_table**: an object which maps a token group to token names, each with a :code:`token` and an :code:`after` value. The default is the complete built in table.

@@ -67,6 +67,12 @@ def parse_command_line_arguments():
     )
     parser.add_argument("--lint_only", default=False, action="store_true", help="Run only the lint checks and the rules of the rule set.")
     parser.add_argument(
+        "--design",
+        default=False,
+        action="store_true",
+        help="Run design analysis with GHDL and Yosys on the design described in the design section of the configuration.",
+    )
+    parser.add_argument(
         "--rule_set",
         default=None,
         action="store",

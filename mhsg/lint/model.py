@@ -226,6 +226,8 @@ class Process:
         self.has_wait = False
         self.clock = None
         self.generate = ()
+        # The line of the semicolon that ends the process
+        self.end_line = iLine
 
 
 class ConcurrentAssignment(Assignment):
@@ -504,6 +506,7 @@ class Model:
             elif tKind == ("process_statement", "begin_keyword"):
                 oProcess.statements, iIndex = self._sequence(iIndex + 1, PROCESS_STOP)
                 iIndex = self._until_semicolon(iIndex)
+                oProcess.end_line = self.line(min(iIndex, len(self.lTokens) - 1))
                 break
             iIndex += 1
         oProcess.generate = tuple(self.lGenerate)

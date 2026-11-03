@@ -25,6 +25,9 @@ The following is a list of the rule groups:
 +-------------------------+---------------------------------------------------------+
 | lint                    | Rules reporting design problems, run in lint mode.      |
 +-------------------------+---------------------------------------------------------+
+| design                  | Rules checking the synthesized design, run with         |
+|                         | --design.                                               |
++-------------------------+---------------------------------------------------------+
 | indent                  | Rules involving line indents.                           |
 +-------------------------+---------------------------------------------------------+
 | naming                  | Rules for constraining how identifiers etc.. are named. |

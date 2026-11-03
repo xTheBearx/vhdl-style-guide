@@ -69,6 +69,19 @@ def generate_options_description(commandLineArguments):
         sys.exit(0)
 
 
+def run_design_analysis(commandLineArguments, oConfig):
+    """Runs design analysis on the design in the configuration, prints its report and exits."""
+    from mhsg.design import analysis
+
+    for sDirectory in config.get_local_rule_directories(commandLineArguments.local_rules):
+        sys.path.append(os.path.abspath(sDirectory))
+    try:
+        sys.exit(analysis.run(commandLineArguments, oConfig))
+    except (exceptions.ConfigurationError, exceptions.DesignError) as e:
+        print(e.message)
+        sys.exit(1)
+
+
 def display_rule_configuration(commandLineArguments, oConfig):
     """
     Displays the configuration of a rule passed on the command line.
@@ -158,6 +171,9 @@ def main():
     except exceptions.ConfigurationError as e:
         print(e.message)
         sys.exit(1)
+
+    if commandLineArguments.design:
+        run_design_analysis(commandLineArguments, oConfig)
     if not commandLineArguments.stdin:
         lIndexFiles = get_index_files(commandLineArguments)
         oConfig.project_type_names = project_index.collect_type_names(lIndexFiles)

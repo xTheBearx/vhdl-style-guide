@@ -64,6 +64,11 @@
    :width: 74.32182491px
    :target: rule_groups.html
 
+.. |design| image:: img/design.svg
+   :height: 25px
+   :width: 74.32182491px
+   :target: rule_groups.html
+
 .. |lint| image:: img/lint.svg
    :height: 25px
    :width: 74.32182491px
