@@ -6,6 +6,7 @@ Backlog
 Features that are incomplete, choices that are not yet confirmed, and improvements worth making.
 Keep this page up to date: add an entry when something is left out or a limitation is found, and remove it when it is done.
 Each entry says what is missing and, where known, what it would take.
+Bugs and limitations of the tools MHSG uses, and how MHSG works around them, are in :doc:`dependency_issues`.
 
 Deferred: needs confirmation on real installations
 --------------------------------------------------
