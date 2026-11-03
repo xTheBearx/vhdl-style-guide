@@ -5,7 +5,7 @@ Multiple HDL Style Guide (MHSG) provides coding style guide enforcement for VHDL
 Support for SystemVerilog and Verilog is being added, see :doc:`systemverilog`.
 
 Why MHSG?
-########
+#########
 
 MHSG was created after participating in a code review in which a real issue was masked by a coding style issue.
 A finding was created for the style issue, while the real issue was missed.

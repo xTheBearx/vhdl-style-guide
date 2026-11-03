@@ -201,7 +201,7 @@ whitespace_011
 
 Alias: :code:`whitespace_space_around_math_operators`
 
-This rule checks for at least a single space before and after math operators +, -, /, * and **.
+This rule checks for at least a single space before and after math operators :code:`+`, :code:`-`, :code:`/`, :code:`*` and :code:`**`.
 
 **Violation**
 

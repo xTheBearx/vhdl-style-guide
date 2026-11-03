@@ -50,7 +50,7 @@ The following code would fail with this option:
      use ieee.std_logic_arith.all;
 
 Example: |names| set to ["std_logic_arith", "my_package"]
-##############################################
+#########################################################
 
 The following code would fail three times with this option:
 

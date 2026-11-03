@@ -34,6 +34,7 @@ Configuring
    configuring_previous_line_rules.rst
    configuring_procedure_call_statement_rules.rst
    configuring_rule_groups.rst
+   configuring_selected_assignment_structure_rules.rst
    configuring_simple_multiline_structure_rules.rst
    configuring_subprogram_specification_statement_rules.rst
    configuring_type_of_instantiations.rst
