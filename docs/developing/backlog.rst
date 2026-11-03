@@ -56,8 +56,9 @@ Design analysis
 Lint and rule sets
 ------------------
 
-* **DO-254 checks still planned for per-file lint**: CP3, CP4, CP6 (reset state and others branch), CP9, CP10, CP14,
-  SS5, SS7, SS17 (signals), SS20, SS21, DR2, DR3, DR9, DR10, DR11. See the coverage table of the do254 rule set.
+* **DO-254 checks still planned for per-file lint**: CP3, CP4, CP6 (reset state and others branch), CP9, CP10, CP14
+  and DR2 for VHDL (checked for SystemVerilog), SS5, SS7, SS17 (signals), SS20, SS21, DR3, DR9, DR10, DR11. See the
+  coverage table of the do254 rule set.
 * **Waivers for findings other than clock domain crossings.** Code tags disable a rule on a line; a waiver with a
   required justification, listed in the report, exists only for crossings.
 * **Tool qualification support**: :code:`--qualify` running the pass and fail examples of each check of a rule set,
@@ -68,11 +69,12 @@ Lint and rule sets
 Verilog and SystemVerilog
 -------------------------
 
-The plan, with the tools evaluated, is in the "Verilog and SystemVerilog" tab of the plan document. Step 1, reading
-files with pyslang and running the language neutral rules, is done; see :doc:`../systemverilog`.
+The plan, with the tools evaluated, is in the "Verilog and SystemVerilog" tab of the plan document. Steps 1 to 4
+(reading files, style rules, lint and design analysis) are done; see :doc:`../systemverilog`. Step 5, breadth, is
+under way: the entries below.
 
-* **Style rules (plan step 2 onwards)**: indentation (4 spaces), alignment, naming, keyword and spacing rules after
-  the lowRISC style that Verible checks. Until then only whitespace_001, whitespace_002 and the length rules run.
+* **Alignment rules**: Verible's formatter aligns port declarations, named port and parameter connections and
+  consecutive assignments in columns; mhsg has no SystemVerilog alignment rules yet.
 * **Indentation not checked yet**: continuation lines, lists aligned after their bracket, the contents of
   expressions (multi-line assignment patterns, randomize with blocks), preprocessor directives and inactive
   :code:`\`ifdef` branches. Verible's formatter has rules for each; they need studying before mhsg checks them.
@@ -87,14 +89,14 @@ files with pyslang and running the language neutral rules, is done; see :doc:`..
 * **Files with syntax errors** are skipped by the SystemVerilog rules, as a VHDL file that does not parse is. Parsing them with the defines and include
   paths of the project (a file list, as Verilator and slang take) would let fewer files fall in this case: 340 of
   the 914 corpus files have errors once macros of other files are left undefined.
-* **Checks needing semantics**: widths, sensitivity lists, multiple drivers, latches and most of the STARC lint
-  items need the elaborated design (plan step 3, lint).
+* **STARC lint items needing data flow**: about 100 per-file items of the STARC guide, such as widths of function
+  arguments, loop bounds, reset polarity and resource sharing, need more than slang's warnings.
 * **Spaces inside parentheses and braces** and around :code:`) (` between parameter and port lists are not checked;
   Verible's formatter sets them by context.
 * **Include files and defines from the command line**: files are parsed on their own; a macro defined in another file
   is not expanded, which is fine for style rules but not for lint.
 * **Code tags in block comments**: :code:`/* mhsg_off */` is not recognized; only :code:`//` comments are.
-* **STARC rule set**: 41 of the 613 items of the STARC guide have rules. The per-file items (216) are planned with
+* **STARC rule set**: 50 of the 613 items of the STARC guide have rules. The per-file items (216) are planned with
   the SystemVerilog rules, the clock and reset items with design analysis of Verilog designs. The catalogue the set
   was made from records each item's limits and its Verible equivalent, kept in the notes of the set.
 * **Lint of a whole design**: each file is elaborated on its own, so unused, undriven and implicit signals are
