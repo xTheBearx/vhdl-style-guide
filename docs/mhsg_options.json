@@ -1,7 +1,7 @@
 {
   "format": "mhsg-options",
   "format_version": 1,
-  "mhsg_version": "3.35.0.post388+git.77bb6983.dirty",
+  "mhsg_version": "3.35.0.post394+git.a2cd7883.dirty",
   "documentation_url": "https://github.com/xTheBearx/vhdl-style-guide/blob/master/docs/",
   "settings": [
     {
@@ -1893,7 +1893,21 @@
         "lint_010",
         "lint_011",
         "lint_012",
-        "lint_013"
+        "lint_013",
+        "lint_014",
+        "lint_015",
+        "lint_016",
+        "lint_017",
+        "lint_018",
+        "lint_019",
+        "lint_020",
+        "lint_021",
+        "lint_022",
+        "lint_023",
+        "lint_024",
+        "lint_025",
+        "lint_026",
+        "lint_027"
       ]
     },
     {
@@ -2679,6 +2693,12 @@
         "ignore"
       ]
     },
+    "attributes": {
+      "type": "list",
+      "label": "Attributes",
+      "description": "Attribute names, such as fsm_safe_state, of which a state signal must have one so synthesis keeps the recovery logic. Empty means not checked.",
+      "item_type": "string"
+    },
     "blank_line_ends_group": {
       "type": "enum",
       "label": "Blank line ends group",
@@ -3213,6 +3233,12 @@
         "insert",
         "remove"
       ]
+    },
+    "pattern": {
+      "type": "string",
+      "label": "Pattern",
+      "description": "Regular expression a requirement tag comment must match, such as the default for -- REQ HWR-123 written with a colon after REQ.",
+      "format": "regex"
     },
     "patterns": {
       "type": "list",
@@ -35137,6 +35163,674 @@
         "lint"
       ],
       "summary": "This rule checks for initial values on signals and output ports.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_014",
+      "alias": "lint_simulation_only_construct",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks for constructs that only simulation supports, in code meant for synthesis.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_015",
+      "alias": "lint_hidden_region",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks for regions of code hidden from synthesis or from coverage by pragmas.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_016",
+      "alias": "lint_integer_without_range",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that integer signals and ports have a range.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_017",
+      "alias": "lint_state_machine_recovery",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that a state machine recovers from illegal states.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "attributes",
+          "default": [],
+          "definition": "attributes"
+        }
+      ]
+    },
+    {
+      "id": "lint_018",
+      "alias": "lint_requirement_tag",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that entities and processes carry a requirement tag, for traceability to the hardware requirements.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "pattern",
+          "default": "\\bREQ\\s*:\\s*\\S+",
+          "definition": "pattern"
+        }
+      ]
+    },
+    {
+      "id": "lint_019",
+      "alias": "lint_buffer_or_inout_port",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks for buffer and inout ports.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_020",
+      "alias": "lint_clock_edge_style",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks how processes use clock edges.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_021",
+      "alias": "lint_one_entity_per_file",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that a file holds one entity, named like the file.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_022",
+      "alias": "lint_variable_holds_state",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks for variables in a clocked process that are read before they are written.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_023",
+      "alias": "lint_generic_assertion",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that an entity with generics checks their values with an assertion.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_024",
+      "alias": "lint_default_assignment",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that a combinational process gives every signal it assigns a default value at its start.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_025",
+      "alias": "lint_process_all",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that combinational processes use process (all).",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_026",
+      "alias": "lint_direct_entity_instantiation",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that entities are instantiated directly, with entity work.name, instead of through a component.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_027",
+      "alias": "lint_enumerated_state_type",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that state machines declare their states with an enumerated type.",
       "documentation": "lint_rules.rst",
       "options": [
         {

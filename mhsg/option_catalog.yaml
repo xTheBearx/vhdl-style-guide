@@ -119,6 +119,11 @@ options:
     values: [add_new_line, remove_new_line, ignore]
     label: Association list comma
     description: "Line break before each comma of the association list. remove_new_line keeps commas at line ends, ignore skips the check; add_new_line (accepted, not documented) moves commas to the start of the next line."
+  attributes:
+    type: list
+    item_type: string
+    label: Attributes
+    description: "Attribute names, such as fsm_safe_state, of which a state signal must have one so synthesis keeps the recovery logic. Empty means not checked."
   blank_line_ends_group:
     type: enum
     values: ["yes", "no"]
@@ -451,6 +456,11 @@ options:
     values: [insert, remove]
     label: Parenthesis
     description: insert requires the if condition to be enclosed in parentheses; remove removes the enclosing parentheses.
+  pattern:
+    type: string
+    format: regex
+    label: Pattern
+    description: Regular expression a requirement tag comment must match, such as the default for -- REQ HWR-123 written with a colon after REQ.
   patterns:
     type: list
     item_type: string

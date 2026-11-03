@@ -45,6 +45,18 @@ class RuleSet:
         self.title = dRuleSet.get("title", "")
         self.source = dRuleSet.get("source", "")
         self.checks = [Check(str(sId), dCheck or {}) for sId, dCheck in (dRuleSet.get("checks") or {}).items()]
+        # Rule sets this one includes; their checks keep their own labels
+        self.parents = []
+
+    def all_sets(self):
+        """Returns the included rule sets, depth first, and then this one; each set once."""
+        lReturn = []
+        for oParent in self.parents:
+            for oRuleSet in oParent.all_sets():
+                if oRuleSet.filename not in [o.filename for o in lReturn]:
+                    lReturn.append(oRuleSet)
+        lReturn.append(self)
+        return lReturn
 
     def label(self, oCheck):
         return self.prefix + "-" + oCheck.id
@@ -58,17 +70,18 @@ class RuleSet:
         dRules = {oRule.get_unique_id(): oRule for oRule in oRuleList.rules}
         dSeverities = {}
         setListed = set()
-        for oCheck in self.checks:
+        lChecks = [(oRuleSet, oCheck) for oRuleSet in self.all_sets() for oCheck in oRuleSet.checks]
+        for oRuleSet, oCheck in lChecks:
             for sRule, dAttributes in oCheck.configuration.items():
-                oRule = get_rule(dRules, sRule, self)
+                oRule = get_rule(dRules, sRule, oRuleSet)
                 for sAttribute, oValue in (dAttributes or {}).items():
-                    set_attribute(oRule, sAttribute, oValue, oSeverityList, self)
+                    set_attribute(oRule, sAttribute, oValue, oSeverityList, oRuleSet)
                 setListed.add(oRule.get_unique_id())
             for sRule in oCheck.rules + rules_in_groups(oRuleList, oCheck.groups):
-                oRule = get_rule(dRules, sRule, self)
+                oRule = get_rule(dRules, sRule, oRuleSet)
                 if oCheck.enable:
                     oRule.disable = False
-                oRule.rule_set_labels.append(self.label(oCheck))
+                oRule.rule_set_labels.append(oRuleSet.label(oCheck))
                 setListed.add(oRule.get_unique_id())
                 if oCheck.severity is not None:
                     dSeverities.setdefault(oRule.get_unique_id(), []).append(oCheck.severity)
@@ -156,9 +169,10 @@ def get_built_in_rule_sets():
     return sorted(os.path.splitext(s)[0] for s in os.listdir(RULE_SET_DIRECTORY) if s.endswith(".yaml"))
 
 
-def load(sNameOrPath):
+def load(sNameOrPath, sDirectory=None, lLoading=None):
     """
     Returns the rule set with a built in name, such as do254, or in a YAML file. Returns None for "none".
+    A rule set can include others with the extends key, by name or by a path relative to its own file.
     Raises a ConfigurationError if it cannot be found or read.
     """
     if sNameOrPath is None or sNameOrPath.lower() == "none":
@@ -166,9 +180,13 @@ def load(sNameOrPath):
     sFileName = os.path.join(RULE_SET_DIRECTORY, sNameOrPath.lower() + ".yaml")
     if not os.path.isfile(sFileName):
         sFileName = os.path.expandvars(sNameOrPath)
+        if sDirectory is not None and not os.path.isabs(sFileName):
+            sFileName = os.path.join(sDirectory, sFileName)
     if not os.path.isfile(sFileName):
         sBuiltIn = ", ".join(get_built_in_rule_sets())
         raise exceptions.ConfigurationError(f"ERROR: rule set {sNameOrPath} is not a built in rule set ({sBuiltIn}) or a file")
+    if os.path.abspath(sFileName) in (lLoading or []):
+        raise exceptions.ConfigurationError(f"ERROR: rule set {sFileName} includes itself through extends")
     try:
         with open(sFileName, encoding="utf-8") as oFile:
             dRuleSet = yaml.safe_load(oFile)
@@ -176,7 +194,14 @@ def load(sNameOrPath):
         raise exceptions.ConfigurationError(f"ERROR: could not read rule set {sFileName}: {e}") from e
     if not isinstance(dRuleSet, dict):
         raise exceptions.ConfigurationError(f"ERROR: rule set {sFileName} is not a mapping")
-    return RuleSet(dRuleSet, sFileName)
+    lLoading = (lLoading or []) + [os.path.abspath(sFileName)]
+    oRuleSet = RuleSet(dRuleSet, sFileName)
+    lExtends = dRuleSet.get("extends") or []
+    for sParent in [lExtends] if isinstance(lExtends, str) else lExtends:
+        oParent = load(sParent, os.path.dirname(sFileName), lLoading)
+        if oParent is not None:
+            oRuleSet.parents.append(oParent)
+    return oRuleSet
 
 
 STATUS_TEXT = {

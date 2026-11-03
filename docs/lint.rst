@@ -7,8 +7,13 @@ Besides style, MHSG can check VHDL for design problems such as latches, multiple
 These lint checks only report; they never change the code.
 
 The checks are grouped in rule sets, which map the checks of a coding standard to the MHSG rules that implement them.
-The built in rule set, **do254**, implements the coding standards of the DO-254 Users Group position paper
-*Best Practice VHDL Coding Standards for DO-254 Programs* (DO254-UG-001 Rev 1a).
+There are two built in rule sets:
+
+* **do254** implements the coding standards of the DO-254 Users Group position paper
+  *Best Practice VHDL Coding Standards for DO-254 Programs* (DO254-UG-001 Rev 1a).
+* **do254_plus** includes do254 and adds further good practice: the synthesizable subset, numeric types, clocks and
+  state machines, traceability, and the `HDLbits VHDL coding guidelines <https://www.hdlbits.com/guides/>`_.
+  Where those conflict with DO-254, DO-254 wins; for example every register needs a reset.
 
 Running lint mode
 -----------------
@@ -136,6 +141,17 @@ Each check has:
 * **enable**: false labels the rules without enabling them, for checks that need project settings first;
 * **status**: for a check without rules, one of planned, design or manual.
 
+A rule set can include others with **extends**, by built in name or by a path relative to its file.
+The checks of an included set keep their own labels, and options set by the including set win:
+
+.. code-block:: yaml
+
+   name: My standard
+   prefix: MY
+   extends: do254
+   checks:
+     ...
+
 A rule that implements checks of different severities gets the most severe one.
 
 The DO-254 rule set
@@ -145,3 +161,12 @@ This table is generated from :code:`mhsg/rule_sets/do254.yaml`.
 DR13 lists the naming rules but does not enable them: configure the prefixes and suffixes of your project, then enable the naming rules.
 
 .. include:: do254_coverage.rst
+
+The DO-254 plus rule set
+------------------------
+
+This table is generated from :code:`mhsg/rule_sets/do254_plus.yaml`. It lists the checks the set adds; it also runs every check of **do254**.
+Two checks need settings for your project: REQ needs the pattern of your requirement tags (the :code:`pattern` option of lint_018),
+and FSMSAFE checks synthesis attributes only when its :code:`attributes` option lists them.
+
+.. include:: do254_plus_coverage.rst

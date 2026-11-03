@@ -112,6 +112,28 @@ class test_rule_set(unittest.TestCase):
         self.assertEqual("Note", dRules["whitespace_002"].get_report_severity().name)
         self.assertEqual("Warning", dRules["length_002"].get_report_severity().name)
 
+    def test_do254_plus_includes_do254(self):
+        oRuleSet = rule_set.load("do254_plus")
+        self.assertEqual(["DO-254", "DO-254 plus"], [o.name for o in oRuleSet.all_sets()])
+        dRules = rules("lint_only", "do254_plus")
+        # Checks of do254 keep their labels; the new checks have their own
+        self.assertEqual(["DO254-SS4"], dRules["lint_009"].rule_set_labels)
+        self.assertEqual(["DO254PLUS-FSMSAFE"], dRules["lint_017"].rule_set_labels)
+        self.assertIn("DO254PLUS-PKG", dRules["use_clause_001"].rule_set_labels)
+        self.assertEqual(["std_logic_arith", "std_logic_unsigned", "std_logic_signed", "std_logic_misc"], dRules["use_clause_001"].names)
+        self.assertEqual(["u_"], dRules["instantiation_601"].prefixes)
+        self.assertFalse(dRules["lint_014"].disable)
+        # The do254 set alone does not run the do254_plus checks
+        self.assertTrue(rules("lint_only", "do254")["lint_014"].disable)
+
+    def test_extends_cycle(self):
+        with tempfile.TemporaryDirectory() as sDirectory:
+            for sName, sOther in (("a", "b"), ("b", "a")):
+                with open(os.path.join(sDirectory, sName + ".yaml"), "w", encoding="utf-8") as oFile:
+                    oFile.write(f"extends: {sOther}.yaml\nchecks: {{}}\n")
+            with self.assertRaises(exceptions.ConfigurationError):
+                rule_set.load(os.path.join(sDirectory, "a.yaml"))
+
     def test_most_severe(self):
         self.assertEqual("Error", rule_set.most_severe(["Note", "Error", "Warning"]))
         self.assertEqual("Warning", rule_set.most_severe(["Note", "Warning"]))
@@ -157,7 +179,7 @@ class test_lint_command_line(unittest.TestCase):
 
     def test_unknown_rule_set(self):
         lOutput = self.run_mhsg(["--lint", "--rule_set", "nothing"])
-        self.assertEqual(["ERROR: rule set nothing is not a built in rule set (do254) or a file"], lOutput)
+        self.assertEqual(["ERROR: rule set nothing is not a built in rule set (do254, do254_plus) or a file"], lOutput)
 
 
 sFixInput = "\n".join(
@@ -222,13 +244,14 @@ class test_lint_fix(unittest.TestCase):
 
 
 class test_rule_set_documentation(unittest.TestCase):
-    def test_coverage_table_is_up_to_date(self):
-        """docs/do254_coverage.rst is written with rule_set.coverage_table(rule_set.load("do254"))."""
-        with open(os.path.join(sRoot, "docs", "do254_coverage.rst"), encoding="utf-8") as oFile:
-            self.assertEqual(rule_set.coverage_table(rule_set.load("do254")), oFile.read())
+    def test_coverage_tables_are_up_to_date(self):
+        """docs/<name>_coverage.rst is written with rule_set.coverage_table(rule_set.load(name))."""
+        for sName in rule_set.get_built_in_rule_sets():
+            with self.subTest(sName), open(os.path.join(sRoot, "docs", sName + "_coverage.rst"), encoding="utf-8") as oFile:
+                self.assertEqual(rule_set.coverage_table(rule_set.load(sName)), oFile.read())
 
     def test_every_check_has_a_status(self):
-        for oCheck in rule_set.load("do254").checks:
+        for oCheck in rule_set.load("do254").checks + rule_set.load("do254_plus").checks:
             with self.subTest(oCheck.id):
                 self.assertIn(oCheck.status, rule_set.STATUS_TEXT)
                 self.assertTrue(oCheck.title)
