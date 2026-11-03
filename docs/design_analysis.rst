@@ -49,12 +49,17 @@ The design is described in the **design** section of a configuration file:
 
 * **top** is the top entity, and **architecture** optionally its architecture.
 * **standard** is the VHDL standard, one of 87, 93, 93c, 00, 02, 08 (the default) or 19.
-* **libraries** lists the libraries in the order they are analyzed, each with a **name** and its files.
+* **libraries** lists the libraries in the order they are analyzed, each with a **name** and its files, unless
+  **order** is **auto**.
   **files** lists files and glob patterns; the files of a pattern are sorted, and the order of the list is kept.
   **files_from** names a file which lists one file per line. Lines starting with # or // are comments,
   environment variables are expanded, and relative paths are relative to the list file.
   **exclude** lists patterns of files to leave out, such as testbenches or files of a missing submodule.
 * **top_library** is the library of the top entity, by default the last library.
+* **order** set to **auto** lets GHDL find the order the files are analyzed in, for designs whose files are not
+  listed in compile order, such as a whole source directory given by a glob pattern. GHDL reads every VHDL file of the
+  libraries (:code:`ghdl -i`) and gives the order the top entity needs (:code:`--elab-order`); files the top does not
+  use are not analyzed. The default, **listed**, analyzes the libraries and their files in the order given.
 * **generics** sets generics of the top entity: numbers, booleans, strings, and vectors as bits, such as ``"00000111"``.
   Every generic without a default value must be set, and every generic set must exist; otherwise design_001 reports
   it before GHDL runs, since GHDL would quietly use the leftmost value of the type, such as 1 for a positive.

@@ -770,7 +770,7 @@ class test_graph(unittest.TestCase):
 
 @unittest.skipUnless(tools_installed(), "GHDL, Yosys and the GHDL plugin are not installed")
 class test_design_analysis(unittest.TestCase):
-    def run_design(self, sTop, sFile, lArguments=(), dGenerics=None, dRules=None, dCdc=None):
+    def run_design(self, sTop, sFile, lArguments=(), dGenerics=None, dRules=None, dCdc=None, dDesignKeys=None):
         with tempfile.TemporaryDirectory() as sDirectory:
             sConfiguration = os.path.join(sDirectory, "design.yaml")
             lFiles = [sFile] if isinstance(sFile, str) else sFile
@@ -779,6 +779,7 @@ class test_design_analysis(unittest.TestCase):
                 dDesign["generics"] = dGenerics
             if dCdc:
                 dDesign["cdc"] = dCdc
+            dDesign.update(dDesignKeys or {})
             with open(sConfiguration, "w", encoding="utf-8") as oFile:
                 json.dump({"design": dDesign, "rule": dRules or {}}, oFile)
             oResult = subprocess.run(
@@ -1197,6 +1198,27 @@ class test_design_analysis(unittest.TestCase):
             [("clk_pad", "clk_pad", None), ("u_ccc.OUT0_FABCLK_0", "clk_pad", "clk_pad")],
             [(d["name"], d["group"], d["from"]) for d in dReport["clocks"]],
         )
+
+    def test_assertion_registers(self):
+        # The register GHDL makes for an assert of a clocked process is not reported as never changing
+        self.assertEqual([], self.findings("assertion_top", "assertion.vhd"))
+
+    def test_automatic_compile_order(self):
+        # The files are listed out of order, the package's library last, and order_unused.vhd does not analyze
+        sDirectory = os.path.join(sTestDir, "order")
+        lFiles = [os.path.join(sDirectory, s) for s in ("order_top.vhd", "order_unused.vhd", "order_leaf.vhd")]
+        dLibraries = {"libraries": [{"name": "work", "files": lFiles}, {"name": "util", "files": [os.path.join(sDirectory, "order_pkg.vhd")]}]}
+        iStatus, lOutput = self.run_design("order_top", [], dDesignKeys={**dLibraries, "top_library": "work"})
+        self.assertEqual(1, iStatus)
+        self.assertTrue(any("design_001" in s for s in lOutput))
+        iStatus, lOutput = self.run_design("order_top", [], dDesignKeys={**dLibraries, "top_library": "work", "order": "auto"})
+        self.assertEqual(0, iStatus, lOutput)
+        self.assertFalse(any("design_001" in s for s in lOutput))
+
+    def test_order_must_be_known(self):
+        iStatus, lOutput = self.run_design("clean", "clean.vhd", dDesignKeys={"order": "alphabetical"})
+        self.assertEqual(1, iStatus)
+        self.assertEqual(["ERROR: design order alphabetical is not one of listed, auto"], lOutput)
 
     def test_crossing_report(self):
         with tempfile.TemporaryDirectory() as sDirectory:
