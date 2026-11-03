@@ -40,8 +40,6 @@ Design analysis
 * **Reconvergence through clocked resets only.** Synchronous resets that feed two or more registers are not followed
   unless :code:`follow_resets` is set; a finer rule could tell resets from clears.
 * **Reset domain crossings through logic** are not checked.
-* **Automatic compile order.** Designs without a compile order, such as hdl-modules, need one written by hand. GHDL can
-  give one (:code:`ghdl -i` then :code:`--elab-order`); the design section could take :code:`order: auto`.
 * **Logic depth** counts operators before technology mapping, which is crude; a mapped count would be more realistic
   but slower and loses names.
 * **Unused combinational signals and delay chains** (DO-254 SS17 in part, SS1) cannot be found in the netlist, because
@@ -52,8 +50,8 @@ Design analysis
   (Open Logic olo_base_ram_tdp).
 * **Generics of type real** are set by patching a copy of the top file; other types GHDL cannot set from the command
   line would need the same.
-* **More real-world designs** in :code:`scripts/real_world_designs.yaml`: hdl-modules (needs a compile order), surf
-  (needs the vendor libraries), and a multi-clock design with vendor clocking.
+* **More real-world designs** in :code:`scripts/real_world_designs.yaml`: surf (needs the vendor libraries), the
+  hdl-modules designs that use them (hard_fifo), and a multi-clock design with vendor clocking.
 
 Lint and rule sets
 ------------------

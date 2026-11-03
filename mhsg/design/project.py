@@ -16,6 +16,7 @@ The description of a design, read from the design section of a configuration fil
       generics:
         DEPTH: 16
       ghdl_options: [-frelaxed-rules]
+      order: auto            # optional: GHDL finds the compile order
 
 A design of Verilog or SystemVerilog files, or of both languages, lists them the same way; defines and
 include_directories are passed to the reader of the Verilog files, and generics set the parameters of the top module.
@@ -29,6 +30,7 @@ from mhsg import exceptions, language
 from mhsg.design import black_box, vendors
 
 STANDARDS = ("87", "93", "93c", "00", "02", "08", "19")
+ORDERS = ("listed", "auto")
 
 
 class Library:
@@ -45,6 +47,9 @@ class Design:
         self.architecture = None
         self.standard = "08"
         self.libraries = []
+        # "listed": the files are analyzed in the order of the libraries and their files; "auto": GHDL finds the
+        # order the top entity needs, see runner.analysis_groups
+        self.order = "listed"
         self.generics = {}
         self.ghdl_options = []
         # Where GHDL and Yosys write their files; a temporary directory, removed after the run, if not given
@@ -88,6 +93,9 @@ def from_configuration(dConfiguration):
     if not oDesign.top:
         raise exceptions.ConfigurationError("ERROR: the design section needs a top entity, with the key top")
     oDesign.architecture = dDesign.get("architecture")
+    oDesign.order = str(dDesign.get("order", "listed")).lower()
+    if oDesign.order not in ORDERS:
+        raise exceptions.ConfigurationError(f"ERROR: design order {dDesign['order']} is not one of {', '.join(ORDERS)}")
     oDesign.standard = str(dDesign.get("standard", "08"))
     if oDesign.standard not in STANDARDS:
         raise exceptions.ConfigurationError(f"ERROR: design standard {oDesign.standard} is not one of {', '.join(STANDARDS)}")

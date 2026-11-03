@@ -82,6 +82,61 @@ def value_text(oValue):
     return str(oValue)
 
 
+def analysis_groups(oDesign, oTools, sWorkDirectory, oResult):
+    """
+    Returns the VHDL files to analyze as (library, files) pairs, in the order they are analyzed, or None if GHDL could
+    not find the order; its messages are then in oResult. The Verilog files of a design of both languages are read
+    by Yosys. With order: listed, each library's files in the order of the configuration. With order: auto, the files
+    the top entity needs, in the order GHDL gives (--elab-order) after importing every file into a directory of its
+    own; consecutive files of one library are analyzed together. Files the top does not need are left out.
+    """
+    lListed = [(o.name, [s for s in o.files if language.of_file(s) == language.VHDL]) for o in oDesign.libraries]
+    lListed = [(sLibrary, lFiles) for sLibrary, lFiles in lListed if lFiles]
+    if oDesign.order != "auto":
+        return lListed
+    sDirectory = os.path.join(sWorkDirectory, "order")
+    os.makedirs(sDirectory, exist_ok=True)
+    lOptions = [f"--std={oDesign.standard}", f"--workdir={sDirectory}", f"-P{sDirectory}"] + oDesign.ghdl_options
+    iMessages = len(oResult.messages)
+    dLibraries = {}
+    for sLibrary, lFiles in lListed:
+        # GHDL 4.1 leaves files imported by an absolute path out of --elab-order, so the paths are relative
+        lRelative = [relative_path(s) for s in lFiles]
+        if not run_ghdl(oResult, oTools, [oTools.ghdl, "-i"] + lOptions + [f"--work={sLibrary}"] + lRelative, "analysis"):
+            return None
+        for sFile in lFiles:
+            dLibraries.setdefault(os.path.abspath(sFile), (sLibrary, sFile))
+    sOrder = os.path.join(sDirectory, "order.txt")
+    lCommand = [oTools.ghdl, "--elab-order"] + lOptions + [f"--work={oDesign.top_library}"] + top_units(oDesign)
+    if not run_ghdl(oResult, oTools, lCommand, "analysis", sOrder):
+        return None
+    # The warnings of these steps, such as unbound components, come again when the design is analyzed and elaborated
+    del oResult.messages[iMessages:]
+    lGroups = []
+    with open(sOrder, encoding="utf-8") as oFile:
+        for sLine in oFile.read().splitlines():
+            tFile = dLibraries.get(os.path.abspath(sLine.strip())) if sLine.strip() else None
+            if tFile is None:
+                continue
+            if lGroups and lGroups[-1][0] == tFile[0]:
+                lGroups[-1][1].append(tFile[1])
+            else:
+                lGroups.append((tFile[0], [tFile[1]]))
+    if not lGroups:
+        oResult.failed_stage = "analysis"
+        oResult.messages.append(Message(None, 0, 0, "error", f"GHDL gave no compile order for {oDesign.top} (order: auto)", "analysis"))
+        return None
+    return lGroups
+
+
+def relative_path(sFile):
+    """Returns the path of a file relative to the current directory, or as it is if there is none, as on another drive."""
+    try:
+        return os.path.relpath(sFile)
+    except ValueError:
+        return sFile
+
+
 def run(oDesign, oTools, sWorkDirectory):
     """Runs the steps in the work directory and returns a Result. Stops at the first step that fails."""
     if oDesign.language == "systemverilog":
@@ -93,13 +148,12 @@ def run(oDesign, oTools, sWorkDirectory):
     if oPatch is not None:
         sOriginal, sCopy, lPatched = oPatch
         oResult.file_map[sCopy] = sOriginal
-    for oLibrary in oDesign.libraries:
-        # The Verilog files of a design of both languages are read by Yosys
-        lLibraryFiles = [s for s in oLibrary.files if language.of_file(s) == language.VHDL]
-        if not lLibraryFiles:
-            continue
+    lGroups = analysis_groups(oDesign, oTools, sWorkDirectory, oResult)
+    if lGroups is None:
+        return oResult
+    for sLibrary, lLibraryFiles in lGroups:
         lFiles = [{v: k for k, v in oResult.file_map.items()}.get(s, s) for s in lLibraryFiles]
-        lCommand = [oTools.ghdl, "-a"] + ghdl_options(oDesign, sWorkDirectory) + [f"--work={oLibrary.name}"] + lFiles
+        lCommand = [oTools.ghdl, "-a"] + ghdl_options(oDesign, sWorkDirectory) + [f"--work={sLibrary}"] + lFiles
         if not run_ghdl(oResult, oTools, lCommand, "analysis"):
             return oResult
 

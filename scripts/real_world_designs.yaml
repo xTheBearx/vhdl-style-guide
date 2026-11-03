@@ -932,3 +932,52 @@ designs:
     generics:
       ClkFreq_g: 100000000.0
   known: []
+- name: hdl_modules_asynchronous_fifo
+  project: hdl-modules
+  # Each module is a library, listed without a compile order, which GHDL finds (order: auto). hard_fifo is left out:
+  # it needs the Xilinx unisim library.
+  design:
+    top: asynchronous_fifo
+    top_library: fifo
+    order: auto
+    generics:
+      width: 8
+      depth: 16
+    libraries:
+    - name: axi
+      files:
+      - modules/axi/src/*.vhd
+    - name: axi_lite
+      files:
+      - modules/axi_lite/src/*.vhd
+    - name: axi_stream
+      files:
+      - modules/axi_stream/src/*.vhd
+    - name: common
+      files:
+      - modules/common/src/*.vhd
+    - name: dma_axi_write_simple
+      files:
+      - modules/dma_axi_write_simple/src/*.vhd
+    - name: fifo
+      files:
+      - modules/fifo/src/*.vhd
+    - name: lfsr
+      files:
+      - modules/lfsr/src/*.vhd
+    - name: math
+      files:
+      - modules/math/src/*.vhd
+    - name: register_file
+      files:
+      - modules/register_file/src/*.vhd
+    - name: resync
+      files:
+      - modules/resync/src/*.vhd
+    - name: ring_buffer
+      files:
+      - modules/ring_buffer/src/*.vhd
+    - name: sine_generator
+      files:
+      - modules/sine_generator/src/*.vhd
+  known: []

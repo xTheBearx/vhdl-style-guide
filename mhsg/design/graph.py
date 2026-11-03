@@ -15,6 +15,8 @@ from mhsg.design import netlist
 STATE_TYPES = netlist.FLIP_FLOP_TYPES | netlist.LATCH_TYPES | {"$dffsr", "$dffsre", "$aldff", "$aldffe", "$sr", "$ff"}
 # Cells with no outputs, or whose effect is outside the logic
 SINK_TYPES = {"$memwr", "$memwr_v2", "$meminit", "$meminit_v2", "$mem", "$mem_v2", "$assert", "$assume", "$cover", "$live", "$fair", "$print", "$check"}
+# The cells of assertions, assumptions and cover statements
+FORMAL_TYPES = {"$assert", "$assume", "$cover", "$live", "$fair", "$check"}
 # Cells whose output bit depends on the same bit of the inputs
 BITWISE_TYPES = {"$and", "$or", "$xor", "$xnor", "$not", "$pos", "$buf", "$bweqx"}
 # Cells that cost no logic level: inverters and buffers
@@ -436,10 +438,18 @@ class ModuleGraph:
     # Registers
 
     def registers(self):
-        """Yields the names of the flip-flop cells of the module."""
+        """Yields the names of the flip-flop cells of the module, leaving out those of assertions."""
         for sCell, dCell in self.cells.items():
-            if dCell.get("type") in netlist.FLIP_FLOP_TYPES:
+            if dCell.get("type") in netlist.FLIP_FLOP_TYPES and not self.assertion_register(sCell):
                 yield sCell
+
+    def assertion_register(self, sCell):
+        """
+        Returns whether a flip-flop only feeds assertions. GHDL makes one for each assert of a clocked process, to hold
+        its condition until the clock edge; it checks the design and is not part of it.
+        """
+        lReaders = [t for oBit in self.cells[sCell].get("connections", {}).get("Q", []) if is_variable(oBit) for t in self.readers.get(oBit, [])]
+        return bool(lReaders) and all(sReader is not None and self.cells[sReader].get("type") in FORMAL_TYPES for sReader, _, _ in lReaders)
 
     def register_value(self, sCell, iIndex):
         """
