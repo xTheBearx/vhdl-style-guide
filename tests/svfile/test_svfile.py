@@ -370,7 +370,7 @@ class test_rules(unittest.TestCase):
     def test_declarations_check(self):
         # Every rule enabled, see all_rules.yaml; the indent, whitespace and begin-end rules are left out
         _, lOutput, _ = self.run_mhsg(["-ap", "-c", os.path.join(sDirectory, "all_rules.yaml")], "declarations.sv")
-        lOutput = [s.split(" ", 1)[1] for s in lOutput if not any(x in s for x in ("sv_indent", "sv_whitespace", "sv_statement_001"))]
+        lOutput = [s.split(" ", 1)[1] for s in lOutput if not any(x in s for x in ("sv_indent", "sv_whitespace", "sv_statement_001", "sv_alignment"))]
         self.assertEqual(
             [
                 "declarations.sv(1)sv_naming_005 -- Rename macro data_width to match [A-Z_0-9]+",
@@ -522,6 +522,31 @@ class test_rules(unittest.TestCase):
             ),
         )
         self.assertIsInstance([o for o in oFile.lAllObjects if o.get_value() == "extra"][0], tokens.of("Declarator", "name"))
+
+    def test_alignment(self):
+        # The ports, declarations and named connections were aligned by their author and are aligned again; the
+        # localparams were nearly flush left and are made flush left; the assignments and case items are in
+        # between, with 3 spaces too many, and are left as they are
+        _, lOutput, _ = self.run_mhsg(["-ap"], "alignment.sv")
+        self.assertEqual(
+            [
+                "ERROR: alignment.sv(4)sv_alignment_001 -- Align valid_o in column 24",
+                "ERROR: alignment.sv(7)sv_alignment_006 -- Use 1 space(s) before =",
+                "ERROR: alignment.sv(8)sv_alignment_004 -- Align valid in column 18",
+                "ERROR: alignment.sv(9)sv_alignment_004 -- Align data in column 18",
+                "ERROR: alignment.sv(10)sv_alignment_004 -- Align wide in column 18",
+                "ERROR: alignment.sv(16)sv_alignment_002 -- Align ( in column 19",
+            ],
+            only(lOutput, "sv_alignment"),
+        )
+        _, _, sAfter = self.run_mhsg(["--fix"], "alignment.sv")
+        self.assertEqual(read("alignment.fixed.sv"), sAfter)
+
+    def test_alignment_policies(self):
+        _, lOutput, _ = self.run_with_configuration("rule:\n  sv_alignment_005:\n    policy: align\n", "alignment.sv")
+        self.assertIn("ERROR: alignment.sv(12)sv_alignment_005 -- Align = in column 20", lOutput)
+        _, lOutput, _ = self.run_with_configuration("rule:\n  sv_alignment_005:\n    policy: flush_left\n", "alignment.sv")
+        self.assertIn("ERROR: alignment.sv(11)sv_alignment_005 -- Use 1 space(s) before =", lOutput)
 
     def test_sample_is_clean(self):
         self.assertEqual((0, []), self.run_mhsg([], "sample.sv")[:2])

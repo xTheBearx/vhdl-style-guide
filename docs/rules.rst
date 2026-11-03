@@ -119,6 +119,7 @@ The rules length_001, length_002, length_004, whitespace_001 and whitespace_002 
 .. toctree::
    :maxdepth: 2
 
+   sv_alignment_rules.rst
    sv_always_rules.rst
    sv_blank_line_rules.rst
    sv_case_rules.rst

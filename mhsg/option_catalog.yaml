@@ -533,6 +533,11 @@ options:
     maximum: 7
     label: Phase
     description: Phase (1 to 7) in which the rule runs; rules run in increasing phase order. Changing it is rarely needed and can break the ordering between rules.
+  policy:
+    type: enum
+    values: [infer, align, flush_left]
+    label: Alignment policy
+    description: "infer aligns the column, keeps it flush left or leaves it, by how the author spaced it, as Verible's formatter does; align always aligns; flush_left always uses the fewest spaces."
   prefix_exceptions:
     type: list
     item_type: string
