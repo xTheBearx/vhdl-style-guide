@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from mhsg.rules.sv_lint.diagnostics import Rule
+from mhsg.rules.sv_lint.verilator_rule import Rule
 
 # Verilator's warnings for checks slang does not make
 DEFAULT_WARNINGS = (
     "ALWCOMBORDER",
     "BLKSEQ",
-    "CASEINCOMPLETE",
     "CASEX",
     "COMBDLY",
     "INITIALDLY",
-    "MULTIDRIVEN",
     "SYNCASYNCNET",
 )
 
@@ -18,10 +16,9 @@ DEFAULT_WARNINGS = (
 class rule_011(Rule):
     """
     This rule reports the warnings of Verilator, when it is installed, for checks slang does not make: blocking
-    assignments in clocked processes (BLKSEQ), non-blocking assignments in combinational ones (COMBDLY), signals
-    assigned in more than one process (MULTIDRIVEN), case statements that do not cover every value
-    (CASEINCOMPLETE), and others. The verilator_warnings option lists the warnings reported, by Verilator's names;
-    by default those whose checks slang does not make.
+    assignments in clocked processes (BLKSEQ), non-blocking assignments in combinational ones (COMBDLY), and others.
+    The verilator_warnings option lists the warnings reported, by Verilator's names; by default those whose checks
+    slang does not make, but for MULTIDRIVEN and CASEINCOMPLETE, which sv_lint_012 and sv_lint_013 report.
 
     Verilator lints the SystemVerilog files of a run together; the systemverilog section of the configuration turns
     it off with :code:`verilator: false`, or names the program with :code:`verilator: /path/to/verilator`.
@@ -47,13 +44,5 @@ class rule_011(Rule):
     """
 
     def __init__(self):
-        super().__init__()
-        self.solution = "See Verilator's description of the warning"
-        self.verilator_warnings = list(DEFAULT_WARNINGS)
+        super().__init__(DEFAULT_WARNINGS)
         self.configuration.append("verilator_warnings")
-
-    def accepts(self, sName):
-        return sName.startswith("verilator.") and sName.split(".", 1)[1] in [str(s).upper() for s in self.verilator_warnings]
-
-    def message(self, oDiagnostic):
-        return f"{super().message(oDiagnostic)} (Verilator {oDiagnostic.name.split('.', 1)[1]})"

@@ -236,6 +236,8 @@ Rules on the design of SystemVerilog and Verilog code that only the designer can
 * `sv_lint_009 <sv_lint_rules.html#sv-lint-009>`_
 * `sv_lint_010 <sv_lint_rules.html#sv-lint-010>`_
 * `sv_lint_011 <sv_lint_rules.html#sv-lint-011>`_
+* `sv_lint_012 <sv_lint_rules.html#sv-lint-012>`_
+* `sv_lint_013 <sv_lint_rules.html#sv-lint-013>`_
 * `sv_literal_002 <sv_literal_rules.html#sv-literal-002>`_
 * `sv_literal_003 <sv_literal_rules.html#sv-literal-003>`_
 * `sv_literal_004 <sv_literal_rules.html#sv-literal-004>`_

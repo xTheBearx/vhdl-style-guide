@@ -93,8 +93,6 @@ under way: the entries below.
 * **STARC rule set**: 50 of the 613 items of the STARC guide have rules. The per-file items (216) are planned with
   the SystemVerilog rules, the clock and reset items with design analysis of Verilog designs. The catalogue the set
   was made from records each item's limits and its Verible equivalent, kept in the notes of the set.
-* **Verilator with the rule sets**: no rule set lists sv_lint_011, as one rule reports several kinds of warning. A
-  rule per warning, or labels per warning, would let the DO-254 and STARC sets use MULTIDRIVEN and CASEINCOMPLETE.
 * **Sensitivity lists** (sv_lint_008) are compared with the names the block reads, by name; reads through
   functions and hierarchical names are not followed.
 * **SystemVerilog designs without the yosys-slang plugin**: Yosys' own reader handles Verilog and part of

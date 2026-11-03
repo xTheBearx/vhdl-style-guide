@@ -17,6 +17,7 @@ from pyslang import analysis, ast  # pylint: disable=import-error
 from pyslang.syntax import SyntaxTree  # pylint: disable=import-error
 
 from mhsg import config, language
+from mhsg.rules.sv_lint import verilator_rule
 from mhsg.svFile import lint, preprocessor, verilator
 from mhsg.vhdlFile import utils
 
@@ -50,16 +51,22 @@ def files_of_run(lFiles, dConfig):
 
 def verilator_enabled(oConfig):
     """
-    Whether sv_lint_011, which reports Verilator's warnings, is enabled in this lint run: by the configuration, or
-    else by lint mode without a rule set, which enables every lint rule, or by a rule set that lists it.
+    Whether a rule that reports Verilator's warnings, sv_lint_011 to sv_lint_013, is enabled in this lint run: by the
+    configuration, or else by lint mode without a rule set, which enables every lint rule, or by a rule set that lists
+    it.
     """
-    dRule = ((getattr(oConfig, "dConfig", None) or {}).get("rule") or {}).get("sv_lint_011") or {}
+    return any(rule_enabled(oConfig, sRule) for sRule in verilator_rule.RULES)
+
+
+def rule_enabled(oConfig, sRule):
+    """Whether a lint rule is enabled in this lint run, by the configuration, or by lint mode and the rule set."""
+    dRule = ((getattr(oConfig, "dConfig", None) or {}).get("rule") or {}).get(sRule) or {}
     if isinstance(dRule, dict) and "disable" in dRule:
         return not dRule["disable"]
     oRuleSet = getattr(oConfig, "rule_set", None)
     if oRuleSet is None:
         return True
-    return any("sv_lint_011" in oCheck.rules for oSet in oRuleSet.all_sets() for oCheck in oSet.checks)
+    return any(sRule in oCheck.rules for oSet in oRuleSet.all_sets() for oCheck in oSet.checks)
 
 
 def collect(lFiles, dConfig, bVerilator=False):

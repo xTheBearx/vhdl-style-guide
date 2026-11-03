@@ -67,7 +67,7 @@ class test_verilator_lint(unittest.TestCase):
                 text=True,
                 check=False,
             )
-        return [s.replace(sDirectory + os.sep, "") for s in oResult.stdout.splitlines() if "sv_lint_011" in s], oResult.stderr
+        return [s.replace(sDirectory + os.sep, "") for s in oResult.stdout.splitlines() if "Verilator" in s], oResult.stderr
 
     def test_findings(self):
         # The package is listed after the file that imports it, and vendor_cell is in no file: Verilator still lints
@@ -76,21 +76,25 @@ class test_verilator_lint(unittest.TestCase):
             [
                 "ERROR: vl_top.sv(16)sv_lint_011 -- Blocking assignment '=' in sequential logic process (Verilator BLKSEQ)",
                 "ERROR: vl_top.sv(21)sv_lint_011 -- Non-blocking assignment '<=' in combinational logic process (Verilator COMBDLY)",
-                "ERROR: vl_top.sv(25)sv_lint_011 -- Case values incompletely covered (example pattern 0x2) (Verilator CASEINCOMPLETE)",
+                "ERROR: vl_top.sv(25)sv_lint_013 -- Case values incompletely covered (example pattern 0x2) (Verilator CASEINCOMPLETE)",
             ],
             lFindings,
         )
         self.assertEqual("", sErrors)
 
-    def test_rule_set_without_the_rule(self):
-        # The DO-254 rule set does not list sv_lint_011; the configuration can enable it
-        self.assertEqual([], self.run_mhsg(["--lint_only"])[0])
+    def test_rule_sets(self):
+        # The DO-254 rule set lists sv_lint_013 under SS2 but not sv_lint_011; the configuration can enable it
+        self.assertEqual(
+            ["ERROR: vl_top.sv(25)DO254-SS2 (sv_lint_013) -- Case values incompletely covered (example pattern 0x2) (Verilator CASEINCOMPLETE)"],
+            self.run_mhsg(["--lint_only"])[0],
+        )
         lFindings, _ = self.run_mhsg(["--lint"], {"rule": {"sv_lint_011": {"disable": False}}})
         self.assertEqual(3, len(lFindings))
 
     def test_warnings_option_and_turning_off(self):
         lFindings, _ = self.run_mhsg(["--lint_only", "--rule_set", "none"], {"rule": {"sv_lint_011": {"verilator_warnings": ["COMBDLY"]}}})
-        self.assertEqual(["vl_top.sv(21)"], [s.split(" ")[1].split("sv_lint")[0] for s in lFindings])
+        # The option is sv_lint_011's; sv_lint_013 still reports CASEINCOMPLETE
+        self.assertEqual(["vl_top.sv(21)"], [s.split(" ")[1].split("sv_lint")[0] for s in lFindings if "sv_lint_011" in s])
         self.assertEqual([], self.run_mhsg(["--lint_only", "--rule_set", "none"], {"systemverilog": {"verilator": False}})[0])
 
     def test_files_left_out(self):
