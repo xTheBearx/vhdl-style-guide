@@ -770,7 +770,7 @@ class test_graph(unittest.TestCase):
 
 @unittest.skipUnless(tools_installed(), "GHDL, Yosys and the GHDL plugin are not installed")
 class test_design_analysis(unittest.TestCase):
-    def run_design(self, sTop, sFile, lArguments=(), dGenerics=None, dRules=None, dCdc=None, dDesignKeys=None):
+    def run_design(self, sTop, sFile, lArguments=(), dGenerics=None, dRules=None, dCdc=None, dDesignKeys=None, lWaivers=None):
         with tempfile.TemporaryDirectory() as sDirectory:
             sConfiguration = os.path.join(sDirectory, "design.yaml")
             lFiles = [sFile] if isinstance(sFile, str) else sFile
@@ -781,7 +781,7 @@ class test_design_analysis(unittest.TestCase):
                 dDesign["cdc"] = dCdc
             dDesign.update(dDesignKeys or {})
             with open(sConfiguration, "w", encoding="utf-8") as oFile:
-                json.dump({"design": dDesign, "rule": dRules or {}}, oFile)
+                json.dump({"design": dDesign, "rule": dRules or {}, **({"waivers": lWaivers} if lWaivers else {})}, oFile)
             oResult = subprocess.run(
                 [*utils.mhsg_exec(), "--design", "-c", sConfiguration, "-of", "syntastic", *lArguments],
                 cwd=sRoot,
@@ -894,6 +894,33 @@ class test_design_analysis(unittest.TestCase):
                 ("registers.vhd", 37, "design_005", "Register busy_r in registers_top never changes: it is always 0"),
             ],
             [t for t in self.findings("registers_top", "registers.vhd") if t[2] in ("design_005", "design_006")],
+        )
+
+    def test_waivers(self):
+        # A waived finding is left out of the findings and listed in the JSON output with its justification
+        lWaivers = [
+            {"rule": "design_005", "file": "registers.vhd", "line": 37, "justification": "busy_r is a placeholder for the next revision"},
+            {"rule": "design_007", "justification": "Matches nothing here"},
+        ]
+        with tempfile.TemporaryDirectory() as sDirectory:
+            sJson = os.path.join(sDirectory, "findings.json")
+            _, lOutput = self.run_design("registers_top", "registers.vhd", ["--json", sJson], lWaivers=lWaivers)
+            with open(sJson, encoding="utf-8") as oFile:
+                dFindings = json.load(oFile)
+        self.assertFalse(any("design_005" in s for s in lOutput))
+        dFile = next(d for d in dFindings["files"] if d["file_path"].endswith("registers.vhd"))
+        self.assertEqual(
+            [
+                {
+                    "rule": "design_005",
+                    "linenumber": 37,
+                    "severity": "Error",
+                    "solution": "Register busy_r in registers_top never changes: it is always 0",
+                    "waiver": 1,
+                    "justification": "busy_r is a placeholder for the next revision",
+                },
+            ],
+            dFile["waived"],
         )
 
     def test_logic_depth(self):

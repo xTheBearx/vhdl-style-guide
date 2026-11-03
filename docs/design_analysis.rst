@@ -251,7 +251,8 @@ clock is too (design_015), and a reset made by logic or by another register is i
            justification: Quasi-static status bits, read only after the run has stopped
 
 A waiver names the destination register of a crossing, as the report names it, or a pattern such as ``u_status.*``.
-A waiver without a justification is reported by design_008.
+A waiver without a justification is reported by design_008. Other findings of design analysis are waived with the
+waivers of the configuration, see :ref:`waivers`.
 
 **Report.** :code:`--cdc_report FILE` writes every clock and crossing, with its status, sources and location, and
 the reset findings: as JSON for a file ending in .json, otherwise as text. It ends with the record of the run, the

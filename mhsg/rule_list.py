@@ -10,7 +10,7 @@ import sys
 from mhsg import exceptions, language
 from mhsg.rules import package_scope
 
-from . import config, deprecated_rule, junit, report, severity, utils
+from . import config, deprecated_rule, junit, report, severity, utils, waivers
 
 NUMBER_OF_SUBPHASES = 7
 
@@ -147,6 +147,9 @@ class rule_list:
         self.iNumberRulesRan = 0
         self.lastPhaseRan = 0
         self.oVhdlFile = oVhdlFile
+        # The waivers of the configuration, and for each that could match in this file whether it did, see waivers.py
+        self.waivers = []
+        self.waiver_use = {}
         self.maximumPhase = maximum_phase(self.rules)
         self.violations = False
         self.had_violations = False
@@ -219,6 +222,7 @@ class rule_list:
         iFailures = 0
         for oRule in filter_out_disabled_rules([o for o in self.rules if o.lint]):
             oRule.analyze(self.oVhdlFile)
+            waivers.apply(oRule, self.oVhdlFile.filename, self.waivers, self.waiver_use)
             if oRule.get_report_severity().type == severity.error_type:
                 iFailures += len(oRule.violations)
             self.iNumberRulesRan += 1
@@ -272,6 +276,7 @@ class rule_list:
 
                 for oRule in lRules:
                     oRule.analyze(self.oVhdlFile)
+                    waivers.apply(oRule, self.oVhdlFile.filename, self.waivers, self.waiver_use)
                     if oRule.get_report_severity().type == severity.error_type:
                         iFailures += len(oRule.violations)
                     self.iNumberRulesRan += 1
@@ -300,6 +305,7 @@ class rule_list:
                 lViolations = oRule.get_violations()
                 dRunInfo["violations"].extend(lViolations)
         dRunInfo["violations"] = sorted(dRunInfo["violations"], key=lambda x: int(x["lineNumber"]))
+        dRunInfo["waived"] = sorted(self.extract_waived(), key=lambda d: d["linenumber"])
         dRunInfo["stopPhase"] = self.lastPhaseRan
         dRunInfo["num_rules_checked"] = self.get_number_of_rules_ran()
         dRunInfo["total_violations"] = len(dRunInfo["violations"])
@@ -434,7 +440,23 @@ class rule_list:
                     dTemp["severity"] = oRule.get_report_severity().name
                     dTemp["solution"] = oViolation.get_solution()
                     dReturn["violations"].append(dTemp)
+        dReturn["waived"] = self.extract_waived()
         return dReturn
+
+    def extract_waived(self):
+        """Returns the violations waivers accept, with the justification of each, see waivers.py."""
+        lReturn = []
+        for oRule in self.rules:
+            for oViolation, oWaiver in oRule.waived:
+                dEntry = {
+                    "rule": oRule.unique_id,
+                    "linenumber": oViolation.get_line_number(),
+                    "severity": oRule.get_report_severity().name,
+                    "solution": oViolation.get_solution(),
+                }
+                dEntry.update(oWaiver.entry())
+                lReturn.append(dEntry)
+        return lReturn
 
     def get_configuration(self):
         """
