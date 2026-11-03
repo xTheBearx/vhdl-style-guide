@@ -2094,6 +2094,21 @@
         "lint_025",
         "lint_026",
         "lint_027",
+        "lint_028",
+        "lint_029",
+        "lint_030",
+        "lint_031",
+        "lint_032",
+        "lint_033",
+        "lint_034",
+        "lint_035",
+        "lint_036",
+        "lint_037",
+        "lint_038",
+        "lint_039",
+        "lint_040",
+        "lint_041",
+        "lint_042",
         "sv_lint_001",
         "sv_lint_002",
         "sv_lint_003",
@@ -2925,6 +2940,12 @@
         "no"
       ]
     },
+    "allowed_numbers": {
+      "type": "list",
+      "label": "Allowed numbers",
+      "description": "The numbers that may be written in statements, such as 0 and 1.",
+      "item_type": "string"
+    },
     "array_constraint": {
       "type": "enum",
       "label": "Array constraint",
@@ -3083,6 +3104,15 @@
       "label": "Differential suffixes",
       "description": "Pairs [positive, negative] of suffixes of differential ports; both ports of a pair are sorted together by their shared name, positive first.",
       "item_type": "list_of_strings"
+    },
+    "direction": {
+      "type": "enum",
+      "label": "Range direction",
+      "description": "The direction the ranges of vectors run in.",
+      "values": [
+        "downto",
+        "to"
+      ]
     },
     "direction_order": {
       "type": "list",
@@ -3439,6 +3469,11 @@
       "description": "The fewest characters in a name other than that of a module or instance.",
       "minimum": 1
     },
+    "minimum_percent": {
+      "type": "integer",
+      "label": "Minimum comment share",
+      "description": "The share of the lines of a file, in percent, that must have a comment."
+    },
     "module_maximum": {
       "type": "integer",
       "label": "Longest module name",
@@ -3489,6 +3524,11 @@
       "description": "Forbidden package names as regular expressions (full match, ignoring case).",
       "item_type": "string",
       "format": "regex"
+    },
+    "nesting_limit": {
+      "type": "integer",
+      "label": "Nesting limit",
+      "description": "The deepest nesting of if, case and loop statements allowed."
     },
     "new_line_after_assign": {
       "type": "enum",
@@ -3727,6 +3767,12 @@
       "description": "Suffixes removed from a local declaration before the fix adds the first allowed suffix.",
       "item_type": "string"
     },
+    "required_fields": {
+      "type": "list",
+      "label": "Required header fields",
+      "description": "Fields the header comment of each file must have, each written as its name followed by a colon.",
+      "item_type": "string"
+    },
     "reset_words": {
       "type": "list",
       "label": "Reset words",
@@ -3792,6 +3838,18 @@
         "2019",
         "all"
       ]
+    },
+    "strip_prefixes": {
+      "type": "list",
+      "label": "Prefixes to ignore",
+      "description": "Prefixes ignored when the name of a signal is compared with the name of the port it is connected to.",
+      "item_type": "string"
+    },
+    "strip_suffixes": {
+      "type": "list",
+      "label": "Suffixes to ignore",
+      "description": "Suffixes ignored when the name of a signal is compared with the name of the port it is connected to.",
+      "item_type": "string"
     },
     "style:architecture_016": {
       "type": "enum",
@@ -37087,6 +37145,765 @@
           "name": "user_error_message",
           "default": "",
           "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_028",
+      "alias": "lint_variable_read_before_assignment",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks for variables in a combinational process that are read before they are written.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_029",
+      "alias": "lint_multiple_waveforms",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks for signal assignments with more than one waveform element.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_030",
+      "alias": "lint_nesting_limit",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that if, case and loop statements are not nested more deeply than a limit, four by default.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "nesting_limit",
+          "default": 4,
+          "definition": "nesting_limit"
+        }
+      ]
+    },
+    {
+      "id": "lint_031",
+      "alias": "lint_vector_direction",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that the ranges of vectors run in one direction, downto by default.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "direction",
+          "default": "downto",
+          "definition": "direction"
+        }
+      ]
+    },
+    {
+      "id": "lint_032",
+      "alias": "lint_deferred_constant",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that every deferred constant of a package gets its value in the package body of the same file.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_033",
+      "alias": "lint_unused_signal",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks for signals of an architecture that are never read.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_034",
+      "alias": "lint_hard_coded_number",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks for numbers written in statements, other than 0 and 1.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "allowed_numbers",
+          "default": [
+            "0",
+            "1"
+          ],
+          "definition": "allowed_numbers"
+        }
+      ]
+    },
+    {
+      "id": "lint_035",
+      "alias": "lint_hard_coded_vector",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks for vector values written as bit strings in statements, other than all zeros and all ones.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_036",
+      "alias": "lint_subprogram_body",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks the bodies of functions and procedures: a function returns a value on every path, and no subprogram waits.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_037",
+      "alias": "lint_state_reachability",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that every state of a state machine can be entered and left.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_038",
+      "alias": "lint_inverter_chain",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks for chains of inverters: concurrent assignments that only invert a signal which another such assignment drives.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_039",
+      "alias": "lint_unique_names",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that names are not used twice in a design unit: a variable, loop parameter or label with the name of a signal, port, generic, constant, type or component of the same entity and architecture.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "lint_040",
+      "alias": "lint_names_across_hierarchy",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that a signal connected to a port of an instance has the name of the port, apart from prefixes and suffixes, so a signal keeps its name through the hierarchy.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "strip_prefixes",
+          "default": [
+            "i_",
+            "o_",
+            "io_",
+            "s_",
+            "r_",
+            "w_"
+          ],
+          "definition": "strip_prefixes"
+        },
+        {
+          "name": "strip_suffixes",
+          "default": [
+            "_i",
+            "_o",
+            "_io",
+            "_s",
+            "_r",
+            "_n",
+            "_reg",
+            "_sig"
+          ],
+          "definition": "strip_suffixes"
+        }
+      ]
+    },
+    {
+      "id": "lint_041",
+      "alias": "lint_file_header",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that a file starts with a header comment, which holds the fields the required_fields option lists.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "required_fields",
+          "default": [],
+          "definition": "required_fields"
+        }
+      ]
+    },
+    {
+      "id": "lint_042",
+      "alias": "lint_comment_density",
+      "category": "lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that comments make up a share of the lines of a file, 20 percent by default.",
+      "documentation": "lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "minimum_percent",
+          "default": 20,
+          "definition": "minimum_percent"
         }
       ]
     },

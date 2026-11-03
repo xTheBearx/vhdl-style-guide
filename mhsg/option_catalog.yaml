@@ -538,6 +538,39 @@ options:
     item_type: string
     label: Verilator warnings
     description: The warnings of Verilator to report, by Verilator's names, such as BLKSEQ and COMBDLY.
+  allowed_numbers:
+    type: list
+    item_type: string
+    label: Allowed numbers
+    description: The numbers that may be written in statements, such as 0 and 1.
+  direction:
+    type: enum
+    values: [downto, to]
+    label: Range direction
+    description: The direction the ranges of vectors run in.
+  minimum_percent:
+    type: integer
+    label: Minimum comment share
+    description: The share of the lines of a file, in percent, that must have a comment.
+  nesting_limit:
+    type: integer
+    label: Nesting limit
+    description: The deepest nesting of if, case and loop statements allowed.
+  required_fields:
+    type: list
+    item_type: string
+    label: Required header fields
+    description: Fields the header comment of each file must have, each written as its name followed by a colon.
+  strip_prefixes:
+    type: list
+    item_type: string
+    label: Prefixes to ignore
+    description: Prefixes ignored when the name of a signal is compared with the name of the port it is connected to.
+  strip_suffixes:
+    type: list
+    item_type: string
+    label: Suffixes to ignore
+    description: Suffixes ignored when the name of a signal is compared with the name of the port it is connected to.
   policy:
     type: enum
     values: [infer, align, flush_left]

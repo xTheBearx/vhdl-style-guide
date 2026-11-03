@@ -905,3 +905,502 @@ Projects that require hard-coded encodings should disable this rule.
 
    type state_t is (IDLE, START, STOP);
    signal state : state_t;
+
+lint_028
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_variable_read_before_assignment`
+
+This rule checks for variables in a combinational process that are read before they are written.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254 rule set (CP10).
+
+Such a variable keeps its value from the last time the process ran, so synthesis makes it a latch, or the
+simulation and the hardware differ. Assign the variable on every path before reading it.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   process (all) is
+     variable sum : unsigned(7 downto 0);
+   begin
+     if enable = '1' then
+       sum := a + b;
+     end if;
+     result <= sum;
+   end process;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   process (all) is
+     variable sum : unsigned(7 downto 0);
+   begin
+     sum := (others => '0');
+     if enable = '1' then
+       sum := a + b;
+     end if;
+     result <= sum;
+   end process;
+
+lint_029
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_multiple_waveforms`
+
+This rule checks for signal assignments with more than one waveform element.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254 rule set (SS5).
+
+A waveform of several elements, each after a delay, describes a sequence of values in time. Synthesis ignores the
+delays, so the hardware differs from the simulation.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   pulse <= '1', '0' after 10 ns;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   pulse <= '1';
+
+lint_030
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_nesting_limit`
+
+This rule checks that if, case and loop statements are not nested more deeply than a limit, four by default.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254 rule set (SS20).
+
+Deep nesting makes code hard to review and to test, and builds long priority chains in hardware. The
+nesting_limit option sets the deepest level allowed.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   if a = '1' then
+     if b = '1' then
+       case c is
+         when "00" =>
+           if d = '1' then
+             for i in 0 to 3 loop    -- level 5
+               y(i) <= e(i);
+             end loop;
+           end if;
+         when others => null;
+       end case;
+     end if;
+   end if;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   -- Move inner levels into a function, or combine conditions
+
+lint_031
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_vector_direction`
+
+This rule checks that the ranges of vectors run in one direction, downto by default.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254 rule set (SS21).
+
+A vector declared with :code:`to` next to vectors declared with :code:`downto` reverses the order of its bits when
+the two are assigned to each other, a mistake that is easy to miss. The rule checks the ranges of
+std_logic_vector, unsigned, signed and the other vector types; arrays of other types, such as memories, may run
+either way. The direction option sets the direction, downto or to.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   signal data : std_logic_vector(0 to 7);
+
+**Fix**
+
+.. code-block:: vhdl
+
+   signal data : std_logic_vector(7 downto 0);
+
+lint_032
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_deferred_constant`
+
+This rule checks that every deferred constant of a package gets its value in the package body of the same file.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254 rule set (SS7).
+
+A deferred constant is declared in a package without a value; the package body gives it one. If the body is in
+another file, or leaves it out, the value is hard to find in a review, and a body that leaves it out does not
+compile. Keep the package and its body in one file, or give the constant its value in the package.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   package config_pkg is
+     constant c_depth : natural;
+   end package config_pkg;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   package config_pkg is
+     constant c_depth : natural := 16;
+   end package config_pkg;
+
+lint_033
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_unused_signal`
+
+This rule checks for signals of an architecture that are never read.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254 rule set (SS17).
+
+A signal that is assigned but never read, or neither assigned nor read, is logic without a purpose. Synthesis
+removes it, so the design analysis cannot see it in the netlist. A signal connected to a port of an instance counts
+as read, as the port may be an input.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   architecture rtl of filter is
+     signal sum   : unsigned(7 downto 0);
+     signal spare : std_logic;
+   begin
+     sum   <= a + b;
+     spare <= a(0);
+     y     <= sum;
+   end architecture rtl;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   architecture rtl of filter is
+     signal sum : unsigned(7 downto 0);
+   begin
+     sum <= a + b;
+     y   <= sum;
+   end architecture rtl;
+
+lint_034
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_hard_coded_number`
+
+This rule checks for numbers written in statements, other than 0 and 1.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254 rule set (CP3).
+
+A number in a statement, such as a count limit or a width, says nothing of what it stands for and must be found and
+changed everywhere it is used. Declare a constant or a generic with a name instead. Numbers in declarations, such
+as the values of constants and the ranges of types, and fixed bit positions, such as data(3) or data(7 downto 4),
+are not checked. The allowed option lists the numbers allowed in statements.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   if count = 99 then
+
+**Fix**
+
+.. code-block:: vhdl
+
+   constant c_last_count : natural := 99;
+   ...
+   if count = c_last_count then
+
+lint_035
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_hard_coded_vector`
+
+This rule checks for vector values written as bit strings in statements, other than all zeros and all ones.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254 rule set (CP4).
+
+A value such as "0110" or x"A5" says nothing of what it stands for, and its width must change with the vector.
+Declare a constant with a name, or build the value from named constants. All zeros and all ones, written
+as bit strings or as (others => '0'), are not reported.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   command <= "0110";
+
+**Fix**
+
+.. code-block:: vhdl
+
+   constant c_read_command : std_logic_vector(3 downto 0) := "0110";
+   ...
+   command <= c_read_command;
+
+lint_036
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_subprogram_body`
+
+This rule checks the bodies of functions and procedures: a function returns a value on every path, and no
+subprogram waits.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254 rule set (CP9).
+
+A function that can reach its end without a return statement fails in simulation only when that path is taken,
+and synthesis tools treat it differently. A wait statement in a procedure cannot be synthesized.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   function parity(data : std_logic_vector) return std_logic is
+   begin
+     if data'length > 0 then
+       return xor data;
+     end if;
+   end function parity;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   function parity(data : std_logic_vector) return std_logic is
+   begin
+     if data'length > 0 then
+       return xor data;
+     end if;
+     return '0';
+   end function parity;
+
+lint_037
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_state_reachability`
+
+This rule checks that every state of a state machine can be entered and left.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254 rule set (CP6).
+
+A state machine is a case statement on a signal of an enumerated type declared in the file. A state that no
+assignment of the file gives the state signal, or its next state, can never be entered, other than by reset; a
+state whose branch of the case statement assigns no other state can never be left. Both are usually mistakes,
+and a state that cannot be left hangs the machine.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   type state_t is (IDLE, RUN, DONE, ERROR);
+   ...
+   case state is
+     when IDLE => if start = '1' then state <= RUN; end if;
+     when RUN  => if last = '1' then state <= DONE; end if;
+     when DONE => null;                    -- never left
+     when others => state <= IDLE;         -- ERROR is never entered
+   end case;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   case state is
+     when IDLE  => if start = '1' then state <= RUN; end if;
+     when RUN   => if last = '1' then state <= DONE; elsif fault = '1' then state <= ERROR; end if;
+     when DONE  => state <= IDLE;
+     when ERROR => state <= IDLE;
+   end case;
+
+lint_038
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_inverter_chain`
+
+This rule checks for chains of inverters: concurrent assignments that only invert a signal which another such
+assignment drives.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254 rule set (SS1).
+
+Such a chain implies logic whose purpose is a delay. Synthesis removes it, so the design does not do what the code
+suggests, and the design analysis does not see the chain in the netlist.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   delay_1 <= not trigger;
+   delay_2 <= not delay_1;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   -- Time the trigger with a register, or with a delay element of the device
+
+lint_039
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_unique_names`
+
+This rule checks that names are not used twice in a design unit: a variable, loop parameter or label with the
+name of a signal, port, generic, constant, type or component of the same entity and architecture.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254 rule set (DR3).
+
+A variable with the name of a signal hides the signal in its process, so a reader cannot tell which one a statement
+uses; a label with the name of a signal makes messages and waveforms ambiguous.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   signal count : natural range 0 to 15;
+   ...
+   process (all) is
+     variable count : natural range 0 to 15;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   signal count : natural range 0 to 15;
+   ...
+   process (all) is
+     variable count_v : natural range 0 to 15;
+
+lint_040
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_names_across_hierarchy`
+
+This rule checks that a signal connected to a port of an instance has the name of the port, apart from
+prefixes and suffixes, so a signal keeps its name through the hierarchy.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254 rule set (DR9).
+
+A signal renamed at each level of the hierarchy is hard to follow from the top to the bottom of the design. The
+strip_prefixes and strip_suffixes options list the parts that are ignored, such as i\_ and _o, which mark direction or kind.
+Only port maps that connect a signal by name, not a slice or an expression, are checked.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   u_fifo : entity work.fifo
+     port map (
+       wr_data => payload
+     );
+
+**Fix**
+
+.. code-block:: vhdl
+
+   u_fifo : entity work.fifo
+     port map (
+       wr_data => wr_data
+     );
+
+lint_041
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_file_header`
+
+This rule checks that a file starts with a header comment, which holds the fields the required_fields option
+lists.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254 rule set (DR10).
+
+A header of the same form in every file says what the file is, who owns it and how it is identified in
+configuration management. The header is the comments before the first line of code. A field is found as its name
+followed by a colon, such as :code:`Author:`, ignoring case. By default no field is required, only the header.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   library ieee;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   -- Title:  FIFO with a single clock
+   -- Author: A. Designer
+   library ieee;
+
+lint_042
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_comment_density`
+
+This rule checks that comments make up a share of the lines of a file, 20 percent by default.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254 rule set (DR11).
+
+The share is the number of lines with a comment over the number of lines that are not blank. The minimum_percent
+option sets the share required. A file below it is reported once, at its first line.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   architecture rtl of counter is
+   begin
+     count <= count + 1 when rising_edge(clk);
+   end architecture rtl;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   -- Free-running counter of the clock cycles since power up
+   architecture rtl of counter is
+   begin
+     -- Wraps around at its maximum
+     count <= count + 1 when rising_edge(clk);
+   end architecture rtl;

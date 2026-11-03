@@ -650,7 +650,8 @@ class Model:
             oStatement = Assignment("variable", iStart, iLine, lVariableTarget, lReads)
         else:
             sModule = kind(self.lTokens[iStart])[0]
-            sKind = {"wait_statement": "wait", "null_statement": "null"}.get(sModule, "other")
+            # A procedure call is a call: it can assign the variables and signals it is given
+            sKind = {"wait_statement": "wait", "null_statement": "null", "procedure_call": "call"}.get(sModule, "other")
             oStatement = Other(sKind, iStart, iLine, lReads)
         return oStatement, iEnd + 1
 
