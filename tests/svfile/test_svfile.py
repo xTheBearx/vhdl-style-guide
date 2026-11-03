@@ -215,6 +215,20 @@ class test_rules(unittest.TestCase):
         self.assertEqual(read("style.fixed.sv"), sAfter)
         self.assertEqual(["WARNING: style.sv(7)length_001 -- Reduce line to less than 80 characters"], lOutput)
 
+    def test_block_comment_code_tags(self):
+        # /* mhsg_off */ and the other code tags work in block comments as in // comments
+        iStatus, lOutput, sAfter = self.run_mhsg(["-ap"], "code_tags.sv")
+        self.assertEqual(
+            [
+                "ERROR: code_tags.sv(12)sv_indent_001 -- Use 4 spaces for indent",
+                "ERROR: code_tags.sv(17)sv_indent_001 -- Use 4 spaces for indent",
+            ],
+            lOutput,
+        )
+        _, _, sAfter = self.run_mhsg(["--fix"], "code_tags.sv")
+        lBefore = read("code_tags.sv").splitlines()
+        self.assertEqual([12, 17], [i + 1 for i, sLine in enumerate(sAfter.splitlines()) if sLine != lBefore[i]])
+
     def test_indent_clean(self):
         self.assertEqual([], only(self.run_mhsg(["-ap"], "indent.sv")[1], "sv_indent", "sv_whitespace"))
 

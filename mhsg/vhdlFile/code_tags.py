@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import parser, rule_aliases
+from mhsg.token import delimited_comment
 
 
 class New:
@@ -74,9 +75,36 @@ def next_line_code_tag_detected(oToken):
 
 
 def token_starts_with(oToken, sString):
-    if oToken.get_value().startswith(sString):
+    if comment_value(oToken).startswith(sString):
         return True
     return False
+
+
+def tag_comment(lTokens, iToken):
+    """
+    The comment token code tags are read from. VHDL splits a delimited comment into /*, its text and */; the text of
+    one on a single line is read as the line comment // text.
+    """
+    oToken = lTokens[iToken]
+    if (
+        isinstance(oToken, delimited_comment.text)
+        and 0 < iToken < len(lTokens) - 1
+        and isinstance(lTokens[iToken - 1], delimited_comment.beginning)
+        and isinstance(lTokens[iToken + 1], delimited_comment.ending)
+    ):
+        return parser.comment("// " + oToken.get_value().strip())
+    return oToken
+
+
+def comment_value(oToken):
+    """
+    The text of a comment, with a block comment on one line read as a line comment: /* mhsg_off */ reads as
+    // mhsg_off, so code tags can be written either way.
+    """
+    sValue = oToken.get_value()
+    if sValue.startswith("/* ") and sValue.endswith("*/") and "\n" not in sValue:
+        return "// " + sValue[3:-2].strip()
+    return sValue
 
 
 def remove_code_tags(self, oToken):
@@ -101,7 +129,7 @@ def add_code_tags(self, oToken):
 
 
 def remove_code_tag_comment(oToken):
-    lString = oToken.get_value().split(":")
+    lString = comment_value(oToken).split(":")
     return lString[0]
 
 
