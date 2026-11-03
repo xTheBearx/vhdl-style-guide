@@ -52,7 +52,7 @@ class New:
 def on_code_tag_detected(oToken):
     if not isinstance(oToken, parser.comment):
         return False
-    if token_starts_with(oToken, ("-- mhsg_on", "-- vsg_on")):
+    if token_starts_with(oToken, ("-- mhsg_on", "-- vsg_on", "// mhsg_on")):
         return True
     return False
 
@@ -60,7 +60,7 @@ def on_code_tag_detected(oToken):
 def off_code_tag_detected(oToken):
     if not isinstance(oToken, parser.comment):
         return False
-    if token_starts_with(oToken, ("-- mhsg_off", "-- vsg_off")):
+    if token_starts_with(oToken, ("-- mhsg_off", "-- vsg_off", "// mhsg_off")):
         return True
     return False
 
@@ -68,7 +68,7 @@ def off_code_tag_detected(oToken):
 def next_line_code_tag_detected(oToken):
     if not isinstance(oToken, parser.comment):
         return False
-    if token_starts_with(oToken, ("-- mhsg_disable_next_line", "-- vsg_disable_next_line")):
+    if token_starts_with(oToken, ("-- mhsg_disable_next_line", "-- vsg_disable_next_line", "// mhsg_disable_next_line")):
         return True
     return False
 

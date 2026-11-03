@@ -68,8 +68,20 @@ Lint and rule sets
 Verilog and SystemVerilog
 -------------------------
 
-* **Support for Verilog and SystemVerilog**: not started. The discovery study, with the tools evaluated and the work
-  it would take, is in the "Verilog and SystemVerilog" tab of the plan document.
+The plan, with the tools evaluated, is in the "Verilog and SystemVerilog" tab of the plan document. Step 1, reading
+files with pyslang and running the language neutral rules, is done; see :doc:`../systemverilog`.
+
+* **Style rules (plan step 2 onwards)**: indentation (4 spaces), alignment, naming, keyword and spacing rules after
+  the lowRISC style that Verible checks. Until then only whitespace_001, whitespace_002 and the length rules run.
+* **Leading tabs** in SystemVerilog files are not reported; in VHDL the indentation rules report them.
+* **Inactive** :code:`\`ifdef` **branches and macro arguments** are kept as unclassified tokens (about 5% of the
+  tokens of ibex, common_cells and picorv32), so rules about syntax will not see them. Parsing each branch with its
+  defines set would let rules check them.
+* **Include files and defines from the command line**: files are parsed on their own; a macro defined in another file
+  is not expanded, which is fine for style rules but not for lint.
+* **Lint and design analysis** of SystemVerilog (Verilator, yosys-slang) are later steps of the plan.
+* **Real-world SystemVerilog check**: ibex, common_cells and picorv32 (914 files) were checked by hand; they should be
+  added to :code:`scripts/real_world_designs.yaml` once it can hold SystemVerilog projects.
 
 Project
 -------

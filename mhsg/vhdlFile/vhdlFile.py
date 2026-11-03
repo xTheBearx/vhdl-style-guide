@@ -259,6 +259,8 @@ dUnaryOrBinaryLogicalOperatorStringMap = {
 
 
 class vhdlFile:
+    language = "vhdl"
+
     """
     Holds contents of a VHDL file.
     When a vhdlFile object is created, the contents of the file must be passed to it.

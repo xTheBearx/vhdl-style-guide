@@ -797,15 +797,13 @@ def fix_blank_lines(lTokens):
 
 
 def fix_trailing_whitespace(lTokens):
+    """Removes whitespace at the ends of lines, except where code tags turn whitespace_001 off."""
     lReturn = []
     for iToken, oToken in enumerate(lTokens):
-        try:
-            if isinstance(oToken, parser.carriage_return) and isinstance(lTokens[iToken - 1], parser.whitespace):
+        if iToken > 0 and isinstance(oToken, parser.carriage_return):
+            oPrevious = lTokens[iToken - 1]
+            if isinstance(oPrevious, parser.whitespace) and not oPrevious.has_code_tag("whitespace_001"):
                 lReturn.pop()
-                lReturn.append(oToken)
-                continue
-        except IndexError:
-            pass
         lReturn.append(oToken)
 
     return lReturn

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import parser, violation
+from mhsg import language, parser, violation
 from mhsg.rule_group import whitespace as ws_group
 from mhsg.vhdlFile import utils
 
@@ -24,6 +24,7 @@ class rule_002(ws_group.Rule):
 
     def __init__(self):
         super().__init__()
+        self.languages = language.LANGUAGES
         self.phase = 1
         self.solution = "Remove tab"
         self.configuration_documentation_link = None

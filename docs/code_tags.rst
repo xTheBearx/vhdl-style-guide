@@ -5,6 +5,8 @@ MHSG supports inline tags embedded into code to enable or disable rules.
 This can be useful in fine tuning rule exceptions within a file.
 The code tags are embedded in comments similar to pragmas, and must be on its own line.
 
+In SystemVerilog and Verilog files the code tags are written in a :code:`//` comment, such as :code:`// mhsg_off`.
+
 .. NOTE:: The code tags used by VSG, **vsg_off**, **vsg_on** and **vsg_disable_next_line**, are also recognized and behave the same as the **mhsg_** tags.
 
 Full rule exclusion

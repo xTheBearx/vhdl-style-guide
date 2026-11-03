@@ -7,7 +7,7 @@ import os
 import pkgutil
 import sys
 
-from mhsg import exceptions
+from mhsg import exceptions, language
 from mhsg.rules import package_scope
 
 from . import config, deprecated_rule, junit, report, severity, utils
@@ -137,6 +137,9 @@ class rule_list:
         self.rules = load_rules()
         for iDirectory, sDirectory in enumerate(config.get_local_rule_directories(sLocalRulesDirectory)):
             self.rules.extend(load_local_rules(sDirectory, iDirectory))
+        # Only the rules for the language of the file
+        sLanguageName = getattr(oVhdlFile, "language", language.VHDL)
+        self.rules = [o for o in self.rules if sLanguageName in getattr(o, "languages", (language.VHDL,))]
         self.iNumberRulesRan = 0
         self.lastPhaseRan = 0
         self.oVhdlFile = oVhdlFile

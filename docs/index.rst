@@ -19,6 +19,7 @@ Welcome to vhdl-style-guide's documentation!
    configuring
    lint
    design_analysis
+   systemverilog
    code_tags
    continuous_integration_servers
    editor_integration/editor_integration

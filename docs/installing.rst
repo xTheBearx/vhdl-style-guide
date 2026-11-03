@@ -25,6 +25,7 @@ The latest development version can be cloned from the GitHub repo.
   git clone https://github.com/jeremiah-c-leary/vhdl-style-guide.git
 
 The project is managed with `uv <https://docs.astral.sh/uv/>`_.
+The Python packages MHSG needs, including pyslang for SystemVerilog, are installed with it.
 Install the locked development dependencies, then build; artifacts will appear in the ``dist`` directory.
 
 .. code-block:: bash

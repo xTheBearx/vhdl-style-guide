@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from mhsg import parser, violation
+from mhsg import language, parser, violation
 from mhsg.rule_group import whitespace
 
 
@@ -25,6 +25,7 @@ class rule_001(whitespace.Rule):
 
     def __init__(self):
         super().__init__()
+        self.languages = language.LANGUAGES
         self.phase = 1
         self.subphase = 0
         self.solution = "Remove trailing whitespace"
