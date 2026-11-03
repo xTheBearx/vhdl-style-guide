@@ -17,5 +17,5 @@
 +---------+-------------------------------------------------------------------------+----------+------------------------------+--------------------+
 | CDC-008 | Release asynchronous resets synchronously in each clock domain          | Error    | Implemented, design analysis | :code:`design_015` |
 +---------+-------------------------------------------------------------------------+----------+------------------------------+--------------------+
-| CDC-009 | Check reconvergence of separately synchronized signals                  |          | Planned, design analysis     |                    |
+| CDC-009 | Avoid reconvergence of separately synchronized signals                  | Error    | Implemented, design analysis | :code:`design_016` |
 +---------+-------------------------------------------------------------------------+----------+------------------------------+--------------------+

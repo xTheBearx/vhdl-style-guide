@@ -110,6 +110,8 @@ class Analysis:
         self.resets = []
         self.clock_as_data = []
         self.shared = []
+        # (registers, signals) where separately synchronized signals meet again
+        self.reconvergences = []
         self.waiver_errors = []
         self._dStrip = {}
         self._dSources = {}
@@ -404,9 +406,17 @@ class Analysis:
             self.crossings.append(oCrossing)
         self._find_buses()
         self.crossings.sort(key=lambda o: o.name)
+        self._find_reconvergence()
 
     def stages_after(self, oCell, iIndex):
         """Returns the number of registers in the same domain that follow a register bit as a chain, each feeding only the next."""
+        return self.chain(oCell, iIndex)[0]
+
+    def chain(self, oCell, iIndex):
+        """
+        Follows a register bit through the registers of the same domain that follow it, each fed only by the one
+        before. Returns (number of stages, last register, its bit), the last stage being the synchronizer output.
+        """
         iStages = 1
         oDomain = self.cell_clock.get(id(oCell))
         setSeen = {(id(oCell), iIndex)}
@@ -414,14 +424,14 @@ class Analysis:
             oQ = oCell.connections["Q"][iIndex]
             lNext = [t for t in self._dFollowers.get(oQ, []) if self.cell_clock.get(id(t[0])) is oDomain and t[0] is not oCell]
             if len(lNext) != 1:
-                return iStages
+                return iStages, oCell, iIndex
             oNext, iNext, lCells = lNext[0]
             setPath = {id(o) for o in lCells} | {id(oNext)}
             if any(t[0] is None or id(t[0]) not in setPath for t in self.flat.readers.get(oQ, [])):
                 # The output of the stage is also used elsewhere
-                return iStages
+                return iStages, oCell, iIndex
             if (id(oNext), iNext) in setSeen:
-                return iStages
+                return iStages, oCell, iIndex
             setSeen.add((id(oNext), iNext))
             iStages += 1
             oCell, iIndex = oNext, iNext
@@ -508,6 +518,63 @@ class Analysis:
             for oCrossing, _ in lMembers:
                 oCrossing.status = sStatus
                 oCrossing.detail = f"{len(setBits)} bits of {self.flat.cell_name(oSource)}" + (", gray coded" if sStatus == GRAY else " cross separately")
+
+    def _find_reconvergence(self):
+        """
+        Signals synchronized separately from one clock domain can change in different cycles of the destination clock,
+        so logic that combines them can see a state the source never had. A register whose inputs depend on two or
+        more of them, through logic of its own domain, is a reconvergence. The bits of one bus count as one signal:
+        a gray-coded bus is meant to be combined, and a bus synchronized bit by bit is reported as a hazard already.
+        """
+        dOutputs = {}
+        for oCrossing in self.crossings:
+            if oCrossing.status not in (SYNCHRONIZED, GRAY, BUS) and getattr(oCrossing, "original_status", None) not in (SYNCHRONIZED, GRAY, BUS):
+                continue
+            for iIndex, tSource in getattr(oCrossing, "first_stages", []):
+                _, oLast, iLast = self.chain(oCrossing.cell, iIndex)
+                oSourceDomain = self.domain_of(tSource)
+                if oSourceDomain is None:
+                    continue
+                sSourceGroup = "async" if oSourceDomain == "async" else oSourceDomain.group
+                if oCrossing.status in (GRAY, BUS) or getattr(oCrossing, "original_status", None) in (GRAY, BUS):
+                    tKey = ("bus", id(tSource[0]))
+                    sName = self.flat.cell_name(tSource[0])
+                else:
+                    tKey = ("bit", id(tSource[0]), tSource[2])
+                    sName = self.point_name(tSource)
+                    if len(tSource[0].connections.get("Q", [])) > 1:
+                        sName += f"({tSource[2]})"
+                dOutputs[oLast.connections["Q"][iLast]] = (tKey, sName, sSourceGroup, oCrossing.clock.group, oSourceDomain)
+        if len(dOutputs) < 2:
+            return
+        dFound = {}
+        for oCell in self.flat.cells:
+            oDomain = self.cell_clock.get(id(oCell))
+            if not is_register(oCell) or oDomain is None:
+                continue
+            dSignals = {}
+            for sPort, lNets in oCell.connections.items():
+                if sPort in CONTROL_PORTS or sPort == "Q" or self.flat.direction(oCell, sPort) != "input":
+                    continue
+                for oNet in lNets:
+                    if not graph.is_variable(oNet):
+                        continue
+                    for oSource, sSourcePort, iSource in self.sources(oNet):
+                        if oSource is None or sSourcePort != "Q":
+                            continue
+                        tOutput = dOutputs.get(oSource.connections["Q"][iSource])
+                        if tOutput is None or tOutput[3] != oDomain.group:
+                            continue
+                        dSignals.setdefault(tOutput[2], {})[tOutput[0]] = (tOutput[1], tOutput[4])
+            for sGroup, dKeys in dSignals.items():
+                if len(dKeys) < 2:
+                    continue
+                tKey = (sGroup, frozenset(dKeys))
+                dFound.setdefault(tKey, (sorted(dKeys.values(), key=lambda t: t[0]), []))[1].append(oCell)
+        for lSignals, lCells in dFound.values():
+            lCells.sort(key=self.flat.cell_name)
+            self.reconvergences.append((lCells, lSignals))
+        self.reconvergences.sort(key=lambda t: self.flat.cell_name(t[0][0]))
 
     def gray_coded(self, oCell):
         """Returns whether a register is loaded with the gray code of a binary value: bit i is b(i) xor b(i+1), the top bit b(n)."""
@@ -765,6 +832,17 @@ class Analysis:
                     "location": f"{sFile}:{iLine}" if sFile else None,
                 },
             )
+        dReturn["reconvergences"] = []
+        for lCells, lSignals in self.reconvergences:
+            sFile, iLine = self.locate(lCells[0], self.flat.cell_name(lCells[0]).split(".")[-1])
+            dReturn["reconvergences"].append(
+                {
+                    "signals": [{"signal": s, "clock": o.name if o != "async" else "async"} for s, o in lSignals],
+                    "clock": self.cell_clock[id(lCells[0])].name,
+                    "registers": [self.flat.cell_name(o) for o in lCells],
+                    "location": f"{sFile}:{iLine}" if sFile else None,
+                },
+            )
         for oReset in self.resets:
             dReturn["resets"].append({"reset": oReset.reset, "kind": oReset.kind, "detail": oReset.detail, "registers": len(oReset.cells)})
         return dReturn
@@ -789,6 +867,14 @@ def report_text(dReport):
             lLines.append(f"    justification: {dCrossing['justification']}")
         if dCrossing["location"]:
             lLines.append(f"    at {dCrossing['location']}")
+    lLines += ["", "Reconvergence"]
+    if not dReport.get("reconvergences"):
+        lLines.append("  none")
+    for dReconvergence in dReport.get("reconvergences", []):
+        sSignals = ", ".join(f"{d['signal']} ({d['clock']})" for d in dReconvergence["signals"])
+        lLines.append(f"  {sSignals} meet in {', '.join(dReconvergence['registers'])} ({dReconvergence['clock']})")
+        if dReconvergence["location"]:
+            lLines.append(f"    at {dReconvergence['location']}")
     lLines += ["", "Reset findings"]
     if not dReport["resets"]:
         lLines.append("  none")
