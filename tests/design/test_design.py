@@ -23,6 +23,7 @@ from mhsg.design import (
     project,
     runner,
     top,
+    vendors,
 )
 from tests import utils
 
@@ -297,6 +298,84 @@ class test_black_box_declarations(unittest.TestCase):
         self.assertEqual("async", self.instance(oLibrary, FakeCell("IBUF", ["I", "O"])).role("O").kind)
         self.assertEqual("clock_out", self.instance(oLibrary, FakeCell("BUFG", ["I", "O"])).role("O").kind)
         self.assertEqual([sLibrary], [o.source for o in oLibrary.find("BUFG", "u")])
+
+
+class test_vendor_libraries(unittest.TestCase):
+    def install(self, sDirectory, lFiles):
+        for sFile in lFiles:
+            sPath = os.path.join(sDirectory, sFile)
+            os.makedirs(os.path.dirname(sPath), exist_ok=True)
+            with open(sPath, "w", encoding="utf-8") as oFile:
+                oFile.write("-- test\n")
+
+    def libraries(self, lEntries, dEnvironment):
+        return [(o.name, [os.path.basename(s) for s in o.files]) for o in vendors.resolve(lEntries, dEnvironment)]
+
+    def test_vendors(self):
+        with tempfile.TemporaryDirectory() as sDirectory:
+            self.install(
+                sDirectory,
+                [
+                    "vivado/data/vhdl/src/unisims/unisim_VPKG.vhd",
+                    "vivado/data/vhdl/src/unisims/unisim_VCOMP.vhd",
+                    "vivado/data/ip/xpm/xpm_VCOMP.vhd",
+                    "libero/Designer/lib/vhdl/polarfire.vhd",
+                    "quartus/eda/sim_lib/altera_mf_components.vhd",
+                    "quartus/eda/sim_lib/cyclonev_components.vhd",
+                    "diamond/cae_library/synthesis/vhdl/ecp5u.vhd",
+                ],
+            )
+            self.assertEqual(
+                [("unisim", ["unisim_VPKG.vhd", "unisim_VCOMP.vhd"]), ("xpm", ["xpm_VCOMP.vhd"])],
+                self.libraries(["xilinx"], {"XILINX_VIVADO": os.path.join(sDirectory, "vivado")}),
+            )
+            self.assertEqual(
+                [("polarfire", ["polarfire.vhd"])],
+                self.libraries([{"vendor": "microchip", "family": "PolarFire", "path": os.path.join(sDirectory, "libero")}], {}),
+            )
+            self.assertEqual(
+                [("altera_mf", ["altera_mf_components.vhd"]), ("cyclonev", ["cyclonev_components.vhd"])],
+                self.libraries([{"vendor": "intel", "family": "cyclonev"}], {"QUARTUS_ROOTDIR": os.path.join(sDirectory, "quartus")}),
+            )
+            self.assertEqual(
+                [("ecp5u", ["ecp5u.vhd"])],
+                self.libraries([{"vendor": "lattice", "family": "ecp5u"}], {"LSC_DIAMOND": os.path.join(sDirectory, "diamond")}),
+            )
+            # Explicit files, joined with the library of the same name
+            sExtra = os.path.join(sDirectory, "my_unisim.vhd")
+            self.install(sDirectory, ["my_unisim.vhd"])
+            self.assertEqual(
+                [("unisim", ["unisim_VPKG.vhd", "unisim_VCOMP.vhd", "my_unisim.vhd"]), ("xpm", ["xpm_VCOMP.vhd"])],
+                self.libraries(["xilinx", {"library": "unisim", "files": [sExtra]}], {"XILINX_VIVADO": os.path.join(sDirectory, "vivado")}),
+            )
+
+    def test_errors(self):
+        with tempfile.TemporaryDirectory() as sDirectory:
+            for lEntries, dEnvironment, sMessage in (
+                (["xilinx"], {}, "the installation is not known"),
+                (["xilinx"], {"XILINX_VIVADO": sDirectory}, "no declarations for library unisim were found. Tried:"),
+                (["acme"], {}, "unknown vendor acme"),
+                ([{"vendor": "microchip", "path": sDirectory}], {}, "needs family"),
+                ([{"library": "unisim", "files": [os.path.join(sDirectory, "missing.vhd")]}], {}, "does not exist"),
+                ([{"library": "unisim"}], {}, "lists no files"),
+            ):
+                with self.subTest(lEntries):
+                    with self.assertRaises(exceptions.ConfigurationError) as oContext:
+                        vendors.resolve(lEntries, dEnvironment)
+                    self.assertIn(sMessage, oContext.exception.message)
+
+    def test_vendor_libraries_come_first(self):
+        oDesign = project.from_configuration(
+            {
+                "design": {
+                    "top": "vendor_top",
+                    "vendor_libraries": [{"vendor": "xilinx", "path": os.path.join(sTestDir, "vendor", "vivado")}],
+                    "libraries": [{"name": "work", "files": [os.path.join(sTestDir, "vendor_top.vhd")]}],
+                },
+            },
+        )
+        self.assertEqual(["unisim", "xpm", "work"], [o.name for o in oDesign.libraries])
+        self.assertEqual("work", oDesign.top_library)
 
 
 class test_flat(unittest.TestCase):
@@ -690,6 +769,45 @@ class test_design_analysis(unittest.TestCase):
             dFiles["template.yaml"],
         )
         self.assertNotIn("IBUF", dFiles["template.yaml"])
+
+    def test_vendor_declarations(self):
+        # The design uses unisim and xpm, analyzed from the declaration files of a (stand-in) installation
+        dDesign = {
+            "top": "vendor_top",
+            "vendor_libraries": ["xilinx"],
+            "libraries": [{"name": "work", "files": [os.path.join(sTestDir, "vendor_top.vhd")]}],
+            "black_boxes": {
+                "IBUF": {"archetype": "buffer", "input": "I", "output": "O"},
+                "BUFG": {"archetype": "clock_buffer", "input": "I", "output": "O"},
+                "xpm_cdc_single": {
+                    "archetype": "synchronizer",
+                    "source_clock": "src_clk",
+                    "destination_clock": "dest_clk",
+                    "input": "src_in",
+                    "output": "dest_out",
+                    "stages": "DEST_SYNC_FF",
+                },
+            },
+        }
+        with tempfile.TemporaryDirectory() as sDirectory:
+            sConfiguration = os.path.join(sDirectory, "design.yaml")
+            sReport = os.path.join(sDirectory, "cdc.json")
+            with open(sConfiguration, "w", encoding="utf-8") as oFile:
+                json.dump({"design": dDesign}, oFile)
+            dEnvironment = dict(os.environ, XILINX_VIVADO=os.path.join(sTestDir, "vendor", "vivado"))
+            oResult = subprocess.run(
+                [*utils.mhsg_exec(), "--design", "-c", sConfiguration, "-of", "syntastic", "--cdc_report", sReport],
+                cwd=sRoot,
+                capture_output=True,
+                text=True,
+                check=False,
+                env=dEnvironment,
+            )
+            with open(sReport, encoding="utf-8") as oFile:
+                dReport = json.load(oFile)
+        self.assertEqual((0, ""), (oResult.returncode, oResult.stdout))
+        self.assertEqual([("clk_pad", "port", 1)], [(d["name"], d["kind"], d["registers"]) for d in dReport["clocks"]])
+        self.assertEqual([("u_sync", "clk_pad", "clk_b", 3)], [(d["instance"], d["from"], d["clock"], d["stages"]) for d in dReport["box_synchronizers"]])
 
     def test_crossing_report(self):
         with tempfile.TemporaryDirectory() as sDirectory:

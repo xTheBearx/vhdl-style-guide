@@ -302,6 +302,13 @@ def describe_settings():
             "default": {},
         },
         {
+            "path": ["design", "vendor_libraries"],
+            "type": "vendor_library_list",
+            "label": "Vendor libraries",
+            "description": "Vendor component declarations to analyze before the design, read from the vendor installation: xilinx, microchip, intel or lattice, or a library with its files.",
+            "default": [],
+        },
+        {
             "path": ["design", "black_boxes"],
             "type": "black_box_map",
             "label": "Black box declarations",

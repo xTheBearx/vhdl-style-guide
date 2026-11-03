@@ -243,6 +243,51 @@ black box type must be declared, whatever its vendor, with a role for every port
 is not declared, a port without a role, and a static port without a justification and a reviewer. Until then, the
 crossings through it are not known.
 
+**Vendor libraries.** A design that uses vendor primitives through a library, such as
+``library unisim; use unisim.vcomponents.all;``, needs the vendor's component declarations to analyze.
+MHSG reads them from your own installation of the vendor tools, listed under **vendor_libraries**, and analyzes them
+before the libraries of the design. Nothing from the vendors is copied into MHSG.
+
+.. code-block:: yaml
+
+   design:
+     top: board_top
+     vendor_libraries:
+       - xilinx                              # unisim and xpm
+       - vendor: microchip
+         family: polarfire
+         path: /opt/microchip/Libero_SoC_v2024.1
+       - library: unimacro                   # any library, from listed files
+         files: [/opt/xilinx/unimacro_VCOMP.vhd]
+     libraries: ...
+
++---------------+-------------------------------+--------------------------------------------------------+-----------------------------------------+
+| Vendor        | Installation from             | Files, relative to the installation                    | Libraries                               |
++===============+===============================+========================================================+=========================================+
+| ``xilinx``    | path, $XILINX_VIVADO,         | data/vhdl/src/unisims/unisim_VPKG.vhd (if present),    | unisim, xpm (if present)                |
+|               | $XILINX_VIVADO_HOME           | data/vhdl/src/unisims/unisim_VCOMP.vhd,                |                                         |
+|               |                               | data/ip/xpm/xpm_VCOMP.vhd                              |                                         |
++---------------+-------------------------------+--------------------------------------------------------+-----------------------------------------+
+| ``microchip`` | path, $LIBERO_INSTALL_DIR,    | Designer/lib/vhdl/<family>.vhd, or                     | <family>, such as polarfire             |
+|               | $LIBERO_ROOT,                 | SynplifyPro/lib/microsemi/<family>.vhd, or             |                                         |
+|               | $SYNPLIFY_PRO_ROOT            | lib/microsemi/<family>.vhd, or the same under actel    |                                         |
++---------------+-------------------------------+--------------------------------------------------------+-----------------------------------------+
+| ``intel``     | path, $QUARTUS_ROOTDIR,       | eda/sim_lib/altera_mf_components.vhd,                  | altera_mf, altera, lpm, and <family>    |
+|               | $QUARTUS_ROOT                 | altera_primitives_components.vhd, 220pack.vhd and      | if given                                |
+|               |                               | <family>_components.vhd (if present)                   |                                         |
++---------------+-------------------------------+--------------------------------------------------------+-----------------------------------------+
+| ``lattice``   | path, $RADIANT_HOME,          | cae_library/synthesis/vhdl/<family>.vhd                | <family>, such as ecp5u                 |
+|               | $LSC_RADIANT, $LSC_DIAMOND,   |                                                        |                                         |
+|               | $DIAMOND_HOME, $FOUNDRY       |                                                        |                                         |
++---------------+-------------------------------+--------------------------------------------------------+-----------------------------------------+
+
+These locations can differ between versions of the tools. When a file is not found, MHSG lists every location it
+tried; set **path** to the installation, or name the files with **library** and **files**. Only declaration files
+belong here: a library of simulation models would make GHDL synthesize the models instead of keeping black boxes.
+The vendor files are analyzed with the standard and **ghdl_options** of the design.
+
+Each vendor primitive is then a black box, to be declared as below.
+
 Write the declarations in the **black_boxes** part of the design section, keyed by component name or a pattern, or in
 library files shared between designs:
 
