@@ -250,7 +250,7 @@ A waiver without a justification is reported by design_008.
 
 **Report.** :code:`--cdc_report FILE` writes every clock and crossing, with its status, sources and location, and
 the reset findings: as JSON for a file ending in .json, otherwise as text. It ends with the record of the run, the
-versions of MHSG, GHDL and Yosys and the configuration used (see :ref:`run_record`):
+versions of MHSG, GHDL and Yosys and the configuration used (see :ref:`the record of the run <run_record>`):
 
 .. code-block:: text
 
