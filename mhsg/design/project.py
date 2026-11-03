@@ -60,6 +60,8 @@ class Design:
         self.vendor_libraries = []
         # Declarations of the black boxes, see black_box.py
         self.black_boxes = black_box.Library()
+        # The names of the black box libraries, such as xilinx; Verilog designs also read Yosys' cell models of them
+        self.black_box_libraries = []
         # For the Verilog and SystemVerilog files: macros defined on the command line and include directories
         self.defines = {}
         self.include_directories = []
@@ -121,6 +123,7 @@ def from_configuration(dConfiguration):
     oDesign.defines = {str(s): o for s, o in dDefines.items()}
     oDesign.include_directories = [os.path.expandvars(str(s)) for s in dDesign.get("include_directories") or []]
     oDesign.black_boxes = black_box.from_design(dDesign)
+    oDesign.black_box_libraries = [str(s).lower() for s in black_box.as_list(dDesign.get("black_box_libraries"))]
     if dDesign.get("work_directory"):
         oDesign.work_directory = os.path.expandvars(str(dDesign["work_directory"]))
     return oDesign

@@ -18,7 +18,7 @@ import re
 import subprocess
 
 from mhsg import language
-from mhsg.design import tools, top
+from mhsg.design import tools, top, verilog_black_boxes
 
 # GHDL writes file:line:column:severity: text, or file:line:column:(assert severity): text for assertion reports
 reMessage = re.compile(
@@ -168,7 +168,7 @@ def run(oDesign, oTools, sWorkDirectory):
     lOptions = []
     if oDesign.verilog_files():
         # The Verilog modules the VHDL instantiates are read first; hierarchy links the instances GHDL leaves unbound
-        sRead, lOptions = verilog_read(oDesign, oTools, None)
+        sRead, lOptions = verilog_read(oDesign, oTools, None, sWorkDirectory)
         sScript = sRead + "; ghdl " + " ".join(elaboration_options(oDesign, sWorkDirectory, lPatched) + top_units(oDesign))
         sScript += f"; hierarchy -check -top {oDesign.top}; proc; check; write_json {sNetlist}"
     lCommand = [oTools.yosys, *yosys_module_options(oTools), *lOptions, "-q", "-l", sLog, "-p", sScript]
@@ -192,7 +192,7 @@ def run_verilog(oDesign, oTools, sWorkDirectory):
     os.makedirs(sWorkDirectory, exist_ok=True)
     sNetlist = os.path.join(sWorkDirectory, "design.json")
     sLog = os.path.join(sWorkDirectory, "yosys.log")
-    sRead, lOptions = verilog_read(oDesign, oTools, oDesign.top)
+    sRead, lOptions = verilog_read(oDesign, oTools, oDesign.top, sWorkDirectory)
     sScript = f"{sRead}; proc; check; write_json {quote(sNetlist)}"
     lCommand = [oTools.yosys, *lOptions, "-q", "-l", sLog, "-p", sScript]
     oResult.commands.append(lCommand)
@@ -212,12 +212,20 @@ def run_verilog(oDesign, oTools, sWorkDirectory):
     return oResult
 
 
-def verilog_read(oDesign, oTools, sTop):
+def verilog_read(oDesign, oTools, sTop, sWorkDirectory=None):
     """
     Returns (Yosys commands, Yosys options) that read the Verilog and SystemVerilog files of a design: read_slang when
     Yosys has it, else read_verilog -sv. With sTop, the commands also elaborate that top module with the parameters
-    set under generics.
+    set under generics. With a work directory, the black boxes are read first, see verilog_black_boxes.py.
     """
+    sBlackBoxes = (
+        verilog_black_boxes.read_commands(oDesign, sWorkDirectory, tools.data_directory(oTools.yosys), oDesign.black_box_libraries) if sWorkDirectory else ""
+    )
+    sScript, lOptions = verilog_read_files(oDesign, oTools, sTop)
+    return (sBlackBoxes + "; " + sScript if sBlackBoxes else sScript), lOptions
+
+
+def verilog_read_files(oDesign, oTools, sTop):
     lDefines = [f"-D{sName}" if oValue is None else f"-D{sName}={verilog_value(oValue)}" for sName, oValue in oDesign.defines.items()]
     lIncludes = [f"-I{quote(s)}" for s in oDesign.include_directories]
     lFiles = [quote(s) for s in oDesign.verilog_files()]

@@ -896,7 +896,29 @@ class test_design_analysis(unittest.TestCase):
             [t for t in self.findings("registers_top", "registers.vhd") if t[2] in ("design_005", "design_006")],
         )
 
-    def test_waivers(self):
+    def test_verilog_black_boxes(self):
+        # BUFGCE comes from Yosys' Xilinx cell models and vendor_ip from a stub; the crossings through them are found.
+        # data_i, whose sync role does not say its direction, is an input, as its net has another driver
+        dDeclaration = {"reviewed_by": "A. Reviewer", "ports": {"aclk": "clock", "data_i": {"sync": "aclk"}, "irq": "async"}}
+        dKeys = {"black_box_libraries": ["xilinx"], "black_boxes": {"vendor_ip": dDeclaration}}
+        self.assertEqual(
+            [
+                ("verilog_black_box.sv", 17, "design_008", "q_r (clk_b) captures d_r (clk_a) without a synchronizer"),
+                ("verilog_black_box.sv", 21, "design_008", "irq_q (clk_a) captures u_ip.irq (async) without a synchronizer"),
+            ],
+            self.findings("vbb_top", "verilog_black_box.sv", dDesignKeys=dKeys),
+        )
+        # Without a declaration, the black box is reported, not the instance of a module that does not exist
+        self.assertEqual(
+            [("verilog_black_box.sv", 20, "design_017", "Black box vendor_ip has no declaration of its clock domain behaviour")],
+            [
+                t
+                for t in self.findings("vbb_top", "verilog_black_box.sv", dDesignKeys={"black_box_libraries": ["xilinx"]})
+                if t[2] in ("design_001", "design_017")
+            ],
+        )
+
+    def test_waivers_of_findings(self):
         # A waived finding is left out of the findings and listed in the JSON output with its justification
         lWaivers = [
             {"rule": "design_005", "file": "registers.vhd", "line": 37, "justification": "busy_r is a placeholder for the next revision"},

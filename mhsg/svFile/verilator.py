@@ -124,8 +124,11 @@ def compile_order(lFiles):
     return lReturn
 
 
-def stubs(lTrees):
-    """Returns the text of empty modules for the modules the trees instantiate but do not define."""
+def undefined_modules(lTrees):
+    """
+    Returns {name: {"parameters", "ordered_parameters", "ports", "ordered_ports"}} for the modules the trees instantiate
+    but do not define: the parameters and ports their instances name, and the most given by position.
+    """
     setDefined = set()
     dInstances = {}
     for oTree in lTrees:
@@ -149,10 +152,13 @@ def stubs(lTrees):
                     for oConnection in lConnections:
                         if oConnection.kind == SyntaxKind.NamedPortConnection and name_of(oConnection.name) not in dModule["ports"]:
                             dModule["ports"].append(name_of(oConnection.name))
+    return {s: d for s, d in sorted(dInstances.items()) if s and s not in setDefined}
+
+
+def stubs(lTrees):
+    """Returns the text of empty modules for the modules the trees instantiate but do not define."""
     lText = []
-    for sModule, dModule in sorted(dInstances.items()):
-        if sModule in setDefined or not sModule:
-            continue
+    for sModule, dModule in undefined_modules(lTrees).items():
         lParameters = dModule["parameters"] + [f"mhsg_parameter_{i}" for i in range(dModule["ordered_parameters"])]
         lPorts = dModule["ports"] + [f"mhsg_port_{i}" for i in range(dModule["ordered_ports"])]
         sParameters = " #(" + ", ".join(f"parameter {s} = 0" for s in lParameters) + ")" if lParameters else ""

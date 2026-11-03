@@ -105,6 +105,21 @@ In a mixed design with a VHDL top, GHDL elaborates the VHDL as for a VHDL design
 components without a VHDL entity unbound; Yosys reads the Verilog files and links those instances to the Verilog
 modules of the same name, so the analysis sees through them. A Verilog top with VHDL modules is not supported yet.
 
+A module the Verilog files instantiate but none defines, such as a vendor primitive or encrypted IP, is a black box, as
+a VHDL component without an entity is (see `Black boxes`_). Yosys reads a module without logic for it before the
+design, so its hierarchy check does not stop there, with the ports the instances connect:
+
+* when the design names a black box library Yosys has cell models for, :code:`black_box_libraries: [xilinx]`, the
+  primitives come from those models (:code:`+/xilinx/cells_sim.v` and :code:`cells_xtra.v`), with their ports;
+* otherwise a port's direction comes from its role in the declaration: a clock, an enable, a reset input or a static
+  port is an input, a path, a clock output, a reset output or a synchronized output is an output, and so is each port
+  another role names as its input;
+* a port whose role does not say, such as :code:`async` or :code:`{sync: aclk}`, is an input of an instance when
+  something else drives what it connects to, and an output when nothing does.
+
+The modules are written to :code:`black_boxes.v` in the work directory. design_017 reports a black box without a
+declaration. With read_slang, this has not been tried yet.
+
 Running design analysis
 -----------------------
 

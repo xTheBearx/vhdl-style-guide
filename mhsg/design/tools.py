@@ -106,6 +106,16 @@ def library_prefix(sGhdl):
     return None
 
 
+def data_directory(sYosys):
+    """Returns Yosys' data directory, which +/ names in Yosys commands: yosys-config --datdir, else share/yosys."""
+    sConfig = os.path.join(os.path.dirname(sYosys), "yosys-config")
+    if os.path.isfile(sConfig):
+        sDirectory = first_line([sConfig, "--datdir"])
+        if sDirectory:
+            return sDirectory
+    return os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(sYosys))), "share", "yosys")
+
+
 def first_line(lCommand):
     oResult = subprocess.run(lCommand, capture_output=True, text=True, check=False)
     lLines = oResult.stdout.splitlines()

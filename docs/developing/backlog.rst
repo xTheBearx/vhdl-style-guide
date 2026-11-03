@@ -106,8 +106,8 @@ under way: the entries below.
   SystemVerilog; ibex and common_cells need the plugin, which is not packaged for Ubuntu. Not yet tried with it.
 * **Mixed designs with a Verilog top** and VHDL modules: Yosys would need each VHDL entity the Verilog instantiates
   elaborated with the ghdl command first; the design section could list them.
-* **Black boxes in Verilog designs**: an instance of a module with no source, such as a vendor primitive, stops
-  Yosys' hierarchy check. Vendor simulation libraries in Verilog (unisims), or stubs made from the black box
-  declarations, would let them through.
+* **Black boxes in Verilog designs with read_slang**: the modules made for black boxes are read with read_verilog
+  -lib before the design; whether read_slang links instances to them is not known. Yosys has cell models for Xilinx
+  only among the vendors with black box libraries.
 * **More SystemVerilog projects** in the real-world check, which runs ibex, common_cells and picorv32: OpenTitan
   (a subset), CVA6, SERV and the sv-tests conformance suite.
