@@ -897,15 +897,16 @@ def set_token_hierarchy_value(lTokens):
 
 def set_code_tags(lTokens):
     oCodeTags = code_tags.New()
-    for oToken in lTokens:
-        if code_tags.token_has_mhsg_on_code_tag(oToken):
+    for iToken, oToken in enumerate(lTokens):
+        oTag = code_tags.tag_comment(lTokens, iToken)
+        if code_tags.token_has_mhsg_on_code_tag(oTag):
             oToken.set_code_tags(oCodeTags.get_tags())
-            oCodeTags.update(oToken)
-        elif code_tags.token_has_mhsg_off_code_tag(oToken):
-            oCodeTags.update(oToken)
+            oCodeTags.update(oTag)
+        elif code_tags.token_has_mhsg_off_code_tag(oTag):
+            oCodeTags.update(oTag)
             oToken.set_code_tags(oCodeTags.get_tags())
-        elif code_tags.token_has_next_line_code_tag(oToken):
-            oCodeTags.update(oToken)
+        elif code_tags.token_has_next_line_code_tag(oTag):
+            oCodeTags.update(oTag)
             oToken.set_code_tags(oCodeTags.get_tags())
         else:
             oToken.set_code_tags(oCodeTags.get_tags())
