@@ -24,14 +24,22 @@ The latest development version can be cloned from the GitHub repo.
 
   git clone https://github.com/jeremiah-c-leary/vhdl-style-guide.git
 
-Install prerequisites.
+The project is managed with `uv <https://docs.astral.sh/uv/>`_.
+Install the locked development dependencies, then build; artifacts will appear in the ``dist`` directory.
 
 .. code-block:: bash
 
-  pip install tox
+  uv sync
+  uv build
 
-Build locally, artifacts will appear in ``dist`` directory.
+External tools
+--------------
+
+Design analysis, see :doc:`design_analysis`, needs GHDL, Yosys and the GHDL plugin for Yosys.
+They are not Python packages, so they are installed with the system's package manager, for example on Ubuntu:
 
 .. code-block:: bash
 
-  tox
+  sudo apt-get install ghdl yosys yosys-plugin-ghdl
+
+The rest of MHSG works without them.

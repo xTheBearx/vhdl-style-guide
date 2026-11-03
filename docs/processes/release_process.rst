@@ -23,10 +23,10 @@ Follow these steps:
 
 .. code-block:: bash
 
-   $ tox -e wheel-py38
+   $ uv build --out-dir dist
 
 5)  Submit to PyPI
 
 .. code-block:: bash
 
-   $ twine upload dist/wheel-py38/*
+   $ uv publish dist/*

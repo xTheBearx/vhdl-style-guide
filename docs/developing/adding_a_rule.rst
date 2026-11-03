@@ -292,10 +292,10 @@ Now that the single test runs, the entire suite of tests must be ran to ensure t
 
 .. code-block:: text
 
-   $ tox -e test-py38
+   $ uv run pytest
    ======================================== test session starts =========================================
    platform linux -- Python 3.8.10, pytest-8.1.1, pluggy-1.4.0
-   cachedir: .tox/test-py38/.pytest_cache
+   cachedir: .pytest_cache
    rootdir: /home/jcleary/projects/mhsg-master
    configfile: pyproject.toml
    plugins: cov-5.0.0, html-4.1.1, xdist-3.5.0, html-reporter-0.2.9, metadata-3.1.1

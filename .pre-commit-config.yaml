@@ -72,6 +72,8 @@ repos:
       - id: codespell
         args:
           - -I.codespell-ignore
+        # Package names in the lock file, such as astroid, are not misspellings
+        exclude: '^uv\.lock$'
 
   - repo: https://github.com/PyCQA/flake8
     rev: 7.0.0

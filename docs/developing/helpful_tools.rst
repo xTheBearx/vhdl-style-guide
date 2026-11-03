@@ -2,7 +2,7 @@ Helpful Tools
 -------------
 
 mhsg_parser
-==========
+===========
 
 :code:`mhsg_parser` is a tool which will show the mapping of tokens to a given file.
 It is located in the bin directory and can be invoked with:

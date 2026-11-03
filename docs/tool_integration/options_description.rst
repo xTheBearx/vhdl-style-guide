@@ -33,7 +33,7 @@ The file is a JSON object with these keys:
 +--------------------+-----------------------------------------------------------------------------------------+
 | mhsg_version       | The version of MHSG which wrote the file.                                               |
 +--------------------+-----------------------------------------------------------------------------------------+
-| documentation_url  | The location of the documentation pages named by :code:`documentation` and             |
+| documentation_url  | The location of the documentation pages named by :code:`documentation` and              |
 |                    | :code:`option_documentation`.                                                           |
 +--------------------+-----------------------------------------------------------------------------------------+
 | settings           | The configuration keys which are not rule options, such as :code:`file_list`.           |
