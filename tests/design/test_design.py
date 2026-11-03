@@ -92,6 +92,39 @@ class test_project(unittest.TestCase):
                 project.from_configuration(dConfiguration)
 
 
+class test_verilog_designs(unittest.TestCase):
+    def design(self, lFiles, dExtra=None):
+        dDesign = {"top": "top", "libraries": [{"name": "work", "files": [os.path.join(sTestDir, s) for s in lFiles]}]}
+        dDesign.update(dExtra or {})
+        return project.from_configuration({"design": dDesign})
+
+    def test_language(self):
+        self.assertEqual("systemverilog", self.design(["cdc_sv.sv"]).language)
+        self.assertEqual("mixed", self.design(["mixed_sync.v", "mixed_top.vhd"]).language)
+        self.assertEqual("vhdl", self.design(["latch.vhd"]).language)
+
+    def test_read_commands(self):
+        oDesign = self.design(
+            ["cdc_sv.sv"],
+            {"defines": {"SIM": None, "WIDTH": 8}, "include_directories": ["inc"], "generics": {"Depth": 4, "Fast": True, "Name": "core"}},
+        )
+        oTools = tools.Tools(None, "yosys", {}, "", "")
+        sScript, lOptions = runner.verilog_read(oDesign, oTools, "top")
+        self.assertEqual([], lOptions)
+        self.assertEqual(
+            f"read_verilog -sv -DSIM -DWIDTH=8 -Iinc {os.path.join(sTestDir, 'cdc_sv.sv')}; hierarchy -check -top top -chparam Depth 4 -chparam Fast 1 -chparam Name \"core\"",
+            sScript,
+        )
+
+    def test_messages(self):
+        lMessages = runner.parse_verilog_messages(
+            "/x/bad.v:2: ERROR: syntax error, unexpected ';'\nERROR: Module `\\sub' referenced in module `\\top' in cell `\\u_sub' is not part of the design.\n",
+            "verilog",
+        )
+        self.assertEqual([("/x/bad.v", 2, "error"), (None, 0, "error")], [(o.file, o.line, o.severity) for o in lMessages])
+        self.assertEqual("Module `sub' referenced in module `top' in cell `u_sub' is not part of the design.", lMessages[1].text)
+
+
 class test_runner_messages(unittest.TestCase):
     def test_parse_messages(self):
         sOutput = "\n".join(
@@ -740,7 +773,8 @@ class test_design_analysis(unittest.TestCase):
     def run_design(self, sTop, sFile, lArguments=(), dGenerics=None, dRules=None, dCdc=None):
         with tempfile.TemporaryDirectory() as sDirectory:
             sConfiguration = os.path.join(sDirectory, "design.yaml")
-            dDesign = {"top": sTop, "libraries": [{"name": "work", "files": [os.path.join(sTestDir, sFile)]}]}
+            lFiles = [sFile] if isinstance(sFile, str) else sFile
+            dDesign = {"top": sTop, "libraries": [{"name": "work", "files": [os.path.join(sTestDir, s) for s in lFiles]}]}
             if dGenerics:
                 dDesign["generics"] = dGenerics
             if dCdc:
@@ -755,6 +789,52 @@ class test_design_analysis(unittest.TestCase):
                 check=False,
             )
         return oResult.returncode, oResult.stdout.splitlines()
+
+    def test_systemverilog_cdc(self):
+        # Yosys reads the SystemVerilog; findings are at the assignment, refined from the always block Yosys points at
+        iStatus, lOutput = self.run_design("cdc_sv", "cdc_sv.sv", dCdc={"clocks": {"clk_a": "a", "clk_b": "b"}})
+        sFile = os.path.join(sTestDir, "cdc_sv.sv")
+        self.assertEqual(1, iStatus)
+        self.assertEqual(
+            [
+                f"ERROR: {sFile}(16)design_010 -- Clock en_a is used as data",
+                f"ERROR: {sFile}(18)design_015 -- Reset rst_ni is released asynchronously: it resets registers clocked by clk_a without a reset synchronizer (3 registers)",
+                f"ERROR: {sFile}(30)design_008 -- unsync_b (clk_b) captures flag_a (clk_a) without a synchronizer",
+                f"ERROR: {sFile}(43)design_009 -- Logic on x_a (clk_a), y_a (clk_a) before synchronizer s1x_b (clk_b) can glitch",
+                f"ERROR: {sFile}(50)design_012 -- Clock clk_a is gated by logic into clk_gated (1 register)",
+            ],
+            lOutput,
+        )
+
+    def test_mixed_languages(self):
+        # The VHDL top uses a Verilog synchronizer: Yosys links the instance GHDL leaves unbound to the module
+        iStatus, lOutput = self.run_design("mixed_top", ["mixed_sync.v", "mixed_top.vhd"], dCdc={"clocks": {"clk_a": "a", "clk_b": "b"}})
+        sFile = os.path.join(sTestDir, "mixed_top.vhd")
+        self.assertEqual(1, iStatus)
+        self.assertEqual(
+            [
+                f"ERROR: {sFile}(48)design_008 -- raw (clk_b) captures flag_a (clk_a) without a synchronizer",
+                f"ERROR: {sFile}(49)design_008 -- raw_b (clk_b) captures flag_a (clk_a) without a synchronizer",
+            ],
+            lOutput,
+        )
+
+    def test_verilog_errors(self):
+        with tempfile.TemporaryDirectory() as sDirectory:
+            sFile = os.path.join(sDirectory, "bad.v")
+            with open(sFile, "w", encoding="utf-8") as oFile:
+                oFile.write("module bad (input clk, output reg q);\n  always @(posedge clk) q <= ;\nendmodule\n")
+            sConfiguration = os.path.join(sDirectory, "design.yaml")
+            with open(sConfiguration, "w", encoding="utf-8") as oFile:
+                json.dump({"design": {"top": "bad", "libraries": [{"name": "work", "files": [sFile]}]}}, oFile)
+            oResult = subprocess.run(
+                [*utils.mhsg_exec(), "--design", "-c", sConfiguration, "-of", "syntastic"],
+                cwd=sRoot,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+        self.assertEqual([f"ERROR: {sFile}(2)design_001 -- Yosys error: syntax error, unexpected ';'"], oResult.stdout.splitlines())
 
     def test_latch(self):
         iStatus, lOutput = self.run_design("latch_top", "latch.vhd")

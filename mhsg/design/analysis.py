@@ -5,10 +5,11 @@ Findings are reported per VHDL file in the same formats as the other checks.
 """
 
 import contextlib
+import importlib
 import json
 import tempfile
 
-from mhsg import report, rule_list, rule_set, severity, vhdlFile
+from mhsg import language, report, rule_list, rule_set, severity, vhdlFile
 from mhsg.design import (
     black_box,
     cdc,
@@ -21,6 +22,10 @@ from mhsg.design import (
     top,
 )
 from mhsg.lint import model
+from mhsg.rules import sv_tree
+
+# mhsg.svFile exports the class svFile under the name of its module
+svFile = importlib.import_module("mhsg.svFile.svFile")
 
 
 class Context:
@@ -54,7 +59,9 @@ class Context:
         return self._oGraph
 
     def vhdl_file(self, sFileName):
-        """Returns the parsed VHDL file, or None if it cannot be read or parsed."""
+        """Returns the parsed VHDL file, or None if it cannot be read or parsed, or is not a VHDL file."""
+        if language.of_file(sFileName) != language.VHDL:
+            return None
         if sFileName not in self._dFiles:
             try:
                 lLines, eError = vhdlFile.utils.read_vhdlfile(sFileName)
@@ -62,6 +69,39 @@ class Context:
             except Exception:  # pylint: disable=broad-except
                 self._dFiles[sFileName] = None
         return self._dFiles[sFileName]
+
+    def sv_file(self, sFileName):
+        """The parsed SystemVerilog file, or None if it cannot be read."""
+        dFiles = self.__dict__.setdefault("_dSvFiles", {})
+        if sFileName not in dFiles:
+            try:
+                lLines, eError = vhdlFile.utils.read_vhdlfile(sFileName)
+                dFiles[sFileName] = None if eError else svFile.svFile(lLines, sFilename=sFileName)
+            except Exception:  # pylint: disable=broad-except
+                dFiles[sFileName] = None
+        return dFiles[sFileName]
+
+    def refine_verilog(self, oLocation, lParts, bLast):
+        """
+        Returns the line of the first assignment, or the last with bLast, to a signal in the always block or
+        continuous assignment at a location of Yosys, which is the start of the block, or None.
+        """
+        oFile = self.sv_file(oLocation.file)
+        if oFile is None:
+            return None
+        for oBlock in oFile.nodes("AlwaysBlock", "AlwaysFFBlock", "AlwaysCombBlock", "AlwaysLatchBlock"):
+            oFirst, oLast = oBlock.getFirstToken(), oBlock.getLastToken()
+            if oFirst is None or not oFile.line_of(oFirst.location.offset) <= oLocation.line <= oFile.line_of(oLast.location.offset):
+                continue
+            lLines = []
+            for oNode in sv_tree.descendants(oBlock):
+                if oNode.kind.name in ("AssignmentExpression", "NonblockingAssignmentExpression"):
+                    oTarget = oNode.left.getFirstToken()
+                    if oTarget is not None and oTarget.rawText.lower() in lParts:
+                        lLines.append(oFile.line_of(oTarget.location.offset))
+            if lLines:
+                return max(lLines) if bLast else min(lLines)
+        return None
 
     def refine(self, oLocation, sSignal, bLast=False):
         """
@@ -71,7 +111,11 @@ class Context:
         """
         if oLocation is None:
             return None, 0
-        oFile = self.vhdl_file(oLocation.file) if sSignal else None
+        # Only VHDL files are refined to the assignment; Yosys locates the cells of Verilog at the assignment itself
+        if sSignal and language.of_file(oLocation.file) == language.SYSTEMVERILOG:
+            iLine = self.refine_verilog(oLocation, list(reversed(sSignal.lower().split("[")[0].split("."))), bLast)
+            return oLocation.file, iLine if iLine is not None else oLocation.line
+        oFile = self.vhdl_file(oLocation.file) if sSignal and language.of_file(oLocation.file) == language.VHDL else None
         if oFile is not None:
             # Names carry generate labels before the signal, such as gen_fifo.memory, and record fields after it,
             # such as ctrl_o.cpu_priv: try the parts from the last
@@ -126,20 +170,23 @@ def design_rules(oConfig, lLocalRules):
 def run(commandLineArguments, oConfig):
     """Runs design analysis and prints its report. Returns the exit status: 1 for errors, else 0."""
     oDesign = project.from_configuration(oConfig.dConfig)
-    oTools = tools.find()
+    oTools = tools.find(bGhdl=oDesign.language != "systemverilog")
     _, lRules = design_rules(oConfig, commandLineArguments.local_rules)
     if oDesign.work_directory:
         oWorkDirectory = contextlib.nullcontext(oDesign.work_directory)
     else:
         oWorkDirectory = tempfile.TemporaryDirectory(prefix="mhsg_design_")
     with oWorkDirectory as sWorkDirectory:
-        oResult = configuration_result(oDesign)
+        # The generics of a VHDL top are checked before GHDL runs; Yosys checks the parameters of a Verilog top
+        oResult = configuration_result(oDesign) if oDesign.language != "systemverilog" else None
         if oResult is None:
             oResult = runner.run(oDesign, oTools, sWorkDirectory)
         oNetlist = None
         if oResult.netlist is not None:
             lFiles = [s for o in oDesign.libraries for s in o.files]
-            oNetlist = netlist.Netlist(oResult.netlist, netlist.read_locations(oResult.verilog_file, lFiles), lFiles)
+            # Locations come from GHDL's Verilog for VHDL, and from the src attributes of the netlist for Verilog
+            dLocations = netlist.read_locations(oResult.verilog_file, lFiles) if oResult.verilog_file else {}
+            oNetlist = netlist.Netlist(oResult.netlist, dLocations, lFiles)
         oContext = Context(oDesign, oResult, oNetlist)
         lFindings = [(oRule, oFinding) for oRule in lRules for oFinding in oRule.check_design(oContext)]
         write_cdc_report(getattr(commandLineArguments, "cdc_report", None), oContext)

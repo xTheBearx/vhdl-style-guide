@@ -66,6 +66,40 @@ The design is described in the **design** section of a configuration file:
 
 Paths in the configuration may use environment variables.
 
+Verilog, SystemVerilog and mixed designs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The files of a design may be Verilog and SystemVerilog, by their extensions :code:`.v`, :code:`.vh`, :code:`.sv`
+and :code:`.svh`, alone or with VHDL files:
+
+.. code-block:: yaml
+
+   design:
+     top: fifo
+     libraries:
+       - name: work
+         files: [rtl/fifo_pkg.sv, rtl/fifo.sv]
+     defines:
+       SYNTHESIS:
+       DEPTH: 16
+     include_directories: [rtl/include]
+     generics:
+       Width: 8
+
+* **defines** are the macros of the command line, :code:`-D` for the tools; a macro with no value is just defined.
+* **include_directories** are searched by :code:`\`include`.
+* **generics** set the parameters of a Verilog top module.
+
+A design of Verilog and SystemVerilog only needs Yosys, not GHDL. Yosys reads the files with the read_slang command of
+the `yosys-slang <https://github.com/povik/yosys-slang>`_ plugin when it has it, as in the YosysHQ OSS CAD Suite;
+without it, with its own reader, :code:`read_verilog -sv`, which reads Verilog and part of SystemVerilog: designs that
+use packages with typed parameters, casts or interfaces need the plugin. Yosys puts the source location on every
+cell, and a finding is moved to the line of the assignment, as for VHDL.
+
+In a mixed design with a VHDL top, GHDL elaborates the VHDL as for a VHDL design and leaves the instances of
+components without a VHDL entity unbound; Yosys reads the Verilog files and links those instances to the Verilog
+modules of the same name, so the analysis sees through them. A Verilog top with VHDL modules is not supported yet.
+
 Running design analysis
 -----------------------
 
@@ -94,6 +128,9 @@ How it works
 3. Yosys synthesizes the same top entity through the GHDL plugin and writes the netlist before any optimization.
 4. The design rules check the result. Each cell of the netlist is located in the VHDL by joining its name to the
    location in GHDL's Verilog, and a latch is reported at the assignment that infers it.
+
+For a Verilog and SystemVerilog design, Yosys reads the files, elaborates the top module and writes the netlist; the
+cells carry their source locations as src attributes.
 
 Analysis stops at the first step that fails, and design_001 reports the errors.
 The other design rules need the netlist, so they run once the design analyzes and elaborates.

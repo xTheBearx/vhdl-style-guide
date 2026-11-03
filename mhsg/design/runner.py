@@ -17,7 +17,8 @@ import os
 import re
 import subprocess
 
-from mhsg.design import top
+from mhsg import language
+from mhsg.design import tools, top
 
 # GHDL writes file:line:column:severity: text, or file:line:column:(assert severity): text for assertion reports
 reMessage = re.compile(
@@ -83,6 +84,8 @@ def value_text(oValue):
 
 def run(oDesign, oTools, sWorkDirectory):
     """Runs the steps in the work directory and returns a Result. Stops at the first step that fails."""
+    if oDesign.language == "systemverilog":
+        return run_verilog(oDesign, oTools, sWorkDirectory)
     oResult = Result()
     os.makedirs(sWorkDirectory, exist_ok=True)
     oPatch = top.patch_real_generics(oDesign, sWorkDirectory)
@@ -91,9 +94,11 @@ def run(oDesign, oTools, sWorkDirectory):
         sOriginal, sCopy, lPatched = oPatch
         oResult.file_map[sCopy] = sOriginal
     for oLibrary in oDesign.libraries:
-        if not oLibrary.files:
+        # The Verilog files of a design of both languages are read by Yosys
+        lLibraryFiles = [s for s in oLibrary.files if language.of_file(s) == language.VHDL]
+        if not lLibraryFiles:
             continue
-        lFiles = [{v: k for k, v in oResult.file_map.items()}.get(s, s) for s in oLibrary.files]
+        lFiles = [{v: k for k, v in oResult.file_map.items()}.get(s, s) for s in lLibraryFiles]
         lCommand = [oTools.ghdl, "-a"] + ghdl_options(oDesign, sWorkDirectory) + [f"--work={oLibrary.name}"] + lFiles
         if not run_ghdl(oResult, oTools, lCommand, "analysis"):
             return oResult
@@ -106,7 +111,13 @@ def run(oDesign, oTools, sWorkDirectory):
     sNetlist = os.path.join(sWorkDirectory, "design.json")
     sLog = os.path.join(sWorkDirectory, "yosys.log")
     sScript = "ghdl " + " ".join(elaboration_options(oDesign, sWorkDirectory, lPatched) + top_units(oDesign)) + f"; proc; check; write_json {sNetlist}"
-    lCommand = [oTools.yosys, *yosys_module_options(oTools), "-q", "-l", sLog, "-p", sScript]
+    lOptions = []
+    if oDesign.verilog_files():
+        # The Verilog modules the VHDL instantiates are read first; hierarchy links the instances GHDL leaves unbound
+        sRead, lOptions = verilog_read(oDesign, oTools, None)
+        sScript = sRead + "; ghdl " + " ".join(elaboration_options(oDesign, sWorkDirectory, lPatched) + top_units(oDesign))
+        sScript += f"; hierarchy -check -top {oDesign.top}; proc; check; write_json {sNetlist}"
+    lCommand = [oTools.yosys, *yosys_module_options(oTools), *lOptions, "-q", "-l", sLog, "-p", sScript]
     oResult.commands.append(lCommand)
     oProcess = subprocess.run(lCommand, capture_output=True, text=True, env=oTools.environment, check=False)
     oResult.messages.extend(parse_messages(oResult.unpatch(oProcess.stderr), "yosys"))
@@ -119,6 +130,81 @@ def run(oDesign, oTools, sWorkDirectory):
     with open(sNetlist, encoding="utf-8") as oFile:
         oResult.netlist = json.load(oFile)
     return oResult
+
+
+def run_verilog(oDesign, oTools, sWorkDirectory):
+    """Runs Yosys on a design of Verilog and SystemVerilog files and returns a Result."""
+    oResult = Result()
+    os.makedirs(sWorkDirectory, exist_ok=True)
+    sNetlist = os.path.join(sWorkDirectory, "design.json")
+    sLog = os.path.join(sWorkDirectory, "yosys.log")
+    sRead, lOptions = verilog_read(oDesign, oTools, oDesign.top)
+    sScript = f"{sRead}; proc; check; write_json {quote(sNetlist)}"
+    lCommand = [oTools.yosys, *lOptions, "-q", "-l", sLog, "-p", sScript]
+    oResult.commands.append(lCommand)
+    oProcess = subprocess.run(lCommand, capture_output=True, text=True, env=oTools.environment, check=False)
+    oResult.messages.extend(parse_verilog_messages(oProcess.stderr, "verilog"))
+    if os.path.isfile(sLog):
+        with open(sLog, encoding="utf-8", errors="replace") as oFile:
+            oResult.yosys_log = oFile.read()
+    if oProcess.returncode != 0 or not os.path.isfile(sNetlist):
+        oResult.failed_stage = "verilog"
+        if not any(o.severity in (None, "error") for o in oResult.messages):
+            sText = (oProcess.stderr.strip() or "Yosys failed").splitlines()[-1]
+            oResult.messages.append(Message(None, 0, 0, "error", sText, "verilog"))
+        return oResult
+    with open(sNetlist, encoding="utf-8") as oFile:
+        oResult.netlist = json.load(oFile)
+    return oResult
+
+
+def verilog_read(oDesign, oTools, sTop):
+    """
+    Returns (Yosys commands, Yosys options) that read the Verilog and SystemVerilog files of a design: read_slang when
+    Yosys has it, else read_verilog -sv. With sTop, the commands also elaborate that top module with the parameters
+    set under generics.
+    """
+    lDefines = [f"-D{sName}" if oValue is None else f"-D{sName}={verilog_value(oValue)}" for sName, oValue in oDesign.defines.items()]
+    lIncludes = [f"-I{quote(s)}" for s in oDesign.include_directories]
+    lFiles = [quote(s) for s in oDesign.verilog_files()]
+    lSlang = tools.slang_options(oTools.yosys) if getattr(oTools, "slang", False) else None
+    if lSlang is not None:
+        lTop = [f"--top {sTop}"] + [f"-G {sName}={verilog_value(oValue)}" for sName, oValue in oDesign.generics.items()] if sTop else []
+        return " ".join(["read_slang", *lDefines, *lIncludes, *lTop, *lFiles]), lSlang
+    sScript = " ".join(["read_verilog -sv", *lDefines, *lIncludes, *lFiles])
+    if sTop:
+        lParameters = [f"-chparam {sName} {verilog_value(oValue)}" for sName, oValue in oDesign.generics.items()]
+        sScript += "; " + " ".join(["hierarchy -check -top", sTop, *lParameters])
+    return sScript, []
+
+
+def verilog_value(oValue):
+    """A value as Verilog writes it: 1 and 0 for booleans, a quoted string for text."""
+    if isinstance(oValue, bool):
+        return "1" if oValue else "0"
+    if isinstance(oValue, str) and not re.fullmatch(r"[0-9]+('[sS]?[bBoOdDhH][0-9a-fA-F_xXzZ]+)?|'[sS]?[bBoOdDhH][0-9a-fA-F_xXzZ]+", oValue):
+        return '"' + oValue + '"'
+    return str(oValue)
+
+
+def quote(sText):
+    return '"' + sText + '"' if " " in sText else sText
+
+
+reVerilogMessage = re.compile(r"^(?P<file>.+?\.(?:sv|svh|v|vh)):(?P<line>\d+): (?P<severity>ERROR|Warning): (?P<text>.*)$", re.IGNORECASE)
+
+
+def parse_verilog_messages(sOutput, sStage):
+    """Returns the messages of Yosys reading and elaborating Verilog: located ones, and errors without a location."""
+    lReturn = []
+    for sLine in sOutput.splitlines():
+        sLine = sLine.strip()
+        oMatch = reVerilogMessage.match(sLine)
+        if oMatch:
+            lReturn.append(Message(oMatch.group("file"), int(oMatch.group("line")), 0, oMatch.group("severity").lower(), oMatch.group("text"), sStage))
+        elif sLine.startswith("ERROR: "):
+            lReturn.append(Message(None, 0, 0, "error", sLine[len("ERROR: ") :].replace("`\\", "`"), sStage))
+    return lReturn
 
 
 def yosys_module_options(oTools):

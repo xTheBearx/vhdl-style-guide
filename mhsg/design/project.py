@@ -16,13 +16,16 @@ The description of a design, read from the design section of a configuration fil
       generics:
         DEPTH: 16
       ghdl_options: [-frelaxed-rules]
+
+A design of Verilog or SystemVerilog files, or of both languages, lists them the same way; defines and
+include_directories are passed to the reader of the Verilog files, and generics set the parameters of the top module.
 """
 
 import fnmatch
 import glob
 import os
 
-from mhsg import exceptions
+from mhsg import exceptions, language
 from mhsg.design import black_box, vendors
 
 STANDARDS = ("87", "93", "93c", "00", "02", "08", "19")
@@ -52,9 +55,27 @@ class Design:
         self.vendor_libraries = []
         # Declarations of the black boxes, see black_box.py
         self.black_boxes = black_box.Library()
+        # For the Verilog and SystemVerilog files: macros defined on the command line and include directories
+        self.defines = {}
+        self.include_directories = []
 
     def all_files(self):
         return [sFile for oLibrary in self.libraries for sFile in oLibrary.files]
+
+    def vhdl_files(self):
+        return [s for s in self.all_files() if language.of_file(s) == language.VHDL]
+
+    def verilog_files(self):
+        return [s for s in self.all_files() if language.of_file(s) == language.SYSTEMVERILOG]
+
+    @property
+    def language(self):
+        """vhdl, systemverilog, or mixed for a design of both."""
+        if not self.verilog_files():
+            return "vhdl"
+        if not self.vhdl_files():
+            return "systemverilog"
+        return "mixed"
 
 
 def from_configuration(dConfiguration):
@@ -86,6 +107,11 @@ def from_configuration(dConfiguration):
     oDesign.generics = dict(dDesign.get("generics") or {})
     oDesign.ghdl_options = [str(s) for s in dDesign.get("ghdl_options") or []]
     oDesign.cdc = read_cdc(dDesign.get("cdc"))
+    dDefines = dDesign.get("defines") or {}
+    if not isinstance(dDefines, dict):
+        raise exceptions.ConfigurationError("ERROR: defines in the design section map macro names to values")
+    oDesign.defines = {str(s): o for s, o in dDefines.items()}
+    oDesign.include_directories = [os.path.expandvars(str(s)) for s in dDesign.get("include_directories") or []]
     oDesign.black_boxes = black_box.from_design(dDesign)
     if dDesign.get("work_directory"):
         oDesign.work_directory = os.path.expandvars(str(dDesign["work_directory"]))
