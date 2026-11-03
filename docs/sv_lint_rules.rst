@@ -262,3 +262,38 @@ or macros of other files is not checked, as a signal driven there would look und
    module counter (output logic [7:0] count_o);
        assign count_o = '0;
    endmodule
+
+sv_lint_011
+###########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`sv_lint_verilator`
+
+This rule reports the warnings of Verilator, when it is installed, for checks slang does not make: blocking
+assignments in clocked processes (BLKSEQ), non-blocking assignments in combinational ones (COMBDLY), signals
+assigned in more than one process (MULTIDRIVEN), case statements that do not cover every value
+(CASEINCOMPLETE), and others. The verilator_warnings option lists the warnings reported, by Verilator's names;
+by default those whose checks slang does not make.
+
+Verilator lints the SystemVerilog files of a run together; the systemverilog section of the configuration turns
+it off with :code:`verilator: false`, or names the program with :code:`verilator: /path/to/verilator`.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and reports what Verilator finds; without Verilator it
+   reports nothing.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk) begin
+       count = count + 1;
+   end
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk) begin
+       count <= count + 1;
+   end

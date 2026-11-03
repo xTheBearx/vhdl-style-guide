@@ -108,7 +108,8 @@ jobs:
           path: |
             build.out
 
-  # Design analysis needs GHDL, Yosys and the GHDL plugin, which are system packages rather than Python packages
+  # Design analysis needs GHDL, Yosys and the GHDL plugin, and sv_lint_011 Verilator, which are system packages
+  # rather than Python packages
   design:
     runs-on: ubuntu-24.04
 
@@ -120,7 +121,7 @@ jobs:
       - name: tools.install
         run: |
           sudo apt-get update
-          sudo apt-get install --yes ghdl yosys yosys-plugin-ghdl
+          sudo apt-get install --yes ghdl yosys yosys-plugin-ghdl verilator
       - name: uv.install
         uses: astral-sh/setup-uv@v6
         with:
@@ -130,4 +131,4 @@ jobs:
           # Fail instead of skipping when the tools are missing
           MHSG_REQUIRE_DESIGN_TOOLS: "1"
         run: |
-          uv run --locked pytest tests/design
+          uv run --locked pytest tests/design tests/svfile/test_verilator.py

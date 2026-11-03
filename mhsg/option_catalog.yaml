@@ -533,6 +533,11 @@ options:
     maximum: 7
     label: Phase
     description: Phase (1 to 7) in which the rule runs; rules run in increasing phase order. Changing it is rarely needed and can break the ordering between rules.
+  verilator_warnings:
+    type: list
+    item_type: string
+    label: Verilator warnings
+    description: The warnings of Verilator to report, by Verilator's names, such as BLKSEQ and COMBDLY.
   policy:
     type: enum
     values: [infer, align, flush_left]

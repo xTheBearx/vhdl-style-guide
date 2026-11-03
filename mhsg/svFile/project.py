@@ -17,7 +17,7 @@ from pyslang import analysis, ast  # pylint: disable=import-error
 from pyslang.syntax import SyntaxTree  # pylint: disable=import-error
 
 from mhsg import config, language
-from mhsg.svFile import lint, preprocessor
+from mhsg.svFile import lint, preprocessor, verilator
 from mhsg.vhdlFile import utils
 
 
@@ -48,7 +48,21 @@ def files_of_run(lFiles, dConfig):
     return lReturn
 
 
-def collect(lFiles, dConfig):
+def verilator_enabled(oConfig):
+    """
+    Whether sv_lint_011, which reports Verilator's warnings, is enabled in this lint run: by the configuration, or
+    else by lint mode without a rule set, which enables every lint rule, or by a rule set that lists it.
+    """
+    dRule = ((getattr(oConfig, "dConfig", None) or {}).get("rule") or {}).get("sv_lint_011") or {}
+    if isinstance(dRule, dict) and "disable" in dRule:
+        return not dRule["disable"]
+    oRuleSet = getattr(oConfig, "rule_set", None)
+    if oRuleSet is None:
+        return True
+    return any("sv_lint_011" in oCheck.rules for oSet in oRuleSet.all_sets() for oCheck in oSet.checks)
+
+
+def collect(lFiles, dConfig, bVerilator=False):
     """
     Compiles the SystemVerilog files of a run together and returns {absolute file name: entry}, where an entry holds
     the hash of the text compiled, the warnings as (offset, name, message), and whether the file uses something
@@ -64,6 +78,7 @@ def collect(lFiles, dConfig):
     lTrees = []
     # Every file gets its buffer before any is parsed, so a file another one includes is read once, as it is here
     lBuffers = []
+    dTexts = {}
     for sPath in lPaths:
         sText = file_text(sPath)
         if sText is None:
@@ -71,10 +86,13 @@ def collect(lFiles, dConfig):
         oBuffer = oSourceManager.assignText(sPath, sText)
         lBuffers.append(oBuffer)
         dBuffers[oBuffer.id.id] = (sPath, text_hash(sText))
+        dTexts[sPath] = sText
+    lFiles = []
     for oBuffer in lBuffers:
         oTree = SyntaxTree.fromBuffer(oBuffer, oSourceManager, oOptions) if oOptions is not None else SyntaxTree.fromBuffer(oBuffer, oSourceManager)
         oCompilation.addSyntaxTree(oTree)
         lTrees.append(oTree)
+        lFiles.append((dBuffers[oBuffer.id.id][0], oTree))
     lDiagnostics = list(oCompilation.getAllDiagnostics())
     oCompilation.freeze()
     oAnalysisOptions = analysis.AnalysisOptions()
@@ -99,4 +117,11 @@ def collect(lFiles, dConfig):
         tDiagnostic = (oDiagnostic.location.offset, sName, oEngine.formatMessage(oDiagnostic))
         if tDiagnostic not in dEntry["diagnostics"]:
             dEntry["diagnostics"].append(tDiagnostic)
+    # Verilator's warnings, when sv_lint_011 is enabled and Verilator installed, see verilator.py
+    sVerilator = verilator.find(dConfig) if bVerilator else None
+    if sVerilator is not None:
+        for sPath, iOffset, sName, sMessage in verilator.lint(sVerilator, lFiles, dConfig, dTexts):
+            tDiagnostic = (iOffset, sName, sMessage)
+            if tDiagnostic not in dReturn[sPath]["diagnostics"]:
+                dReturn[sPath]["diagnostics"].append(tDiagnostic)
     return dReturn

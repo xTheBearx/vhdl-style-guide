@@ -41,7 +41,8 @@ class rule_009(Rule):
         self.lOthers = [o() for o in (rule_001, rule_002, rule_003, rule_004, rule_005, rule_006, rule_007, rule_010)]
 
     def accepts(self, sName):
-        return sName not in COVERED and not any(o.accepts(sName) for o in self.lOthers)
+        # Verilator's warnings are sv_lint_011's
+        return sName not in COVERED and not sName.startswith("verilator.") and not any(o.accepts(sName) for o in self.lOthers)
 
     def message(self, oDiagnostic):
         return super().message(oDiagnostic) + f" (slang {oDiagnostic.name})"

@@ -6,7 +6,8 @@ Lint Mode
 Besides style, MHSG can check VHDL and SystemVerilog for design problems such as latches, multiple drivers or incomplete case statements.
 These lint checks only report; they never change the code.
 For SystemVerilog and Verilog files the lint rules are :code:`sv_lint_001` to :code:`sv_lint_010`, which report
-what slang finds when it elaborates the file, see :doc:`systemverilog`. The **do254** rule set labels them with
+what slang finds when it elaborates the file, and :code:`sv_lint_011`, which reports Verilator's warnings when
+Verilator is installed, see :doc:`systemverilog`. The **do254** rule set labels them with
 its checks too.
 
 The checks are grouped in rule sets, which map the checks of a coding standard to the MHSG rules that implement them.

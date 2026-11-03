@@ -30,6 +30,13 @@ def only(lOutput, *lRuleGroups):
     return [s for s in lOutput if any(f"){sGroup}_" in s for sGroup in lRuleGroups)]
 
 
+# Verilator's findings in lint.sv, when it is installed, see sv_lint_011: without a complete sensitivity list,
+# Verilator takes the block for a clocked one
+VERILATOR_FINDINGS = (
+    ["ERROR: lint.sv(21)sv_lint_011 -- Blocking assignment '=' in sequential logic process (Verilator BLKSEQ)"] if shutil.which("verilator") else []
+)
+
+
 class Configuration:
     """A configuration with only a dictionary, as svFile reads it."""
 
@@ -454,6 +461,7 @@ class test_rules(unittest.TestCase):
                 "ERROR: lint.sv(20)sv_lint_004 -- Implicit net 'implicit_net' created",
                 "ERROR: lint.sv(20)sv_lint_005 -- Implicit net 'implicit_net' is unused elsewhere",
                 "ERROR: lint.sv(21)sv_lint_008 -- Add b_i to the sensitivity list, or use always_comb",
+                *VERILATOR_FINDINGS,
                 "ERROR: lint.sv(25)sv_lint_006 -- 'case' statement contains duplicate items for value '4'b1' (the second one will never be matched)",
                 "ERROR: lint.sv(30)sv_lint_007 -- Comparison of differently signed types ('logic[3:0]' and 'int')",
             ],

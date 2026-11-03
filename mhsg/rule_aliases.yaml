@@ -1194,6 +1194,7 @@ sv_lint_007: sv_lint_signedness
 sv_lint_008: sv_lint_sensitivity_list
 sv_lint_009: sv_lint_other_warnings
 sv_lint_010: sv_lint_undriven
+sv_lint_011: sv_lint_verilator
 sv_alignment_001: sv_alignment_port_declarations
 sv_alignment_002: sv_alignment_named_ports
 sv_alignment_003: sv_alignment_named_parameters
