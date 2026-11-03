@@ -96,15 +96,18 @@ each rule set with its version and digest. The JSON output (:code:`--json`) has 
 
 .. code-block:: json
 
-   "run": {
-     "mhsg": "3.36.0",
-     "python": "3.12.3",
-     "pyslang": "12.1.0",
-     "command_line": ["-f", "fifo.vhd", "-c", "mhsg.yaml", "--rule_set", "do254", "--json", "fifo.json"],
-     "configuration_files": [{"file": "mhsg.yaml", "sha256": "e10324..."}],
-     "configuration_sha256": "31b0f5...",
-     "lint_mode": "lint",
-     "rule_sets": [{"name": "DO-254", "version": "1", "sha256": "253f82..."}]
+   {
+     "files": [],
+     "run": {
+       "mhsg": "3.36.0",
+       "python": "3.12.3",
+       "pyslang": "12.1.0",
+       "command_line": ["-f", "fifo.vhd", "-c", "mhsg.yaml", "--rule_set", "do254", "--json", "fifo.json"],
+       "configuration_files": [{"file": "mhsg.yaml", "sha256": "e10324..."}],
+       "configuration_sha256": "31b0f5...",
+       "lint_mode": "lint",
+       "rule_sets": [{"name": "DO-254", "version": "1", "sha256": "253f82..."}]
+     }
    }
 
 The JUnit report (:code:`--junit`) has the same in the properties of its test suite, such as
