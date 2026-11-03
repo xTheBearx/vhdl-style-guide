@@ -49,8 +49,6 @@ Design analysis
 Lint and rule sets
 ------------------
 
-* **Tool qualification support**: :code:`--qualify` running the pass and fail examples of each check of a rule set,
-  with a report of expected against actual results and the versions of mhsg, the rule set, GHDL and Yosys.
 
 Verilog and SystemVerilog
 -------------------------

@@ -68,7 +68,9 @@ def summary(dRecord):
     lTools = [f"mhsg {dRecord['mhsg']}", f"Python {dRecord['python']}"]
     for sKey, sName in (("pyslang", "pyslang"), ("verilator", "Verilator"), ("ghdl", "GHDL"), ("yosys", "Yosys")):
         if dRecord.get(sKey):
-            lTools.append(f"{sName} {dRecord[sKey]}")
+            # The versions some tools give start with their name, such as GHDL 4.1.0
+            sVersion = str(dRecord[sKey])
+            lTools.append(sVersion if sVersion.lower().startswith(sName.lower()) else f"{sName} {sVersion}")
     lLines = ["Tools: " + ", ".join(lTools)]
     for dFile in dRecord["configuration_files"]:
         lLines.append(f"Configuration: {dFile['file']} (sha256 {dFile['sha256']})")

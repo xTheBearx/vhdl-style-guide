@@ -1,0 +1,892 @@
+# Qualification suite of the STARC rule set, made by scripts/make_qualification_suite.py.
+# The expected results were reviewed before they were committed; see mhsg/qualify.py.
+rule_set: STARC
+rule_set_version: '1'
+cases:
+- rule: length_001
+  file: examples/length/rule_001_test_input.vhd
+  expected:
+  - - 3
+    - Reduce line to less than 110 characters
+  - - 7
+    - Reduce line to less than 110 characters
+  - - 9
+    - Reduce line to less than 110 characters
+- rule: sv_always_002
+  file: examples/svfile/structure.sv
+  expected:
+  - - 10
+    - Use a blocking assignment (=) in always_comb
+- rule: sv_always_002
+  file: examples/svfile/verilator/vl_top.sv
+  expected:
+  - - 21
+    - Use a blocking assignment (=) in always_comb
+- rule: sv_always_002
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_always_003
+  file: examples/svfile/structure.fixed.sv
+  expected:
+  - - 27
+    - Use a nonblocking assignment (<=) in sequential logic
+  - - 8
+    - Use a nonblocking assignment (<=) in sequential logic
+- rule: sv_always_003
+  file: examples/svfile/structure.sv
+  expected:
+  - - 29
+    - Use a nonblocking assignment (<=) in sequential logic
+  - - 8
+    - Use a nonblocking assignment (<=) in sequential logic
+- rule: sv_always_003
+  file: examples/svfile/verilator/vl_top.sv
+  expected:
+  - - 16
+    - Use a nonblocking assignment (<=) in sequential logic
+- rule: sv_always_003
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_always_004
+  file: examples/svfile/structure.fixed.sv
+  expected:
+  - - 22
+    - Do not mix blocking and nonblocking assignments in an always block
+- rule: sv_always_004
+  file: examples/svfile/structure.sv
+  expected:
+  - - 24
+    - Do not mix blocking and nonblocking assignments in an always block
+- rule: sv_always_004
+  file: examples/svfile/verilator/vl_top.sv
+  expected:
+  - - 15
+    - Do not mix blocking and nonblocking assignments in an always block
+- rule: sv_always_004
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_always_005
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 50
+    - Use a single event control, at the start of the always block
+- rule: sv_always_005
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_always_006
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 43
+    - Move the statement to an always block of its own
+  - - 44
+    - Move the statement to an always block of its own
+- rule: sv_always_006
+  file: examples/svfile/structure.fixed.sv
+  expected:
+  - - 31
+    - Move the statement to an always block of its own
+  - - 34
+    - Move the statement to an always block of its own
+- rule: sv_always_006
+  file: examples/svfile/structure.sv
+  expected:
+  - - 33
+    - Move the statement to an always block of its own
+  - - 36
+    - Move the statement to an always block of its own
+- rule: sv_always_006
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_case_001
+  file: examples/svfile/structure.fixed.sv
+  expected:
+  - - 28
+    - Add a default item
+  - - 31
+    - Add a default item
+- rule: sv_case_001
+  file: examples/svfile/structure.sv
+  expected:
+  - - 30
+    - Add a default item
+  - - 33
+    - Add a default item
+- rule: sv_case_001
+  file: examples/svfile/verilator/vl_top.sv
+  expected:
+  - - 25
+    - Add a default item
+- rule: sv_case_001
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_case_002
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_case_002
+  file: examples/extra/sv_case_002/default_first.sv
+  expected:
+  - - 11
+    - Move the default item to the end of the case statement
+- rule: sv_case_003
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 44
+    - Use a signal as the case selector, not a constant
+- rule: sv_case_003
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_comment_001
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 52
+    - Remove the synthesis directive from the comment
+- rule: sv_comment_001
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_dimension_001
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 14
+    - Write the packed dimension as [msb:lsb]
+- rule: sv_dimension_001
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_file_001
+  file: examples/svfile/alignment.fixed.sv
+  expected:
+  - - 1
+    - Name the file after module alignment
+- rule: sv_file_001
+  file: examples/svfile/structure.fixed.sv
+  expected:
+  - - 1
+    - Name the file after module structure
+- rule: sv_file_001
+  file: examples/svfile/style.fixed.sv
+  expected:
+  - - 1
+    - Name the file after module style
+- rule: sv_file_001
+  file: examples/svfile/alignment.sv
+  expected: []
+- rule: sv_file_003
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 56
+    - Move the module to a file of its own
+- rule: sv_file_003
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_file_004
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 3
+    - Use a relative path in `include
+- rule: sv_file_004
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_function_004
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 33
+    - Use a blocking assignment (=) in a function
+- rule: sv_function_004
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_function_005
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 35
+    - Use a function instead of a task
+- rule: sv_function_005
+  file: examples/svfile/indent.sv
+  expected:
+  - - 89
+    - Use a function instead of a task
+- rule: sv_function_005
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_indent_001
+  file: examples/svfile/alignment.fixed.sv
+  expected:
+  - - 2
+    - Use 2 spaces for indent
+  - - 3
+    - Use 2 spaces for indent
+  - - 4
+    - Use 2 spaces for indent
+  - - 6
+    - Use 2 spaces for indent
+  - - 7
+    - Use 2 spaces for indent
+  - - 8
+    - Use 2 spaces for indent
+  - - 9
+    - Use 2 spaces for indent
+  - - 10
+    - Use 2 spaces for indent
+  - - 11
+    - Use 2 spaces for indent
+  - - 12
+    - Use 2 spaces for indent
+  - - 13
+    - Use 2 spaces for indent
+  - - 14
+    - Use 4 spaces for indent
+  - - 15
+    - Use 4 spaces for indent
+  - - 16
+    - Use 4 spaces for indent
+  - - 17
+    - Use 2 spaces for indent
+  - - 18
+    - Use 2 spaces for indent
+  - - 19
+    - Use 4 spaces for indent
+  - - 20
+    - Use 6 spaces for indent
+  - - 21
+    - Use 6 spaces for indent
+  - - 22
+    - Use 6 spaces for indent
+  - - 23
+    - Use 4 spaces for indent
+  - - 24
+    - Use 2 spaces for indent
+- rule: sv_indent_001
+  file: examples/svfile/alignment.sv
+  expected:
+  - - 2
+    - Use 2 spaces for indent
+  - - 3
+    - Use 2 spaces for indent
+  - - 4
+    - Use 2 spaces for indent
+  - - 6
+    - Use 2 spaces for indent
+  - - 7
+    - Use 2 spaces for indent
+  - - 8
+    - Use 2 spaces for indent
+  - - 9
+    - Use 2 spaces for indent
+  - - 10
+    - Use 2 spaces for indent
+  - - 11
+    - Use 2 spaces for indent
+  - - 12
+    - Use 2 spaces for indent
+  - - 13
+    - Use 2 spaces for indent
+  - - 14
+    - Use 4 spaces for indent
+  - - 15
+    - Use 4 spaces for indent
+  - - 16
+    - Use 4 spaces for indent
+  - - 17
+    - Use 2 spaces for indent
+  - - 18
+    - Use 2 spaces for indent
+  - - 19
+    - Use 4 spaces for indent
+  - - 20
+    - Use 6 spaces for indent
+  - - 21
+    - Use 6 spaces for indent
+  - - 22
+    - Use 6 spaces for indent
+  - - 23
+    - Use 4 spaces for indent
+  - - 24
+    - Use 2 spaces for indent
+- rule: sv_indent_001
+  file: examples/svfile/code_tags.sv
+  expected:
+  - - 2
+    - Use 2 spaces for indent
+  - - 3
+    - Use 2 spaces for indent
+  - - 12
+    - Use 2 spaces for indent
+  - - 17
+    - Use 2 spaces for indent
+- rule: sv_lint_001
+  file: examples/svfile/lint.sv
+  expected:
+  - - 14
+    - Implicit conversion truncates from 8 to 4 bits
+- rule: sv_lint_001
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_002
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 42
+    - Latch inferred for 'v' because it is not assigned on all control paths
+- rule: sv_lint_002
+  file: examples/svfile/lint.sv
+  expected:
+  - - 16
+    - Latch inferred for 'l_o' because it is not assigned on all control paths
+- rule: sv_lint_002
+  file: examples/svfile/verilator/vl_top.sv
+  expected:
+  - - 26
+    - Latch inferred for 's_o' because it is not assigned on all control paths
+- rule: sv_lint_002
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_006
+  file: examples/svfile/lint.sv
+  expected:
+  - - 25
+    - '''case'' statement contains duplicate items for value ''4''b1'' (the second one will never be matched)'
+- rule: sv_lint_006
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_007
+  file: examples/svfile/lint.sv
+  expected:
+  - - 30
+    - Comparison of differently signed types ('logic[3:0]' and 'int')
+- rule: sv_lint_007
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_008
+  file: examples/svfile/lint.sv
+  expected:
+  - - 21
+    - Add b_i to the sensitivity list, or use always_comb
+- rule: sv_lint_008
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_013
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_013
+  file: examples/extra/sv_lint_013/incomplete_case.sv
+  expected:
+  - - 12
+    - Case values incompletely covered (example pattern 0x2) (Verilator CASEINCOMPLETE)
+- rule: sv_literal_001
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 28
+    - Write all 4 digits of the binary literal
+- rule: sv_literal_001
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_literal_002
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 29
+    - The value needs 8 bits, more than the width 4
+- rule: sv_literal_002
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_literal_003
+  file: examples/svfile/alignment.fixed.sv
+  expected:
+  - - 6
+    - Write the parameter value with a base, such as 'd
+  - - 7
+    - Write the parameter value with a base, such as 'd
+- rule: sv_literal_003
+  file: examples/svfile/alignment.sv
+  expected:
+  - - 6
+    - Write the parameter value with a base, such as 'd
+  - - 7
+    - Write the parameter value with a base, such as 'd
+- rule: sv_literal_003
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 10
+    - Write the parameter value with a base, such as 'd
+  - - 11
+    - Write the parameter value with a base, such as 'd
+  - - 17
+    - Write the parameter value with a base, such as 'd
+- rule: sv_literal_003
+  file: examples/svfile/code_tags.sv
+  expected: []
+- rule: sv_literal_004
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 31
+    - Give the literal a width; it needs more than 32 bits
+- rule: sv_literal_004
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_literal_005
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 42
+    - Do not compare with x or z
+- rule: sv_literal_005
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_module_002
+  file: examples/svfile/structure.fixed.sv
+  expected:
+  - - 3
+    - Set the parameter in the instantiation instead of with defparam
+- rule: sv_module_002
+  file: examples/svfile/structure.sv
+  expected:
+  - - 3
+    - Set the parameter in the instantiation instead of with defparam
+- rule: sv_module_002
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_naming_009
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 25
+    - Use only letters, digits and underscores in _x, starting with a letter
+- rule: sv_naming_009
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_naming_010
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 58
+    - Rename Bus, a VHDL keyword
+  - - 21
+    - Rename signal, a VHDL keyword
+- rule: sv_naming_010
+  file: examples/svfile/indent.sv
+  expected:
+  - - 111
+    - Rename new, a VHDL keyword
+- rule: sv_naming_010
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_naming_011
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 22
+    - Rename vdd_ok, which starts like a power net
+- rule: sv_naming_011
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_naming_012
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 23
+    - Rename Data, which differs from data only in case
+- rule: sv_naming_012
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_naming_013
+  file: examples/svfile/code_tags.sv
+  expected:
+  - - 11
+    - Use 2 to 40 characters for signal c
+  - - 12
+    - Use 2 to 40 characters for signal d
+  - - 15
+    - Use 2 to 40 characters for signal e
+  - - 17
+    - Use 2 to 40 characters for signal f
+  - - 2
+    - Use 2 to 40 characters for port a
+  - - 3
+    - Use 2 to 40 characters for port b
+- rule: sv_naming_013
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 24
+    - Use 2 to 40 characters for signal v
+  - - 61
+    - Use 2 to 40 characters for signal x
+  - - 35
+    - Use 2 to 40 characters for port n
+  - - 37
+    - Use 2 to 40 characters for port d
+- rule: sv_naming_013
+  file: examples/svfile/indent.sv
+  expected:
+  - - 89
+    - Use 2 to 40 characters for port n
+- rule: sv_naming_013
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_003
+  file: examples/svfile/structure.fixed.sv
+  expected:
+  - - 41
+    - Move the statement to its own line
+- rule: sv_statement_003
+  file: examples/svfile/structure.sv
+  expected:
+  - - 10
+    - Move the statement to its own line
+  - - 10
+    - Move the statement to its own line
+  - - 43
+    - Move the statement to its own line
+- rule: sv_statement_003
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_004
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 40
+    - Remove the initial block from design code
+- rule: sv_statement_004
+  file: examples/svfile/structure.fixed.sv
+  expected:
+  - - 12
+    - Remove the initial block from design code
+- rule: sv_statement_004
+  file: examples/svfile/structure.sv
+  expected:
+  - - 12
+    - Remove the initial block from design code
+- rule: sv_statement_004
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_005
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_005
+  file: examples/extra/sv_statement_005/fork_join.sv
+  expected:
+  - - 10
+    - Use begin-end instead of fork-join
+- rule: sv_statement_006
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 45
+    - Remove the empty branch or give it a statement
+- rule: sv_statement_006
+  file: examples/svfile/whitespace.fixed.sv
+  expected:
+  - - 15
+    - Remove the empty branch or give it a statement
+- rule: sv_statement_006
+  file: examples/svfile/whitespace.sv
+  expected:
+  - - 15
+    - Remove the empty branch or give it a statement
+- rule: sv_statement_006
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: whitespace_002
+  file: examples/whitespace/rule_002_test_input.fixed.vhd
+  expected: []
+- rule: whitespace_002
+  file: examples/whitespace/rule_002_test_input.vhd
+  expected:
+  - - 4
+    - Remove tab
+  - - 6
+    - Remove tab
+  - - 8
+    - Remove tab
+  - - 10
+    - Remove tab
+  - - 13
+    - Remove tab
+  - - 15
+    - Remove tab
+  - - 17
+    - Remove tab
+  - - 19
+    - Remove tab
+design_cases:
+- rule: design_008
+  name: clean design
+  design: &id001
+    top: clean_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/clean.vhd
+  expected: []
+- rule: design_009
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_012
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_013
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_014
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_008
+  name: undeclared signal
+  design: &id002
+    top: undeclared_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/undeclared.vhd
+  expected: []
+- rule: design_009
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_012
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_013
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_014
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_008
+  name: latch
+  design: &id003
+    top: latch_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/latch.vhd
+  expected: []
+- rule: design_009
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_012
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_013
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_014
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_008
+  name: combinational loop
+  design: &id004
+    top: loop_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/loop.vhd
+  expected: []
+- rule: design_009
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_012
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_013
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_014
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_008
+  name: multiple drivers
+  design: &id005
+    top: md_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/multiple_drivers.vhd
+  expected: []
+- rule: design_009
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_012
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_013
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_014
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_008
+  name: registers
+  design: &id006
+    top: registers_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/registers.vhd
+  expected: []
+- rule: design_009
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_012
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_013
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_014
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_008
+  name: logic depth
+  design: &id007
+    top: depth_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/depth.vhd
+  expected: []
+- rule: design_009
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_012
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_013
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_014
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_008
+  name: clock domain crossings
+  design: &id008
+    top: cdc_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/cdc.vhd
+  expected:
+  - - examples/design/cdc.vhd
+    - 90
+    - unsync_b (clk_b) captures flag_a (clk_a) without a synchronizer
+- rule: design_009
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 93
+    - Logic on x_a (clk_a), y_a (clk_a) before synchronizer logic1_b (clk_b) can glitch
+  - - examples/design/cdc.vhd
+    - 95
+    - bus_a (clk_a) is synchronized bit by bit into bus1_b (clk_b); the bits can arrive in different cycles
+- rule: design_012
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 170
+    - Clock clk_a is gated by logic into clk_gated (1 register)
+- rule: design_013
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 81
+    - Clock div_a is made by a register from clk_a (1 register)
+- rule: design_014
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 163
+    - Asynchronous reset is made by logic of rst_b, soft_a
+- rule: design_008
+  name: reconvergence
+  design: &id009
+    top: reconvergence_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/reconvergence.vhd
+  expected: []
+- rule: design_009
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_012
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_013
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_014
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_008
+  name: black box
+  design: &id010
+    top: bb_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/black_box.vhd
+  expected: []
+- rule: design_009
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_012
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_013
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_014
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_008
+  name: deep logic
+  design: &id011
+    top: deep_top
+    libraries:
+    - name: work
+      files:
+      - examples/extra/design_007/deep.vhd
+  expected: []
+- rule: design_009
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_012
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_013
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_014
+  name: deep logic
+  design: *id011
+  expected: []
