@@ -22,6 +22,7 @@ from . import (
     utils,
     version,
     vhdlFile,
+    waivers,
 )
 
 
@@ -170,6 +171,7 @@ def main():
     oConfig = config.New(commandLineArguments)
     try:
         rule_set.configure_lint_mode(oConfig, commandLineArguments)
+        oConfig.waivers = waivers.from_configuration(oConfig.dConfig)
     except exceptions.ConfigurationError as e:
         print(e.message)
         sys.exit(1)
@@ -245,15 +247,20 @@ def main():
                 if bKeepProcessingFiles:
                     break
 
+    lWaiverUses = []
     for tValue in lReturn:
         fStatus, testCase, dJsonEntry = tValue
         fExitStatus = fExitStatus or fStatus
+        lWaiverUses.append(dJsonEntry.pop(apply_rules.WAIVER_USE, {}))
 
         if commandLineArguments.junit:
             oJunitTestsuite.add_testcase(testCase)
 
         if commandLineArguments.json or commandLineArguments.quality_report:
             dJson["files"].append(dJsonEntry)
+
+    for oWaiver in waivers.unused(oConfig.waivers, lWaiverUses):
+        print(f"WARNING: {oWaiver.describe()} matched no finding; it may be out of date", file=sys.stderr)
 
     if commandLineArguments.junit:
         oJunitFile.add_testsuite(oJunitTestsuite)

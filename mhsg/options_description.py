@@ -241,6 +241,13 @@ def describe_settings():
             "default": "do254",
         },
         {
+            "path": ["waivers"],
+            "type": "waivers",
+            "label": "Waivers",
+            "description": "Findings accepted with a justification: each waiver names a rule (an identifier, alias or pattern) and a justification, and optionally a file pattern, a line or lines, a message pattern and a reviewer. Waived findings do not fail the run and are listed in the reports.",
+            "default": [],
+        },
+        {
             "path": ["design", "top"],
             "type": "string",
             "nullable": True,

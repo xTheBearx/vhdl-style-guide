@@ -13,7 +13,10 @@ def print_output(dRunInfo):
     header = print_header(dRunInfo["filename"])
     stats = print_stats(dRunInfo)
     violations = print_violations(dRunInfo)
-    return header + stats + violations, None
+    waived = print_waived(dRunInfo)
+    if waived and violations:
+        violations += "\n"
+    return header + stats + violations + waived, None
 
 
 def print_header(sFilename):
@@ -113,3 +116,16 @@ def print_violations(dRunInfo):
 
 def get_longest_violation_rule_name(lViolations):
     return max([len(d["rule"]) for d in lViolations])
+
+
+def print_waived(dRunInfo):
+    """Lists the violations waivers accept, each with the waiver and its justification, see waivers.py."""
+    lWaived = dRunInfo.get("waived") or []
+    if not lWaived:
+        return ""
+    sOutput = f"Waived:              {len(lWaived)}\n"
+    for dWaived in lWaived:
+        sReviewer = f", reviewed by {dWaived['reviewer']}" if dWaived.get("reviewer") else ""
+        sOutput += f"  {dWaived['rule']} line {dWaived['linenumber']}: {dWaived['solution']}\n"
+        sOutput += f"    waiver {dWaived['waiver']}{sReviewer}: {dWaived['justification']}\n"
+    return sOutput

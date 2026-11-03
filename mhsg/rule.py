@@ -13,6 +13,8 @@ class Rule:
         self.identifier = get_rule_identifier(self)
         self.solution = None
         self.violations = []
+        # Violations a waiver accepts, as (violation, waiver), see waivers.py
+        self.waived = []
         self.had_violations = False
         self.indent_style = "spaces"
         self.indent_size = DEFAULT_INDENT_SIZE
@@ -233,6 +235,7 @@ class Rule:
 
     def clear_violations(self):
         self.violations = []
+        self.waived = []
 
     def set_debug(self):
         """

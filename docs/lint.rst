@@ -120,12 +120,61 @@ In lint mode there is a third severity, **Note**, which the DO-254 coding standa
 A Note is reported like a warning and does not fail a run.
 
 Lint checks can be disabled for a line or a region with code tags, like any other rule, see :doc:`code_tags`.
-When a violation is accepted, the code tag is a good place to give the justification:
+When a violation is accepted, the code tag is a good place to give the justification; a waiver, below, also lists it in the reports:
 
 .. code-block:: vhdl
 
    -- mhsg_disable_next_line lint_012 synchronizer flip-flops have no reset by design
    sync_r <= async_in;
+
+.. _waivers:
+
+Waivers
+-------
+
+A code tag leaves no record of what it disabled. A waiver accepts a finding with a justification and keeps it in the
+reports, for a review or an audit. Waivers are listed in the **waivers** section of a configuration:
+
+.. code-block:: yaml
+
+   waivers:
+     - rule: lint_012
+       file: rtl/sync/*.vhd
+       message: "*sync_r*"
+       justification: The synchronizer flip-flops have no reset by design
+       reviewer: A. Reviewer
+     - rule: sv_lint_unused
+       file: rtl/core/alu.sv
+       line: [112, 140]
+       justification: Spare signals kept for the next revision
+
+* **rule** is a rule identifier, an alias, or a pattern such as ``sv_lint_*``. Required.
+* **justification** says why the finding is accepted. Required: a waiver without one stops the run.
+* **file** narrows the waiver to files: a pattern without a directory, such as ``*_sync.vhd``, matches the file name;
+  one with a directory matches the path, relative to where MHSG runs.
+* **line** narrows it to a line or a list of lines, and **message** to findings whose message matches a pattern.
+* **reviewer** names who accepted it.
+
+A waived finding does not fail the run and is not reported as a violation. It is listed with its waiver, its
+justification and its reviewer, in the text output under **Waived** and in the JSON output (:code:`--json`) under
+**waived** for each file:
+
+.. code-block:: text
+
+   Waived:              1
+     lint_012 line 42: Register sync_r has no reset
+       waiver 1, reviewed by A. Reviewer: The synchronizer flip-flops have no reset by design
+
+A waiver whose rule ran on a file it names, but which matched no finding there, is reported on standard error, as it
+may be out of date:
+
+.. code-block:: text
+
+   WARNING: waiver 2 (rule sv_lint_005, file rtl/core/alu.sv) matched no finding; it may be out of date
+
+Waivers apply to every rule, lint and style alike, and to the findings of design analysis. They do not stop
+:code:`--fix` from changing the code a fixable rule reports; a code tag does. The crossings of clock domain analysis
+have their own waivers, in the cdc section of the design, see :doc:`design_analysis`.
 
 What the lint checks see
 ------------------------

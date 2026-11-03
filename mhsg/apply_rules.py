@@ -61,6 +61,8 @@ def normalize_path(sFileName):
 
 bStopProcessingFiles = True
 bKeepProcessingFiles = False
+# The key of a file's entry that tells main which waivers could match in the file and whether they did
+WAIVER_USE = "waiver_use"
 
 
 # This function is in a separate module from __main__ as a workaround for https://bugs.python.org/issue25053
@@ -88,6 +90,7 @@ def apply_rules(commandLineArguments, oConfig, tIndexFileName):
     oVhdlFile.set_indent_map(dIndent)
     try:
         oRules = rule_list.rule_list(oVhdlFile, oConfig.severity_list, commandLineArguments.local_rules)
+        oRules.waivers = getattr(oConfig, "waivers", None) or []
     except OSError as e:
         sOutputStd = (
             f"ERROR: encountered {e.__class__.__name__}, No such file or directory "
@@ -140,7 +143,12 @@ def apply_rules(commandLineArguments, oConfig, tIndexFileName):
 
     if commandLineArguments.json or commandLineArguments.quality_report:
         dJsonEntry["file_path"] = sFileName
-        dJsonEntry["violations"] = oRules.extract_violation_dictionary()["violations"]
+        dViolations = oRules.extract_violation_dictionary()
+        dJsonEntry["violations"] = dViolations["violations"]
+        if dViolations.get("waived"):
+            dJsonEntry["waived"] = dViolations["waived"]
+    # Which waivers could match in this file and whether they did; taken out of the entry before it is written
+    dJsonEntry[WAIVER_USE] = oRules.waiver_use
 
     return fExitStatus, testCase, dJsonEntry, sOutputStd, sOutputErr, bKeepProcessingFiles
 

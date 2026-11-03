@@ -7,9 +7,19 @@ Findings are reported per VHDL file in the same formats as the other checks.
 import contextlib
 import importlib
 import json
+import sys
 import tempfile
 
-from mhsg import language, provenance, report, rule_list, rule_set, severity, vhdlFile
+from mhsg import (
+    language,
+    provenance,
+    report,
+    rule_list,
+    rule_set,
+    severity,
+    vhdlFile,
+    waivers,
+)
 from mhsg.design import (
     black_box,
     cdc,
@@ -192,7 +202,9 @@ def run(commandLineArguments, oConfig):
         lFindings = [(oRule, oFinding) for oRule in lRules for oFinding in oRule.check_design(oContext)]
         write_cdc_report(getattr(commandLineArguments, "cdc_report", None), oContext, dRecord)
         write_black_box_template(getattr(commandLineArguments, "black_box_template", None), oContext)
-    iStatus, lRunInfo = print_report(oDesign, oResult, lFindings, oConfig, commandLineArguments.output_format, len(lRules))
+    lWaivers = getattr(oConfig, "waivers", None) or []
+    lFindings, lWaived = apply_waivers(oDesign, lRules, lFindings, lWaivers)
+    iStatus, lRunInfo = print_report(oDesign, oResult, lFindings, oConfig, commandLineArguments.output_format, len(lRules), lWaived)
     if getattr(commandLineArguments, "json", None):
         with open(commandLineArguments.json, "w", encoding="utf-8") as oFile:
             # The entries of the files have the keys of those --json writes for the files of a run
@@ -203,6 +215,7 @@ def run(commandLineArguments, oConfig):
                         {"rule": v["rule"], "linenumber": int(v["lineNumber"]), "severity": v["severity"]["name"], "solution": v["solution"]}
                         for v in d["violations"]
                     ],
+                    **({"waived": d["waived"]} if d["waived"] else {}),
                 }
                 for d in lRunInfo
             ]
@@ -266,14 +279,48 @@ def configuration_result(oDesign):
     return oResult
 
 
-def print_report(oDesign, oResult, lFindings, oConfig, sOutputFormat, iRules):
+def apply_waivers(oDesign, lRules, lFindings, lWaivers):
+    """
+    Returns (the findings no waiver matches, the waived ones as (rule, finding, waiver)), and warns of the waivers of
+    design rules that matched nothing, see waivers.py.
+    """
+    if not lWaivers:
+        return lFindings, []
+    lFiles = [s for o in oDesign.libraries for s in o.files]
+    dUse = {}
+    for oRule in lRules:
+        for oWaiver in lWaivers:
+            if oWaiver.applies_to_rule(oRule.get_unique_id()) and (oWaiver.file is None or any(oWaiver.applies_to_file(s) for s in lFiles)):
+                dUse.setdefault(oWaiver.index, False)
+    lKept = []
+    lWaived = []
+    for oRule, oFinding in lFindings:
+        oWaiver = waivers.first_match(lWaivers, oRule.get_unique_id(), oFinding.file, oFinding.line, oFinding.message)
+        if oWaiver is None:
+            lKept.append((oRule, oFinding))
+        else:
+            lWaived.append((oRule, oFinding, oWaiver))
+            dUse[oWaiver.index] = True
+    for oWaiver in waivers.unused(lWaivers, [dUse]):
+        print(f"WARNING: {oWaiver.describe()} matched no finding; it may be out of date", file=sys.stderr)
+    return lKept, lWaived
+
+
+def print_report(oDesign, oResult, lFindings, oConfig, sOutputFormat, iRules, lWaived=()):
     dByFile = {}
+    dWaived = {}
     lRunInfo = []
     for oRule, oFinding in lFindings:
         dByFile.setdefault(oFinding.file or oDesign.top, []).append((oRule, oFinding))
+    for oRule, oFinding, oWaiver in lWaived:
+        dEntry = {"rule": oRule.get_unique_id(), "linenumber": oFinding.line, "severity": oRule.get_report_severity().name, "solution": oFinding.message}
+        dEntry.update(oWaiver.entry())
+        dWaived.setdefault(oFinding.file or oDesign.top, []).append(dEntry)
+        dByFile.setdefault(oFinding.file or oDesign.top, [])
     bErrors = oResult.failed_stage is not None
     for sFile in sorted(dByFile):
         dRunInfo = run_info(sFile, dByFile[sFile], oConfig.severity_list, iRules)
+        dRunInfo["waived"] = sorted(dWaived.get(sFile, []), key=lambda d: d["linenumber"])
         lRunInfo.append(dRunInfo)
         bErrors = bErrors or any(d["severity"]["type"] == severity.error_type for d in dRunInfo["violations"])
         sOutputStd, sOutputErr = format_report(dRunInfo, sOutputFormat)
@@ -281,8 +328,9 @@ def print_report(oDesign, oResult, lFindings, oConfig, sOutputFormat, iRules):
             print(sOutputStd, end="" if sOutputStd.endswith("\n") else "\n")
         if sOutputErr:
             print(sOutputErr)
-    if not dByFile and sOutputFormat != "syntastic":
-        print(f"Design analysis of {oDesign.top}: no findings ({iRules} design rules checked)")
+    if not any(dByFile.values()) and sOutputFormat != "syntastic":
+        sWaived = f", {len(lWaived)} waived" if lWaived else ""
+        print(f"Design analysis of {oDesign.top}: no findings ({iRules} design rules checked{sWaived})")
     return (1 if bErrors else 0), lRunInfo
 
 
