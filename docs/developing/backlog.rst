@@ -91,8 +91,6 @@ under way: the entries below.
 * **Files with syntax errors** are skipped by the SystemVerilog rules, as a VHDL file that does not parse is. The
   defines and include directories of the systemverilog section let fewer files fall in this case; the real-world
   check runs without them.
-* **Lint after --fix**: a file the fixes changed is linted on its own, not with the files of the run; compiling the
-  run again after the fixes would keep the checks across files.
 * **STARC lint items needing data flow**: about 100 per-file items of the STARC guide, such as widths of function
   arguments, loop bounds, reset polarity and resource sharing, need more than slang's warnings.
 * **Spaces inside parentheses and braces** and around :code:`) (` between parameter and port lists are not checked;
@@ -100,9 +98,8 @@ under way: the entries below.
 * **STARC rule set**: 50 of the 613 items of the STARC guide have rules. The per-file items (216) are planned with
   the SystemVerilog rules, the clock and reset items with design analysis of Verilog designs. The catalogue the set
   was made from records each item's limits and its Verible equivalent, kept in the notes of the set.
-* **Verilator after --fix and with the rule sets**: sv_lint_011 reports nothing for a file the fixes changed, which
-  is linted on its own; and no rule set lists it, as one rule reports several kinds of warning. A rule per warning, or
-  labels per warning, would let the DO-254 and STARC sets use MULTIDRIVEN and CASEINCOMPLETE.
+* **Verilator with the rule sets**: no rule set lists sv_lint_011, as one rule reports several kinds of warning. A
+  rule per warning, or labels per warning, would let the DO-254 and STARC sets use MULTIDRIVEN and CASEINCOMPLETE.
 * **Sensitivity lists** (sv_lint_008) are compared with the names the block reads, by name; reads through
   functions and hierarchical names are not followed.
 * **SystemVerilog designs without the yosys-slang plugin**: Yosys' own reader handles Verilog and part of

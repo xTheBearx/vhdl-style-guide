@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import copy
 import functools
 import json
 import multiprocessing
@@ -209,6 +210,15 @@ def main():
     if commandLineArguments.json:
         dJson["run"] = provenance.record(commandLineArguments, oConfig)
 
+    if fix_before_lint(commandLineArguments, oConfig):
+        # The files are fixed first and the SystemVerilog files of the run compiled again, so a file the fixes changed
+        # is linted with the others; the check that reports then runs without fixing
+        fix_files(commandLineArguments, oConfig)
+        oConfig.sv_lint_project = sv_project.collect(lIndexFiles, oConfig.dConfig, sv_project.verilator_enabled(oConfig))
+        commandLineArguments = copy.copy(commandLineArguments)
+        commandLineArguments.fix = False
+        commandLineArguments.backup = False
+
     f = functools.partial(apply_rules.apply_rules, commandLineArguments, oConfig)
     # It's easier to debug when not using multiprocessing.Pool()
     lReturn = []
@@ -274,6 +284,25 @@ def main():
         quality_report.write(commandLineArguments, dJson)
 
     sys.exit(fExitStatus)
+
+
+def fix_before_lint(commandLineArguments, oConfig):
+    """Whether --fix runs as a pass of its own: in lint mode, when the run has SystemVerilog files compiled together."""
+    if not commandLineArguments.fix or commandLineArguments.stdin or commandLineArguments.stdout:
+        return False
+    return oConfig.lint_mode is not None and bool(getattr(oConfig, "sv_lint_project", None))
+
+
+def fix_files(commandLineArguments, oConfig):
+    """Fixes the files of the run; what the check after the fixes finds is not reported, see fix_before_lint."""
+    f = functools.partial(apply_rules.apply_rules, commandLineArguments, oConfig)
+    lFiles = list(enumerate(commandLineArguments.filename))
+    if commandLineArguments.jobs == 1:
+        for tFile in lFiles:
+            f(tFile)
+    else:
+        with multiprocessing.Pool(commandLineArguments.jobs) as pool:
+            list(pool.imap(f, lFiles))
 
 
 def create_json_dictionary():
