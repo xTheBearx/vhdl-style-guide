@@ -80,6 +80,14 @@ Rules Enforcing Alignment Rule Group
 * `signal_402 <../signal_rules.html#signal-402>`_
 * `subprogram_body_400 <../subprogram_body_rules.html#subprogram-body-400>`_
 * `subprogram_body_401 <../subprogram_body_rules.html#subprogram-body-401>`_
+* `sv_alignment_001 <../sv_alignment_rules.html#sv-alignment-001>`_
+* `sv_alignment_002 <../sv_alignment_rules.html#sv-alignment-002>`_
+* `sv_alignment_003 <../sv_alignment_rules.html#sv-alignment-003>`_
+* `sv_alignment_004 <../sv_alignment_rules.html#sv-alignment-004>`_
+* `sv_alignment_005 <../sv_alignment_rules.html#sv-alignment-005>`_
+* `sv_alignment_006 <../sv_alignment_rules.html#sv-alignment-006>`_
+* `sv_alignment_007 <../sv_alignment_rules.html#sv-alignment-007>`_
+* `sv_alignment_008 <../sv_alignment_rules.html#sv-alignment-008>`_
 * `type_400 <../type_rules.html#type-400>`_
 * `variable_400 <../variable_rules.html#variable-400>`_
 * `variable_401 <../variable_rules.html#variable-401>`_

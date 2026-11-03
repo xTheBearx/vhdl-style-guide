@@ -3,7 +3,7 @@ module ws #(parameter int W = 8) (
     input logic [W-1:0] a_i, b_i,
     output logic [W-1:0] y_o
 );
-    data_t [1:0] mem;
+    data_t [1:0]  mem;
     logic [W-1:0] sum;
     always_ff @(posedge clk_i) begin : proc_sum
         if (a_i[0]) sum <= a_i + b_i;

@@ -57,7 +57,7 @@ module indent #(
     end
 
     // Continuation lines and aligned lists are not checked
-    assign valid = data_i[0] &&
+    assign valid  = data_i[0] &&
                      data_i[1];
     assign data_o = combine(data_q,
                             data_i);

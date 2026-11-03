@@ -74,8 +74,8 @@ The plan, with the tools evaluated, is in the "Verilog and SystemVerilog" tab of
 (reading files, style rules, lint and design analysis) are done; see :doc:`../systemverilog`. Step 5, breadth, is
 under way: the entries below.
 
-* **Alignment rules**: Verible's formatter aligns port declarations, named port and parameter connections and
-  consecutive assignments in columns; mhsg has no SystemVerilog alignment rules yet.
+* **Alignment of several columns**: the sv_alignment rules align one column each, such as the names of port
+  declarations; Verible also aligns the columns before it, such as the types and packed dimensions.
 * **Indentation not checked yet**: continuation lines, lists aligned after their bracket, the contents of
   expressions (multi-line assignment patterns, randomize with blocks), preprocessor directives and inactive
   :code:`\`ifdef` branches. Verible's formatter has rules for each; they need studying before mhsg checks them.
