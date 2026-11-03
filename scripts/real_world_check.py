@@ -39,7 +39,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MHSG = os.path.join(REPO_ROOT, "bin", "mhsg")
 DEFAULT_PROJECTS = os.path.join(REPO_ROOT, "scripts", "real_world_projects.yaml")
 DEFAULT_CACHE = os.path.join(REPO_ROOT, ".real_world_cache")
-EXTENSIONS = (".vhd", ".vhdl")
+EXTENSIONS = (".vhd", ".vhdl", ".sv", ".svh", ".v", ".vh")
 
 OK = "OK"
 CRASH = "CRASH"
@@ -130,6 +130,9 @@ def check_file(sSource, sWorkDir, iTimeout):
             return classify(sCheck, sFix)
         sFirstFix = read(sCopy)
         sSecondFixOutput = run_mhsg(["-f", sCopy, "--fix", "-of", "syntastic"], iTimeout)
+        # SystemVerilog that does not parse is reported by sv_syntax_001; a fix must not add syntax errors
+        if sSecondFixOutput.count("sv_syntax_001") > sCheck.count("sv_syntax_001"):
+            return FIX_BROKE_PARSE, sSecondFixOutput
         return classify(sCheck, sFix, sSecondFixOutput, sFirstFix, read(sCopy))
     except subprocess.TimeoutExpired:
         return TIMEOUT, f"A step took longer than {iTimeout} seconds"
@@ -171,7 +174,7 @@ def relative_path(sFileName, sDirectory):
 
 
 def find_vhdl_files(sDirectory, lExclude=()):
-    """Returns the VHDL files below a directory, except the excluded paths."""
+    """Returns the VHDL, SystemVerilog and Verilog files below a directory, except the excluded paths."""
     lFiles = []
     for sRoot, lDirectories, lFileNames in os.walk(sDirectory):
         lDirectories[:] = sorted(s for s in lDirectories if s != ".git")
