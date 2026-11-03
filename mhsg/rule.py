@@ -3,6 +3,9 @@
 
 from mhsg import rule_aliases, severity, utils
 
+# The number of spaces of each indent level, unless a configuration sets indent_size
+DEFAULT_INDENT_SIZE = 4
+
 
 class Rule:
     def __init__(self):
@@ -12,7 +15,7 @@ class Rule:
         self.violations = []
         self.had_violations = False
         self.indent_style = "spaces"
-        self.indent_size = 2
+        self.indent_size = DEFAULT_INDENT_SIZE
         self.phase = None
         self.subphase = 1
         # If set, the fix also runs in this later subphase of the same phase

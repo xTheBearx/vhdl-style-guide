@@ -83,13 +83,13 @@ There are additional options for configuring block comments:
 |                     | "center" | "center" |                                                                  |
 |                     | "right"  |          |                                                                  |
 +---------------------+----------+----------+------------------------------------------------------------------+
-| max_header_column   | Integer  |   120    | Sets the maximum length of the combined header.                  |
+| max_header_column   | Integer  |    80    | Sets the maximum length of the combined header.                  |
 +---------------------+----------+----------+------------------------------------------------------------------+
 | footer_alignment    | "left"   |          | Sets horizontal position of footer string.                       |
 |                     | "center" | "center" |                                                                  |
 |                     | "right"  |          |                                                                  |
 +---------------------+----------+----------+------------------------------------------------------------------+
-| max_footer_column   | Integer  |   120    | Sets the maximum length of the combined footer.                  |
+| max_footer_column   | Integer  |    80    | Sets the maximum length of the combined footer.                  |
 +---------------------+----------+----------+------------------------------------------------------------------+
 | allow_indenting     | "yes"    |  "yes"   | Allows indented block comments. Setting this to :code:`no` will  |
 |                     | "no"     |          | only detect block comments starting at column 0.                 |

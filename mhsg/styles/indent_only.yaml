@@ -8,6 +8,8 @@ skip_phase: []
 rule :
   global:
     disable: true
+    # This style indents by 2 spaces
+    indent_size: 2
   group:
     indent:
       disable: false

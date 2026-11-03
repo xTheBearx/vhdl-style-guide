@@ -4,6 +4,11 @@ name : jcl
 description : Coding style preferred by Jeremiah Leary
 # Define the rules for this style
 rule :
+  # This style indents by 2 spaces and allows lines of 120 characters
+  global :
+    indent_size : 2
+  length_001 :
+    length : 120
   # Set Uppercase rules
   architecture_011 :
     case : upper

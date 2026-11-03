@@ -12,7 +12,7 @@ Overriding Line Length
 
 Limiting the line length of the VHDL code can improve readability.
 Code that exceeds the editor window is more difficult to read.
-The default line length is 120, and can be changed by configuring rule **length_001**.
+The default line length is 80, and can be changed by configuring rule **length_001**.
 
 Use the following configuration to change the line length to 180.
 

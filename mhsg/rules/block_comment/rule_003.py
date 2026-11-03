@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import importlib
 
 from mhsg import block_rule, parser, violation
 from mhsg.vhdlFile import utils
+
+# mhsg.rules exports the class line_length under the name of its module
+line_length = importlib.import_module("mhsg.rules.line_length")
 
 
 class rule_003(block_rule.Rule):
@@ -37,7 +41,8 @@ class rule_003(block_rule.Rule):
         self.footer_string = None
         self.footer_right_repeat = None
         self.footer_alignment = "center"
-        self.max_footer_column = 120
+        # The same as the line length of length_001
+        self.max_footer_column = line_length.DEFAULT_LENGTH
         self.configuration.extend(["footer_left", "footer_left_repeat", "footer_string", "footer_right_repeat", "footer_alignment", "max_footer_column"])
 
     def analyze_comments(self, oToi):

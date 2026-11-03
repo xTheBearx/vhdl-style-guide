@@ -1,0 +1,8 @@
+# The settings the test files were written for: 2-space indentation and lines of 120 characters, the defaults
+# before they became 4 and 80. tests/utils.py adds this file to every mhsg run of the tests, as tests/conftest.py does
+# for tests that create rules themselves; tests/mhsg/test_defaults.py checks the defaults without it.
+rule:
+  global:
+    indent_size: 2
+  length_001:
+    length: 120
