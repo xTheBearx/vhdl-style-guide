@@ -1,0 +1,4 @@
+systemverilog:
+  defines:
+    EXTRA:
+  include_directories: [tests/svfile/project/include]

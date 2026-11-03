@@ -23,6 +23,25 @@ macro uses and the code in inactive :code:`\`ifdef` branches are all kept, and a
 change. The arguments of macro uses and the code in inactive branches are not parsed, so rules leave them alone, and
 spaces next to a macro use are not changed.
 
+Preprocessor settings
+---------------------
+
+The **systemverilog** section of a configuration sets the macros and include directories used when a file is read,
+so macros defined in include files expand and :code:`\`ifdef` branches follow the defines:
+
+.. code-block:: yaml
+
+   systemverilog:
+     defines:
+       SYNTHESIS:
+       WIDTH: 8
+     include_directories: [rtl/include, vendor/lowrisc_ip/ip/prim/rtl]
+     files: [rtl/pkg/*.sv]
+
+A macro with no value is just defined. Without this section, the defines and include directories of the design
+section are used, see :doc:`design_analysis`. **files** are compiled with the files of a run in lint mode, such as
+packages the checked files use, without being checked themselves; files given with :code:`--index_files` are too.
+
 Rules
 -----
 
@@ -83,9 +102,17 @@ they implement:
    $ mhsg -f rtl/fifo.sv --lint_only
    WARNING: rtl/fifo.sv(16)DO254-SS4 (sv_lint_002) -- Latch inferred for 'l_o' because it is not assigned on all control paths
 
-A file is elaborated on its own, so the modules, packages and macros of other files are unknown. slang leaves out
-the warnings that would follow from them, and mhsg leaves out unused, undriven and implicit signals in a file that
-uses anything defined elsewhere, as a signal driven or read there would look undriven or unused.
+The SystemVerilog files of a run are compiled together, once, with the files of the systemverilog section and of
+:code:`--index_files`, so each file is checked against the others: an instance against the ports of its module, a
+package against the files that use it. A file that still uses a module, package or macro the run does not know is not
+checked for unused, undriven and implicit signals, as a signal driven or read there would look undriven or unused.
+
+.. code-block:: text
+
+   $ mhsg -f rtl/*.sv --lint_only -c project.yaml
+
+With :code:`--fix`, a file the fixes changed is compiled again on its own, as the warnings of the run describe the
+file before the fixes.
 
 Syntax errors
 #############
