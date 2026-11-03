@@ -7,7 +7,8 @@ a comma, or at least, as around a binary operator, where code aligned in columns
 Verible's formatter.
 
 Tokens in inactive `ifdef branches and in the arguments of macros are not parsed, and macro uses expand to code mhsg
-does not see, so pairs with them are left alone; only a comment may follow a macro use.
+does not see, so pairs with them are left alone; only a comment may follow a macro use. A file with syntax errors is
+left alone, as its tokens may be classified wrongly near the errors, see sv_syntax_001.
 """
 
 from mhsg import language, parser, violation
@@ -36,6 +37,8 @@ class Rule(whitespace.Rule):
 
     def _get_tokens_of_interest(self, oFile):
         lReturn = []
+        if getattr(oFile, "syntax_errors", None):
+            return lReturn
         lTokens = oFile.lAllObjects
         iPrevious = None
         for iToken, oToken in enumerate(lTokens):
@@ -45,7 +48,11 @@ class Rule(whitespace.Rule):
             if isinstance(oToken, (parser.whitespace, parser.blank_line)):
                 continue
             if iPrevious is not None and is_code(lTokens[iPrevious]) and (is_code(oToken) or isinstance(oToken, parser.comment)):
-                if not isinstance(lTokens[iPrevious], tokens.preprocessor) or isinstance(oToken, parser.comment):
+                if (
+                    isinstance(oToken, parser.comment)
+                    or not isinstance(lTokens[iPrevious], tokens.preprocessor)
+                    and not isinstance(oToken, tokens.preprocessor)
+                ):
                     tSpacing = self.spacing(lTokens[iPrevious], oToken)
                     if tSpacing is not None:
                         iLine = oFile.oTokenMap.get_line_number_of_index(iToken)

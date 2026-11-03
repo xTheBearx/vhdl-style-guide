@@ -84,7 +84,7 @@ files with pyslang and running the language neutral rules, is done; see :doc:`..
   tokens of ibex, common_cells and picorv32, most in the arguments of macros such as :code:`\`ASSERT` and
   :code:`\`uvm_info`), so rules do not check them. Parsing each branch with its defines set, and macro arguments
   that are expressions, would let rules check them.
-* **Files with syntax errors** are skipped by the rules on constructs. Parsing them with the defines and include
+* **Files with syntax errors** are skipped by the SystemVerilog rules, as a VHDL file that does not parse is. Parsing them with the defines and include
   paths of the project (a file list, as Verilator and slang take) would let fewer files fall in this case: 340 of
   the 914 corpus files have errors once macros of other files are left undefined.
 * **Checks needing semantics**: widths, sensitivity lists, multiple drivers, latches and most of the STARC lint
@@ -112,8 +112,8 @@ files with pyslang and running the language neutral rules, is done; see :doc:`..
 * **Black boxes in Verilog designs**: an instance of a module with no source, such as a vendor primitive, stops
   Yosys' hierarchy check. Vendor simulation libraries in Verilog (unisims), or stubs made from the black box
   declarations, would let them through.
-* **Real-world SystemVerilog check**: ibex, common_cells and picorv32 (914 files) were checked by hand; they should be
-  added to :code:`scripts/real_world_designs.yaml` once it can hold SystemVerilog projects.
+* **More SystemVerilog projects** in the real-world check, which runs ibex, common_cells and picorv32: OpenTitan
+  (a subset), CVA6, SERV and the sv-tests conformance suite.
 
 Project
 -------

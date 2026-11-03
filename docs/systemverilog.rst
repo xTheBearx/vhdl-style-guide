@@ -91,9 +91,10 @@ Syntax errors
 #############
 
 Each file is parsed on its own, so macros defined in other files and include files that are not found are not
-errors. Other syntax errors are reported by :code:`sv_syntax_001`, and the rules on constructs, from
-:code:`sv_always` to :code:`sv_typedef`, skip the file: its syntax tree has constructs missing or misplaced, and
-fixing it would be unsafe. The rules on spaces, indentation and lines still check it.
+errors. Other syntax errors are reported by :code:`sv_syntax_001`, and the SystemVerilog rules skip the file: its
+syntax tree has constructs missing or misplaced, and its tokens may be classified wrongly near the errors, so checking
+or fixing it would be unsafe. Only the rules for every language, on trailing spaces, tabs and lengths, and
+:code:`sv_blank_line_001` still check it.
 
 After a fix that changes the structure of the code, such as replacing always @* with always_comb or removing a
 generate region, the file is parsed again, so the rules that follow, such as the indentation, see the fixed code.

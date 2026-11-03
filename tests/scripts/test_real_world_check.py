@@ -65,8 +65,8 @@ class test_find_vhdl_files(unittest.TestCase):
     def test_exclude(self):
         with tempfile.TemporaryDirectory() as sDirectory:
             os.makedirs(os.path.join(sDirectory, "sub"))
-            for sName in ("a.vhd", "b.VHDL", "c.txt", os.path.join("sub", "d.vhd")):
+            for sName in ("a.vhd", "b.VHDL", "c.txt", "e.sv", "f.svh", "g.v", os.path.join("sub", "d.vhd")):
                 open(os.path.join(sDirectory, sName), "w").close()
             lFiles = real_world_check.find_vhdl_files(sDirectory, ["sub/d.vhd"])
             lRelative = [real_world_check.relative_path(s, sDirectory) for s in lFiles]
-            self.assertEqual(lRelative, ["a.vhd", "b.VHDL"])
+            self.assertEqual(lRelative, ["a.vhd", "b.VHDL", "e.sv", "f.svh", "g.v"])
