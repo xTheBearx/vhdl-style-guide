@@ -21,6 +21,9 @@ All three must be on the path.
 The plugin does not always find the libraries of the installed GHDL backend.
 MHSG sets **GHDL_PREFIX** to the library directory GHDL reports, unless it is already set.
 
+MHSG loads the plugin with :code:`yosys -m ghdl`, unless the ghdl command is built into Yosys, as in the MSYS2
+packages for Windows, which have no plugin to load. MHSG asks Yosys once which it is.
+
 Describing the design
 ---------------------
 
@@ -85,7 +88,9 @@ How it works
 ------------
 
 1. GHDL analyzes the files of each library, in order.
-2. GHDL synthesizes the top entity to Verilog, which is only read for the source locations GHDL writes in it.
+2. GHDL synthesizes the top entity to Verilog, which is only read for the source locations GHDL writes in it:
+   comments such as :code:`/* fifo.vhd:42:5 */`, or Yosys src attributes such as :code:`(* src="fifo.vhd:42.5" *)`
+   in later versions of GHDL. Builds of GHDL that write neither give findings without a location.
 3. Yosys synthesizes the same top entity through the GHDL plugin and writes the netlist before any optimization.
 4. The design rules check the result. Each cell of the netlist is located in the VHDL by joining its name to the
    location in GHDL's Verilog, and a latch is reported at the assignment that infers it.

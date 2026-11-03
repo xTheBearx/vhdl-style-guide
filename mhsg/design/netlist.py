@@ -3,20 +3,40 @@
 Reads the JSON netlist of Yosys and maps its cells back to VHDL source locations.
 
 The GHDL plugin for Yosys writes no source locations into the netlist. The cells it creates are named after GHDL's
-instance numbers, such as \\17, and GHDL's Verilog output names the same instance n17_q or n17_o and writes a comment
-with its location before it, such as /* fifo.vhd:42:5 */. Joining the two gives each cell the location of the VHDL
-statement it came from, as a single line and column.
+instance numbers, such as \\17 or :17, and GHDL's Verilog output names the same instance n17_q, n17_o or n17 and gives
+it the location of the VHDL statement it came from, as a single line and column. Depending on the version of GHDL the
+location is:
+
+- a comment before the statement, such as /* fifo.vhd:42:5 */ or /*# fifo.vhd:42:5 */,
+- a Yosys src attribute on the statement or on the declaration of its output, such as
+  (* src="fifo.vhd:42.5" *) or (* src="fifo.vhd:42.5-44.9" *), possibly several joined by |,
+- or both. Some builds write neither, and their cells have no location.
+
+Joining the instance numbers of the two gives each cell its location. A src attribute on a cell of the JSON netlist,
+which holds the same text, is used for the cells the Verilog does not locate.
 """
 
+import os
 import re
 
 LATCH_TYPES = {"$dlatch", "$adlatch", "$dlatchsr"}
 MUX_TYPES = {"$mux", "$pmux"}
 FLIP_FLOP_TYPES = {"$dff", "$dffe", "$adff", "$adffe", "$sdff", "$sdffe", "$sdffce", "$aldff", "$aldffe", "$dffsr", "$dffsre"}
 
-reLocation = re.compile(r"^\s*/\* (\S+):(\d+):(\d+)\s+\*/")
-reModule = re.compile(r"^module (\S+)")
-reInstanceOutput = re.compile(r"\bn(\d+)_[a-z]+\b\s*(?:<=|=)")
+VHDL_EXTENSIONS = (".vhd", ".vhdl", ".vho", ".vhf")
+
+# A location comment of GHDL: /* file:line:column */, or /*# file:line:column */ in later versions
+reLocation = re.compile(r"^\s*/\*#?\s*(\S+):(\d+):(\d+)\s*\*/")
+# A Verilog attribute instance, (* name = value, ... *), and the src attribute in it
+reAttributes = re.compile(r"\(\*.*?\*\)")
+reSourceAttribute = re.compile(r'\bsrc\s*=\s*"((?:[^"\\]|\\.)*)"')
+# One location of a src attribute: file:line.column or file:line.column-line.column; the column is optional
+reSource = re.compile(r"^(.+?):(\d+)(?:\.(\d+))?(?:-\d+(?:\.\d+)?)?$")
+reModule = re.compile(r"^\s*module\s+([^\s(;#]+)")
+# The output of an instance: n17_q or n17_o, or n17 in later versions, assigned
+reInstanceOutput = re.compile(r"\bn(\d+)(?:_[a-z]+)?\b\s*(?:<=|=)")
+# The declaration of the output of an instance, such as reg [7:0] n17; or wire n17_o;
+reInstanceDeclaration = re.compile(r"^\s*(?:reg|wire|logic)\b(?:\s+signed)?(?:\s*\[[^\]]*\])?\s+n(\d+)(?:_[a-z]+)?\s*[;\[=]")
 # An instance of a module: the module name, the instance name and an opening parenthesis
 reModuleInstance = re.compile(r"^\s+[A-Za-z_\\][^\s(]*\s+([A-Za-z_\\][^\s(]*)\s*\($")
 # An instance with parameters: the module name and #(, the parameters, then the instance name on a line of its own
@@ -34,48 +54,118 @@ class Location:
         return f"{self.file}:{self.line}:{self.column}"
 
 
-def read_locations(sVerilogFile):
-    """Returns {(module, instance number): Location} from the location comments of GHDL's Verilog output."""
+def read_locations(sVerilogFile, lSourceFiles=None):
+    """
+    Returns {(module, instance number): Location} from the locations in GHDL's Verilog output: the location comments,
+    and the src attributes of the statements and of the declarations of instance outputs. An instance gets the src
+    attribute of its statement, else the last comment, which holds until a blank line as in the output of earlier
+    versions, else the src attribute of the declaration of its output. lSourceFiles, the files of the design, picks
+    the location among several in a src attribute, see source_location.
+    """
     dReturn = {}
+    dDeclarations = {}
     sModule = None
+    # The location of the last comment, and of the src attribute of the statement, which holds until the statement ends
     oLocation = None
+    oStatement = None
     bParameters = False
+    setFiles = source_file_set(lSourceFiles)
     with open(sVerilogFile, encoding="utf-8", errors="replace") as oFile:
         for sLine in oFile:
+            oSource = attribute_location(sLine, setFiles)
+            sCode = reAttributes.sub("", sLine) if "(*" in sLine else sLine
             if bParameters:
-                oMatch = reInstanceName.match(sLine)
+                oCurrent = oSource or oStatement or oLocation
+                oMatch = reInstanceName.match(sCode)
                 if oMatch:
                     bParameters = False
-                    if oLocation is not None and sModule is not None:
-                        dReturn.setdefault((sModule, "instance " + oMatch.group(1)), oLocation)
+                    if oCurrent is not None and sModule is not None:
+                        dReturn.setdefault((sModule, "instance " + oMatch.group(1)), oCurrent)
+                    oStatement = None
                 continue
-            oMatch = reModule.match(sLine)
+            oMatch = reModule.match(sCode)
             if oMatch:
-                sModule, oLocation = oMatch.group(1), None
+                sModule, oLocation, oStatement = oMatch.group(1), None, None
                 continue
-            oMatch = reLocation.match(sLine)
+            oMatch = reLocation.match(sCode)
             if oMatch:
                 oLocation = Location(oMatch.group(1), int(oMatch.group(2)), int(oMatch.group(3)))
                 continue
-            if oLocation is None or sModule is None:
+            if sModule is None:
                 continue
-            for oInstance in reInstanceOutput.finditer(sLine):
-                dReturn.setdefault((sModule, oInstance.group(1)), oLocation)
-            oMatch = reModuleInstance.match(sLine)
+            oMatch = reInstanceDeclaration.match(sCode)
             if oMatch:
-                dReturn.setdefault((sModule, "instance " + oMatch.group(1)), oLocation)
-            elif reParameterizedModule.match(sLine):
-                bParameters = True
-            if sLine.strip() == "" or sLine.startswith("endmodule"):
+                # The src attribute of a declaration locates the declared output only, not the statements after it
+                if oSource is not None:
+                    dDeclarations.setdefault((sModule, oMatch.group(1)), oSource)
+            elif oSource is not None:
+                oStatement = oSource
+            oCurrent = oStatement or oLocation
+            if oCurrent is not None:
+                for oInstance in reInstanceOutput.finditer(sCode):
+                    dReturn.setdefault((sModule, oInstance.group(1)), oCurrent)
+                oMatch = reModuleInstance.match(sCode)
+                if oMatch:
+                    dReturn.setdefault((sModule, "instance " + oMatch.group(1)), oCurrent)
+                elif reParameterizedModule.match(sCode):
+                    bParameters = True
+            if sLine.strip() == "" or sCode.startswith("endmodule"):
                 oLocation = None
+                oStatement = None
+            elif sCode.rstrip().endswith(";"):
+                oStatement = None
+    for tKey, oDeclaration in dDeclarations.items():
+        dReturn.setdefault(tKey, oDeclaration)
     return dReturn
+
+
+def attribute_location(sLine, setFiles=None):
+    """Returns the Location of the src attribute in the attribute instances of a line of Verilog, or None."""
+    if "(*" not in sLine:
+        return None
+    for sAttributes in reAttributes.findall(sLine):
+        oMatch = reSourceAttribute.search(sAttributes)
+        if oMatch:
+            return source_location(oMatch.group(1).replace('\\"', '"'), setFiles)
+    return None
+
+
+def source_location(sSource, setFiles=None):
+    """
+    Returns the Location of the value of a src attribute, such as fifo.vhd:42.5-44.9, or None if it has no location in
+    a VHDL file. Of several locations joined by |, the first in a file of the design, in setFiles, wins, then the first in
+    a VHDL file.
+    """
+    if not isinstance(sSource, str):
+        return None
+    oFirst = None
+    for sPart in sSource.split("|"):
+        oMatch = reSource.match(sPart.strip())
+        if oMatch is None:
+            continue
+        sFile = oMatch.group(1)
+        oLocation = Location(sFile, int(oMatch.group(2)), int(oMatch.group(3) or 0))
+        if setFiles and normalise(sFile) in setFiles:
+            return oLocation
+        if oFirst is None and sFile.lower().endswith(VHDL_EXTENSIONS):
+            oFirst = oLocation
+    return oFirst
+
+
+def source_file_set(lSourceFiles):
+    return {normalise(s) for s in lSourceFiles} if lSourceFiles else set()
+
+
+def normalise(sFile):
+    return os.path.normcase(os.path.normpath(os.path.abspath(sFile)))
 
 
 class Netlist:
     """The modules of a Yosys JSON netlist, with the location of each cell and the names of its nets."""
 
-    def __init__(self, dNetlist, dLocations):
+    def __init__(self, dNetlist, dLocations, lSourceFiles=None):
         dModules = dNetlist.get("modules", {})
+        self._setFiles = source_file_set(lSourceFiles)
         # GHDL writes an empty module, marked blackbox, for each component without an entity, such as a vendor
         # primitive: those are black boxes, not modules with no logic
         self.black_boxes = {s: d for s, d in dModules.items() if is_black_box(d)}
@@ -106,12 +196,18 @@ class Netlist:
                     yield sModule, sCell, dCell
 
     def location(self, sModule, sCell):
-        """Returns the Location of a cell, or None if it is not known."""
+        """
+        Returns the Location of a cell, or None if it is not known: from the Verilog of GHDL, else from the src
+        attribute of the cell in the netlist.
+        """
         sName = sCell.lstrip("\\")
-        oReturn = self.locations.get((module_name(sModule), sName.split(".")[-1]))
+        oReturn = self.locations.get((module_name(sModule), instance_number(sName.split(".")[-1])))
         if oReturn is None:
             # GHDL writes the instance data_ram_gen:1.data_ram_inst as data_ram_gen_n1_data_ram_inst
             oReturn = self.locations.get((module_name(sModule), "instance " + verilog_instance_name(sName)))
+        if oReturn is None:
+            dCell = self.modules.get(sModule, {}).get("cells", {}).get(sCell, {})
+            oReturn = source_location(dCell.get("attributes", {}).get("src"), self._setFiles)
         return oReturn
 
     def bit_name(self, sModule, iBit):
@@ -151,6 +247,11 @@ def is_black_box(dModule):
 def verilog_instance_name(sName):
     """Returns the name GHDL gives an instance in Verilog: generate indexes become _nN and dots underscores."""
     return re.sub(r":(-?\d+)", lambda o: "_n" + o.group(1).replace("-", "m"), sName).replace(".", "_")
+
+
+def instance_number(sName):
+    """Returns the instance number of a cell the GHDL plugin names \\17 or :17, as 17; other names unchanged."""
+    return sName[1:] if sName.startswith(":") and sName[1:].isdigit() else sName
 
 
 def module_name(sModule):
