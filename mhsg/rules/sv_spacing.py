@@ -11,10 +11,15 @@ does not see, so pairs with them are left alone; only a comment may follow a mac
 left alone, as its tokens may be classified wrongly near the errors, see sv_syntax_001.
 """
 
+import importlib
+
 from mhsg import language, parser, violation
 from mhsg.rule_group import whitespace
 from mhsg.svFile import tokens
 from mhsg.vhdlFile.extract import tokens as extract_tokens
+
+# mhsg.svFile exports the class svFile under the name of its module
+svFile = importlib.import_module("mhsg.svFile.svFile")
 
 # Syntax nodes holding the index or the range of a select or a dimension, where Verible allows operators without
 # spaces, as in a[i+1]
@@ -74,6 +79,12 @@ class Rule(whitespace.Rule):
                 oViolation = violation.New(oToi.get_line_number(), oToi, self.solution)
                 oViolation.set_action(iSpaces)
                 self.add_violation(oViolation)
+
+    def fix(self, oFile, dFixOnly=None):
+        super().fix(oFile, dFixOnly)
+        # A comment continuing a trailing comment moves with it
+        if self.fixable and svFile.realign_comment_continuations(oFile.lAllObjects):
+            oFile.update_token_map()
 
     def _fix_violation(self, oViolation):
         lTokens = oViolation.get_tokens()
