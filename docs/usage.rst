@@ -16,6 +16,7 @@ The command line tool can be invoked with:
                                  [-oc OUTPUT_CONFIGURATION]
                                  [-rc RULE_CONFIGURATION]
                                  [--lint] [--lint_only] [--design]
+                                 [--cdc_report FILE]
                                  [--rule_set RULE_SET]
                                  [--output_options OUTPUT_OPTIONS]
                                  [--style {indent_only,jcl}] [-v] [-ap]
@@ -64,6 +65,8 @@ The command line tool can be invoked with:
                            set.
      --design              Run design analysis with GHDL and Yosys on the design
                            described in the design section of the configuration.
+     --cdc_report FILE     With --design, write the clock domain crossing report
+                           to a file: JSON for a .json file, otherwise text.
      --rule_set RULE_SET   Rule set for lint mode: a built in name (default
                            do254), a YAML file, or none for all lint rules
                            without labels.
@@ -164,6 +167,9 @@ The command line tool can be invoked with:
 +-------------------------------+-------------------------------------------------+
 | --design                      | Runs design analysis with GHDL and Yosys. See   |
 |                               | :ref:`design_analysis`.                         |
++-------------------------------+-------------------------------------------------+
+| --cdc_report                  | Writes the clock domain crossing report of      |
+|                               | design analysis.                                |
 +-------------------------------+-------------------------------------------------+
 | --rule_set                    | The rule set used in lint mode.                 |
 +-------------------------------+-------------------------------------------------+

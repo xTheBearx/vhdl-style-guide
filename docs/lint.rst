@@ -7,13 +7,14 @@ Besides style, MHSG can check VHDL for design problems such as latches, multiple
 These lint checks only report; they never change the code.
 
 The checks are grouped in rule sets, which map the checks of a coding standard to the MHSG rules that implement them.
-There are two built in rule sets:
+There are three built in rule sets:
 
 * **do254** implements the coding standards of the DO-254 Users Group position paper
   *Best Practice VHDL Coding Standards for DO-254 Programs* (DO254-UG-001 Rev 1a).
 * **do254_plus** includes do254 and adds further good practice: the synthesizable subset, numeric types, clocks and
   state machines, traceability, and the `HDLbits VHDL coding guidelines <https://www.hdlbits.com/guides/>`_.
   Where those conflict with DO-254, DO-254 wins; for example every register needs a reset.
+* **cdc** holds the clock domain crossing, clock and reset checks of design analysis, see :doc:`design_analysis`.
 
 Running lint mode
 -----------------

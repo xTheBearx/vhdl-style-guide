@@ -45,6 +45,8 @@ class Design:
         self.ghdl_options = []
         # Where GHDL and Yosys write their files; a temporary directory, removed after the run, if not given
         self.work_directory = None
+        # Clock domain crossing constraints: clocks, clock_groups, inputs and waivers
+        self.cdc = {}
 
     def all_files(self):
         return [sFile for oLibrary in self.libraries for sFile in oLibrary.files]
@@ -75,9 +77,31 @@ def from_configuration(dConfiguration):
     oDesign.top_library = str(dDesign.get("top_library") or oDesign.libraries[-1].name)
     oDesign.generics = dict(dDesign.get("generics") or {})
     oDesign.ghdl_options = [str(s) for s in dDesign.get("ghdl_options") or []]
+    oDesign.cdc = read_cdc(dDesign.get("cdc"))
     if dDesign.get("work_directory"):
         oDesign.work_directory = os.path.expandvars(str(dDesign["work_directory"]))
     return oDesign
+
+
+CDC_KEYS = ("clocks", "clock_groups", "inputs", "waivers")
+
+
+def read_cdc(dCdc):
+    """Checks the cdc section of a design and returns it as a dictionary."""
+    if dCdc is None:
+        return {}
+    if not isinstance(dCdc, dict):
+        raise exceptions.ConfigurationError("ERROR: the cdc section of the design must be a map")
+    lUnknown = sorted(str(s) for s in dCdc if s not in CDC_KEYS)
+    if lUnknown:
+        raise exceptions.ConfigurationError(f"ERROR: unknown keys in the cdc section of the design: {', '.join(lUnknown)}; expected {', '.join(CDC_KEYS)}")
+    if not isinstance(dCdc.get("clocks") or {}, dict) or not isinstance(dCdc.get("inputs") or {}, dict):
+        raise exceptions.ConfigurationError("ERROR: clocks and inputs in the cdc section map names to clocks")
+    if any(not isinstance(l, list) for l in dCdc.get("clock_groups") or []):
+        raise exceptions.ConfigurationError("ERROR: clock_groups in the cdc section is a list of lists of clock names")
+    if any(not isinstance(d, dict) or "signal" not in d for d in dCdc.get("waivers") or []):
+        raise exceptions.ConfigurationError("ERROR: each waiver in the cdc section needs a signal and a justification")
+    return dict(dCdc)
 
 
 def read_file_list(sFileList):

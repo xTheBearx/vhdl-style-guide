@@ -15,7 +15,9 @@ designs:
     libraries:
     - name: neorv32
       files_from: rtl/file_list_core.f
-  known: []
+  known:
+  # Real by the rule: the reset request synchronizers xrstn_wdt_o and xrstn_ocd_o are reset by the raw rstn_ext_i
+  - 'rtl/core/neorv32_sys.vhd(66)design_015 -- Reset rstn_i is released asynchronously: it resets registers clocked by clk_i without a reset synchronizer (2 registers)'
 - name: neorv32_wrapper
   project: neorv32
   environment:
@@ -36,6 +38,8 @@ designs:
   - rtl/core/neorv32_tracebuf.vhd(101)design_006 -- Register ctrl_hsel in neorv32_tracebuf_32_5ba93c9db0cff93f52b521d7420e43f6eda2784f is never used
   # Same register: assigned data and DUAL_CORE_EN, which is false here
   - 'rtl/core/neorv32_tracebuf.vhd(113)design_005 -- Register ctrl_hsel in neorv32_tracebuf_32_5ba93c9db0cff93f52b521d7420e43f6eda2784f never changes: it is always 0'
+  # Real: mtime_lo is reset by the raw rstn_i instead of rstn_sys; the other two are the reset request synchronizers
+  - 'rtl/core/neorv32_top.vhd(1196)design_015 -- Reset rstn_i is released asynchronously: it resets registers clocked by clk_i without a reset synchronizer (3 registers)'
 - name: neorv32_latch_regfile
   project: neorv32
   environment:
@@ -50,6 +54,10 @@ designs:
   known:
   # Intended: CPU_RF_ARCH_SEL 3 selects the register file built from latches
   - rtl/core/neorv32_cpu_regfile.vhd(215)design_002 -- Synthesis infers a latch for regfile in neorv32_cpu_regfile_5_3 (31 latches)
+  # Intended: the latch register file opens its latches with the clock level
+  - 'rtl/core/neorv32_cpu_regfile.vhd(214)design_010 -- Clock clk_i is used as data (31 places)'
+  # Real by the rule: the reset request synchronizers xrstn_wdt_o and xrstn_ocd_o are reset by the raw rstn_ext_i
+  - 'rtl/core/neorv32_sys.vhd(66)design_015 -- Reset rstn_i is released asynchronously: it resets registers clocked by clk_i without a reset synchronizer (2 registers)'
 - name: olo_axi_lite_slave
   project: open-logic
   design:
@@ -206,6 +214,10 @@ designs:
     - -frelaxed-rules
     - -Wno-hide
     - -Wno-shared
+    cdc:
+      # The clocks of this entity are synchronous, with an integer ratio
+      clock_groups:
+      - [In_Clk, Out_Clk]
   known: []
 - name: olo_base_cc_pulse
   project: open-logic
@@ -277,6 +289,10 @@ designs:
     - -Wno-shared
     generics:
       Width_g: 16
+    cdc:
+      # The clocks of this entity are synchronous, with an integer ratio
+      clock_groups:
+      - [In_Clk, Out_Clk]
   known: []
 - name: olo_base_crc
   project: open-logic

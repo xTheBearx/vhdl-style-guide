@@ -5,10 +5,11 @@ Findings are reported per VHDL file in the same formats as the other checks.
 """
 
 import contextlib
+import json
 import tempfile
 
 from mhsg import report, rule_list, rule_set, severity, vhdlFile
-from mhsg.design import graph, netlist, project, runner, tools, top
+from mhsg.design import cdc, flat, graph, netlist, project, runner, tools, top
 from mhsg.lint import model
 
 
@@ -21,6 +22,19 @@ class Context:
         self.netlist = oNetlist
         self._dFiles = {}
         self._oGraph = None
+
+    def cdc(self):
+        """Returns the clock domain crossing Analysis of the flat netlist, built once, or None without a netlist."""
+        if getattr(self, "_oCdc", None) is None and self.netlist is not None:
+            oFlat = flat.FlatDesign(self.netlist)
+            dConstraints = self.design.cdc if self.design is not None else {}
+            self._oCdc = cdc.Analysis(oFlat, dConstraints, self.locate_cell)
+        return getattr(self, "_oCdc", None)
+
+    def locate_cell(self, oCell, sSignal=None):
+        """Returns (file, line) of a flat cell, refined to the assignment of the signal."""
+        oLocation = self.netlist.location(oCell.module, oCell.name)
+        return self.refine(oLocation, sSignal) if oLocation is not None else (None, 0)
 
     def graph(self):
         """Returns the DesignGraph of the netlist, built once for all rules, or None without a netlist."""
@@ -94,7 +108,27 @@ def run(commandLineArguments, oConfig):
             oNetlist = netlist.Netlist(oResult.netlist, netlist.read_locations(oResult.verilog_file))
         oContext = Context(oDesign, oResult, oNetlist)
         lFindings = [(oRule, oFinding) for oRule in lRules for oFinding in oRule.check_design(oContext)]
+        write_cdc_report(getattr(commandLineArguments, "cdc_report", None), oContext)
     return print_report(oDesign, oResult, lFindings, oConfig, commandLineArguments.output_format, len(lRules))
+
+
+def write_cdc_report(sFileName, oContext):
+    """Writes the clock domain crossing report, as JSON for a .json file name and as text otherwise."""
+    if not sFileName:
+        return
+    oAnalysis = oContext.cdc()
+    if oAnalysis is None:
+        dReport = {"top": oContext.design.top, "error": "the design did not synthesize, see design_001"}
+        sText = f"Clock domain crossing report for {oContext.design.top}\n\nNot available: the design did not synthesize, see design_001\n"
+    else:
+        dReport = oAnalysis.report()
+        sText = cdc.report_text(dReport)
+    with open(sFileName, "w", encoding="utf-8") as oFile:
+        if sFileName.lower().endswith(".json"):
+            json.dump(dReport, oFile, indent=2)
+            oFile.write("\n")
+        else:
+            oFile.write(sText)
 
 
 def configuration_result(oDesign):

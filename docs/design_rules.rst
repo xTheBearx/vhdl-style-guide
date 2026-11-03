@@ -178,3 +178,221 @@ Each register is reported once, with its deepest path.
 
    -- With maximum_depth set to 2
    result <= (a + b) + (c + d) when sel = '1' else (others => '0');
+
+design_008
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_unsynchronized_crossing`
+
+This rule reports signals that cross from one clock domain to another without a synchronizer.
+
+.. NOTE:: This is a design rule. It runs in design analysis and implements DO-254 check CDC1.
+
+A register that captures a signal from an asynchronous clock domain can go metastable.
+A single-bit crossing needs a synchronizer: two or more registers in series in the destination domain, the first fed directly from a register of the source domain and feeding only the next.
+Data captured while an enable synchronized to the destination clock holds it, as in a handshake, is safe.
+Clocks are asynchronous unless the design section groups them, see the design analysis documentation, where crossings can also be waived with a justification.
+A waiver without a justification is reported by this rule.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   process (clk_b) is
+   begin
+     if rising_edge(clk_b) then
+       flag_b <= flag_a;  -- flag_a is clocked by clk_a
+     end if;
+   end process;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   process (clk_b) is
+   begin
+     if rising_edge(clk_b) then
+       flag_meta <= flag_a;
+       flag_b    <= flag_meta;
+     end if;
+   end process;
+
+design_009
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_crossing_hazard`
+
+This rule reports clock domain crossings with a synchronizer that can still fail.
+
+.. NOTE:: This is a design rule. It runs in design analysis and implements DO-254 check CDC1.
+
+Two hazards are reported:
+
+* logic between the clock domains before the first synchronizer stage, which can glitch and be captured;
+* the bits of a bus synchronized one by one, which can arrive in different clock cycles, unless the bus is gray coded.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   sync_meta <= valid_a and ready_a;  -- logic on signals of clock domain a, captured by clk_b
+   sync_b    <= sync_meta;
+
+design_010
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_clock_as_data`
+
+This rule reports clocks used as data.
+
+.. NOTE:: This is a design rule. It runs in design analysis and implements DO-254 check SS8.
+
+A clock from an input port or a black box, such as a PLL, should only reach clock pins.
+Using it in logic or sampling it with a register makes the design depend on the timing of the clock network.
+Logic that gates a clock is reported by design_012 instead.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   process (clk_a) is
+   begin
+     if rising_edge(clk_a) then
+       sample <= clk_b;
+     end if;
+   end process;
+
+design_011
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_shared_clock_reset`
+
+This rule reports signals used both as a clock and as an asynchronous reset.
+
+.. NOTE:: This is a design rule. It runs in design analysis and implements DO-254 check SS9.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   process (clk_a, clk_c) is
+   begin
+     if clk_c = '1' then
+       q <= '0';
+     elsif rising_edge(clk_a) then
+       q <= d;
+     end if;
+   end process;
+
+design_012
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_gated_clock`
+
+This rule reports gated clocks: clocks that pass through logic.
+
+.. NOTE:: This is a design rule. It runs in design analysis and implements DO-254 check SS10.
+
+Logic on a clock adds skew and can glitch, which clocks registers when they should not be.
+Use a clock enable instead, or a clock gating cell of the device.
+Registers on a gated clock are in the clock domain of the clock that is gated.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   clk_gated <= clk and enable;
+
+design_013
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_generated_clock`
+
+This rule reports clocks made inside the design by a register, such as a clock divider, or by logic.
+
+.. NOTE:: This is a design rule. It runs in design analysis and implements DO-254 check SS11.
+
+A clock from a register or logic is not on the clock network of the device, so it has more skew, and timing analysis needs it to be declared.
+Use a clock enable in the domain of the original clock, or a clock management block of the device.
+Registers on a divided clock are in the clock domain of the clock that is divided.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   div <= not div when rising_edge(clk);
+
+   process (div) is
+   begin
+     if rising_edge(div) then
+       q <= d;
+     end if;
+   end process;
+
+design_014
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_generated_reset`
+
+This rule reports asynchronous resets made inside the design by logic or by a register that is not a reset synchronizer.
+
+.. NOTE:: This is a design rule. It runs in design analysis and implements DO-254 check SS12.
+
+Logic on an asynchronous reset can glitch and reset registers when it should not.
+The output of a reset synchronizer, a chain of registers that the reset clears and that load a constant, is not reported.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   process (clk, soft_reset, reset) is
+   begin
+     if (soft_reset or reset) = '1' then
+       q <= '0';
+     elsif rising_edge(clk) then
+       q <= d;
+     end if;
+   end process;
+
+design_015
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_reset_release`
+
+This rule reports asynchronous resets that are not released synchronously to the clock of the registers they reset.
+
+.. NOTE:: This is a design rule. It runs in design analysis and implements DO-254 check SS15.
+
+A reset may be asserted asynchronously, but released close to a clock edge it leaves registers in different states.
+Release it through a reset synchronizer in each clock domain: a chain of two or more registers that the reset clears and that load a constant.
+Two cases are reported: a reset input that resets registers directly, and a reset synchronized to one clock that resets registers of another.
+A reset input declared in the domain of the registers under inputs in the cdc section is taken as synchronous.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   process (clk, reset) is
+   begin
+     if reset = '1' then
+       q <= '0';
+     elsif rising_edge(clk) then
+       q <= d;
+     end if;
+   end process;

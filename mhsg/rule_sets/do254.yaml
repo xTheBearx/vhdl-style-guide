@@ -82,7 +82,8 @@ checks:
 
   CDC1:
     title: Analyze multiple asynchronous clocks
-    status: design
+    rules: [design_008, design_009]
+    note: The cdc rule set reports more, and mhsg --design --cdc_report writes the crossing report.
 
   # Safe synthesis
 
@@ -118,23 +119,23 @@ checks:
   SS8:
     title: Avoid clock used as data
     severity: Error
-    status: design
+    rules: [design_010]
   SS9:
     title: Avoid shared clock and reset signal
     severity: Error
-    status: design
+    rules: [design_011]
   SS10:
     title: Avoid gated clocks
     severity: Warning
-    status: design
+    rules: [design_012]
   SS11:
     title: Avoid internally generated clocks
     severity: Warning
-    status: design
+    rules: [design_013]
   SS12:
     title: Avoid internally generated resets
     severity: Warning
-    status: design
+    rules: [design_014]
   SS13:
     title: Avoid mixed polarity reset
     severity: Warning
@@ -146,7 +147,7 @@ checks:
   SS15:
     title: Avoid asynchronous reset release
     severity: Error
-    status: design
+    rules: [design_015]
   SS16:
     title: Avoid initialization assignments
     severity: Error

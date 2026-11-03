@@ -1,0 +1,49 @@
+# Clock domain crossing checks, run by design analysis (mhsg --design).
+#
+# The checks of the DO-254 rule set that concern clocks and resets, with the crossing checks split by kind.
+# mhsg --design --cdc_report FILE also writes the report of every crossing, with its status.
+
+name: CDC
+prefix: CDC
+version: "1"
+title: Clock domain crossing checks
+source: mhsg design analysis
+
+checks:
+
+  "001":
+    title: Synchronize every signal that crosses into an asynchronous clock domain
+    severity: Error
+    rules: [design_008]
+  "002":
+    title: Avoid logic before a synchronizer and buses synchronized bit by bit
+    severity: Error
+    rules: [design_009]
+  "003":
+    title: Avoid clocks used as data
+    severity: Error
+    rules: [design_010]
+  "004":
+    title: Avoid a signal used as a clock and as a reset
+    severity: Error
+    rules: [design_011]
+  "005":
+    title: Avoid gated clocks
+    severity: Warning
+    rules: [design_012]
+  "006":
+    title: Avoid internally generated clocks
+    severity: Warning
+    rules: [design_013]
+  "007":
+    title: Avoid internally generated asynchronous resets
+    severity: Warning
+    rules: [design_014]
+  "008":
+    title: Release asynchronous resets synchronously in each clock domain
+    severity: Error
+    rules: [design_015]
+  "009":
+    title: Check reconvergence of separately synchronized signals
+    status: design
+    note: Planned.

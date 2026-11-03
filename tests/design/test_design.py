@@ -11,7 +11,7 @@ import tempfile
 import unittest
 
 from mhsg import exceptions, vhdlFile
-from mhsg.design import analysis, graph, netlist, project, runner, top
+from mhsg.design import analysis, cdc, flat, graph, netlist, project, runner, top
 from tests import utils
 
 sTestDir = os.path.dirname(os.path.abspath(__file__))
@@ -137,6 +137,54 @@ class test_netlist(unittest.TestCase):
         self.assertEqual((None, 0), oContext.refine(None, "q"))
 
 
+class test_cdc_configuration(unittest.TestCase):
+    def design(self, dCdc):
+        return project.from_configuration(
+            {"design": {"top": "cdc_top", "libraries": [{"name": "work", "files": [os.path.join(sTestDir, "cdc.vhd")]}], "cdc": dCdc}},
+        )
+
+    def test_valid(self):
+        dCdc = {
+            "clocks": {"sys": "clk_a"},
+            "clock_groups": [["sys", "clk_b"]],
+            "inputs": {"rst_a": "async"},
+            "waivers": [{"signal": "x", "justification": "y"}],
+        }
+        self.assertEqual(dCdc, self.design(dCdc).cdc)
+        self.assertEqual({}, self.design(None).cdc)
+
+    def test_errors(self):
+        for dCdc in ([], {"unknown": 1}, {"clocks": ["clk_a"]}, {"clock_groups": ["clk_a"]}, {"waivers": [{"justification": "y"}]}):
+            with self.subTest(dCdc), self.assertRaises(exceptions.ConfigurationError):
+                self.design(dCdc)
+
+
+class test_flat(unittest.TestCase):
+    def test_instances_are_flattened(self):
+        dChild = {
+            "ports": {"a": {"direction": "input", "bits": [2]}, "y": {"direction": "output", "bits": [3]}},
+            "cells": {"\\5": {"type": "$not", "port_directions": {"A": "input", "Y": "output"}, "connections": {"A": [2], "Y": [3]}}},
+            "netnames": {},
+        }
+        dTop = {
+            "ports": {"i": {"direction": "input", "bits": [2]}, "o": {"direction": "output", "bits": [4]}},
+            "cells": {
+                "u_1": {"type": "child", "connections": {"a": [2], "y": [3]}},
+                "u_2": {"type": "child", "connections": {"a": [3], "y": [4]}},
+            },
+            "netnames": {"mid": {"bits": [3], "hide_name": 0}},
+        }
+        oFlat = flat.FlatDesign(netlist.Netlist({"modules": {"child": dChild, "top": dTop}}, {}))
+        self.assertEqual("top", oFlat.top)
+        self.assertEqual([("u_1",), ("u_2",)], sorted(o.path for o in oFlat.cells))
+        oFirst, oSecond = sorted(oFlat.cells, key=lambda o: o.path)
+        # The output of the first instance is the input of the second, through the net mid of the top
+        self.assertEqual(oFirst.connections["Y"], oSecond.connections["A"])
+        self.assertEqual("mid", oFlat.net_name(oFirst.connections["Y"][0]))
+        self.assertEqual("i", oFlat.net_name(oFirst.connections["A"][0]))
+        self.assertEqual(oFlat.top_ports["o"][1], oSecond.connections["Y"])
+
+
 class test_top(unittest.TestCase):
     def design(self, dGenerics):
         return project.from_configuration(
@@ -236,12 +284,14 @@ class test_graph(unittest.TestCase):
 
 @unittest.skipUnless(tools_installed(), "GHDL, Yosys and the GHDL plugin are not installed")
 class test_design_analysis(unittest.TestCase):
-    def run_design(self, sTop, sFile, lArguments=(), dGenerics=None, dRules=None):
+    def run_design(self, sTop, sFile, lArguments=(), dGenerics=None, dRules=None, dCdc=None):
         with tempfile.TemporaryDirectory() as sDirectory:
             sConfiguration = os.path.join(sDirectory, "design.yaml")
             dDesign = {"top": sTop, "libraries": [{"name": "work", "files": [os.path.join(sTestDir, sFile)]}]}
             if dGenerics:
                 dDesign["generics"] = dGenerics
+            if dCdc:
+                dDesign["cdc"] = dCdc
             with open(sConfiguration, "w", encoding="utf-8") as oFile:
                 json.dump({"design": dDesign, "rule": dRules or {}}, oFile)
             oResult = subprocess.run(
@@ -278,9 +328,11 @@ class test_design_analysis(unittest.TestCase):
         lReturn = []
         for sLine in lOutput:
             sLocation, sMessage = sLine.split(": ", 1)[1].split(" -- ", 1)
-            sFile, sRest = sLocation.split("(", 1)
+            sFile, sRest = sLocation.rsplit("(", 1)
             sLineNumber, sRule = sRest.split(")", 1)
-            lReturn.append((os.path.basename(sFile), int(sLineNumber), sRule, sMessage))
+            # A finding without a location is reported under the name of the top entity, at line 0
+            sFile = None if sFile == sTop else os.path.basename(sFile)
+            lReturn.append((sFile, int(sLineNumber), sRule, sMessage))
         return lReturn
 
     def test_combinational_loops(self):
@@ -307,7 +359,7 @@ class test_design_analysis(unittest.TestCase):
                 ("registers.vhd", 33, "design_006", "Register count in registers_top is never used"),
                 ("registers.vhd", 37, "design_005", "Register busy_r in registers_top never changes: it is always 0"),
             ],
-            self.findings("registers_top", "registers.vhd"),
+            [t for t in self.findings("registers_top", "registers.vhd") if t[2] in ("design_005", "design_006")],
         )
 
     def test_logic_depth(self):
@@ -326,6 +378,93 @@ class test_design_analysis(unittest.TestCase):
         )
         # A real generic is set in a copy of the file, and findings still name the original
         self.assertEqual([], self.findings("real_top", "real_generic.vhd", dGenerics={"WIDTH": 4, "FREQ_HZ": 100.0e6}))
+
+    def test_clock_domain_crossings(self):
+        self.assertEqual(
+            [
+                ("cdc.vhd", 69, "design_010", "Clock clk_b is used as data"),
+                ("cdc.vhd", 81, "design_013", "Clock div_a is made by a register from clk_a (1 register)"),
+                ("cdc.vhd", 90, "design_008", "unsync_b (clk_b) captures flag_a (clk_a) without a synchronizer"),
+                ("cdc.vhd", 93, "design_009", "Logic on x_a (clk_a), y_a (clk_a) before synchronizer logic1_b (clk_b) can glitch"),
+                ("cdc.vhd", 95, "design_009", "bus_a (clk_a) is synchronized bit by bit into bus1_b (clk_b); the bits can arrive in different cycles"),
+                ("cdc.vhd", 136, "design_015", "Reset rst_a is released asynchronously: it resets registers clocked by clk_a without a reset synchronizer"),
+                ("cdc.vhd", 146, "design_015", "Reset rst_b is synchronized to clk_b, resets registers clocked by clk_a"),
+                ("cdc.vhd", 163, "design_014", "Asynchronous reset is made by logic of rst_b, soft_a"),
+                ("cdc.vhd", 170, "design_012", "Clock clk_a is gated by logic into clk_gated (1 register)"),
+                ("cdc.vhd", 198, "design_011", "clk_c is used as a clock and as an asynchronous reset"),
+                ("cdc.vhd", 198, "design_015", "Reset clk_c is released asynchronously: it resets registers clocked by clk_a without a reset synchronizer"),
+            ],
+            self.findings("cdc_top", "cdc.vhd"),
+        )
+
+    def test_cdc_rule_set(self):
+        _, lOutput = self.run_design("cdc_top", "cdc.vhd", ["--lint", "--rule_set", "cdc"])
+        self.assertIn(
+            f"ERROR: {os.path.join(sTestDir, 'cdc.vhd')}(90)CDC-001 (design_008) -- unsync_b (clk_b) captures flag_a (clk_a) without a synchronizer",
+            lOutput,
+        )
+        self.assertIn(
+            f"WARNING: {os.path.join(sTestDir, 'cdc.vhd')}(170)CDC-005 (design_012) -- Clock clk_a is gated by logic into clk_gated (1 register)",
+            lOutput,
+        )
+
+    def test_crossing_report(self):
+        with tempfile.TemporaryDirectory() as sDirectory:
+            sJson = os.path.join(sDirectory, "cdc.json")
+            sText = os.path.join(sDirectory, "cdc.txt")
+            self.run_design("cdc_top", "cdc.vhd", ["--cdc_report", sJson])
+            self.run_design("cdc_top", "cdc.vhd", ["--cdc_report", sText])
+            with open(sJson, encoding="utf-8") as oFile:
+                dReport = json.load(oFile)
+            with open(sText, encoding="utf-8") as oFile:
+                sReport = oFile.read()
+        self.assertEqual(
+            {
+                "bus1_b": cdc.BUS,
+                "data_b": cdc.QUALIFIED,
+                "gray1_b": cdc.GRAY,
+                "logic1_b": cdc.LOGIC,
+                "req1_b": cdc.SYNCHRONIZED,
+                "sync1_b": cdc.SYNCHRONIZED,
+                "unsync_b": cdc.UNSYNCHRONIZED,
+            },
+            {d["destination"]: d["status"] for d in dReport["crossings"]},
+        )
+        self.assertEqual(
+            [("clk_a", "port", None), ("clk_b", "port", None), ("clk_c", "port", None), ("clk_gated", "logic", "clk_a"), ("div_a", "register", "clk_a")],
+            [(d["name"], d["kind"], d["from"]) for d in dReport["clocks"]],
+        )
+        self.assertIn("  sync1_b (clk_b) <- flag_a (clk_a)\n    synchronized: 2 stages\n", sReport)
+        self.assertIn(
+            "Summary: 1 bus synchronized bit by bit, 1 gray-coded bus, 1 logic before synchronizer, 1 qualified by enable, 2 synchronized, 1 unsynchronized",
+            sReport,
+        )
+
+    def test_crossing_constraints(self):
+        # Grouped clocks do not cross, and a reset input declared in a domain is synchronous to it
+        lFindings = self.findings("cdc_top", "cdc.vhd", dCdc={"clock_groups": [["clk_a", "clk_b"]], "inputs": {"rst_a": "clk_a"}})
+        lRules = sorted({t[2] for t in lFindings})
+        self.assertEqual(["design_010", "design_011", "design_012", "design_013", "design_014", "design_015"], lRules)
+        self.assertEqual(
+            ["Reset clk_c is released asynchronously: it resets registers clocked by clk_a without a reset synchronizer"],
+            [t[3] for t in lFindings if t[2] == "design_015"],
+        )
+
+    def test_waivers(self):
+        lFindings = self.findings(
+            "cdc_top",
+            "cdc.vhd",
+            dCdc={"clocks": {"fast": "clk_a"}, "waivers": [{"signal": "unsync_b", "justification": "Test"}, {"signal": "bus1_*"}]},
+        )
+        lCrossings = [t for t in lFindings if t[2] in ("design_008", "design_009")]
+        self.assertEqual(
+            [
+                ("cdc.vhd", 93, "design_009", "Logic on x_a (fast), y_a (fast) before synchronizer logic1_b (clk_b) can glitch"),
+                ("cdc.vhd", 95, "design_009", "bus_a (fast) is synchronized bit by bit into bus1_b (clk_b); the bits can arrive in different cycles"),
+                (None, 0, "design_008", "Waiver for bus1_* has no justification"),
+            ],
+            lCrossings,
+        )
 
     def test_missing_design_section(self):
         oResult = subprocess.run([*utils.mhsg_exec(), "--design", "-of", "syntastic"], cwd=sRoot, capture_output=True, text=True, check=False)
