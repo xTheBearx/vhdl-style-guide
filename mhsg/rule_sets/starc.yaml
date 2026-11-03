@@ -727,7 +727,9 @@ checks:
     title: Do not mix blocking and non-blocking assignments in combinational always blocks
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_always_002
+    - sv_always_004
     note: Verilog only.
   2.2.3.2:
     title: No default-then-override non-blocking assignments to one signal in combinational blocks
@@ -745,7 +747,8 @@ checks:
     title: Use non-blocking assignments to infer flip-flops
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_always_003
     note: 'Verible: always-ff-non-blocking.'
   2.3.1.2:
     title: Use only synthesizable flip-flop coding templates
@@ -787,7 +790,8 @@ checks:
     title: Do not mix blocking and non-blocking assignments in sequential always blocks
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_always_004
     note: Verilog only.
   2.3.3.1:
     title: One always block must not use different clock edges
@@ -1034,7 +1038,11 @@ checks:
     title: Every case statement needs a default branch
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_case_001
+    configuration:
+      sv_case_001:
+        exempt_unique: 'no'
     note: 'Verible: case-missing-default.'
   2.8.1.5:
     title: Do not use tool-specific full_case directives
@@ -1090,7 +1098,8 @@ checks:
     title: The default branch must be the last case item
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_case_002
     note: Verilog only.
   2.8.3.6:
     title: Don't-care signals not used as case selectors unless default assigns x
@@ -1567,7 +1576,8 @@ checks:
     title: At most one assignment per line
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_003
   3.1.4.5:
     title: Lines at most about 110 characters
     level: Recommendation 3
@@ -1684,7 +1694,8 @@ checks:
     title: Do not use defparam
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_module_002
     note: 'Verilog only. Verible: forbid-defparam.'
   3.2.5.1:
     title: Logic-level library selectors improve speed

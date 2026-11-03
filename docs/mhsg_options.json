@@ -2338,6 +2338,23 @@
         "subprogram_instantiation_005",
         "subtype_005",
         "subtype_006",
+        "sv_always_001",
+        "sv_always_002",
+        "sv_always_003",
+        "sv_always_004",
+        "sv_case_001",
+        "sv_case_002",
+        "sv_generate_001",
+        "sv_generate_002",
+        "sv_generate_003",
+        "sv_generate_004",
+        "sv_generate_005",
+        "sv_label_001",
+        "sv_module_001",
+        "sv_module_002",
+        "sv_statement_001",
+        "sv_statement_002",
+        "sv_statement_003",
         "type_008",
         "type_009",
         "type_017",
@@ -3037,6 +3054,15 @@
       "item_type": "string",
       "format": "regex"
     },
+    "exempt_unique": {
+      "type": "enum",
+      "label": "Exempt unique case",
+      "description": "yes lets a unique or unique0 case statement go without a default item; no requires one in every case statement. Booleans true/false are also accepted.",
+      "values": [
+        "yes",
+        "no"
+      ]
+    },
     "first_open_paren": {
       "type": "enum",
       "label": "First open parenthesis",
@@ -3433,6 +3459,12 @@
       "type": "string",
       "label": "Pattern",
       "description": "Regular expression a requirement tag comment must match, such as the default for -- REQ HWR-123 written with a colon after REQ.",
+      "format": "regex"
+    },
+    "pattern:sv_generate_002": {
+      "type": "string",
+      "label": "Pattern",
+      "description": "Regular expression the label of a generate block must match in full; the default (g_|gen_).* follows Verible.",
       "format": "regex"
     },
     "patterns": {
@@ -3861,6 +3893,15 @@
       "type": "string",
       "label": "User error message",
       "description": "Extra text appended to the solution of every violation of this rule. Empty means no message."
+    },
+    "waive_for_locals": {
+      "type": "enum",
+      "label": "Waive for locals",
+      "description": "yes allows blocking assignments to variables declared in the block; no reports every blocking assignment outside the header of a for loop. Booleans true/false are also accepted.",
+      "values": [
+        "yes",
+        "no"
+      ]
     },
     "wrap_at_when": {
       "type": "enum",
@@ -59232,6 +59273,199 @@
       "option_documentation": "configuring_prefix_and_suffix_rules.rst"
     },
     {
+      "id": "sv_always_001",
+      "alias": "sv_always_comb",
+      "category": "sv_always",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that combinational logic uses always_comb rather than always @ or always @().",
+      "documentation": "sv_always_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_always_002",
+      "alias": "sv_always_comb_blocking",
+      "category": "sv_always",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that always_comb blocks use blocking assignments (=), not nonblocking ones (<=).",
+      "documentation": "sv_always_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_always_003",
+      "alias": "sv_always_ff_non_blocking",
+      "category": "sv_always",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that sequential logic, in always_ff blocks and in always blocks clocked on an edge, uses nonblocking assignments (<=). Blocking assignments in the header of a for loop are allowed; with waive_for_locals set to yes, so are blocking assignments to variables declared in the block.",
+      "documentation": "sv_always_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "waive_for_locals",
+          "default": "no",
+          "definition": "waive_for_locals"
+        }
+      ]
+    },
+    {
+      "id": "sv_always_004",
+      "alias": "sv_always_mixed_assignments",
+      "category": "sv_always",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that an always block does not mix blocking (=) and nonblocking (<=) assignments. Assignments in the header of a for loop are not counted.",
+      "documentation": "sv_always_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
       "id": "sv_blank_line_001",
       "alias": "sv_blank_line_end_of_file",
       "category": "sv_blank_line",
@@ -59279,6 +59513,345 @@
       ]
     },
     {
+      "id": "sv_case_001",
+      "alias": "sv_case_missing_default",
+      "category": "sv_case",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that a case statement has a default item, unless it is unique or unique0 and exempt_unique is yes, the default.",
+      "documentation": "sv_case_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "exempt_unique",
+          "default": "yes",
+          "definition": "exempt_unique"
+        }
+      ]
+    },
+    {
+      "id": "sv_case_002",
+      "alias": "sv_case_default_last",
+      "category": "sv_case",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that the default item of a case statement is its last item.",
+      "documentation": "sv_case_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_generate_001",
+      "alias": "sv_generate_label",
+      "category": "sv_generate",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that the begin-end blocks of generate loops, ifs and cases are labelled.",
+      "documentation": "sv_generate_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_generate_002",
+      "alias": "sv_generate_label_prefix",
+      "category": "sv_generate",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that the labels of generate blocks match pattern, a regular expression, by default (g_|gen_).*, as Verible's generate-label-prefix rule does.",
+      "documentation": "sv_generate_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "pattern",
+          "default": "(g_|gen_).*",
+          "definition": "pattern:sv_generate_002"
+        }
+      ]
+    },
+    {
+      "id": "sv_generate_003",
+      "alias": "sv_generate_v2001_begin",
+      "category": "sv_generate",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for begin-end blocks directly in a generate region, a Verilog-2001 form.",
+      "documentation": "sv_generate_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_generate_004",
+      "alias": "sv_generate_legacy_region",
+      "category": "sv_generate",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for generate regions: the generate and endgenerate keywords are not needed.",
+      "documentation": "sv_generate_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_generate_005",
+      "alias": "sv_generate_legacy_genvar",
+      "category": "sv_generate",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for genvar declarations outside of a for loop; declare the genvar in the loop instead.",
+      "documentation": "sv_generate_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
       "id": "sv_indent_001",
       "alias": "sv_indent_code",
       "category": "sv_indent",
@@ -59306,6 +59879,288 @@
         {
           "name": "disable",
           "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_label_001",
+      "alias": "sv_label_mismatched",
+      "category": "sv_label",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that the label after end matches the label of its begin. An end label without a begin label is removed.",
+      "documentation": "sv_label_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_module_001",
+      "alias": "sv_module_begin_block",
+      "category": "sv_module",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for begin-end blocks directly in a module, outside of any generate construct.",
+      "documentation": "sv_module_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_module_002",
+      "alias": "sv_module_defparam",
+      "category": "sv_module",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for defparam statements; set parameters in the instantiation instead.",
+      "documentation": "sv_module_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_001",
+      "alias": "sv_statement_explicit_begin",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that the statement of an if, else, for, foreach, while, repeat, forever, always or initial is a begin-end block, as Verible's explicit-begin rule does. An else if needs no block of its own.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_002",
+      "alias": "sv_statement_consecutive_null_statements",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for consecutive null statements, such as ;;.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_003",
+      "alias": "sv_statement_one_per_line",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for more than one statement or declaration on a line, as the STARC guide asks (3.1.4.4, at most one assignment per line). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
           "definition": "disable"
         },
         {

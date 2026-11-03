@@ -38,6 +38,18 @@ what a Verible lint rule checks, its alias is the Verible rule's name.
   between if, for or case and its parenthesis and around the colon of a block label; at least two before a comment
   at the end of a line
 * :code:`sv_blank_line_001`: no blank lines at the end of the file
+* :code:`sv_always_001` to :code:`sv_always_004`: always_comb instead of always @*, blocking assignments in
+  always_comb, nonblocking assignments in sequential logic, no mixing of the two in one block
+* :code:`sv_case_001`, :code:`sv_case_002`: a default item in every case statement that is not unique, and last
+* :code:`sv_statement_001` to :code:`sv_statement_003`: begin-end blocks under if, else, loops, always and initial;
+  no consecutive null statements; one statement per line (disabled by default, enabled by the starc rule set)
+* :code:`sv_generate_001` to :code:`sv_generate_005`: labelled generate blocks, with labels starting with gen\_
+  or g\_; no begin-end blocks directly in generate regions; no generate regions; genvars declared in their loop
+* :code:`sv_label_001`: end labels that match their begin labels
+* :code:`sv_module_001`, :code:`sv_module_002`: no begin-end blocks directly in a module; no defparam
+
+After a fix that changes the structure of the code, such as replacing always @* with always_comb or removing a
+generate region, the file is parsed again, so the rules that follow, such as the indentation, see the fixed code.
 
 The rules that apply to every language check SystemVerilog files as well:
 

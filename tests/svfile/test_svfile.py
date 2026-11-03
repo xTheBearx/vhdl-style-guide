@@ -25,6 +25,11 @@ def read(sName):
         return oFile.read()
 
 
+def only(lOutput, *lRuleGroups):
+    """The output lines of the rules of the given groups, such as sv_whitespace."""
+    return [s for s in lOutput if any(f"){sGroup}_" in s for sGroup in lRuleGroups)]
+
+
 def tokens_of(sText):
     return svFile(sText.splitlines(True), sFilename="test.sv").lAllObjects
 
@@ -204,7 +209,7 @@ class test_rules(unittest.TestCase):
         self.assertEqual(["WARNING: style.sv(7)length_001 -- Reduce line to less than 80 characters"], lOutput)
 
     def test_indent_clean(self):
-        self.assertEqual((0, []), self.run_mhsg([], "indent.sv")[:2])
+        self.assertEqual([], only(self.run_mhsg(["-ap"], "indent.sv")[1], "sv_indent", "sv_whitespace"))
 
     def test_indent_fix(self):
         # Every line whose indent is checked is indented by one space; the fix restores the file
@@ -232,8 +237,10 @@ class test_rules(unittest.TestCase):
                 self.assertEqual("module m;\n    logic a;  // trailing\n              // continued\nendmodule\n", oFile.read())
 
     def test_whitespace_check(self):
-        iStatus, lOutput, _ = self.run_mhsg([], "whitespace.sv")
+        # The structure rules of phase 1 also report the file; -ap reports the whitespace rules of phase 2 as well
+        iStatus, lOutput, _ = self.run_mhsg(["-ap"], "whitespace.sv")
         self.assertEqual(1, iStatus)
+        lOutput = only(lOutput, "sv_whitespace")
         lRules = [s.split(")", 1)[1].split(" ")[0] for s in lOutput]
         dCounts = {s: lRules.count(s) for s in lRules}
         self.assertEqual(
@@ -262,18 +269,82 @@ class test_rules(unittest.TestCase):
         # the operators in brackets and the arguments of the macro; it removes the blank lines at the end
         _, lOutput, sAfter = self.run_mhsg(["--fix"], "whitespace.sv")
         self.assertEqual(read("whitespace.fixed.sv"), sAfter)
-        self.assertEqual([], lOutput)
-        self.assertEqual((0, []), self.run_mhsg(["-ap"], "whitespace.fixed.sv")[:2])
+        self.assertEqual([], only(lOutput, "sv_whitespace", "sv_blank_line"))
+        self.assertEqual([], only(self.run_mhsg(["-ap"], "whitespace.fixed.sv")[1], "sv_whitespace", "sv_blank_line"))
 
     def test_blank_lines_at_end(self):
-        iStatus, lOutput, _ = self.run_mhsg(["-ap"], "whitespace.fixed.sv")
-        self.assertEqual((0, []), (iStatus, lOutput))
+        self.assertEqual([], only(self.run_mhsg(["-ap"], "whitespace.fixed.sv")[1], "sv_blank_line"))
         with tempfile.TemporaryDirectory() as sTemporary:
             sCopy = os.path.join(sTemporary, "e.sv")
             with open(sCopy, "w", encoding="utf-8") as oFile:
                 oFile.write("module m;\nendmodule\n\n\n")
             oResult = subprocess.run([sys.executable, "bin/mhsg", "-f", sCopy, "-of", "syntastic"], cwd=sRoot, capture_output=True, text=True, check=False)
             self.assertEqual([f"ERROR: {sCopy}(3)sv_blank_line_001 -- Remove blank lines at the end of the file"], oResult.stdout.splitlines())
+
+    def test_structure_check(self):
+        iStatus, lOutput, _ = self.run_mhsg([], "structure.sv")
+        self.assertEqual(1, iStatus)
+        self.assertEqual(
+            [
+                "ERROR: structure.sv(2)sv_generate_005 -- Declare the genvar in the for loop",
+                "ERROR: structure.sv(3)sv_module_002 -- Set the parameter in the instantiation instead of with defparam",
+                "ERROR: structure.sv(4)sv_always_001 -- Use always_comb",
+                "ERROR: structure.sv(4)sv_statement_001 -- Use a begin-end block",
+                "ERROR: structure.sv(5)sv_always_001 -- Use always_comb",
+                "ERROR: structure.sv(8)sv_always_003 -- Use a nonblocking assignment (<=) in sequential logic",
+                "ERROR: structure.sv(8)sv_statement_001 -- Use a begin-end block",
+                "ERROR: structure.sv(10)sv_always_002 -- Use a blocking assignment (=) in always_comb",
+                "ERROR: structure.sv(10)sv_statement_002 -- Remove the null statement",
+                "ERROR: structure.sv(10)sv_statement_002 -- Remove the null statement",
+                "ERROR: structure.sv(12)sv_statement_001 -- Use a begin-end block",
+                "ERROR: structure.sv(13)sv_module_001 -- Remove the begin-end block from the module",
+                "ERROR: structure.sv(15)sv_generate_004 -- Remove generate and endgenerate",
+                "ERROR: structure.sv(16)sv_generate_001 -- Label the generate block",
+                "ERROR: structure.sv(20)sv_generate_002 -- Rename loop to match (g_|gen_).*",
+                "ERROR: structure.sv(21)sv_label_001 -- Change the end label to loop",
+                "ERROR: structure.sv(24)sv_always_004 -- Do not mix blocking and nonblocking assignments in an always block",
+                "ERROR: structure.sv(29)sv_always_003 -- Use a nonblocking assignment (<=) in sequential logic",
+                "ERROR: structure.sv(33)sv_case_001 -- Add a default item",
+                "ERROR: structure.sv(46)sv_label_001 -- Remove the end label, the block has no begin label",
+            ],
+            lOutput,
+        )
+
+    def test_structure_fix(self):
+        # The fixes change always @* to always_comb, <= to = in always_comb, remove null statements, the generate
+        # region and the end label without a begin label, and correct the mismatched end label
+        _, _, sAfter = self.run_mhsg(["--fix"], "structure.sv")
+        self.assertEqual(read("structure.fixed.sv"), sAfter)
+
+    def run_with_configuration(self, sConfiguration, sFile):
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sConfigurationFile = os.path.join(sTemporary, "c.yaml")
+            with open(sConfigurationFile, "w", encoding="utf-8") as oFile:
+                oFile.write(sConfiguration)
+            return self.run_mhsg(["-c", sConfigurationFile], sFile)
+
+    def test_waive_for_locals(self):
+        _, lOutput, _ = self.run_with_configuration("rule:\n  sv_always_003:\n    waive_for_locals: yes\n", "structure.sv")
+        self.assertNotIn("ERROR: structure.sv(29)sv_always_003 -- Use a nonblocking assignment (<=) in sequential logic", lOutput)
+        self.assertIn("ERROR: structure.sv(8)sv_always_003 -- Use a nonblocking assignment (<=) in sequential logic", lOutput)
+
+    def test_generate_label_pattern(self):
+        _, lOutput, _ = self.run_with_configuration("rule:\n  sv_generate_002:\n    pattern: '(loop|gen_).*'\n", "structure.sv")
+        self.assertFalse([s for s in lOutput if "sv_generate_002" in s])
+
+    def test_one_statement_per_line(self):
+        _, lOutput, _ = self.run_with_configuration("rule:\n  sv_statement_003:\n    disable: false\n", "structure.sv")
+        self.assertIn("ERROR: structure.sv(43)sv_statement_003 -- Move the statement to its own line", lOutput)
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sCopy = os.path.join(sTemporary, "s.sv")
+            with open(sCopy, "w", encoding="utf-8") as oFile:
+                oFile.write("module m;\n    always_comb begin\n        a = 1; b = 2;\n    end\nendmodule\n")
+            sConfigurationFile = os.path.join(sTemporary, "c.yaml")
+            with open(sConfigurationFile, "w", encoding="utf-8") as oFile:
+                oFile.write("rule:\n  sv_statement_003:\n    disable: false\n")
+            subprocess.run([sys.executable, "bin/mhsg", "-f", sCopy, "--fix", "-c", sConfigurationFile], cwd=sRoot, capture_output=True, check=False)
+            with open(sCopy, encoding="utf-8") as oFile:
+                self.assertEqual("module m;\n    always_comb begin\n        a = 1;\n        b = 2;\n    end\nendmodule\n", oFile.read())
 
     def test_sample_is_clean(self):
         self.assertEqual((0, []), self.run_mhsg([], "sample.sv")[:2])

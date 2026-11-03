@@ -66,11 +66,35 @@ class svFile(vhdl.vhdlFile):
     def _processFile(self):
         # Lines come without their line ends from the command line, and with them from tests and the API
         lLines = [sLine.rstrip("\r\n") for sLine in self.filecontent]
-        sText = "\n".join(lLines) + "\n" if lLines else ""
-        self.syntax_tree = None
-        self.lAllObjects = build_tokens(sText, self.filename or "source.sv")
+        self.parse("\n".join(lLines) + "\n" if lLines else "")
+
+    def parse(self, sText):
+        """Builds the tokens of a text, with its syntax tree and the syntax nodes by kind."""
+        # The source manager is kept with the tree, which refers to its buffers
+        self.lAllObjects, (self.syntax_tree, self.source_manager), self.dNodes = build_tokens(sText, self.filename or "source.sv", bTree=True)
+        self.dTokenAtOffset = {o.offset: o for o in self.lAllObjects if getattr(o, "offset", None) is not None}
         vhdl.set_code_tags(self.lAllObjects)
         self.oTokenMap = self.build_token_map()
+
+    def reparse(self):
+        """
+        Parses the file again as it is now, after a fix that changed its structure, so the classes, indent levels
+        and syntax tree of the tokens describe the fixed code.
+        """
+        self.parse("\n".join(self.get_lines()[1:]) + "\n")
+
+    def nodes(self, *lKinds):
+        """The syntax nodes of the given kinds, such as AlwaysFFBlock, in the file."""
+        lReturn = []
+        for sKind in lKinds:
+            lReturn.extend(self.dNodes.get(sKind, []))
+        return lReturn
+
+    def token_at(self, oSyntaxToken):
+        """The mhsg token for a token of the syntax tree, or None for one not in the file as written."""
+        if oSyntaxToken is None:
+            return None
+        return self.dTokenAtOffset.get(oSyntaxToken.location.offset)
 
     def build_token_map(self):
         """The token map, where each token is also found under the base classes of its class, such as keyword."""
@@ -88,12 +112,16 @@ class svFile(vhdl.vhdlFile):
         """Indentation of SystemVerilog is not configured yet."""
 
 
-def build_tokens(sText, sFileName):
-    """Returns the mhsg tokens of a SystemVerilog text: lexed as written, classified from the syntax tree."""
+def build_tokens(sText, sFileName, bTree=False):
+    """
+    Returns the mhsg tokens of a SystemVerilog text: lexed as written, classified from the syntax tree. With bTree,
+    returns (tokens, (syntax tree, its source manager), {kind: syntax nodes}).
+    """
     oSourceManager = pyslang.SourceManager()
     oTree = SyntaxTree.fromText(sText, oSourceManager, sFileName)
     oFirst = oTree.root.getFirstToken()
-    dClasses = classify(oTree, oFirst.location.buffer.id, line_starts(sText)) if oFirst is not None else {}
+    dNodes = {}
+    dClasses = classify(oTree, oFirst.location.buffer.id, line_starts(sText), dNodes) if oFirst is not None else {}
     oBuffer = oSourceManager.assignText(sFileName + " (as written)", sText)
     oLexer = Lexer(oBuffer, pyslang.BumpAllocator(), pyslang.Diagnostics(), oSourceManager, LexerOptions())
     lReturn = []
@@ -112,9 +140,13 @@ def build_tokens(sText, sFileName):
             oNew = tokens.for_token(sKind, oInfo.syntax, oInfo.field)(oToken.rawText, sKind, oInfo.syntax, oInfo.field)
             oNew.set_indent(oInfo.indent)
             oNew.closing = oInfo.closing
+        # The offset of the token in the text, by which rules find it from the syntax tree
+        oNew.offset = oToken.location.offset
         add_text(lReturn, oNew)
     mark_blank_lines(lReturn)
     set_comment_indents(lReturn)
+    if bTree:
+        return lReturn, (oTree, oSourceManager), dNodes
     return lReturn
 
 
@@ -233,7 +265,7 @@ def line_starts(sText):
     return sReturn
 
 
-def classify(oTree, iBuffer, sLineStarts):
+def classify(oTree, iBuffer, sLineStarts, dNodes=None):
     """
     Returns {offset: token_info} for the tokens of the file in a syntax tree; sLineStarts are the offsets of the
     tokens that start a line.
@@ -251,6 +283,8 @@ def classify(oTree, iBuffer, sLineStarts):
     while lStack:
         oNode, tPath, iLevel = lStack.pop()
         sKind = oNode.kind.name
+        if dNodes is not None:
+            dNodes.setdefault(sKind, []).append(oNode)
         tPath = tPath + (tokens.short_name(sKind),)
         dFields, sUnparsed, dListStarts = node_fields(oNode)
         # A list whose first element is on the line of its opening bracket is aligned rather than indented, such as

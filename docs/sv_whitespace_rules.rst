@@ -118,7 +118,7 @@ sv_whitespace_006
 
 Alias: :code:`sv_whitespace_event_control`
 
-This rule checks for no space between @ and its parenthesis or *, and one space between an always keyword
+This rule checks for no space between @ and its parenthesis or :code:`*`, and one space between an always keyword
 and @, as Verible's formatter does.
 
 **Violation**

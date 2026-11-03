@@ -160,6 +160,7 @@ Rules Disabled by Default
 * `subtype_600 <subtype_rules.html#subtype-600>`_
 * `subtype_601 <subtype_rules.html#subtype-601>`_
 * `subtype_602 <subtype_rules.html#subtype-602>`_
+* `sv_statement_003 <sv_statement_rules.html#sv-statement-003>`_
 * `type_015 <type_rules.html#type-015>`_
 * `type_100 <type_rules.html#type-100>`_
 * `type_200 <type_rules.html#type-200>`_

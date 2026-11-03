@@ -220,6 +220,11 @@ options:
     by_rule:
       comment_100:
         description: "Comment starts (exactly three characters, beginning with --) after which no space is required, e.g. --! or ---."
+  exempt_unique:
+    type: enum
+    values: ["yes", "no"]
+    label: Exempt unique case
+    description: "yes lets a unique or unique0 case statement go without a default item; no requires one in every case statement. Booleans true/false are also accepted."
   first_open_paren:
     type: enum
     values: [add_new_line, remove_new_line, ignore]
@@ -470,6 +475,9 @@ options:
     format: regex
     label: Pattern
     description: Regular expression a requirement tag comment must match, such as the default for -- REQ HWR-123 written with a colon after REQ.
+    by_rule:
+      sv_generate_002:
+        description: Regular expression the label of a generate block must match in full; the default (g_|gen_).* follows Verible.
   patterns:
     type: list
     item_type: string
@@ -680,6 +688,11 @@ options:
     type: string
     label: User error message
     description: Extra text appended to the solution of every violation of this rule. Empty means no message.
+  waive_for_locals:
+    type: enum
+    values: ["yes", "no"]
+    label: Waive for locals
+    description: "yes allows blocking assignments to variables declared in the block; no reports every blocking assignment outside the header of a for loop. Booleans true/false are also accepted."
   wrap_at_when:
     type: enum
     values: ["yes", "no"]
