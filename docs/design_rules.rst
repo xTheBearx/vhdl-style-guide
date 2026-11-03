@@ -433,3 +433,28 @@ and is not followed, unless :code:`follow_resets` is true; the crossing report l
        go_b       <= start_b and mode_b;  -- start_a and mode_a meet again
      end if;
    end process;
+
+design_017
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_black_box_declaration`
+
+This rule reports black boxes whose effect on clock domains is not declared.
+
+.. NOTE:: This is a design rule. It runs in design analysis and implements DO-254 check CDC1.
+
+Design analysis cannot see inside a black box, such as a vendor primitive, a vendor macro or encrypted IP, and
+assumes nothing about one. Each black box type must be declared in the black_boxes part of the design section,
+or in a black box library, with a role for every port: which pins are clocks, which data is timed by which clock,
+which outputs follow inputs, which clocks it makes, and what it synchronizes inside.
+A static port needs a justification and reviewed_by.
+:code:`mhsg --design --black_box_template FILE` writes a template of the declarations a design needs.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   -- vendor_dma has no declaration
+   u_dma : vendor_dma port map (aclk => clk, irq => irq);

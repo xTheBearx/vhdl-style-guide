@@ -106,6 +106,7 @@ Design rules
 * :code:`design_007` reports combinational paths deeper than :code:`maximum_depth` logic levels, 48 by default (DO-254 SS19).
 
 * :code:`design_008` to :code:`design_016` check clock domain crossings, clocks and resets, see below.
+* :code:`design_017` reports black boxes whose clock domain behaviour is not declared, see below.
 
 See :doc:`design_rules`. Design rules are configured like other rules, for example with a different severity:
 
@@ -233,13 +234,150 @@ and SS15:
 
 .. include:: cdc_coverage.rst
 
+Black boxes
+-----------
+
+A black box is an instance whose logic design analysis cannot see: a vendor primitive such as a clock buffer or a
+PLL, a vendor macro, encrypted IP, or any component without an entity. Nothing is assumed about a black box. Every
+black box type must be declared, whatever its vendor, with a role for every port; design_017 reports a black box that
+is not declared, a port without a role, and a static port without a justification and a reviewer. Until then, the
+crossings through it are not known.
+
+Write the declarations in the **black_boxes** part of the design section, keyed by component name or a pattern, or in
+library files shared between designs:
+
+.. code-block:: yaml
+
+   design:
+     top: board_top
+     libraries: ...
+     black_box_libraries: [../common/xilinx_black_boxes.yaml]
+     black_boxes:
+       BUFGCE:
+         archetype: clock_buffer
+         input: I
+         output: O
+         enable: CE
+         reference: UG953, BUFGCE
+       xpm_cdc_single:
+         archetype: synchronizer
+         source_clock: src_clk
+         destination_clock: dest_clk
+         input: src_in
+         output: dest_out
+         stages: DEST_SYNC_FF
+       vendor_dma:
+         reference: DMA product guide, section 3
+         reviewed_by: H. Reid
+         ports:
+           aclk: clock
+           s_axi_*: {sync: aclk}
+           irq: async
+           cfg_mode: {static: Written once at boot, before aclk starts}
+     black_box_instances:
+       u_top.u_dma_test:
+         ports:
+           irq: unused
+
+A library file has the same **black_boxes** and **black_box_instances** keys. The design section takes precedence over
+libraries, and a declaration of an instance, by path or pattern, over the declaration of its type.
+
+**Roles.** A port role is one of:
+
++---------------------------------------------------+------------------------------------------------------------------+
+| Role                                              | Meaning                                                          |
++===================================================+==================================================================+
+| ``clock``                                         | A clock input.                                                   |
++---------------------------------------------------+------------------------------------------------------------------+
+| ``{sync: <clock pin>}``                           | Data timed by a clock pin of the black box. Data from another    |
+|                                                   | clock domain into such an input is a crossing.                   |
++---------------------------------------------------+------------------------------------------------------------------+
+| ``{path: [<inputs>]}``                            | An output that follows inputs without a register, such as an     |
+|                                                   | input buffer. Clocks and data are followed through it.           |
++---------------------------------------------------+------------------------------------------------------------------+
+| ``{clock_out: {from: <pin>, relation: <r>}}``     | A clock output: ``same`` for a buffer, ``derived`` for a clock   |
+|                                                   | synchronous to its input, such as a PLL output, ``independent``  |
+|                                                   | for a new asynchronous clock, such as a recovered clock.         |
++---------------------------------------------------+------------------------------------------------------------------+
+| ``{enable: <clock output>}``                      | The enable of a clock buffer.                                    |
++---------------------------------------------------+------------------------------------------------------------------+
+| ``{reset_in: async}``, ``{reset_in: {sync: <c>}}``| A reset input.                                                   |
++---------------------------------------------------+------------------------------------------------------------------+
+| ``{reset_out: {clock: <pin>, release: <r>}}``     | A reset output released ``sync`` or ``async`` to a clock pin.    |
++---------------------------------------------------+------------------------------------------------------------------+
+| ``async``                                         | An output that changes asynchronously, such as an interrupt or   |
+|                                                   | a lock signal, or an input sampled asynchronously.               |
++---------------------------------------------------+------------------------------------------------------------------+
+| ``{synchronized: {clock, from, stages}}``         | An output synchronized inside the black box, such as a vendor    |
+|                                                   | synchronizer macro. Listed in the crossing report for manual     |
+|                                                   | review, with its stages, a number or the name of a generic, and  |
+|                                                   | tagged as a synchronizer for reconvergence.                      |
++---------------------------------------------------+------------------------------------------------------------------+
+| ``{static: <justification>}``                     | Configuration that only changes while the design is idle; left   |
+|                                                   | out of the crossing checks. Needs **reviewed_by**, on the port   |
+|                                                   | as ``{static: {justification, reviewed_by}}`` or on the          |
+|                                                   | declaration.                                                     |
++---------------------------------------------------+------------------------------------------------------------------+
+| ``unused``                                        | A port with no effect on clock domains.                          |
++---------------------------------------------------+------------------------------------------------------------------+
+
+A port that another role names, such as the input of a path, needs no role of its own. Port names and patterns, such
+as ``s_axi_*``, match in any case. **reference** and **reviewed_by** are printed in the crossing report.
+
+**Archetypes.** An archetype writes the roles of a common kind of black box from a few names; **ports** can add to or
+override them:
+
++------------------------+---------------------------------------------------+------------------------------------------+
+| Archetype              | Parameters                                        | Roles                                    |
++========================+===================================================+==========================================+
+| ``buffer``             | input, output                                     | output follows input                     |
++------------------------+---------------------------------------------------+------------------------------------------+
+| ``clock_buffer``       | input, output, enable                             | the same clock, with an enable           |
++------------------------+---------------------------------------------------+------------------------------------------+
+| ``clock_generator``    | input, outputs, relation (derived), reset, locked | derived clocks, asynchronous lock output |
++------------------------+---------------------------------------------------+------------------------------------------+
+| ``single_clock``       | clock, async_reset                                | every other port timed by the clock      |
++------------------------+---------------------------------------------------+------------------------------------------+
+| ``dual_clock``,        | sides: {clock pin: [ports]}                       | ports timed by their clock; a FIFO is    |
+| ``memory``,            |                                                   | listed for manual review                 |
+| ``dual_clock_fifo``    |                                                   |                                          |
++------------------------+---------------------------------------------------+------------------------------------------+
+| ``synchronizer``       | source_clock, destination_clock, input, output,   | a synchronized output                    |
+|                        | stages                                            |                                          |
++------------------------+---------------------------------------------------+------------------------------------------+
+| ``async_input``        | outputs (all)                                     | asynchronous outputs                     |
++------------------------+---------------------------------------------------+------------------------------------------+
+| ``static``             | justification, reviewed_by                        | every port static                        |
++------------------------+---------------------------------------------------+------------------------------------------+
+
+**Variants.** Roles that depend on generics, whose values GHDL keeps, go under **variants**:
+
+.. code-block:: yaml
+
+   fifo_generator_0:
+     archetype: dual_clock_fifo
+     sides: {wr_clk: [din, wr_en, full], rd_clk: [dout, rd_en, empty]}
+     variants:
+       - when: {COMMON_CLOCK: 1}
+         ports: {dout: {sync: wr_clk}, rd_en: {sync: wr_clk}, empty: {sync: wr_clk}}
+
+**Template.** :code:`mhsg --design -c design.yaml --black_box_template black_boxes.yaml` writes a declaration for each
+black box type that has none, with its instances, generic values, ports, directions and widths, and every role
+``TODO``. Fill it in, then add it to **black_box_libraries** or copy it into the design section; design_017 reports
+every ``TODO`` that remains.
+
+**Report.** The crossing report lists each black box type, where it is declared, its reference and reviewer, the
+outputs synchronized inside black boxes for manual review, the static ports with their justification and reviewer,
+and the problems of the declarations.
+
 Limitations
 -----------
 
 * Only the synthesizable part of the design is analyzed. Testbenches are not supported.
 * The design is elaborated with one set of generics. Analyze each configuration that matters, with a configuration file each.
 * Vendor primitives must be given as VHDL sources or component declarations which GHDL can elaborate as black boxes.
-  A black box is assumed to register its outputs and to use all of its inputs.
+  The netlist checks, design_002 to design_007, assume a black box registers its outputs and uses all of its inputs;
+  the clock domain checks use the declarations.
 * GHDL simplifies the logic while it builds the netlist: it removes registers nothing reads, which design_006 finds by
   comparing the netlist with the clocked processes, and it removes inverter and buffer chains and unused combinational
   signals, which a netlist cannot show. Checks for those are planned for the per-file lint.
@@ -247,6 +385,4 @@ Limitations
   entity with its generics, as GHDL names it, such as :code:`neorv32_cpu_regfile_5_3`.
 * What a black box does with its inputs is not known, so reconvergence counts only the logic before it.
   Reset domain crossings through logic are not checked yet.
-* A black box is assumed to have no path from its inputs to its outputs, so a crossing through one is not found;
-  name its clock outputs under clocks.
 * Formal reachability is planned.

@@ -1,0 +1,33 @@
+# Declarations of the black boxes of black_box_cdc.vhd; mystery is left undeclared on purpose
+black_boxes:
+  IBUF:
+    archetype: buffer
+    input: I
+    output: O
+  BUFG:
+    archetype: clock_buffer
+    input: I
+    output: O
+  clock_gen:
+    archetype: clock_generator
+    input: clk_in
+    outputs: [clk_out0]
+    locked: locked
+    ports:
+      clk_out1: {clock_out: {from: clk_in, relation: independent}}
+    reference: Clock generator data sheet, section 2
+  cdc_bit:
+    archetype: synchronizer
+    source_clock: src_clk
+    destination_clock: dest_clk
+    input: src_in
+    output: dest_out
+    stages: STAGES
+  dual_ip:
+    archetype: dual_clock
+    sides:
+      aclk: [a_data]
+      bclk: [b_data]
+    ports:
+      cfg: {static: Set once at power up}
+      irq: async

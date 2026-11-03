@@ -9,7 +9,17 @@ import json
 import tempfile
 
 from mhsg import report, rule_list, rule_set, severity, vhdlFile
-from mhsg.design import cdc, flat, graph, netlist, project, runner, tools, top
+from mhsg.design import (
+    black_box,
+    cdc,
+    flat,
+    graph,
+    netlist,
+    project,
+    runner,
+    tools,
+    top,
+)
 from mhsg.lint import model
 
 
@@ -28,7 +38,8 @@ class Context:
         if getattr(self, "_oCdc", None) is None and self.netlist is not None:
             oFlat = flat.FlatDesign(self.netlist)
             dConstraints = self.design.cdc if self.design is not None else {}
-            self._oCdc = cdc.Analysis(oFlat, dConstraints, self.locate_cell)
+            oBlackBoxes = self.design.black_boxes if self.design is not None else None
+            self._oCdc = cdc.Analysis(oFlat, dConstraints, self.locate_cell, oBlackBoxes)
         return getattr(self, "_oCdc", None)
 
     def locate_cell(self, oCell, sSignal=None):
@@ -109,6 +120,7 @@ def run(commandLineArguments, oConfig):
         oContext = Context(oDesign, oResult, oNetlist)
         lFindings = [(oRule, oFinding) for oRule in lRules for oFinding in oRule.check_design(oContext)]
         write_cdc_report(getattr(commandLineArguments, "cdc_report", None), oContext)
+        write_black_box_template(getattr(commandLineArguments, "black_box_template", None), oContext)
     return print_report(oDesign, oResult, lFindings, oConfig, commandLineArguments.output_format, len(lRules))
 
 
@@ -129,6 +141,18 @@ def write_cdc_report(sFileName, oContext):
             oFile.write("\n")
         else:
             oFile.write(sText)
+
+
+def write_black_box_template(sFileName, oContext):
+    """Writes a YAML template of declarations for the black boxes of the design that have none."""
+    if not sFileName:
+        return
+    oAnalysis = oContext.cdc()
+    with open(sFileName, "w", encoding="utf-8") as oFile:
+        if oAnalysis is None:
+            oFile.write("# The design did not synthesize, see design_001, so its black boxes are not known.\n")
+        else:
+            oFile.write(black_box.template(oAnalysis.flat, oAnalysis.box_library))
 
 
 def configuration_result(oDesign):

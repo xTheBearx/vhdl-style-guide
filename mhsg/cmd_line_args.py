@@ -79,6 +79,12 @@ def parse_command_line_arguments():
         help="With --design, write the clock domain crossing report to a file: JSON for a .json file, otherwise text.",
     )
     parser.add_argument(
+        "--black_box_template",
+        default=None,
+        metavar="FILE",
+        help="With --design, write a template of declarations for the black boxes of the design that have none.",
+    )
+    parser.add_argument(
         "--rule_set",
         default=None,
         action="store",

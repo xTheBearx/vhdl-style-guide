@@ -302,6 +302,28 @@ def describe_settings():
             "default": {},
         },
         {
+            "path": ["design", "black_boxes"],
+            "type": "black_box_map",
+            "label": "Black box declarations",
+            "description": "Maps black box types, such as vendor primitives, to the clock domain role of each port, or to an archetype. Every black box must be declared.",
+            "default": {},
+        },
+        {
+            "path": ["design", "black_box_libraries"],
+            "type": "list",
+            "item_type": "string",
+            "label": "Black box libraries",
+            "description": "YAML files with black_boxes and black_box_instances, shared between designs. The design section takes precedence.",
+            "default": [],
+        },
+        {
+            "path": ["design", "black_box_instances"],
+            "type": "black_box_map",
+            "label": "Black box instance declarations",
+            "description": "Maps instance paths or patterns to declarations that take precedence over the declaration of their type.",
+            "default": {},
+        },
+        {
             "path": ["design", "ghdl_options"],
             "type": "list",
             "item_type": "string",

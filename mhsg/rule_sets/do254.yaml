@@ -82,7 +82,7 @@ checks:
 
   CDC1:
     title: Analyze multiple asynchronous clocks
-    rules: [design_008, design_009, design_016]
+    rules: [design_008, design_009, design_016, design_017]
     note: The cdc rule set reports more, and mhsg --design --cdc_report writes the crossing report.
 
   # Safe synthesis
