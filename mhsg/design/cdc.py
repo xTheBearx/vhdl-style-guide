@@ -18,7 +18,7 @@ pointers that control it cross safely, which the analysis checks.
 
 import fnmatch
 
-from mhsg.design import graph, netlist
+from mhsg.design import black_box, graph, netlist
 
 TRANSPARENT_TYPES = {"$pos", "$buf", "$not"}
 MUX_TYPES = {"$mux", "$pmux"}
@@ -99,8 +99,13 @@ class ResetFinding:
 
 
 class Analysis:
-    def __init__(self, oFlat, dConstraints=None, fLocate=None):
+    def __init__(self, oFlat, dConstraints=None, fLocate=None, oBlackBoxes=None):
         self.flat = oFlat
+        # The declarations of the black boxes: nothing is assumed about a black box that has none
+        self.box_library = oBlackBoxes if oBlackBoxes is not None else black_box.Library()
+        self.boxes = {id(o): black_box.Instance(o, self.box_library.find(o.type, repr(o))) for o in oFlat.cells if o.is_black_box()}
+        self.box_problems = []
+        self.box_synchronizers = []
         # Returns (file, line) of a cell and the signal it drives; the location of the cell itself by default
         self.locate = fLocate or self.cell_location
         self.constraints = dConstraints or {}
@@ -115,11 +120,49 @@ class Analysis:
         self.waiver_errors = []
         self._dStrip = {}
         self._dSources = {}
+        self._check_boxes()
         self._find_clocks()
         self._find_crossings()
         self._find_resets()
         self._find_clock_as_data()
         self._apply_waivers()
+
+    # Black boxes
+
+    def box_role(self, oCell, sPort):
+        """The declared role of a port of a black box, or None when it has none."""
+        oInstance = self.boxes.get(id(oCell))
+        return oInstance.role(sPort) if oInstance is not None else None
+
+    def box_net(self, oCell, sPort, iIndex=0):
+        """The net on a bit of a port of a cell, matching the port name in any case; None if there is none."""
+        for sName, lNets in oCell.connections.items():
+            if sName.lower() == str(sPort).lower():
+                return lNets[min(iIndex, len(lNets) - 1)] if lNets else None
+        return None
+
+    def box_clock(self, oCell, sPin):
+        """The Clock on a clock pin of a black box."""
+        oNet = self.box_net(oCell, sPin)
+        return self.trace_clock(oNet) if graph.is_variable(oNet) else None
+
+    def _check_boxes(self):
+        """Every black box must be declared, with a role for every port; a static port needs reviewed_by."""
+        dTypes = {}
+        for oInstance in self.boxes.values():
+            dTypes.setdefault(oInstance.cell.type, []).append(oInstance)
+        for sType, lInstances in sorted(dTypes.items(), key=lambda t: t[0].lower()):
+            lUndeclared = [o for o in lInstances if not o.declared()]
+            if lUndeclared:
+                self.box_problems.append((lUndeclared[0].cell, f"Black box {sType} has no declaration of its clock domain behaviour", len(lUndeclared)))
+            lSeen = []
+            for oInstance in lInstances:
+                if not oInstance.declared():
+                    continue
+                for sProblem in oInstance.problems(black_box.port_list(self.flat, oInstance.cell)):
+                    if sProblem not in lSeen:
+                        lSeen.append(sProblem)
+                        self.box_problems.append((oInstance.cell, f"Black box {sType}: {sProblem}", 1))
 
     # Following nets
 
@@ -174,10 +217,15 @@ class Analysis:
                 self._dSources[oCurrent] = frozenset()
                 continue
             oCell, sPort, iIndex = tDriver
-            if oCell is None or oCell.is_black_box() or is_clocked(oCell) or oCell.type in MEMORY_READ_TYPES or oCell.type in graph.STATE_TYPES:
+            oRole = self.box_role(oCell, sPort) if oCell is not None and oCell.is_black_box() else None
+            if oRole is not None and oRole.kind == "path":
+                # A declared path through a black box, such as an input buffer, is followed like logic
+                lInputs = self.path_inputs(oCell, oRole, iIndex)
+            elif oCell is None or oCell.is_black_box() or is_clocked(oCell) or oCell.type in MEMORY_READ_TYPES or oCell.type in graph.STATE_TYPES:
                 self._dSources[oCurrent] = frozenset([tDriver])
                 continue
-            lInputs = self.comb_inputs(oCell, sPort, iIndex)
+            else:
+                lInputs = self.comb_inputs(oCell, sPort, iIndex)
             if not bDone:
                 setVisiting.add(oCurrent)
                 lStack.append((oCurrent, True))
@@ -188,6 +236,14 @@ class Analysis:
                 setResult |= self._dSources.get(oInput, frozenset())
             self._dSources[oCurrent] = frozenset(setResult)
         return self._dSources[oNet]
+
+    def path_inputs(self, oCell, oRole, iIndex):
+        """The input nets an output bit of a black box follows: the same bit of inputs as wide as needed, else all bits."""
+        lReturn = []
+        for sInput in oRole.inputs:
+            lNets = next((l for s, l in oCell.connections.items() if s.lower() == sInput.lower()), [])
+            lReturn += [lNets[iIndex]] if iIndex < len(lNets) and len(lNets) > 1 else list(lNets)
+        return [b for b in lReturn if graph.is_variable(b)]
 
     def strip(self, oCell, iIndex, sPort="D"):
         """
@@ -248,7 +304,18 @@ class Analysis:
             return self.clock("port " + self.flat.input_port(oRoot), "port", self.flat.input_port(oRoot), oRoot)
         if oCell.is_black_box():
             sName = f"{oCell!r}.{sPort}" + (f"({iIndex})" if len(oCell.connections.get(sPort, [])) > 1 else "")
-            return self.clock("box " + sName, "box", sName, oRoot, oCell)
+            oRole = self.box_role(oCell, sPort)
+            if oRole is not None and oRole.kind == "path":
+                lInputs = self.path_inputs(oCell, oRole, iIndex)
+                return self.trace_clock(lInputs[0]) if lInputs else None
+            if oRole is not None and oRole.kind == "clock_out" and oRole.relation == "same":
+                # A clock buffer: the clock of its input
+                return self.box_clock(oCell, oRole.source)
+            oDomain = self.clock("box " + sName, "box", sName, oRoot, oCell)
+            if oRole is not None and oRole.kind == "clock_out" and oRole.relation == "derived" and oDomain.parent is None:
+                oDomain.parent = False
+                oDomain.parent = self.box_clock(oCell, oRole.source)
+            return oDomain
         if is_clocked(oCell) or oCell.type in graph.STATE_TYPES:
             oDomain = self.clock("register " + self.flat.cell_name(oCell), "register", self.flat.cell_name(oCell), oRoot, oCell)
             if oDomain.parent is None and "CLK" in oCell.connections:
@@ -350,8 +417,21 @@ class Analysis:
                     return oDomain
             return None
         if oCell.is_black_box():
-            return None
+            return self.box_domain(oCell, sPort)
         return self.cell_clock.get(id(oCell))
+
+    def box_domain(self, oCell, sPort):
+        """The clock domain of a black box output: from its role; None for static, unknown or undeclared outputs."""
+        oRole = self.box_role(oCell, sPort)
+        if oRole is None:
+            return None
+        if oRole.kind in ("sync", "synchronized"):
+            return self.box_clock(oCell, oRole.clock)
+        if oRole.kind == "reset_out":
+            return self.box_clock(oCell, oRole.clock) if oRole.release == "sync" else "async"
+        if oRole.kind == "async":
+            return "async"
+        return None
 
     @staticmethod
     def related(oFirst, oSecond):
@@ -404,12 +484,56 @@ class Analysis:
         for oCrossing in dCrossings.values():
             self.classify(oCrossing)
             self.crossings.append(oCrossing)
+        self._find_box_crossings()
         self._find_buses()
         self.crossings.sort(key=lambda o: o.name)
         self.reconvergences = self._find_reconvergence(False)
         # Meetings found only when synchronous resets are followed, listed in the report and reported on request
         lData = {(self.endpoint_name(t[0][0]), tuple(x[1] for x in t[1])) for t in self.reconvergences}
         self.reset_reconvergences = [t for t in self._find_reconvergence(True) if (self.endpoint_name(t[0][0]), tuple(x[1] for x in t[1])) not in lData]
+
+    def _find_box_crossings(self):
+        """
+        An input of a black box timed by one of its clocks is like the input of a register: data from another domain
+        must be synchronized before it. Outputs synchronized inside a black box are listed for manual review.
+        """
+        for oInstance in self.boxes.values():
+            oCell = oInstance.cell
+            for sPort, lNets in sorted(oCell.connections.items()):
+                oRole = oInstance.role(sPort)
+                if oRole is None:
+                    continue
+                if oRole.kind == "synchronized":
+                    oSource = None
+                    if oRole.source:
+                        oSourceRole = oInstance.role(oRole.source)
+                        oSource = self.box_clock(oCell, oSourceRole.clock) if oSourceRole is not None and oSourceRole.kind == "sync" else "async"
+                    self.box_synchronizers.append((oInstance, sPort, oRole, oSource, self.box_clock(oCell, oRole.clock)))
+                    continue
+                if oRole.kind != "sync" or self.flat.direction(oCell, sPort) != "input":
+                    continue
+                oDomain = self.box_clock(oCell, oRole.clock)
+                if oDomain is None:
+                    continue
+                oCrossing = None
+                for oNet in lNets:
+                    if not graph.is_variable(oNet):
+                        continue
+                    lForeign = [t for t in self.sources(oNet) if not self.related(self.domain_of(t), oDomain)]
+                    if not lForeign:
+                        continue
+                    if oCrossing is None:
+                        oCrossing = Crossing(oCell, f"{oCell!r}.{sPort}", oDomain)
+                        oCrossing.status = UNSYNCHRONIZED
+                        oCrossing.detail = f"into an input of black box {oCell.type} timed by {oRole.clock}"
+                        oCrossing.bits = []
+                        self.crossings.append(oCrossing)
+                    for tPoint in lForeign:
+                        oSource = self.domain_of(tPoint)
+                        oCrossing.sources[self.point_name(tPoint)] = oSource if oSource != "async" else Clock("async", "async", "async", None)
+        for oInstance in self.boxes.values():
+            if any(o.archetype == "dual_clock_fifo" for o in oInstance.declarations):
+                self.box_synchronizers.append((oInstance, None, None, None, None))
 
     def stages_after(self, oCell, iIndex):
         """Returns the number of registers in the same domain that follow a register bit as a chain, each feeding only the next."""
@@ -561,6 +685,16 @@ class Analysis:
                 _, oLast, iLast = self.chain(oCrossing.cell, iIndex)
                 tNode = ("r", id(oLast), iLast)
                 dSeeds[tNode] = dSeeds.get(tNode, 0) | (1 << iTag)
+        # Outputs synchronized inside black boxes, such as vendor synchronizer macros, are synchronizers too
+        for oInstance, sPort, oRole, oSource, oDestination in self.box_synchronizers:
+            if sPort is None or oDestination is None:
+                continue
+            sGroup = oSource.group if isinstance(oSource, Clock) else "async"
+            iTag = len(self.sync_tags)
+            sFrom = f"{oInstance.cell!r}.{oRole.source}" if oRole.source else f"{oInstance.cell!r}"
+            self.sync_tags.append((sFrom, f"{oInstance.cell!r}.{sPort}", oSource if isinstance(oSource, Clock) else "async", (sGroup, oDestination.group)))
+            tNode = ("b", id(oInstance.cell), sPort.lower())
+            dSeeds[tNode] = dSeeds.get(tNode, 0) | (1 << iTag)
         if len(self.sync_tags) < 2:
             return []
         lReturn = []
@@ -658,8 +792,13 @@ class Analysis:
     def point_nodes(self, setPoints):
         """The tag nodes of source points: register bits and memory read ports."""
         lReturn = []
-        for oCell, _, iIndex in setPoints:
-            if oCell is None or oCell.is_black_box():
+        for oCell, sPort, iIndex in setPoints:
+            if oCell is not None and oCell.is_black_box():
+                oRole = self.box_role(oCell, sPort)
+                if oRole is not None and oRole.kind == "synchronized":
+                    lReturn.append(("b", id(oCell), sPort.lower()))
+                continue
+            if oCell is None:
                 continue
             if is_register(oCell):
                 lReturn.append(("r", id(oCell), iIndex))
@@ -739,6 +878,9 @@ class Analysis:
                     self._node_cell[("r", id(oCell), iIndex)] = oCell
             elif oCell.type in MEMORY_READ_TYPES:
                 self._node_cell[("d", id(oCell))] = oCell
+            elif oCell.is_black_box():
+                for sPort in oCell.connections:
+                    self._node_cell[("b", id(oCell), sPort.lower())] = oCell
         dInputs = {}
         dResetFanout = {}
         for oCell in self.flat.cells:
@@ -931,7 +1073,16 @@ class Analysis:
                         continue
                     tKey = ("raw", oRoot, oDomain.group)
                 elif tDriver[0].is_black_box():
-                    continue
+                    # A declared output: released asynchronously, or synchronously to one of the box's clocks
+                    oSourceDomain = self.box_domain(tDriver[0], tDriver[1])
+                    if oSourceDomain is None:
+                        continue
+                    if oSourceDomain == "async":
+                        tKey = ("raw", oRoot, oDomain.group)
+                    elif oSourceDomain.group != oDomain.group:
+                        tKey = ("crossing", oRoot, oDomain.group)
+                    else:
+                        continue
                 elif self.is_reset_synchronizer_output(oRoot, dMemo):
                     oSourceDomain = self.cell_clock.get(id(tDriver[0]))
                     if oSourceDomain is not None and oSourceDomain.group == oDomain.group:
@@ -945,7 +1096,10 @@ class Analysis:
             oCell = tDriver[0] if tDriver is not None and tDriver[0] is not None else lCells[0]
             oDomain = self.cell_clock.get(id(lCells[0]))
             if sKind == "crossing":
-                oSourceDomain = self.cell_clock.get(id(tDriver[0]))
+                if tDriver[0].is_black_box():
+                    oSourceDomain = self.box_domain(tDriver[0], tDriver[1])
+                else:
+                    oSourceDomain = self.cell_clock.get(id(tDriver[0]))
                 sDetail = f"synchronized to {oSourceDomain.name}, resets registers clocked by {oDomain.name}"
             elif sKind == "raw":
                 sDetail = f"resets registers clocked by {oDomain.name}"
@@ -994,7 +1148,21 @@ class Analysis:
                     continue
                 setSeen.add(oNet)
                 for oCell, sPort, _ in self.flat.readers.get(oNet, []):
-                    if oCell is None or oCell.is_black_box():
+                    if oCell is None:
+                        continue
+                    if oCell.is_black_box():
+                        oInstance = self.boxes.get(id(oCell))
+                        oRole = oInstance.role(sPort) if oInstance is not None else None
+                        # A clock through a declared buffer is still a clock; reaching a data input it is data
+                        for sOutput, lOutputs in oCell.connections.items():
+                            oOutputRole = oInstance.role(sOutput) if oInstance is not None else None
+                            if oOutputRole is not None and (
+                                (oOutputRole.kind == "clock_out" and oOutputRole.relation == "same" and (oOutputRole.source or "").lower() == sPort.lower())
+                                or (oOutputRole.kind == "path" and sPort.lower() in [s.lower() for s in oOutputRole.inputs])
+                            ):
+                                lWork.extend(b for b in lOutputs if graph.is_variable(b))
+                        if oRole is not None and oRole.kind in ("sync", "async", "static"):
+                            dReaders.setdefault((oDomain.key, oCell.module, oCell.name), (oDomain, oCell))
                         continue
                     # A clock pin, or an asynchronous reset, which is a shared clock and reset
                     if (sPort == "CLK" and is_clocked(oCell)) or sPort in RESET_PORTS:
@@ -1024,6 +1192,56 @@ class Analysis:
                     oCrossing.status = WAIVED
 
     # Report
+
+    def box_report(self):
+        """The black box part of the report: declarations, internal synchronizers for review, static ports, problems."""
+        dTypes = {}
+        for oInstance in self.boxes.values():
+            dTypes.setdefault(oInstance.cell.type, []).append(oInstance)
+        lTypes = []
+        lStatic = []
+        for sType, lInstances in sorted(dTypes.items(), key=lambda t: t[0].lower()):
+            oFirst = lInstances[0]
+            lTypes.append(
+                {
+                    "type": sType,
+                    "instances": len(lInstances),
+                    "declared": all(o.declared() for o in lInstances),
+                    "declared_in": sorted({d.source for o in lInstances for d in o.declarations}),
+                    "reference": oFirst.reference(),
+                    "reviewed_by": oFirst.reviewed_by(),
+                },
+            )
+            for oInstance in lInstances:
+                for sPort in sorted(oInstance.cell.connections):
+                    oRole = oInstance.role(sPort)
+                    if oRole is not None and oRole.kind == "static":
+                        lStatic.append(
+                            {"port": f"{oInstance.cell!r}.{sPort}", "justification": oRole.justification, "reviewed_by": oInstance.reviewed_by(oRole)},
+                        )
+        lSynchronizers = []
+        for oInstance, sPort, oRole, oSource, oDestination in self.box_synchronizers:
+            if sPort is None:
+                lSynchronizers.append({"instance": repr(oInstance.cell), "type": oInstance.cell.type, "kind": "dual clock FIFO"})
+                continue
+            lSynchronizers.append(
+                {
+                    "instance": repr(oInstance.cell),
+                    "type": oInstance.cell.type,
+                    "kind": "synchronizer",
+                    "output": sPort,
+                    "input": oRole.source,
+                    "from": oSource.name if isinstance(oSource, Clock) else oSource,
+                    "clock": oDestination.name if oDestination is not None else None,
+                    "stages": oInstance.stages(oRole),
+                },
+            )
+        return {
+            "black_boxes": lTypes,
+            "box_synchronizers": lSynchronizers,
+            "static_ports": lStatic,
+            "box_problems": [s for _, s, _ in self.box_problems],
+        }
 
     def cell_location(self, oCell, sSignal=None):
         oLocation = self.flat.location(oCell)
@@ -1081,6 +1299,7 @@ class Analysis:
                     "location": f"{sFile}:{iLine}" if sFile else None,
                 },
             )
+        dReturn.update(self.box_report())
         for oReset in self.resets:
             dReturn["resets"].append({"reset": oReset.reset, "kind": oReset.kind, "detail": oReset.detail, "registers": len(oReset.cells)})
         return dReturn
@@ -1122,7 +1341,7 @@ def report_text(dReport):
     for dClock in dReport["clocks"]:
         sFrom = f", from {dClock['from']}" if dClock["from"] else ""
         lLines.append(
-            f"  {dClock['name']}: {dClock['kind']} {dClock['source'].split(' ', 1)[-1]}, group {dClock['group']}, {dClock['registers']} registers{sFrom}",
+            f"  {dClock['name']}: {dClock['kind']} {dClock['source'].split(' ', 1)[-1]}, group {dClock['group']}, {'1 register' if dClock['registers'] == 1 else str(dClock['registers']) + ' registers'}{sFrom}",
         )
     lLines += ["", "Crossings"]
     if not dReport["crossings"]:
@@ -1152,6 +1371,33 @@ def report_text(dReport):
             lLines.append(f"  {sSignals} meet in {', '.join(dReconvergence['points'])}{sClock}")
             if dReconvergence["location"]:
                 lLines.append(f"    at {dReconvergence['location']}")
+    if dReport.get("black_boxes"):
+        lLines += ["", "Black boxes"]
+        for dType in dReport["black_boxes"]:
+            sState = "declared in " + ", ".join(dType["declared_in"]) if dType["declared"] else "NOT DECLARED"
+            sReference = f", reference {dType['reference']}" if dType["reference"] else ""
+            sReviewed = f", reviewed by {dType['reviewed_by']}" if dType["reviewed_by"] else ""
+            sInstances = "1 instance" if dType["instances"] == 1 else f"{dType['instances']} instances"
+            lLines.append(f"  {dType['type']}: {sInstances}, {sState}{sReference}{sReviewed}")
+    if dReport.get("box_problems"):
+        lLines += ["", "Black box problems"]
+        for sProblem in dReport["box_problems"]:
+            lLines.append(f"  {sProblem}")
+    if dReport.get("box_synchronizers"):
+        lLines += ["", "Synchronized inside black boxes (manual review)"]
+        for dSynchronizer in dReport["box_synchronizers"]:
+            if dSynchronizer["kind"] != "synchronizer":
+                lLines.append(f"  {dSynchronizer['instance']} ({dSynchronizer['type']}): {dSynchronizer['kind']}")
+                continue
+            sStages = f", {dSynchronizer['stages']} stages" if dSynchronizer["stages"] is not None else ", stages not known"
+            sFrom = f" from {dSynchronizer['from']}" if dSynchronizer["from"] else ""
+            lLines.append(
+                f"  {dSynchronizer['instance']}.{dSynchronizer['output']} ({dSynchronizer['type']}): {dSynchronizer['input']}{sFrom} to {dSynchronizer['clock']}{sStages}",
+            )
+    if dReport.get("static_ports"):
+        lLines += ["", "Static black box ports"]
+        for dStatic in dReport["static_ports"]:
+            lLines.append(f"  {dStatic['port']}: {dStatic['justification']} (reviewed by {dStatic['reviewed_by'] or 'nobody'})")
     lLines += ["", "Reset findings"]
     if not dReport["resets"]:
         lLines.append("  none")

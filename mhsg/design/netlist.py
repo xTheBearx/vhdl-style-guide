@@ -19,6 +19,9 @@ reModule = re.compile(r"^module (\S+)")
 reInstanceOutput = re.compile(r"\bn(\d+)_[a-z]+\b\s*(?:<=|=)")
 # An instance of a module: the module name, the instance name and an opening parenthesis
 reModuleInstance = re.compile(r"^\s+[A-Za-z_\\][^\s(]*\s+([A-Za-z_\\][^\s(]*)\s*\($")
+# An instance with parameters: the module name and #(, the parameters, then the instance name on a line of its own
+reParameterizedModule = re.compile(r"^\s+[A-Za-z_\\][^\s(]*\s+#\($")
+reInstanceName = re.compile(r"^\s+([A-Za-z_\\][^\s(.]*)\s*\($")
 
 
 class Location:
@@ -36,8 +39,16 @@ def read_locations(sVerilogFile):
     dReturn = {}
     sModule = None
     oLocation = None
+    bParameters = False
     with open(sVerilogFile, encoding="utf-8", errors="replace") as oFile:
         for sLine in oFile:
+            if bParameters:
+                oMatch = reInstanceName.match(sLine)
+                if oMatch:
+                    bParameters = False
+                    if oLocation is not None and sModule is not None:
+                        dReturn.setdefault((sModule, "instance " + oMatch.group(1)), oLocation)
+                continue
             oMatch = reModule.match(sLine)
             if oMatch:
                 sModule, oLocation = oMatch.group(1), None
@@ -53,6 +64,8 @@ def read_locations(sVerilogFile):
             oMatch = reModuleInstance.match(sLine)
             if oMatch:
                 dReturn.setdefault((sModule, "instance " + oMatch.group(1)), oLocation)
+            elif reParameterizedModule.match(sLine):
+                bParameters = True
             if sLine.strip() == "" or sLine.startswith("endmodule"):
                 oLocation = None
     return dReturn

@@ -10,8 +10,20 @@ import subprocess
 import tempfile
 import unittest
 
+import yaml
+
 from mhsg import exceptions, vhdlFile
-from mhsg.design import analysis, cdc, flat, graph, netlist, project, runner, top
+from mhsg.design import (
+    analysis,
+    black_box,
+    cdc,
+    flat,
+    graph,
+    netlist,
+    project,
+    runner,
+    top,
+)
 from tests import utils
 
 sTestDir = os.path.dirname(os.path.abspath(__file__))
@@ -157,6 +169,134 @@ class test_cdc_configuration(unittest.TestCase):
         for dCdc in ([], {"unknown": 1}, {"clocks": ["clk_a"]}, {"clock_groups": ["clk_a"]}, {"waivers": [{"justification": "y"}]}):
             with self.subTest(dCdc), self.assertRaises(exceptions.ConfigurationError):
                 self.design(dCdc)
+
+
+class FakeCell:
+    """A black box cell of the flat netlist, for testing declarations."""
+
+    def __init__(self, sType, dPorts, dParameters=None, tPath=("u_box",)):
+        self.type = sType
+        self.path = tPath[:-1]
+        self.name = tPath[-1]
+        self.cell = {"parameters": dParameters or {}}
+        self.connections = {s: [1] for s in dPorts}
+
+    def is_black_box(self):
+        return True
+
+    def __repr__(self):
+        return ".".join(self.path + (self.name,))
+
+
+class test_black_box_declarations(unittest.TestCase):
+    def library(self, dTypes, dInstances=None):
+        oLibrary = black_box.Library()
+        oLibrary.add_types(dTypes, "test")
+        oLibrary.add_instances(dInstances or {}, "test")
+        return oLibrary
+
+    def instance(self, oLibrary, oCell):
+        return black_box.Instance(oCell, oLibrary.find(oCell.type, repr(oCell)))
+
+    def test_archetypes(self):
+        oLibrary = self.library(
+            {
+                "BUFGCE": {"archetype": "clock_buffer", "input": "I", "output": "O", "enable": "CE"},
+                "IBUF": {"archetype": "buffer", "input": "I", "output": "O"},
+                "MMCM": {"archetype": "clock_generator", "input": "CLKIN", "outputs": ["CLKOUT*"], "reset": "RST", "locked": "LOCKED"},
+                "ip": {"archetype": "single_clock", "clock": "aclk", "ports": {"irq": "async"}},
+                "sync": {"archetype": "synchronizer", "destination_clock": "dclk", "input": "d", "output": "q", "stages": "STAGES"},
+                "fifo": {"archetype": "dual_clock_fifo", "sides": {"wclk": ["din", "wr_en"], "rclk": ["dout", "rd_en"]}},
+            },
+        )
+        oBuffer = self.instance(oLibrary, FakeCell("BUFGCE", ["I", "O", "CE"]))
+        self.assertEqual(
+            ("clock", "clock_out", "same", "enable"),
+            (oBuffer.role("I").kind, oBuffer.role("O").kind, oBuffer.role("O").relation, oBuffer.role("ce").kind),
+        )
+        self.assertEqual(["I"], self.instance(oLibrary, FakeCell("IBUF", ["I", "O"])).role("O").inputs)
+        oMmcm = self.instance(oLibrary, FakeCell("MMCM", ["CLKIN", "CLKOUT0", "CLKOUT1", "RST", "LOCKED"]))
+        self.assertEqual(
+            ["clock", "clock_out", "clock_out", "reset_in", "async"],
+            [oMmcm.role(s).kind for s in ("CLKIN", "CLKOUT0", "CLKOUT1", "RST", "LOCKED")],
+        )
+        self.assertEqual("derived", oMmcm.role("CLKOUT1").relation)
+        oIp = self.instance(oLibrary, FakeCell("ip", ["aclk", "s_data", "irq"]))
+        self.assertEqual(("clock", "sync", "aclk", "async"), (oIp.role("aclk").kind, oIp.role("s_data").kind, oIp.role("s_data").clock, oIp.role("irq").kind))
+        oSync = self.instance(oLibrary, FakeCell("sync", ["dclk", "d", "q"], {"STAGES": "00000000000000000000000000000011"}))
+        self.assertEqual(("async", "synchronized", 3), (oSync.role("d").kind, oSync.role("q").kind, oSync.stages(oSync.role("q"))))
+        oFifo = self.instance(oLibrary, FakeCell("fifo", ["wclk", "rclk", "din", "dout", "wr_en", "rd_en"]))
+        self.assertEqual(["wclk", "rclk"], [oFifo.role(s).clock for s in ("din", "dout")])
+        self.assertEqual([], oFifo.problems({s: "input" for s in oFifo.cell.connections}))
+
+    def test_problems(self):
+        oLibrary = self.library(
+            {
+                "ip": {"ports": {"clk": "clock", "data": "TODO", "cfg": {"static": "Set at boot"}, "missing": "async"}},
+                "reviewed": {"reviewed_by": "A. Reviewer", "ports": {"cfg": {"static": "Set at boot"}}},
+            },
+        )
+        oIp = self.instance(oLibrary, FakeCell("ip", ["clk", "data", "cfg", "other"]))
+        self.assertEqual(
+            [
+                "port data has no role",
+                "port other has no role",
+                "static port cfg needs reviewed_by",
+                "the declaration names port missing, which ip does not have",
+            ],
+            oIp.problems({s: "input" for s in ("clk", "data", "cfg", "other")}),
+        )
+        oReviewed = self.instance(oLibrary, FakeCell("reviewed", ["cfg"]))
+        self.assertEqual([], oReviewed.problems({"cfg": "input"}))
+        self.assertFalse(self.instance(oLibrary, FakeCell("unknown", ["a"])).declared())
+
+    def test_variants_and_instances(self):
+        oLibrary = self.library(
+            {
+                "fifo_ip": {
+                    "ports": {"clk": "clock", "rclk": "clock", "dout": {"sync": "rclk"}},
+                    "variants": [{"when": {"COMMON_CLOCK": 1}, "ports": {"dout": {"sync": "clk"}}}],
+                },
+            },
+            {"top.u_special": {"ports": {"dout": "async"}}},
+        )
+        oCommon = self.instance(oLibrary, FakeCell("fifo_ip", ["clk", "rclk", "dout"], {"COMMON_CLOCK": "1"}))
+        oIndependent = self.instance(oLibrary, FakeCell("fifo_ip", ["clk", "rclk", "dout"], {"COMMON_CLOCK": "0"}))
+        oSpecial = self.instance(oLibrary, FakeCell("fifo_ip", ["clk", "rclk", "dout"], {}, ("top", "u_special")))
+        self.assertEqual(("clk", "rclk", "async"), (oCommon.role("dout").clock, oIndependent.role("dout").clock, oSpecial.role("dout").kind))
+        self.assertEqual("clock", oSpecial.role("clk").kind)
+
+    def test_errors(self):
+        for dTypes in (
+            {"x": {"ports": {"a": "fast"}}},
+            {"x": {"ports": {"a": {"sync": "c", "path": ["b"]}}}},
+            {"x": {"ports": {"a": {"clock_out": {"from": "c", "relation": "sideways"}}}}},
+            {"x": {"archetype": "teleporter"}},
+            {"x": {"archetype": "buffer", "input": "I"}},
+            {"x": {"colour": "blue"}},
+            {"x": {"variants": [{"ports": {}}]}},
+        ):
+            with self.subTest(dTypes), self.assertRaises(exceptions.ConfigurationError):
+                self.library(dTypes)
+
+    def test_library_files(self):
+        with tempfile.TemporaryDirectory() as sDirectory:
+            sLibrary = os.path.join(sDirectory, "vendor.yaml")
+            with open(sLibrary, "w", encoding="utf-8") as oFile:
+                json.dump(
+                    {
+                        "black_boxes": {
+                            "BUFG": {"archetype": "clock_buffer", "input": "I", "output": "O"},
+                            "IBUF": {"archetype": "buffer", "input": "I", "output": "O"},
+                        },
+                    },
+                    oFile,
+                )
+            oLibrary = black_box.from_design({"black_box_libraries": [sLibrary], "black_boxes": {"IBUF": {"ports": {"I": "unused", "O": "async"}}}})
+        # The design section takes precedence over the library
+        self.assertEqual("async", self.instance(oLibrary, FakeCell("IBUF", ["I", "O"])).role("O").kind)
+        self.assertEqual("clock_out", self.instance(oLibrary, FakeCell("BUFG", ["I", "O"])).role("O").kind)
+        self.assertEqual([sLibrary], [o.source for o in oLibrary.find("BUFG", "u")])
 
 
 class test_flat(unittest.TestCase):
@@ -480,6 +620,76 @@ class test_design_analysis(unittest.TestCase):
             with open(sJson, encoding="utf-8") as oFile:
                 dReport = json.load(oFile)
         self.assertEqual([("u_buf.O", "box", 1)], [(d["name"], d["kind"], d["registers"]) for d in dReport["clocks"]])
+
+    def run_black_box_design(self, lArguments=()):
+        with open(os.path.join(sTestDir, "black_box_cdc.yaml"), encoding="utf-8") as oFile:
+            dDeclarations = yaml.safe_load(oFile)
+        with tempfile.TemporaryDirectory() as sDirectory:
+            sConfiguration = os.path.join(sDirectory, "design.yaml")
+            dDesign = {"top": "bbc_top", "libraries": [{"name": "work", "files": [os.path.join(sTestDir, "black_box_cdc.vhd")]}], **dDeclarations}
+            with open(sConfiguration, "w", encoding="utf-8") as oFile:
+                json.dump({"design": dDesign}, oFile)
+            lArguments = [s.replace("DIRECTORY", sDirectory) for s in lArguments]
+            oResult = subprocess.run(
+                [*utils.mhsg_exec(), "--design", "-c", sConfiguration, "-of", "syntastic", *lArguments],
+                cwd=sRoot,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            dFiles = {}
+            for sName in os.listdir(sDirectory):
+                with open(os.path.join(sDirectory, sName), encoding="utf-8") as oFile:
+                    dFiles[sName] = oFile.read()
+        lFindings = []
+        for sLine in oResult.stdout.splitlines():
+            sLocation, sMessage = sLine.split(": ", 1)[1].split(" -- ", 1)
+            sFile, sRest = sLocation.rsplit("(", 1)
+            sLineNumber, sRule = sRest.split(")", 1)
+            lFindings.append((os.path.basename(sFile), int(sLineNumber), sRule, sMessage))
+        return lFindings, dFiles
+
+    def test_declared_black_boxes(self):
+        lFindings, dFiles = self.run_black_box_design(["--cdc_report", "DIRECTORY/cdc.json", "--black_box_template", "DIRECTORY/template.yaml"])
+        self.assertEqual(
+            [
+                ("black_box_cdc.vhd", 116, "design_008", "irq_q (clk_pad) captures u_ip.irq (async) without a synchronizer"),
+                (
+                    "black_box_cdc.vhd",
+                    146,
+                    "design_016",
+                    "Separately synchronized u_sync_flag.src_in (by u_sync_flag.dest_out) and u_sync_mode.src_in (by u_sync_mode.dest_out) from clk_pad meet again in both_b (clk_b)",
+                ),
+                ("black_box_cdc.vhd", 162, "design_008", "reg1 (u_gen.clk_out1) captures flag_a (clk_pad) without a synchronizer"),
+                ("black_box_cdc.vhd", 167, "design_008", "u_ip.a_data (clk_pad) captures bdata_b (clk_b) without a synchronizer"),
+                ("black_box_cdc.vhd", 167, "design_017", "Black box dual_ip: static port cfg needs reviewed_by"),
+                (
+                    "black_box_cdc.vhd",
+                    181,
+                    "design_015",
+                    "Reset locked is released asynchronously: it resets registers clocked by clk_pad without a reset synchronizer",
+                ),
+                ("black_box_cdc.vhd", 187, "design_017", "Black box mystery has no declaration of its clock domain behaviour"),
+            ],
+            lFindings,
+        )
+        dReport = json.loads(dFiles["cdc.json"])
+        # The clock passes through the input buffer and the clock buffer; the derived output joins its group
+        self.assertEqual(
+            [("clk_b", "clk_b", None), ("clk_pad", "clk_pad", None), ("u_gen.clk_out0", "clk_pad", "clk_pad"), ("u_gen.clk_out1", "u_gen.clk_out1", None)],
+            [(d["name"], d["group"], d["from"]) for d in dReport["clocks"]],
+        )
+        self.assertEqual(
+            [("u_sync_flag", "dest_out", "clk_pad", "clk_b", 3), ("u_sync_mode", "dest_out", "clk_pad", "clk_b", 3)],
+            [(d["instance"], d["output"], d["from"], d["clock"], d["stages"]) for d in dReport["box_synchronizers"]],
+        )
+        self.assertEqual([{"port": "u_ip.cfg", "justification": "Set once at power up", "reviewed_by": ""}], dReport["static_ports"])
+        self.assertEqual(["mystery"], [d["type"] for d in dReport["black_boxes"] if not d["declared"]])
+        self.assertIn(
+            "  mystery:\n    # Instances: u_mystery\n    reference: TODO\n    reviewed_by: TODO\n    ports:\n      y: TODO  # output, 1 bit\n      x: TODO  # input, 1 bit\n",
+            dFiles["template.yaml"],
+        )
+        self.assertNotIn("IBUF", dFiles["template.yaml"])
 
     def test_crossing_report(self):
         with tempfile.TemporaryDirectory() as sDirectory:

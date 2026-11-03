@@ -23,6 +23,7 @@ import glob
 import os
 
 from mhsg import exceptions
+from mhsg.design import black_box
 
 STANDARDS = ("87", "93", "93c", "00", "02", "08", "19")
 
@@ -47,6 +48,8 @@ class Design:
         self.work_directory = None
         # Clock domain crossing constraints: clocks, clock_groups, inputs and waivers
         self.cdc = {}
+        # Declarations of the black boxes, see black_box.py
+        self.black_boxes = black_box.Library()
 
     def all_files(self):
         return [sFile for oLibrary in self.libraries for sFile in oLibrary.files]
@@ -78,6 +81,7 @@ def from_configuration(dConfiguration):
     oDesign.generics = dict(dDesign.get("generics") or {})
     oDesign.ghdl_options = [str(s) for s in dDesign.get("ghdl_options") or []]
     oDesign.cdc = read_cdc(dDesign.get("cdc"))
+    oDesign.black_boxes = black_box.from_design(dDesign)
     if dDesign.get("work_directory"):
         oDesign.work_directory = os.path.expandvars(str(dDesign["work_directory"]))
     return oDesign

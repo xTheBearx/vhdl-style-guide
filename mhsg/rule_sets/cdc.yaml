@@ -47,3 +47,7 @@ checks:
     title: Avoid reconvergence of separately synchronized signals
     severity: Error
     rules: [design_016]
+  "010":
+    title: Declare the clock domain behaviour of every black box
+    severity: Error
+    rules: [design_017]

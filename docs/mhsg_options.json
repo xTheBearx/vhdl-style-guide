@@ -166,6 +166,37 @@
     {
       "path": [
         "design",
+        "black_boxes"
+      ],
+      "type": "black_box_map",
+      "label": "Black box declarations",
+      "description": "Maps black box types, such as vendor primitives, to the clock domain role of each port, or to an archetype. Every black box must be declared.",
+      "default": {}
+    },
+    {
+      "path": [
+        "design",
+        "black_box_libraries"
+      ],
+      "type": "list",
+      "item_type": "string",
+      "label": "Black box libraries",
+      "description": "YAML files with black_boxes and black_box_instances, shared between designs. The design section takes precedence.",
+      "default": []
+    },
+    {
+      "path": [
+        "design",
+        "black_box_instances"
+      ],
+      "type": "black_box_map",
+      "label": "Black box instance declarations",
+      "description": "Maps instance paths or patterns to declarations that take precedence over the declaration of their type.",
+      "default": {}
+    },
+    {
+      "path": [
+        "design",
         "ghdl_options"
       ],
       "type": "list",
@@ -1883,7 +1914,8 @@
         "design_013",
         "design_014",
         "design_015",
-        "design_016"
+        "design_016",
+        "design_017"
       ]
     },
     {
@@ -19360,6 +19392,53 @@
           "name": "follow_resets",
           "default": false,
           "definition": "follow_resets"
+        }
+      ]
+    },
+    {
+      "id": "design_017",
+      "alias": "design_black_box_declaration",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports black boxes whose effect on clock domains is not declared.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
         }
       ]
     },

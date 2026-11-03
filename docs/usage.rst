@@ -17,6 +17,7 @@ The command line tool can be invoked with:
                                  [-rc RULE_CONFIGURATION]
                                  [--lint] [--lint_only] [--design]
                                  [--cdc_report FILE]
+                                 [--black_box_template FILE]
                                  [--rule_set RULE_SET]
                                  [--output_options OUTPUT_OPTIONS]
                                  [--style {indent_only,jcl}] [-v] [-ap]
@@ -67,6 +68,9 @@ The command line tool can be invoked with:
                            described in the design section of the configuration.
      --cdc_report FILE     With --design, write the clock domain crossing report
                            to a file: JSON for a .json file, otherwise text.
+     --black_box_template FILE
+                           With --design, write a template of declarations for
+                           the black boxes of the design that have none.
      --rule_set RULE_SET   Rule set for lint mode: a built in name (default
                            do254), a YAML file, or none for all lint rules
                            without labels.
@@ -170,6 +174,9 @@ The command line tool can be invoked with:
 +-------------------------------+-------------------------------------------------+
 | --cdc_report                  | Writes the clock domain crossing report of      |
 |                               | design analysis.                                |
++-------------------------------+-------------------------------------------------+
+| --black_box_template          | Writes a template of the black box declarations |
+|                               | a design needs.                                 |
 +-------------------------------+-------------------------------------------------+
 | --rule_set                    | The rule set used in lint mode.                 |
 +-------------------------------+-------------------------------------------------+

@@ -20,3 +20,4 @@ Rules Enforcing Design Rule Group
 * `design_014 <../design_rules.html#design-014>`_
 * `design_015 <../design_rules.html#design-015>`_
 * `design_016 <../design_rules.html#design-016>`_
+* `design_017 <../design_rules.html#design-017>`_
