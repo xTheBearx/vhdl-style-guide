@@ -44,6 +44,11 @@ class testcase:
         self.name = sName
         self.time = sTime
         self.failures = None
+        # Lines on the findings waivers accept, written to the testcase's system-out, see waivers.py
+        self.waived = []
+
+    def add_waived(self, sText):
+        self.waived.append(sText)
 
     def add_failure(self, oFailure):
         try:
@@ -64,6 +69,11 @@ class testcase:
                     lJunit.extend(oFailure.build_junit())
                 except TypeError:
                     pass
+
+        if self.waived:
+            lJunit.append("    <system-out>")
+            lJunit.extend("Waived " + escape_xml_characters(s) for s in self.waived)
+            lJunit.append("    </system-out>")
 
         lJunit.append("  </testcase>")
 

@@ -114,7 +114,8 @@ each rule set with its version and digest. The JSON output (:code:`--json`) has 
 The JUnit report (:code:`--junit`) has the same in the properties of its test suite, such as
 :code:`<property name="mhsg.version" value="3.36.0" />`. With :code:`--design`, :code:`--json` writes the findings of
 design analysis, with the versions of GHDL and Yosys and whether Yosys has the yosys-slang plugin, and the clock domain
-crossing report ends with the record too, see :doc:`design_analysis`.
+crossing report ends with the record too, see :doc:`design_analysis`. The text output on the terminal, which is read
+rather than kept, and the code quality report, whose format has no place for it, do not have the record.
 
 In lint mode there is a third severity, **Note**, which the DO-254 coding standards use for checks that only need to be examined.
 A Note is reported like a warning and does not fail a run.
@@ -156,8 +157,9 @@ reports, for a review or an audit. Waivers are listed in the **waivers** section
 * **reviewer** names who accepted it.
 
 A waived finding does not fail the run and is not reported as a violation. It is listed with its waiver, its
-justification and its reviewer, in the text output under **Waived** and in the JSON output (:code:`--json`) under
-**waived** for each file:
+justification and its reviewer: in the text output under **Waived**, in the JSON output (:code:`--json`) under
+**waived** for each file, in the JUnit report (:code:`--junit`) in the system-out of the file's test case, and in the
+code quality report (:code:`--quality_report`) with the severity info:
 
 .. code-block:: text
 

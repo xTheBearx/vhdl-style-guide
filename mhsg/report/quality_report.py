@@ -18,6 +18,13 @@ def build_report(dJson):
             iViolation += 1
             dEntry = create_entry(dFile, dViolation, iViolation)
             lReport.append(dEntry)
+        # Findings waivers accept are listed with the lowest severity, info, and their justification, see waivers.py
+        for dWaived in dFile.get("waived", []):
+            iViolation += 1
+            dEntry = create_entry(dFile, dWaived, iViolation)
+            dEntry["severity"] = "info"
+            dEntry["description"] += f" (waived, waiver {dWaived['waiver']}: {dWaived['justification']})"
+            lReport.append(dEntry)
     return lReport
 
 

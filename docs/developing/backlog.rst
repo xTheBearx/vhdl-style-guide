@@ -60,13 +60,8 @@ Lint and rule sets
 * **DO-254 checks still planned for per-file lint**: CP3, CP4, CP6 (reset state and others branch), CP9, CP10, CP14
   and DR2 for VHDL (checked for SystemVerilog), SS5, SS7, SS17 (signals), SS20, SS21, DR3, DR9, DR10, DR11. See the
   coverage table of the do254 rule set.
-* **Waivers in the other reports**: waived findings are listed in the text and JSON outputs; the JUnit report and the
-  code quality report leave them out.
 * **Tool qualification support**: :code:`--qualify` running the pass and fail examples of each check of a rule set,
   with a report of expected against actual results and the versions of mhsg, the rule set, GHDL and Yosys.
-* **Record of the run in more reports**: the JSON, JUnit and clock domain crossing reports record the versions of
-  the tools and the configuration; the text output on the terminal and the code quality report
-  (:code:`--quality_report`, whose format has no place for it) do not.
 
 Verilog and SystemVerilog
 -------------------------

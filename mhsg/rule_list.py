@@ -419,6 +419,12 @@ class rule_list:
         if oFailure.has_text():
             oTestcase.add_failure(oFailure)
 
+        for dWaived in sorted(self.extract_waived(), key=lambda d: d["linenumber"]):
+            sReviewer = f", reviewed by {dWaived['reviewer']}" if dWaived.get("reviewer") else ""
+            oTestcase.add_waived(
+                f"{dWaived['rule']}: {dWaived['linenumber']} : {dWaived['solution']} (waiver {dWaived['waiver']}{sReviewer}: {dWaived['justification']})",
+            )
+
         return oTestcase
 
     def extract_violation_dictionary(self):
