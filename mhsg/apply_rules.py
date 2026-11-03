@@ -3,7 +3,7 @@
 import os
 import shutil
 
-from . import config, junit, rule_list, rule_set, vhdlFile
+from . import config, junit, language, rule_list, rule_set, vhdlFile
 from .exceptions import ClassifyError, ConfigurationError
 
 
@@ -75,7 +75,7 @@ def apply_rules(commandLineArguments, oConfig, tIndexFileName):
     dJsonEntry = {}
     lFileContent, eError, sEncoding = vhdlFile.utils.read_vhdlfile(sFileName, True)
     try:
-        oVhdlFile = vhdlFile.vhdlFile(lFileContent, commandLineArguments, sFileName, eError, oConfig, sEncoding)
+        oVhdlFile = language.file_class(language.of_file(sFileName))(lFileContent, commandLineArguments, sFileName, eError, oConfig, sEncoding)
     except ClassifyError as e:
         fExitStatus = True
         testCase = create_junit_testcase(sFileName, e)

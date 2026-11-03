@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from mhsg import rule_aliases, severity, utils
+from mhsg import language, rule_aliases, severity, utils
 
 # The number of spaces of each indent level, unless a configuration sets indent_size
 DEFAULT_INDENT_SIZE = 4
@@ -16,6 +16,8 @@ class Rule:
         self.had_violations = False
         self.indent_style = "spaces"
         self.indent_size = DEFAULT_INDENT_SIZE
+        # The languages of the files the rule checks; rules that only look at whitespace and lines check every language
+        self.languages = (language.VHDL,)
         self.phase = None
         self.subphase = 1
         # If set, the fix also runs in this later subphase of the same phase

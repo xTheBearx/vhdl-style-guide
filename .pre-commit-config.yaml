@@ -24,7 +24,7 @@ repos:
     rev: v1.5.4
     hooks:
       - id: forbid-tabs
-        exclude: '^(.*\.vhd|.*\.svg)$'
+        exclude: '^(.*\.vhd|.*\.svg|tests/svfile/style(\.fixed)?\.sv)$'
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
@@ -53,7 +53,8 @@ repos:
         exclude: "^(\
           tests/styles/code_examples/trailing_whitespace\\.vhd|\
           tests/styles/jcl/trailing_whitespace.fixed\\.vhd|\
-          tests/whitespace/.*\\.vhd\
+          tests/whitespace/.*\\.vhd|\
+          tests/svfile/style(\\.fixed)?\\.sv\
           )$"
       - id: fix-encoding-pragma
 
@@ -90,5 +91,6 @@ repos:
         additional_dependencies:
           - pylint==4.1.3
           - pyyaml
+          - pyslang>=12.1,<13
         types: [python]
         files: "^mhsg/"

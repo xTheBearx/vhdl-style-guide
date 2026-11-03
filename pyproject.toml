@@ -37,6 +37,7 @@ readme = "README.rst"
 requires-python = ">=3.12"
 
 dependencies = [
+    "pyslang>=12.1,<13",
     "PyYAML>=5.1",
 ]
 
@@ -115,6 +116,8 @@ exclude = [
 line-length = 160
 
 [tool.pylint.MASTER]
+# pyslang is a compiled extension: pylint inspects it only by loading it
+extension-pkg-allow-list = ["pyslang"]
 disable = [
     # Conventions and refactoring suggestions are not enforced yet. Many do not fit the code base,
     # for example the type prefixes in names such as sValue and lTokens fail invalid-name.

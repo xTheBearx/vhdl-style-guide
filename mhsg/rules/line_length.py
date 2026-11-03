@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from mhsg import violation
+from mhsg import language, violation
 from mhsg.rule_group import length
 
 # The longest line allowed, unless a configuration sets length
@@ -25,6 +25,7 @@ class line_length(length.Rule):
 
     def __init__(self):
         super().__init__()
+        self.languages = language.LANGUAGES
         self.disable = False
         self.length = DEFAULT_LENGTH
 
