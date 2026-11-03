@@ -156,6 +156,16 @@
     {
       "path": [
         "design",
+        "cdc"
+      ],
+      "type": "cdc_constraints",
+      "label": "Clock domain crossing constraints",
+      "description": "Names of clock sources (clocks), groups of synchronous clocks (clock_groups), the clock domains of input ports (inputs) and crossings waived with a justification (waivers).",
+      "default": {}
+    },
+    {
+      "path": [
+        "design",
         "ghdl_options"
       ],
       "type": "list",
@@ -1864,7 +1874,15 @@
         "design_004",
         "design_005",
         "design_006",
-        "design_007"
+        "design_007",
+        "design_008",
+        "design_009",
+        "design_010",
+        "design_011",
+        "design_012",
+        "design_013",
+        "design_014",
+        "design_015"
       ]
     },
     {
@@ -18908,6 +18926,382 @@
           "name": "maximum_depth",
           "default": 48,
           "definition": "maximum_depth"
+        }
+      ]
+    },
+    {
+      "id": "design_008",
+      "alias": "design_unsynchronized_crossing",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports signals that cross from one clock domain to another without a synchronizer.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_009",
+      "alias": "design_crossing_hazard",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports clock domain crossings with a synchronizer that can still fail.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_010",
+      "alias": "design_clock_as_data",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports clocks used as data.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_011",
+      "alias": "design_shared_clock_reset",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports signals used both as a clock and as an asynchronous reset.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_012",
+      "alias": "design_gated_clock",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports gated clocks: clocks that pass through logic.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_013",
+      "alias": "design_generated_clock",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports clocks made inside the design by a register, such as a clock divider, or by logic.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_014",
+      "alias": "design_generated_reset",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports asynchronous resets made inside the design by logic or by a register that is not a reset synchronizer.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_015",
+      "alias": "design_reset_release",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports asynchronous resets that are not released synchronously to the clock of the registers they reset.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
         }
       ]
     },

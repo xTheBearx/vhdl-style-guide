@@ -295,6 +295,13 @@ def describe_settings():
             "default": None,
         },
         {
+            "path": ["design", "cdc"],
+            "type": "cdc_constraints",
+            "label": "Clock domain crossing constraints",
+            "description": "Names of clock sources (clocks), groups of synchronous clocks (clock_groups), the clock domains of input ports (inputs) and crossings waived with a justification (waivers).",
+            "default": {},
+        },
+        {
             "path": ["design", "ghdl_options"],
             "type": "list",
             "item_type": "string",

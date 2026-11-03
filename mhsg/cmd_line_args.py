@@ -73,6 +73,12 @@ def parse_command_line_arguments():
         help="Run design analysis with GHDL and Yosys on the design described in the design section of the configuration.",
     )
     parser.add_argument(
+        "--cdc_report",
+        default=None,
+        metavar="FILE",
+        help="With --design, write the clock domain crossing report to a file: JSON for a .json file, otherwise text.",
+    )
+    parser.add_argument(
         "--rule_set",
         default=None,
         action="store",

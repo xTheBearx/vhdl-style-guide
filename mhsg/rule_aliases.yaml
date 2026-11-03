@@ -279,6 +279,14 @@ design_004: design_multiple_drivers
 design_005: design_constant_register
 design_006: design_unused_logic
 design_007: design_logic_depth
+design_008: design_unsynchronized_crossing
+design_009: design_crossing_hazard
+design_010: design_clock_as_data
+design_011: design_shared_clock_reset
+design_012: design_gated_clock
+design_013: design_generated_clock
+design_014: design_generated_reset
+design_015: design_reset_release
 element_association_100: element_association_space_between_others_and_arrow
 element_association_101: element_association_space_after_arrow
 element_association_102: element_association_space_before_arrow

@@ -59,6 +59,14 @@ Rules Disabled by Default
 * `design_005 <design_rules.html#design-005>`_
 * `design_006 <design_rules.html#design-006>`_
 * `design_007 <design_rules.html#design-007>`_
+* `design_008 <design_rules.html#design-008>`_
+* `design_009 <design_rules.html#design-009>`_
+* `design_010 <design_rules.html#design-010>`_
+* `design_011 <design_rules.html#design-011>`_
+* `design_012 <design_rules.html#design-012>`_
+* `design_013 <design_rules.html#design-013>`_
+* `design_014 <design_rules.html#design-014>`_
+* `design_015 <design_rules.html#design-015>`_
 * `expression_001 <expression_rules.html#expression-001>`_
 * `file_100 <file_rules.html#file-100>`_
 * `function_600 <function_rules.html#function-600>`_

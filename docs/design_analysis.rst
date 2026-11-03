@@ -105,6 +105,8 @@ Design rules
 * :code:`design_006` reports registers that are never used and signals that are read but never assigned (DO-254 SS17).
 * :code:`design_007` reports combinational paths deeper than :code:`maximum_depth` logic levels, 48 by default (DO-254 SS19).
 
+* :code:`design_008` to :code:`design_015` check clock domain crossings, clocks and resets, see below.
+
 See :doc:`design_rules`. Design rules are configured like other rules, for example with a different severity:
 
 .. code-block:: yaml
@@ -116,6 +118,106 @@ See :doc:`design_rules`. Design rules are configured like other rules, for examp
 Each entity is checked on its own netlist, before the netlist is flattened or optimized, so findings point at the
 entity that holds the logic. Paths through instances use a summary of the instantiated entity: which inputs reach
 which outputs without a register, which inputs it uses, and its logic depths.
+
+Clock domain crossings
+----------------------
+
+Clock domain crossing analysis runs on the whole design, flattened: every instance is replaced by its logic, so a
+crossing is found wherever it is in the hierarchy.
+
+**Clocks.** The clock of each register is traced back through buffers and inverters to its source: an input port,
+a black box output such as a PLL, a register, which divides a clock, or logic, which gates a clock.
+Each source is a clock domain, asynchronous to every other unless they are grouped.
+A divided or gated clock belongs with the clock it comes from.
+
+**Crossings.** The data inputs of each register are traced back through logic to the registers that drive them.
+A register of another, asynchronous domain is a crossing, classified as:
+
++--------------------------------+---------------------------------------------------------------------------------+
+| Status                         | Meaning                                                                         |
++================================+=================================================================================+
+| synchronized                   | Captured directly by two or more registers in series, each feeding only the     |
+|                                | next.                                                                           |
++--------------------------------+---------------------------------------------------------------------------------+
+| gray-coded bus                 | The bits of a bus synchronized one by one, loaded with the gray code of a       |
+|                                | value, so only one bit changes at a time.                                       |
++--------------------------------+---------------------------------------------------------------------------------+
+| qualified by enable            | Data held stable and captured when an enable synchronized to the destination    |
+|                                | clock allows it, as in a handshake.                                             |
++--------------------------------+---------------------------------------------------------------------------------+
+| bus synchronized bit by bit    | Several bits of one register synchronized one by one: they can arrive in        |
+|                                | different cycles. Reported by design_009.                                       |
++--------------------------------+---------------------------------------------------------------------------------+
+| logic before synchronizer      | Logic between the domains feeds the first stage and can glitch. Reported by     |
+|                                | design_009.                                                                     |
++--------------------------------+---------------------------------------------------------------------------------+
+| unsynchronized                 | Captured by a single register, or used through an enable or reset. Reported by  |
+|                                | design_008.                                                                     |
++--------------------------------+---------------------------------------------------------------------------------+
+| waived                         | Waived in the design section, with a justification.                             |
++--------------------------------+---------------------------------------------------------------------------------+
+
+Data that crosses through a memory, as in an asynchronous FIFO, is not a crossing: the FIFO is safe when its pointers
+cross safely, which the analysis checks.
+
+**Resets.** The asynchronous reset of each register is traced back to its source. A reset synchronizer is a chain of
+two or more registers that the reset clears and that load a constant, such as a shift register of ones; its registers
+may take the reset from anywhere. Every other register must be reset by a reset synchronizer of its own clock domain.
+A reset input that resets registers directly is released asynchronously (design_015), a reset synchronized to another
+clock is too (design_015), and a reset made by logic or by another register is internally generated (design_014).
+
+**Constraints.** Clocks and inputs are described in the **cdc** part of the design section:
+
+.. code-block:: yaml
+
+   design:
+     top: board_top
+     libraries: ...
+     cdc:
+       clocks:
+         # Names for clock sources: an input port, or the output of a black box
+         sys_clk: u_pll.clk_out1
+       clock_groups:
+         # Synchronous clocks, such as outputs of one PLL with an integer ratio
+         - [sys_clk, clk_i]
+       inputs:
+         # The clock domain of input ports, or async; other inputs are not checked
+         uart_rx: async
+         sync_rst: sys_clk
+       waivers:
+         - signal: u_status.flags_meta
+           justification: Quasi-static status bits, read only after the run has stopped
+
+A waiver names the destination register of a crossing, as the report names it, or a pattern such as ``u_status.*``.
+A waiver without a justification is reported by design_008.
+
+**Report.** :code:`--cdc_report FILE` writes every clock and crossing, with its status, sources and location, and
+the reset findings: as JSON for a file ending in .json, otherwise as text:
+
+.. code-block:: text
+
+   $ mhsg --design -c design.yaml --cdc_report cdc.txt
+   $ cat cdc.txt
+   Clock domain crossing report for olo_base_fifo_async
+
+   Clocks
+     In_Clk: port In_Clk, group In_Clk, 10 registers
+     Out_Clk: port Out_Clk, group Out_Clk, 11 registers
+
+   Crossings
+     i_cc_rd_wr.reg0 (In_Clk) <- i_cc_rd_wr.regin (Out_Clk)
+       gray-coded bus: 6 bits of i_cc_rd_wr.regin, gray coded
+       at src/base/vhdl/olo_base_cc_bits.vhd:125
+     ...
+
+**Rule set.** The **cdc** rule set labels these checks CDC-001 to CDC-009; **do254** maps them to CDC1, SS8 to SS12
+and SS15:
+
+.. code-block:: bash
+
+   mhsg --design --lint --rule_set cdc -c design.yaml
+
+.. include:: cdc_coverage.rst
 
 Limitations
 -----------
@@ -129,4 +231,7 @@ Limitations
   signals, which a netlist cannot show. Checks for those are planned for the per-file lint.
 * Findings depend on the generics: logic that a generic disables may be constant or unused. Each finding names the
   entity with its generics, as GHDL names it, such as :code:`neorv32_cpu_regfile_5_3`.
-* Clock domain crossing analysis and formal reachability are planned.
+* Reconvergence of separately synchronized signals, and reset domain crossings through logic, are not checked yet.
+* A black box is assumed to have no path from its inputs to its outputs, so a crossing through one is not found;
+  name its clock outputs under clocks.
+* Formal reachability is planned.

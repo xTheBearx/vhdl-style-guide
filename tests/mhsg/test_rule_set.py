@@ -179,7 +179,7 @@ class test_lint_command_line(unittest.TestCase):
 
     def test_unknown_rule_set(self):
         lOutput = self.run_mhsg(["--lint", "--rule_set", "nothing"])
-        self.assertEqual(["ERROR: rule set nothing is not a built in rule set (do254, do254_plus) or a file"], lOutput)
+        self.assertEqual(["ERROR: rule set nothing is not a built in rule set (cdc, do254, do254_plus) or a file"], lOutput)
 
 
 sFixInput = "\n".join(
