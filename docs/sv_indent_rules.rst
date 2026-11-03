@@ -20,7 +20,8 @@ end, else, endmodule and the brackets closing a list are at the level of the con
 A comment is indented like the next line of code, or one level more above a line closing a construct. A comment
 line continuing the comment at the end of the line above, aligned with it, stays aligned with it.
 
-Continuation lines, such as the second line of a long expression, and preprocessor directives are not checked.
+Continuation lines, such as the second line of a long expression, and preprocessor directives are not checked,
+nor is a file with syntax errors, whose levels may be wrong near the errors, see sv_syntax_001.
 
 **Violation**
 

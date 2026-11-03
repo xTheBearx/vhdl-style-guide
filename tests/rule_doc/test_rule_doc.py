@@ -29,6 +29,16 @@ class testDocGen(unittest.TestCase):
     def tearDownClass(cls):
         cls._tmpdir.cleanup()
 
+    def test_every_rule_page_is_up_to_date(self):
+        """Every page the generator writes, including those of rule groups added later, matches docs."""
+        lPages = sorted(glob.glob(os.path.join(self._tmpdir.name, "*_rules.rst")))
+        self.assertGreater(len(lPages), 100)
+        for sPage in lPages:
+            sName = os.path.basename(sPage)[: -len("_rules.rst")]
+            with self.subTest(sName):
+                lExpected, lActual = self.compare_files(sName)
+                self.assertEqual(lExpected, lActual)
+
     def test_all_rule_sections_in_rules_index(self):
         # Get all rule names from the system
         oVhdlFile = vhdlFile.vhdlFile([""])
