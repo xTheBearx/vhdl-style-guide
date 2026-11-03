@@ -312,25 +312,46 @@ class Library:
         self.instances = [Declaration(str(k), v, sSource) for k, v in dInstances.items()] + self.instances
 
     def find(self, sType, sInstance):
-        """Returns the declarations that apply to an instance: those of the instance first, then of its type."""
+        """
+        Returns the declarations that apply to an instance, those of the instance first, then those of its type,
+        the design section before library files. A port takes its role from the first declaration that has one, so
+        the design section can change single ports of a library declaration.
+        """
         lReturn = [o for o in self.instances if fnmatch.fnmatchcase(sInstance.lower(), o.name.lower())]
-        lTypes = [o for o in self.types if o.name.lower() == sType.lower()]
-        lTypes += [o for o in self.types if o not in lTypes and fnmatch.fnmatchcase(sType.lower(), o.name.lower())]
-        return lReturn + lTypes[:1]
+        return lReturn + [o for o in self.types if o.name.lower() == sType.lower() or fnmatch.fnmatchcase(sType.lower(), o.name.lower())]
+
+
+BUILT_IN_DIRECTORY = os.path.join(os.path.dirname(os.path.dirname(__file__)), "black_box_libraries")
+
+
+def built_in_libraries():
+    """Returns the names of the declaration libraries that come with mhsg, such as xilinx."""
+    return sorted(os.path.splitext(s)[0] for s in os.listdir(BUILT_IN_DIRECTORY) if s.endswith(".yaml"))
+
+
+def library_file(sName):
+    """Returns the file of a black box library: a file, or the library of that name that comes with mhsg."""
+    sFile = os.path.expandvars(sName)
+    if os.path.isfile(sFile):
+        return sFile
+    if sName.lower() in built_in_libraries():
+        return os.path.join(BUILT_IN_DIRECTORY, sName.lower() + ".yaml")
+    raise exceptions.ConfigurationError(f"ERROR: black box library {sName} is not a file or a library that comes with mhsg ({', '.join(built_in_libraries())})")
 
 
 def from_design(dDesign):
     """Returns the Library of a design section: black_box_libraries, black_boxes and black_box_instances."""
     oLibrary = Library()
-    for sFile in as_list(dDesign.get("black_box_libraries")):
-        sFile = os.path.expandvars(sFile)
+    for sName in as_list(dDesign.get("black_box_libraries")):
+        sFile = library_file(sName)
         try:
             with open(sFile, encoding="utf-8") as oFile:
                 dFile = yaml.safe_load(oFile) or {}
         except (OSError, yaml.YAMLError) as e:
             raise exceptions.ConfigurationError(f"ERROR: could not read black box library {sFile}: {e}") from e
-        oLibrary.add_types(dFile.get("black_boxes") or {}, sFile)
-        oLibrary.add_instances(dFile.get("black_box_instances") or {}, sFile)
+        sSource = f"library {sName.lower()}" if os.path.dirname(sFile) == BUILT_IN_DIRECTORY else sFile
+        oLibrary.add_types(dFile.get("black_boxes") or {}, sSource)
+        oLibrary.add_instances(dFile.get("black_box_instances") or {}, sSource)
     oLibrary.add_types(dDesign.get("black_boxes") or {}, "design section")
     oLibrary.add_instances(dDesign.get("black_box_instances") or {}, "design section")
     return oLibrary
@@ -393,6 +414,9 @@ class Instance:
                 if not self.reviewed_by(oRole):
                     lReturn.append(f"static port {sPort} needs reviewed_by")
         for oDeclaration in self.declarations:
+            if oDeclaration.source.startswith("library "):
+                # A library that comes with mhsg covers several versions of a primitive, with ports some lack
+                continue
             for _, oRole in oDeclaration.ports:
                 for sName in oRole.names() if oRole is not None else []:
                     if sName.lower() not in setPorts:
@@ -469,3 +493,47 @@ def port_list(oFlat, oCell):
 
 def is_variable(oBit):
     return graph.is_variable(oBit)
+
+
+def describe(sPort, oRole):
+    """Returns a role in words, for the documentation of the libraries."""
+    if oRole is None:
+        return f"{sPort}: left for the design to declare"
+    if oRole.kind == "sync":
+        return f"{sPort}: timed by {oRole.clock}"
+    if oRole.kind == "path":
+        return f"{sPort}: follows {', '.join(oRole.inputs)}"
+    if oRole.kind == "clock_out":
+        if oRole.relation == "independent":
+            return f"{sPort}: an independent clock"
+        return f"{sPort}: clock, {'the same as' if oRole.relation == 'same' else 'derived from'} {oRole.source}"
+    if oRole.kind == "enable":
+        return f"{sPort}: enable of {oRole.target}"
+    if oRole.kind == "reset_in":
+        return f"{sPort}: asynchronous reset" if oRole.asynchronous else f"{sPort}: reset timed by {oRole.clock}"
+    if oRole.kind == "reset_out":
+        return f"{sPort}: reset released {'synchronously to' if oRole.release == 'sync' else 'asynchronously from'} {oRole.clock}"
+    if oRole.kind == "synchronized":
+        sStages = f", {oRole.stages} stages" if oRole.stages is not None else ""
+        sFrom = f"{oRole.source} " if oRole.source else ""
+        return f"{sPort}: {sFrom}synchronized to {oRole.clock}{sStages} (manual review)"
+    if oRole.kind == "static":
+        return f"{sPort}: static"
+    return f"{sPort}: {oRole.kind}"
+
+
+def library_documentation(sName):
+    """Returns reStructuredText describing each declaration of a library that comes with mhsg."""
+    with open(library_file(sName), encoding="utf-8") as oFile:
+        dFile = yaml.safe_load(oFile)
+    lLines = []
+    for sType, dDeclaration in dFile["black_boxes"].items():
+        oDeclaration = Declaration(str(sType), dDeclaration, f"library {sName}")
+        sArchetype = f" ({oDeclaration.archetype})" if oDeclaration.archetype else ""
+        lLines.append(f"* ``{sType}``{sArchetype}: " + "; ".join(describe(f"``{s}``", o) for s, o in oDeclaration.ports) + ".")
+        for dWhen, lPorts in oDeclaration.variants:
+            sWhen = ", ".join(f"{k} = {v}" for k, v in dWhen.items())
+            lLines.append(f"  When {sWhen}: " + "; ".join(describe(f"``{s}``", o) for s, o in lPorts) + ".")
+        if oDeclaration.reference:
+            lLines.append(f"  Reference: {oDeclaration.reference}.")
+    return "\n".join(lLines) + "\n"

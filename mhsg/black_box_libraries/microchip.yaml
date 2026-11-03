@@ -1,0 +1,174 @@
+# Clock domain declarations of Microchip (formerly Microsemi) macros for PolarFire, PolarFire SoC, SmartFusion2,
+# IGLOO2 and RTG4, for design analysis.
+#
+# Include it in the design section with:  black_box_libraries: [microchip]
+#
+# The port names and behaviour are taken from the published macro library guides: PolarFire Family FPGA Macro
+# Library Guide, SmartFusion2 and IGLOO2 Macro Library Guide, RTG4 Macro Library Guide, and the handbooks of the
+# cores named below. No vendor file is copied. Check the declarations against the guide of the Libero version you
+# use: a declaration in your design section takes precedence over this library, port by port.
+#
+# Generated cores, such as clock conditioning circuits, take the names given in Libero, such as PF_CCC_C0, and are
+# matched with patterns; check that the port names of your configuration match. Ports whose behaviour depends on how
+# a macro is used are left out on purpose, so design analysis asks for them: the latch mode of SLE, and the ECC and
+# busy ports of the RAM blocks, for example. Math blocks, micro SRAM, transceivers and other IP cores are not
+# included; declare them in the design section.
+#
+# Choices to review:
+# - Clock conditioning circuit outputs are derived from REF_CLK_0, so they are synchronous to it and to each other.
+# - The on-chip oscillators are clocks of their own, asynchronous to every other clock.
+
+black_boxes:
+
+  # Global and regional clock buffers
+
+  CLKINT:
+    archetype: clock_buffer
+    input: A
+    output: Y
+    reference: Macro library guide, CLKINT
+  CLKINT_PRESERVE:
+    archetype: clock_buffer
+    input: A
+    output: Y
+    reference: Macro library guide, CLKINT_PRESERVE
+  RCLKINT:
+    archetype: clock_buffer
+    input: A
+    output: Y
+    reference: Macro library guide, RCLKINT
+  RCLKINT_PRESERVE:
+    archetype: clock_buffer
+    input: A
+    output: Y
+    reference: Macro library guide, RCLKINT_PRESERVE
+  GCLKINT:
+    archetype: clock_buffer
+    input: A
+    output: Y
+    enable: EN
+    reference: Macro library guide, GCLKINT
+  RGCLKINT:
+    archetype: clock_buffer
+    input: A
+    output: Y
+    enable: EN
+    reference: Macro library guide, RGCLKINT
+  CLKBUF:
+    archetype: clock_buffer
+    input: PAD
+    output: Y
+    reference: Macro library guide, CLKBUF
+  CLKBUF_DIFF:
+    reference: Macro library guide, CLKBUF_DIFF
+    ports:
+      PADP: clock
+      PADN: unused
+      Y: {clock_out: {from: PADP, relation: same}}
+
+  # Input and output buffers
+
+  INBUF:
+    archetype: buffer
+    input: PAD
+    output: Y
+    reference: Macro library guide, INBUF
+  INBUF_DIFF:
+    reference: Macro library guide, INBUF_DIFF
+    ports:
+      Y: {path: [PADP, PADN]}
+  OUTBUF:
+    archetype: buffer
+    input: D
+    output: PAD
+    reference: Macro library guide, OUTBUF
+  OUTBUF_DIFF:
+    reference: Macro library guide, OUTBUF_DIFF
+    ports:
+      PADP: {path: [D]}
+      PADN: {path: [D]}
+  TRIBUFF:
+    reference: Macro library guide, TRIBUFF
+    ports:
+      PAD: {path: [D, E]}
+  BIBUF:
+    reference: Macro library guide, BIBUF
+    ports:
+      PAD: {path: [D, E]}
+      Y: {path: [PAD]}
+  BIBUF_DIFF:
+    reference: Macro library guide, BIBUF_DIFF
+    ports:
+      PADP: {path: [D, E]}
+      PADN: {path: [D, E]}
+      Y: {path: [PADP, PADN]}
+
+  # Registers: LAT, the latch mode, is left for the design to declare
+
+  SLE:
+    reference: Macro library guide, SLE
+    ports:
+      CLK: clock
+      D: {sync: CLK}
+      EN: {sync: CLK}
+      SLn: {sync: CLK}
+      SD: {sync: CLK}
+      Q: {sync: CLK}
+      ALn: {reset_in: async}
+      ADn: async
+
+  # Large SRAM blocks: the ECC and busy ports are left for the design to declare
+
+  RAM1K18:
+    reference: SmartFusion2 and IGLOO2 macro library guide, RAM1K18
+    archetype: dual_clock
+    sides:
+      A_CLK: ["A_*"]
+      B_CLK: ["B_*"]
+    ports:
+      A_ARST_N: {reset_in: async}
+      B_ARST_N: {reset_in: async}
+      A_DOUT_ARST_N: {reset_in: async}
+      B_DOUT_ARST_N: {reset_in: async}
+  RAM1K20:
+    reference: PolarFire macro library guide, RAM1K20
+    archetype: dual_clock
+    sides:
+      A_CLK: ["A_*"]
+      B_CLK: ["B_*"]
+    ports:
+      A_ARST_N: {reset_in: async}
+      B_ARST_N: {reset_in: async}
+      A_DOUT_ARST_N: {reset_in: async}
+      B_DOUT_ARST_N: {reset_in: async}
+
+  # Generated cores, matched by the name Libero gives them
+
+  PF_CCC_*:
+    reference: PolarFire clocking resources user guide, PF_CCC
+    ports:
+      REF_CLK_*: clock
+      OUT*_FABCLK_*: {clock_out: {from: REF_CLK_0, relation: derived}}
+      PLL_LOCK_*: async
+      PLL_POWERDOWN_N_*: async
+  PF_OSC_*:
+    reference: PolarFire clocking resources user guide, PF_OSC
+    ports:
+      RCOSC_*: {clock_out: {relation: independent}}
+  PF_INIT_MONITOR_*:
+    reference: PolarFire FPGA power-up and resets user guide, PF_INIT_MONITOR
+    archetype: async_input
+  CORERESET_PF_*:
+    reference: CoreReset_PF handbook
+    ports:
+      CLK: clock
+      FABRIC_RESET_N: {reset_out: {clock: CLK, release: sync}}
+      "*": async
+
+  # SmartFusion2 and IGLOO2 system reset
+
+  SYSRESET:
+    reference: SmartFusion2 and IGLOO2 macro library guide, SYSRESET
+    ports:
+      DEVRST_N: async
+      POWER_ON_RESET_N: async

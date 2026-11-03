@@ -1,0 +1,549 @@
+# Clock domain declarations of AMD/Xilinx primitives and XPM macros, for design analysis.
+#
+# Include it in the design section with:  black_box_libraries: [xilinx]
+#
+# The port names and behaviour are taken from the published libraries guides: UG953 (Vivado Design Suite 7 Series
+# FPGA and Zynq-7000 SoC Libraries Guide) and UG974 (UltraScale Architecture Libraries Guide), which also describes
+# the XPM macros. No vendor file is copied. Check the declarations against the guide of the tool version you use: a
+# declaration in your design section takes precedence over this library, port by port.
+#
+# Ports whose behaviour depends on how the primitive is used are left out on purpose, so design analysis asks for
+# them: the ECC and cascade ports of block RAM, for example. Transceivers, SERDES, PCIe, memory interfaces and other
+# IP cores are not included; declare them in the design section.
+#
+# Choices to review:
+# - The output of a clock multiplexer (BUFGMUX, BUFGCTRL) is a clock of its own, asynchronous to both inputs. This
+#   reports every crossing between it and its inputs; group the clocks under clock_groups if they are related.
+# - MMCM and PLL outputs are derived from CLKIN1 (CLKIN for UltraScale PLLs), so they are synchronous to it and to
+#   each other. A design that switches to CLKIN2 should declare the outputs itself.
+# - Outputs of XPM synchronizers are listed in the crossing report for manual review, with their stages.
+
+black_boxes:
+
+  # Clock buffers
+
+  BUFG:
+    archetype: clock_buffer
+    input: I
+    output: O
+    reference: UG953/UG974, BUFG
+  BUFGCE:
+    archetype: clock_buffer
+    input: I
+    output: O
+    enable: CE
+    reference: UG953/UG974, BUFGCE
+  BUFGCE_1:
+    archetype: clock_buffer
+    input: I
+    output: O
+    enable: CE
+    reference: UG953, BUFGCE_1
+  BUFH:
+    archetype: clock_buffer
+    input: I
+    output: O
+    reference: UG953, BUFH
+  BUFHCE:
+    archetype: clock_buffer
+    input: I
+    output: O
+    enable: CE
+    reference: UG953, BUFHCE
+  BUFIO:
+    archetype: clock_buffer
+    input: I
+    output: O
+    reference: UG953, BUFIO
+  BUFMR:
+    archetype: clock_buffer
+    input: I
+    output: O
+    reference: UG953, BUFMR
+  BUFMRCE:
+    archetype: clock_buffer
+    input: I
+    output: O
+    enable: CE
+    reference: UG953, BUFMRCE
+  BUFR:
+    reference: UG953, BUFR
+    ports:
+      I: clock
+      O: {clock_out: {from: I, relation: derived}}
+      CE: async
+      CLR: {reset_in: async}
+  BUFGCE_DIV:
+    reference: UG974, BUFGCE_DIV
+    ports:
+      I: clock
+      O: {clock_out: {from: I, relation: derived}}
+      CE: {enable: O}
+      CLR: {reset_in: async}
+  BUFG_GT:
+    reference: UG974, BUFG_GT
+    ports:
+      I: clock
+      O: {clock_out: {from: I, relation: derived}}
+      CE: async
+      CEMASK: async
+      CLR: {reset_in: async}
+      CLRMASK: async
+      DIV: async
+  BUFG_GT_SYNC:
+    reference: UG974, BUFG_GT_SYNC
+    ports:
+      CLK: clock
+      CE: async
+      CLR: {reset_in: async}
+      CESYNC: {sync: CLK}
+      CLRSYNC: {sync: CLK}
+  BUFGMUX:
+    reference: UG953/UG974, BUFGMUX
+    ports:
+      I0: clock
+      I1: clock
+      O: {clock_out: {relation: independent}}
+      S: async
+  BUFGMUX_CTRL:
+    reference: UG953/UG974, BUFGMUX_CTRL
+    ports:
+      I0: clock
+      I1: clock
+      O: {clock_out: {relation: independent}}
+      S: async
+  BUFGCTRL:
+    reference: UG953/UG974, BUFGCTRL
+    ports:
+      I0: clock
+      I1: clock
+      O: {clock_out: {relation: independent}}
+      CE0: async
+      CE1: async
+      S0: async
+      S1: async
+      IGNORE0: async
+      IGNORE1: async
+
+  # Input and output buffers
+
+  IBUF:
+    archetype: buffer
+    input: I
+    output: O
+    reference: UG953/UG974, IBUF
+  IBUFG:
+    archetype: buffer
+    input: I
+    output: O
+    reference: UG953, IBUFG
+  IBUF_IBUFDISABLE:
+    reference: UG953, IBUF_IBUFDISABLE
+    ports:
+      O: {path: [I, IBUFDISABLE]}
+  IBUFDS:
+    reference: UG953/UG974, IBUFDS
+    ports:
+      O: {path: [I, IB]}
+  IBUFGDS:
+    reference: UG953, IBUFGDS
+    ports:
+      O: {path: [I, IB]}
+  IBUFDS_DIFF_OUT:
+    reference: UG953/UG974, IBUFDS_DIFF_OUT
+    ports:
+      O: {path: [I, IB]}
+      OB: {path: [I, IB]}
+  IBUFDS_GTE2:
+    reference: UG953, IBUFDS_GTE2
+    ports:
+      I: clock
+      IB: unused
+      O: {clock_out: {from: I, relation: same}}
+      ODIV2: {clock_out: {from: I, relation: derived}}
+      CEB: async
+  IBUFDS_GTE3:
+    reference: UG974, IBUFDS_GTE3
+    ports:
+      I: clock
+      IB: unused
+      O: {clock_out: {from: I, relation: same}}
+      ODIV2: {clock_out: {from: I, relation: derived}}
+      CEB: async
+  IBUFDS_GTE4:
+    reference: UG974, IBUFDS_GTE4
+    ports:
+      I: clock
+      IB: unused
+      O: {clock_out: {from: I, relation: same}}
+      ODIV2: {clock_out: {from: I, relation: derived}}
+      CEB: async
+  OBUF:
+    archetype: buffer
+    input: I
+    output: O
+    reference: UG953/UG974, OBUF
+  OBUFT:
+    reference: UG953/UG974, OBUFT
+    ports:
+      O: {path: [I, T]}
+  OBUFDS:
+    reference: UG953/UG974, OBUFDS
+    ports:
+      O: {path: [I]}
+      OB: {path: [I]}
+  OBUFTDS:
+    reference: UG953/UG974, OBUFTDS
+    ports:
+      O: {path: [I, T]}
+      OB: {path: [I, T]}
+  IOBUF:
+    reference: UG953/UG974, IOBUF
+    ports:
+      IO: {path: [I, T]}
+      O: {path: [IO]}
+  IOBUFDS:
+    reference: UG953/UG974, IOBUFDS
+    ports:
+      IO: {path: [I, T]}
+      IOB: {path: [I, T]}
+      O: {path: [IO, IOB]}
+
+  # Clock generators
+
+  MMCME2_*:
+    reference: UG953, MMCME2_BASE and MMCME2_ADV
+    ports: &mmcm
+      CLKIN1: clock
+      CLKIN2: clock
+      CLKFBIN: clock
+      CLKOUT*: {clock_out: {from: CLKIN1, relation: derived}}
+      CLKFBOUT*: {clock_out: {from: CLKIN1, relation: derived}}
+      LOCKED: async
+      CLKINSTOPPED: async
+      CLKFBSTOPPED: async
+      RST: {reset_in: async}
+      PWRDWN: async
+      CLKINSEL: async
+      DCLK: clock
+      DADDR: {sync: DCLK}
+      DI: {sync: DCLK}
+      DEN: {sync: DCLK}
+      DWE: {sync: DCLK}
+      DO: {sync: DCLK}
+      DRDY: {sync: DCLK}
+      PSCLK: clock
+      PSEN: {sync: PSCLK}
+      PSINCDEC: {sync: PSCLK}
+      PSDONE: {sync: PSCLK}
+  MMCME3_*:
+    reference: UG974, MMCME3_BASE and MMCME3_ADV
+    ports:
+      <<: *mmcm
+      CDDCREQ: async
+      CDDCDONE: async
+  MMCME4_*:
+    reference: UG974, MMCME4_BASE and MMCME4_ADV
+    ports:
+      <<: *mmcm
+      CDDCREQ: async
+      CDDCDONE: async
+  PLLE2_*:
+    reference: UG953, PLLE2_BASE and PLLE2_ADV
+    ports:
+      <<: *mmcm
+  PLLE3_*:
+    reference: UG974, PLLE3_BASE and PLLE3_ADV
+    ports: &pll_us
+      CLKIN: clock
+      CLKFBIN: clock
+      CLKOUT*: {clock_out: {from: CLKIN, relation: derived}}
+      CLKFBOUT: {clock_out: {from: CLKIN, relation: derived}}
+      LOCKED: async
+      RST: {reset_in: async}
+      PWRDWN: async
+      CLKOUTPHYEN: async
+      DCLK: clock
+      DADDR: {sync: DCLK}
+      DI: {sync: DCLK}
+      DEN: {sync: DCLK}
+      DWE: {sync: DCLK}
+      DO: {sync: DCLK}
+      DRDY: {sync: DCLK}
+  PLLE4_*:
+    reference: UG974, PLLE4_BASE and PLLE4_ADV
+    ports:
+      <<: *pll_us
+
+  # Registers, shift registers and DSP
+
+  FDRE:
+    archetype: single_clock
+    clock: C
+    reference: UG953/UG974, FDRE
+  FDSE:
+    archetype: single_clock
+    clock: C
+    reference: UG953/UG974, FDSE
+  FDCE:
+    archetype: single_clock
+    clock: C
+    async_reset: CLR
+    reference: UG953/UG974, FDCE
+  FDPE:
+    archetype: single_clock
+    clock: C
+    async_reset: PRE
+    reference: UG953/UG974, FDPE
+  SRL16E:
+    archetype: single_clock
+    clock: CLK
+    reference: UG953/UG974, SRL16E
+  SRLC16E:
+    archetype: single_clock
+    clock: CLK
+    reference: UG953, SRLC16E
+  SRLC32E:
+    archetype: single_clock
+    clock: CLK
+    reference: UG953/UG974, SRLC32E
+  DSP48E1:
+    archetype: single_clock
+    clock: CLK
+    reference: UG953, DSP48E1
+  DSP48E2:
+    archetype: single_clock
+    clock: CLK
+    reference: UG974, DSP48E2
+
+  # Input and output registers and delays
+
+  IDDR:
+    reference: UG953, IDDR
+    ports:
+      C: clock
+      D: {sync: C}
+      CE: {sync: C}
+      Q1: {sync: C}
+      Q2: {sync: C}
+      R: {sync: C}
+      S: {sync: C}
+    variants:
+      - when: {SRTYPE: ASYNC}
+        ports:
+          R: {reset_in: async}
+          S: {reset_in: async}
+  ODDR:
+    reference: UG953, ODDR
+    ports:
+      C: clock
+      D1: {sync: C}
+      D2: {sync: C}
+      CE: {sync: C}
+      Q: {sync: C}
+      R: {sync: C}
+      S: {sync: C}
+    variants:
+      - when: {SRTYPE: ASYNC}
+        ports:
+          R: {reset_in: async}
+          S: {reset_in: async}
+  IDDRE1:
+    reference: UG974, IDDRE1
+    ports:
+      C: clock
+      CB: clock
+      D: {sync: C}
+      Q1: {sync: C}
+      Q2: {sync: C}
+      R: {reset_in: async}
+  ODDRE1:
+    reference: UG974, ODDRE1
+    ports:
+      C: clock
+      D1: {sync: C}
+      D2: {sync: C}
+      Q: {sync: C}
+      SR: {reset_in: async}
+  IDELAYE2:
+    reference: UG953, IDELAYE2
+    ports:
+      C: clock
+      DATAOUT: {path: [IDATAIN, DATAIN]}
+      CE: {sync: C}
+      INC: {sync: C}
+      LD: {sync: C}
+      LDPIPEEN: {sync: C}
+      CNTVALUEIN: {sync: C}
+      CNTVALUEOUT: {sync: C}
+      REGRST: {sync: C}
+      CINVCTRL: {sync: C}
+  IDELAYCTRL:
+    reference: UG953/UG974, IDELAYCTRL
+    ports:
+      REFCLK: clock
+      RST: {reset_in: async}
+      RDY: async
+
+  # Block RAM: the ECC and cascade ports are left for the design to declare
+
+  RAMB18E1:
+    reference: UG953, RAMB18E1
+    archetype: dual_clock
+    sides: &ramb_e1
+      CLKARDCLK: [ADDRARDADDR, DIADI, DIPADIP, DOADO, DOPADOP, ENARDEN, REGCEAREGCE, RSTRAMARSTRAM, RSTREGARSTREG, WEA]
+      CLKBWRCLK: [ADDRBWRADDR, DIBDI, DIPBDIP, DOBDO, DOPBDOP, ENBWREN, REGCEB, RSTRAMB, RSTREGB, WEBWE]
+  RAMB36E1:
+    reference: UG953, RAMB36E1
+    archetype: dual_clock
+    sides: *ramb_e1
+  RAMB18E2:
+    reference: UG974, RAMB18E2
+    archetype: dual_clock
+    sides: &ramb_e2
+      CLKARDCLK: [ADDRARDADDR, ADDRENA, DINADIN, DINPADINP, DOUTADOUT, DOUTPADOUTP, ENARDEN, REGCEAREGCE, RSTRAMARSTRAM, RSTREGARSTREG, WEA]
+      CLKBWRCLK: [ADDRBWRADDR, ADDRENB, DINBDIN, DINPBDINP, DOUTBDOUT, DOUTPBDOUTP, ENBWREN, REGCEB, RSTRAMB, RSTREGB, WEBWE]
+  RAMB36E2:
+    reference: UG974, RAMB36E2
+    archetype: dual_clock
+    sides: *ramb_e2
+
+  # Configuration
+
+  STARTUPE2:
+    reference: UG953, STARTUPE2
+    ports:
+      CFGCLK: {clock_out: {relation: independent}}
+      CFGMCLK: {clock_out: {relation: independent}}
+      CLK: clock
+      "*": async
+  STARTUPE3:
+    reference: UG974, STARTUPE3
+    ports:
+      CFGCLK: {clock_out: {relation: independent}}
+      CFGMCLK: {clock_out: {relation: independent}}
+      "*": async
+  ICAPE2:
+    archetype: single_clock
+    clock: CLK
+    reference: UG953, ICAPE2
+  ICAPE3:
+    archetype: single_clock
+    clock: CLK
+    reference: UG974, ICAPE3
+
+  # XPM clock domain crossing macros: synchronized outputs are listed for manual review
+
+  xpm_cdc_single:
+    archetype: synchronizer
+    source_clock: src_clk
+    destination_clock: dest_clk
+    input: src_in
+    output: dest_out
+    stages: DEST_SYNC_FF
+    reference: UG974, XPM_CDC_SINGLE
+  xpm_cdc_array_single:
+    archetype: synchronizer
+    source_clock: src_clk
+    destination_clock: dest_clk
+    input: src_in
+    output: dest_out
+    stages: DEST_SYNC_FF
+    reference: UG974, XPM_CDC_ARRAY_SINGLE
+  xpm_cdc_gray:
+    archetype: synchronizer
+    source_clock: src_clk
+    destination_clock: dest_clk
+    input: src_in_bin
+    output: dest_out_bin
+    stages: DEST_SYNC_FF
+    reference: UG974, XPM_CDC_GRAY
+  xpm_cdc_handshake:
+    reference: UG974, XPM_CDC_HANDSHAKE
+    ports:
+      src_clk: clock
+      dest_clk: clock
+      src_in: {sync: src_clk}
+      src_send: {sync: src_clk}
+      src_rcv: {synchronized: {clock: src_clk, from: dest_ack, stages: SRC_SYNC_FF}}
+      dest_ack: {sync: dest_clk}
+      dest_req: {synchronized: {clock: dest_clk, from: src_send, stages: DEST_SYNC_FF}}
+      dest_out: {synchronized: {clock: dest_clk, from: src_in, stages: DEST_SYNC_FF}}
+  xpm_cdc_pulse:
+    reference: UG974, XPM_CDC_PULSE
+    ports:
+      src_clk: clock
+      dest_clk: clock
+      src_pulse: {sync: src_clk}
+      src_rst: {sync: src_clk}
+      dest_rst: {sync: dest_clk}
+      dest_pulse: {synchronized: {clock: dest_clk, from: src_pulse, stages: DEST_SYNC_FF}}
+  xpm_cdc_sync_rst:
+    reference: UG974, XPM_CDC_SYNC_RST
+    ports:
+      dest_clk: clock
+      src_rst: async
+      dest_rst: {synchronized: {clock: dest_clk, from: src_rst, stages: DEST_SYNC_FF}}
+  xpm_cdc_async_rst:
+    reference: UG974, XPM_CDC_ASYNC_RST
+    ports:
+      dest_clk: clock
+      src_arst: {reset_in: async}
+      dest_arst: {reset_out: {clock: dest_clk, release: sync}}
+
+  # XPM FIFOs and memories
+
+  xpm_fifo_async:
+    reference: UG974, XPM_FIFO_ASYNC
+    archetype: dual_clock_fifo
+    sides:
+      wr_clk: [rst, din, wr_en, full, almost_full, wr_ack, overflow, prog_full, wr_data_count, wr_rst_busy, injectsbiterr, injectdbiterr]
+      rd_clk: [dout, rd_en, empty, almost_empty, data_valid, underflow, prog_empty, rd_data_count, rd_rst_busy, sbiterr, dbiterr]
+    ports:
+      sleep: async
+  xpm_fifo_sync:
+    reference: UG974, XPM_FIFO_SYNC
+    archetype: single_clock
+    clock: wr_clk
+    ports:
+      sleep: async
+  xpm_memory_spram:
+    reference: UG974, XPM_MEMORY_SPRAM
+    archetype: single_clock
+    clock: clka
+    ports:
+      sleep: async
+  xpm_memory_sdpram:
+    reference: UG974, XPM_MEMORY_SDPRAM
+    archetype: memory
+    sides:
+      clka: [addra, dina, ena, wea, injectsbiterra, injectdbiterra]
+      clkb: [addrb, doutb, enb, regceb, rstb, sbiterrb, dbiterrb]
+    ports:
+      sleep: async
+    variants:
+      - when: {CLOCKING_MODE: common_clock}
+        ports: &common_b
+          addrb: {sync: clka}
+          doutb: {sync: clka}
+          enb: {sync: clka}
+          regceb: {sync: clka}
+          rstb: {sync: clka}
+          sbiterrb: {sync: clka}
+          dbiterrb: {sync: clka}
+          dinb: {sync: clka}
+          web: {sync: clka}
+          injectsbiterrb: {sync: clka}
+          injectdbiterrb: {sync: clka}
+          clkb: unused
+  xpm_memory_tdpram:
+    reference: UG974, XPM_MEMORY_TDPRAM
+    archetype: memory
+    sides:
+      clka: [addra, dina, douta, ena, regcea, rsta, wea, injectsbiterra, injectdbiterra, sbiterra, dbiterra]
+      clkb: [addrb, dinb, doutb, enb, regceb, rstb, web, injectsbiterrb, injectdbiterrb, sbiterrb, dbiterrb]
+    ports:
+      sleep: async
+    variants:
+      - when: {CLOCKING_MODE: common_clock}
+        ports: *common_b
