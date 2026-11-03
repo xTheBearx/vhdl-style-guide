@@ -19,7 +19,11 @@ from mhsg import parser
 
 
 class token(parser.item):
-    """A token of a SystemVerilog file."""
+    """
+    A token of a SystemVerilog file.
+
+    unique_id = sv : token
+    """
 
     def __init__(self, sString="", sKind="", tSyntax=(), sField=None):
         super().__init__(sString)
@@ -32,19 +36,35 @@ class token(parser.item):
 
 
 class keyword(token, parser.keyword):
-    """A keyword, such as module or always_ff."""
+    """
+    A keyword, such as module or always_ff.
+
+    unique_id = sv : keyword
+    """
 
 
 class identifier(token, parser.identifier):
-    """An identifier, simple or escaped, or a system name such as $display."""
+    """
+    An identifier, simple or escaped, or a system name such as $display.
+
+    unique_id = sv : identifier
+    """
 
 
 class preprocessor(token, parser.preprocessor):
-    """A compiler directive, such as `define or `ifdef, or a macro use, such as `WIDTH: kept as written."""
+    """
+    A compiler directive, such as `define or `ifdef, or a macro use, such as `WIDTH: kept as written.
+
+    unique_id = sv : preprocessor
+    """
 
 
 class unclassified(token):
-    """A token that is not part of the parsed code: in an inactive `ifdef branch or in the arguments of a macro."""
+    """
+    A token that is not part of the parsed code: in an inactive `ifdef branch or in the arguments of a macro.
+
+    unique_id = sv : unclassified
+    """
 
 
 _dClasses = {}
@@ -58,7 +78,8 @@ def of(sSyntax, sField, oBase=token):
     sSyntax = short_name(sSyntax)
     tKey = (sSyntax, sField)
     if tKey not in _dClasses:
-        _dClasses[tKey] = type(f"{sSyntax}.{sField}", (oBase,), {"__module__": __name__})
+        sName = f"{sSyntax}.{sField}"
+        _dClasses[tKey] = type(sName, (oBase,), {"__module__": __name__, "__doc__": f"unique_id = sv : {sName}"})
     return _dClasses[tKey]
 
 
@@ -72,6 +93,11 @@ def for_token(sKind, tSyntax, sField):
         # A field holding tokens of several kinds, such as keywords and identifiers: one class per kind
         return of(tSyntax[-1], f"{sField}.{base_name(oBase)}", oBase)
     return oBase
+
+
+def token_classes(oClass):
+    """The SystemVerilog token classes a class is, itself first: a token is found by any of them in the token map."""
+    return [o for o in oClass.__mro__ if issubclass(o, token)]
 
 
 def base_class(sKind):

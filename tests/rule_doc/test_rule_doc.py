@@ -32,7 +32,7 @@ class testDocGen(unittest.TestCase):
     def test_all_rule_sections_in_rules_index(self):
         # Get all rule names from the system
         oVhdlFile = vhdlFile.vhdlFile([""])
-        oRuleList = rule_list.rule_list(oVhdlFile, None, None)
+        oRuleList = rule_list.rule_list(oVhdlFile, None, None, bAllLanguages=True)
         lExpected = {oRule.name for oRule in oRuleList.rules}
         # Special case: this page is not generated from a rule class
         lExpected.add("unfixable")
@@ -46,7 +46,7 @@ class testDocGen(unittest.TestCase):
 
     def test_documentation_links_in_docstrings(self):
         oVhdlFile = vhdlFile.vhdlFile([""])
-        oRuleList = rule_list.rule_list(oVhdlFile, None, None)
+        oRuleList = rule_list.rule_list(oVhdlFile, None, None, bAllLanguages=True)
         lExpected = []
         lActual = []
 
@@ -62,7 +62,7 @@ class testDocGen(unittest.TestCase):
     def test_rule_link_in_configuration_documentation_exists(self):
         self.maxDiff = None
         oVhdlFile = vhdlFile.vhdlFile([""])
-        oRuleList = rule_list.rule_list(oVhdlFile, None, None)
+        oRuleList = rule_list.rule_list(oVhdlFile, None, None, bAllLanguages=True)
         lExpected = []
         lActual = []
 
@@ -118,7 +118,7 @@ class testDocGen(unittest.TestCase):
     def test_rule_group_links(self):
         self.maxDiff = None
         oVhdlFile = vhdlFile.vhdlFile([""])
-        oRuleList = rule_list.rule_list(oVhdlFile, None, None)
+        oRuleList = rule_list.rule_list(oVhdlFile, None, None, bAllLanguages=True)
 
         dConfigurationFiles = {}
         for oRule in oRuleList.rules:
@@ -150,7 +150,7 @@ class testDocGen(unittest.TestCase):
     def test_configuring_disabled_rules_doc(self):
         self.maxDiff = None
         oVhdlFile = vhdlFile.vhdlFile([""])
-        oRuleList = rule_list.rule_list(oVhdlFile, None, None)
+        oRuleList = rule_list.rule_list(oVhdlFile, None, None, bAllLanguages=True)
 
         lExpected = []
         for oRule in oRuleList.rules:
@@ -171,7 +171,7 @@ class testDocGen(unittest.TestCase):
     def test_unfixable_rules_doc(self):
         self.maxDiff = None
         oVhdlFile = vhdlFile.vhdlFile([""])
-        oRuleList = rule_list.rule_list(oVhdlFile, None, None)
+        oRuleList = rule_list.rule_list(oVhdlFile, None, None, bAllLanguages=True)
 
         lExpected = []
         for oRule in oRuleList.rules:

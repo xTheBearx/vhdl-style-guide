@@ -100,6 +100,7 @@ Rules Enforcing Indent Rule Group
 * `signal_001 <../signal_rules.html#signal-001>`_
 * `subprogram_instantiation_300 <../subprogram_instantiation_rules.html#subprogram-instantiation-300>`_
 * `subtype_001 <../subtype_rules.html#subtype-001>`_
+* `sv_indent_001 <../sv_indent_rules.html#sv-indent-001>`_
 * `type_001 <../type_rules.html#type-001>`_
 * `type_005 <../type_rules.html#type-005>`_
 * `type_012 <../type_rules.html#type-012>`_

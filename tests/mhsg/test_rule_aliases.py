@@ -12,7 +12,7 @@ from tests import utils
 
 
 def get_rules():
-    return rule_list.rule_list(vhdlFile.vhdlFile([""]), None).rules
+    return rule_list.rule_list(vhdlFile.vhdlFile([""]), None, bAllLanguages=True).rules
 
 
 class test_rule_aliases(unittest.TestCase):

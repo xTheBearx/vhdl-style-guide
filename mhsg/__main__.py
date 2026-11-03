@@ -41,7 +41,7 @@ def generate_output_configuration(commandLineArguments, oConfig):
         fExitStatus = 0
         # Create empty file so it can be used to create the rule list
         oVhdlFile = vhdlFile.vhdlFile([""])
-        oRules = rule_list.rule_list(oVhdlFile, oConfig.severity_list, commandLineArguments.local_rules)
+        oRules = rule_list.rule_list(oVhdlFile, oConfig.severity_list, commandLineArguments.local_rules, bAllLanguages=True)
         rule_set.apply(oRules, oConfig)
         oRules.configure(oConfig)
         dOutputConfiguration = {}
@@ -98,7 +98,7 @@ def display_rule_configuration(commandLineArguments, oConfig):
         fExitStatus = 0
         # Create empty file so it can be used to create the rule list
         oVhdlFile = vhdlFile.vhdlFile([""])
-        oRules = rule_list.rule_list(oVhdlFile, oConfig.severity_list, commandLineArguments.local_rules)
+        oRules = rule_list.rule_list(oVhdlFile, oConfig.severity_list, commandLineArguments.local_rules, bAllLanguages=True)
         rule_set.apply(oRules, oConfig)
         oRules.configure(oConfig)
         dOutputConfiguration = {}

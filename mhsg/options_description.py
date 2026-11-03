@@ -39,7 +39,7 @@ def build(lLocalRules=None):
     lLocalRules are local rule directories, whose rules are included.
     """
     dCatalog = read_catalog()
-    oRules = rule_list.rule_list(vhdlFile.vhdlFile([""]), severity.create_list({}), lLocalRules)
+    oRules = rule_list.rule_list(vhdlFile.vhdlFile([""]), severity.create_list({}), lLocalRules, bAllLanguages=True)
 
     dDefinitions = {}
     lRules = []

@@ -25,7 +25,14 @@ change.
 Rules
 -----
 
-Only the rules that apply to every language run on SystemVerilog files so far:
+The rules for SystemVerilog are in groups whose names start with :code:`sv_`, see :doc:`rules`. They follow the
+`lowRISC Verilog coding style <https://github.com/lowRISC/style-guides/blob/master/VerilogCodingStyle.md>`_ that
+Verible checks, except that indentation is 4 spaces and lines are 80 characters, as for VHDL. Where a rule checks
+what a Verible lint rule checks, its alias is the Verible rule's name.
+
+* :code:`sv_indent_001`: indentation, 4 spaces per level
+
+The rules that apply to every language check SystemVerilog files as well:
 
 * :code:`whitespace_001`: trailing whitespace
 * :code:`whitespace_002`: tabs inside a line
@@ -33,11 +40,21 @@ Only the rules that apply to every language run on SystemVerilog files so far:
 * :code:`length_002`: file length
 * :code:`length_004`: length of the second line of a statement split over lines
 
-The other rules are VHDL rules and are skipped for SystemVerilog files. Rules for SystemVerilog will follow the
-`lowRISC Verilog coding style <https://github.com/lowRISC/style-guides/blob/master/VerilogCodingStyle.md>`_ that
-Verible checks, except that indentation is 4 spaces and lines are 80 characters, as for VHDL.
+The other rules are VHDL rules and are skipped for SystemVerilog files.
 
-Tabs at the start of a line are not reported yet; they will be with the indentation rules.
+Indentation
+###########
+
+:code:`sv_indent_001` computes the level of each line from the syntax tree. One level in are the members of a
+module, package, interface or class; the items of a begin-end block, a function or a task; ports, parameters and
+the connections of an instance; enum and struct members; case items; and a statement under if, else, a loop, an
+always block or a case item, unless it is a begin-end block. end, else, endmodule and closing brackets are at the
+level of what they close.
+
+Not checked: the continuation lines of a statement, lists aligned after their opening bracket (such as the
+arguments of a call continued under the first), anything inside an expression, preprocessor directives and code in
+inactive :code:`\`ifdef` branches. A comment line continuing the comment at the end of the line above, aligned
+with it, keeps that alignment.
 
 Code tags
 ---------

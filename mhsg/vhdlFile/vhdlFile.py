@@ -372,7 +372,7 @@ class vhdlFile:
         set_todo_tokens(self.lAllObjects)
         set_aggregate_tokens(self.lAllObjects)
         set_code_tags(self.lAllObjects)
-        self.oTokenMap = process_tokens(self.lAllObjects)
+        self.oTokenMap = self.build_token_map()
 
     def get_declarations(self):
         """
@@ -417,13 +417,17 @@ class vhdlFile:
             merge_whitespace_at(self.lAllObjects, iStart + len(lMyTokens) - 1)
             merge_whitespace_at(self.lAllObjects, iStart - 1)
         if bUpdateMap:
-            self.oTokenMap = process_tokens(self.lAllObjects)
+            self.oTokenMap = self.build_token_map()
 
     def get_token_map(self):
         return self.oTokenMap
 
+    def build_token_map(self):
+        """Returns the map from token types to their indexes in the token list."""
+        return process_tokens(self.lAllObjects)
+
     def update_token_map(self):
-        self.oTokenMap = process_tokens(self.lAllObjects)
+        self.oTokenMap = self.build_token_map()
 
     def set_indent_map(self, dIndentMap):
         self.dIndentMap = dIndentMap

@@ -1,7 +1,7 @@
 {
   "format": "mhsg-options",
   "format_version": 1,
-  "mhsg_version": "3.35.0.post420+git.02cdb62f.dirty",
+  "mhsg_version": "3.35.0.post426+git.fbb7e06d",
   "documentation_url": "https://github.com/xTheBearx/vhdl-style-guide/blob/master/docs/",
   "settings": [
     {
@@ -2026,6 +2026,7 @@
         "signal_001",
         "subprogram_instantiation_300",
         "subtype_001",
+        "sv_indent_001",
         "type_001",
         "type_005",
         "type_012",
@@ -59208,6 +59209,53 @@
         }
       ],
       "option_documentation": "configuring_prefix_and_suffix_rules.rst"
+    },
+    {
+      "id": "sv_indent_001",
+      "alias": "sv_indent_code",
+      "category": "sv_indent",
+      "groups": [
+        "indent"
+      ],
+      "summary": "This rule checks the indent of SystemVerilog and Verilog code.",
+      "documentation": "sv_indent_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 4,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
     },
     {
       "id": "type_001",
