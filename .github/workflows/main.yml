@@ -63,7 +63,7 @@ jobs:
           python-version: ${{ env.BUILD_PYTHON }}
       - name: build
         run: |
-          uv run --locked --group docs sphinx-build docs build.out/docs/html
+          uv run --locked --group docs sphinx-build -W --keep-going docs build.out/docs/html
       - name: archive.upload
         if: always()
         uses: actions/upload-artifact@v4

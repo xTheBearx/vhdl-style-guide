@@ -25,5 +25,6 @@ Configuration
 .. toctree::
    :maxdepth: 2
 
+   notepad_pp.rst
    vim.rst
    vscode.rst

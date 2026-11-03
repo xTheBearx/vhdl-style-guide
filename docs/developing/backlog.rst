@@ -112,9 +112,3 @@ under way: the entries below.
   declarations, would let them through.
 * **More SystemVerilog projects** in the real-world check, which runs ibex, common_cells and picorv32: OpenTitan
   (a subset), CVA6, SERV and the sv-tests conformance suite.
-
-Project
--------
-
-* **Documentation warnings.** A few pages have Sphinx warnings that predate this work, such as short title
-  underlines in configuring_library_and_package_name_restriction_rules.rst and overview.rst.
