@@ -8,8 +8,6 @@ class rule_002(TreeRule, structure.Rule):
     """
     This rule checks that the default item of a case statement is its last item.
 
-    |unfixable|
-
     **Violation**
 
     .. code-block:: systemverilog

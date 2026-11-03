@@ -64,8 +64,6 @@ This rule checks that sequential logic, in always_ff blocks and in always blocks
 nonblocking assignments (<=). Blocking assignments in the header of a for loop are allowed; with
 **waive_for_locals** set to yes, so are blocking assignments to variables declared in the block.
 
-|unfixable|
-
 **Violation**
 
 .. code-block:: systemverilog
@@ -92,8 +90,6 @@ Alias: :code:`sv_always_mixed_assignments`
 This rule checks that an always block does not mix blocking (=) and nonblocking (<=) assignments.
 Assignments in the header of a for loop are not counted.
 
-|unfixable|
-
 **Violation**
 
 .. code-block:: systemverilog
@@ -110,4 +106,58 @@ Assignments in the header of a for loop are not counted.
    always_ff @(posedge clk_i) begin
        count_q <= count_d;
        valid_q <= valid_d;
+   end
+
+sv_always_005
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_single_event_control`
+
+This rule checks that an always block has a single event control, at its start, as the STARC guide asks
+(2.2.2.3). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always @(posedge clk_i) begin
+       @(posedge clk_i) q <= d;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always @(posedge clk_i) begin
+       q <= d;
+
+sv_always_006
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_one_top_level_statement`
+
+This rule checks that an always block holds at most one if or case statement at its top level, as the STARC
+guide asks (2.6.2.1). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_comb begin
+       if (a) y = 1;
+       if (b) z = 1;
+   end
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_comb begin
+       if (a) y = 1;
+   end
+   always_comb begin
+       if (b) z = 1;
    end

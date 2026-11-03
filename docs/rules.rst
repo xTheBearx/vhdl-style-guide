@@ -122,9 +122,18 @@ The rules length_001, length_002, length_004, whitespace_001 and whitespace_002 
    sv_always_rules.rst
    sv_blank_line_rules.rst
    sv_case_rules.rst
+   sv_comment_rules.rst
+   sv_declaration_rules.rst
+   sv_dimension_rules.rst
+   sv_file_rules.rst
+   sv_function_rules.rst
    sv_generate_rules.rst
    sv_indent_rules.rst
    sv_label_rules.rst
+   sv_literal_rules.rst
    sv_module_rules.rst
+   sv_naming_rules.rst
    sv_statement_rules.rst
+   sv_syntax_rules.rst
+   sv_typedef_rules.rst
    sv_whitespace_rules.rst

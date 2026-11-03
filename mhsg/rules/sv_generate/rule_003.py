@@ -8,8 +8,6 @@ class rule_003(TreeRule, structure.Rule):
     """
     This rule checks for begin-end blocks directly in a generate region, a Verilog-2001 form.
 
-    |unfixable|
-
     **Violation**
 
     .. code-block:: systemverilog

@@ -9,8 +9,6 @@ class rule_001(TreeRule, structure.Rule):
     """
     This rule checks that the begin-end blocks of generate loops, ifs and cases are labelled.
 
-    |unfixable|
-
     **Violation**
 
     .. code-block:: systemverilog

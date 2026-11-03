@@ -84,12 +84,17 @@ files with pyslang and running the language neutral rules, is done; see :doc:`..
   tokens of ibex, common_cells and picorv32, most in the arguments of macros such as :code:`\`ASSERT` and
   :code:`\`uvm_info`), so rules do not check them. Parsing each branch with its defines set, and macro arguments
   that are expressions, would let rules check them.
+* **Files with syntax errors** are skipped by the rules on constructs. Parsing them with the defines and include
+  paths of the project (a file list, as Verilator and slang take) would let fewer files fall in this case: 340 of
+  the 914 corpus files have errors once macros of other files are left undefined.
+* **Checks needing semantics**: widths, sensitivity lists, multiple drivers, latches and most of the STARC lint
+  items need the elaborated design (plan step 3, lint).
 * **Spaces inside parentheses and braces** and around :code:`) (` between parameter and port lists are not checked;
   Verible's formatter sets them by context.
 * **Include files and defines from the command line**: files are parsed on their own; a macro defined in another file
   is not expanded, which is fine for style rules but not for lint.
 * **Code tags in block comments**: :code:`/* mhsg_off */` is not recognized; only :code:`//` comments are.
-* **STARC rule set**: 8 of the 613 items of the STARC guide have rules. The per-file items (216) are planned with
+* **STARC rule set**: 41 of the 613 items of the STARC guide have rules. The per-file items (216) are planned with
   the SystemVerilog rules, the clock and reset items with design analysis of Verilog designs. The catalogue the set
   was made from records each item's limits and its Verible equivalent, kept in the notes of the set.
 * **Lint and design analysis** of SystemVerilog (Verilator, yosys-slang) are later steps of the plan.

@@ -227,14 +227,14 @@ class test_rules(unittest.TestCase):
                 self.assertEqual(sText, oFile.read())
 
     def test_comment_continuation_follows_its_line(self):
-        sText = "module m;\n  logic a;  // trailing\n            // continued\nendmodule\n"
+        sText = "module c;\n  logic a;  // trailing\n            // continued\nendmodule\n"
         with tempfile.TemporaryDirectory() as sTemporary:
             sCopy = os.path.join(sTemporary, "c.sv")
             with open(sCopy, "w", encoding="utf-8") as oFile:
                 oFile.write(sText)
             subprocess.run([sys.executable, "bin/mhsg", "-f", sCopy, "--fix"], cwd=sRoot, capture_output=True, check=False)
             with open(sCopy, encoding="utf-8") as oFile:
-                self.assertEqual("module m;\n    logic a;  // trailing\n              // continued\nendmodule\n", oFile.read())
+                self.assertEqual("module c;\n    logic a;  // trailing\n              // continued\nendmodule\n", oFile.read())
 
     def test_whitespace_check(self):
         # The structure rules of phase 1 also report the file; -ap reports the whitespace rules of phase 2 as well
@@ -277,7 +277,7 @@ class test_rules(unittest.TestCase):
         with tempfile.TemporaryDirectory() as sTemporary:
             sCopy = os.path.join(sTemporary, "e.sv")
             with open(sCopy, "w", encoding="utf-8") as oFile:
-                oFile.write("module m;\nendmodule\n\n\n")
+                oFile.write("module e;\nendmodule\n\n\n")
             oResult = subprocess.run([sys.executable, "bin/mhsg", "-f", sCopy, "-of", "syntastic"], cwd=sRoot, capture_output=True, text=True, check=False)
             self.assertEqual([f"ERROR: {sCopy}(3)sv_blank_line_001 -- Remove blank lines at the end of the file"], oResult.stdout.splitlines())
 
@@ -338,13 +338,89 @@ class test_rules(unittest.TestCase):
         with tempfile.TemporaryDirectory() as sTemporary:
             sCopy = os.path.join(sTemporary, "s.sv")
             with open(sCopy, "w", encoding="utf-8") as oFile:
-                oFile.write("module m;\n    always_comb begin\n        a = 1; b = 2;\n    end\nendmodule\n")
+                oFile.write("module s;\n    always_comb begin\n        a = 1; b = 2;\n    end\nendmodule\n")
             sConfigurationFile = os.path.join(sTemporary, "c.yaml")
             with open(sConfigurationFile, "w", encoding="utf-8") as oFile:
                 oFile.write("rule:\n  sv_statement_003:\n    disable: false\n")
             subprocess.run([sys.executable, "bin/mhsg", "-f", sCopy, "--fix", "-c", sConfigurationFile], cwd=sRoot, capture_output=True, check=False)
             with open(sCopy, encoding="utf-8") as oFile:
-                self.assertEqual("module m;\n    always_comb begin\n        a = 1;\n        b = 2;\n    end\nendmodule\n", oFile.read())
+                self.assertEqual("module s;\n    always_comb begin\n        a = 1;\n        b = 2;\n    end\nendmodule\n", oFile.read())
+
+    def test_declarations_check(self):
+        # Every rule enabled, see all_rules.yaml; the indent, whitespace and begin-end rules are left out
+        _, lOutput, _ = self.run_mhsg(["-ap", "-c", os.path.join(sDirectory, "all_rules.yaml")], "declarations.sv")
+        lOutput = [s.split(" ", 1)[1] for s in lOutput if not any(x in s for x in ("sv_indent", "sv_whitespace", "sv_statement_001"))]
+        self.assertEqual(
+            [
+                "declarations.sv(1)sv_naming_005 -- Rename macro data_width to match [A-Z_0-9]+",
+                "declarations.sv(3)sv_file_004 -- Use a relative path in `include",
+                "declarations.sv(4)sv_file_002 -- Name the file after package types",
+                "declarations.sv(5)sv_naming_002 -- Rename State to match [a-z_0-9]+(_t|_e)",
+                "declarations.sv(6)sv_naming_003 -- Rename Beat to match [a-z_0-9]+_t",
+                "declarations.sv(10)sv_declaration_001 -- Give data_width a type",
+                "declarations.sv(10)sv_literal_003 -- Write the parameter value with a base, such as 'd",
+                "declarations.sv(10)sv_naming_001 -- Rename parameter data_width to match ([A-Z0-9]+[a-z0-9]*)+(_[0-9]+)?|[A-Z_0-9]+",
+                "declarations.sv(11)sv_literal_003 -- Write the parameter value with a base, such as 'd",
+                "declarations.sv(11)sv_naming_007 -- Rename DisableParity after what it enables",
+                "declarations.sv(14)sv_dimension_001 -- Write the packed dimension as [msb:lsb]",
+                "declarations.sv(15)sv_naming_008 -- Rename Valid_o to match [a-z_0-9]+",
+                "declarations.sv(17)sv_literal_003 -- Write the parameter value with a base, such as 'd",
+                "declarations.sv(17)sv_naming_001 -- Rename localparam MAX_COUNT to match ([A-Z0-9]+[a-z0-9]*)+(_[0-9]+)?",
+                "declarations.sv(19)sv_dimension_002 -- Write the unpacked dimension as [0:N-1] or [N]",
+                "declarations.sv(21)sv_naming_010 -- Rename signal, a VHDL keyword",
+                "declarations.sv(22)sv_naming_011 -- Rename vdd_ok, which starts like a power net",
+                "declarations.sv(23)sv_naming_008 -- Rename Data to match [a-z_0-9]+",
+                "declarations.sv(23)sv_naming_012 -- Rename Data, which differs from data only in case",
+                "declarations.sv(24)sv_naming_013 -- Use 2 to 40 characters for signal v",
+                "declarations.sv(25)sv_naming_009 -- Use only letters, digits and underscores in _x, starting with a letter",
+                "declarations.sv(26)sv_typedef_001 -- Declare the enum type with typedef",
+                "declarations.sv(27)sv_typedef_002 -- Declare the struct or union type with typedef",
+                "declarations.sv(28)sv_literal_001 -- Write all 4 digits of the binary literal",
+                "declarations.sv(29)sv_literal_002 -- The value needs 8 bits, more than the width 4",
+                "declarations.sv(31)sv_literal_004 -- Give the literal a width; it needs more than 32 bits",
+                "declarations.sv(32)sv_function_001 -- Declare the function automatic or static",
+                "declarations.sv(32)sv_function_003 -- Give argument data a type",
+                "declarations.sv(33)sv_function_004 -- Use a blocking assignment (=) in a function",
+                "declarations.sv(35)sv_function_002 -- Declare the task automatic or static",
+                "declarations.sv(35)sv_function_005 -- Use a function instead of a task",
+                "declarations.sv(35)sv_naming_013 -- Use 2 to 40 characters for port n",
+                "declarations.sv(37)sv_naming_013 -- Use 2 to 40 characters for port d",
+                "declarations.sv(40)sv_statement_004 -- Remove the initial block from design code",
+                "declarations.sv(42)sv_literal_005 -- Do not compare with x or z",
+                "declarations.sv(43)sv_always_006 -- Move the statement to an always block of its own",
+                "declarations.sv(44)sv_always_006 -- Move the statement to an always block of its own",
+                "declarations.sv(44)sv_case_003 -- Use a signal as the case selector, not a constant",
+                "declarations.sv(45)sv_statement_006 -- Remove the empty branch or give it a statement",
+                "declarations.sv(50)sv_always_005 -- Use a single event control, at the start of the always block",
+                "declarations.sv(52)sv_comment_001 -- Remove the synthesis directive from the comment",
+                "declarations.sv(56)sv_file_003 -- Move the module to a file of its own",
+                "declarations.sv(58)sv_naming_004 -- Rename Bus to match [a-z_0-9]+_if",
+                "declarations.sv(58)sv_naming_010 -- Rename Bus, a VHDL keyword",
+                "declarations.sv(61)sv_naming_013 -- Use 2 to 40 characters for signal x",
+                "declarations.sv(62)sv_naming_006 -- Rename Length to match ([a-z0-9]+_)+c",
+            ],
+            lOutput,
+        )
+
+    def test_declarations_fix(self):
+        _, _, sAfter = self.run_mhsg(["--fix"], "declarations.sv")
+        lAfter = sAfter.splitlines()
+        self.assertIn("    function automatic logic parity(input data);", lAfter)
+        self.assertIn("    task automatic wait_cycles(input int n);", lAfter)
+        self.assertIn("    assign v = 4'b0001;", lAfter)
+        # A function already automatic, and zero, are left as they are
+        self.assertIn("    function automatic logic ok(input logic [7:0] d);", lAfter)
+        self.assertIn("    assign v = 4'b0;", lAfter)
+
+    def test_syntax_errors(self):
+        # The rules on constructs skip a file slang cannot parse; sv_syntax_001 reports the error. A macro
+        # defined in another file is not an error.
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sCopy = os.path.join(sTemporary, "e.sv")
+            with open(sCopy, "w", encoding="utf-8") as oFile:
+                oFile.write("module e;\n    always @* y = a +;\n    `UNDEFINED(x)\nendmodule\n")
+            oResult = subprocess.run([sys.executable, "bin/mhsg", "-f", sCopy, "-of", "syntastic"], cwd=sRoot, capture_output=True, text=True, check=False)
+        self.assertEqual([f"ERROR: {sCopy}(2)sv_syntax_001 -- Syntax error: expected expression"], oResult.stdout.splitlines())
 
     def test_sample_is_clean(self):
         self.assertEqual((0, []), self.run_mhsg([], "sample.sv")[:2])

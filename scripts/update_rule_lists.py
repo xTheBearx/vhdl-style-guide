@@ -86,8 +86,8 @@ def main():
     sFileName = os.path.join(DOCS, "unfixable_rules.rst")
     with open(sFileName, encoding="utf-8") as oFile:
         sText = oFile.read()
-    sSection = "SystemVerilog\n-------------\n\nRules on the design of SystemVerilog and Verilog code that only the designer can change.\n\n"
-    sText = re.sub(r"\nSystemVerilog\n-------------\n.*?(?=\n[^\n]+\n-+\n|\Z)", "", sText, flags=re.S).rstrip("\n") + "\n"
+    sSection = "SystemVerilog Rules\n-------------------\n\nRules on the design of SystemVerilog and Verilog code that only the designer can change.\n\n"
+    sText = re.sub(r"\nSystemVerilog( Rules)?\n-+\n.*?(?=\n[^\n]+\n-+\n|\Z)", "", sText, flags=re.S).rstrip("\n") + "\n"
     if lUnfixable:
         sText += "\n" + sSection + "\n".join(lUnfixable) + "\n"
     with open(sFileName, "w", encoding="utf-8") as oFile:

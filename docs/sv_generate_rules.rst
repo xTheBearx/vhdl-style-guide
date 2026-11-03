@@ -12,8 +12,6 @@ Alias: :code:`sv_generate_label`
 
 This rule checks that the begin-end blocks of generate loops, ifs and cases are labelled.
 
-|unfixable|
-
 **Violation**
 
 .. code-block:: systemverilog
@@ -40,8 +38,6 @@ Alias: :code:`sv_generate_label_prefix`
 This rule checks that the labels of generate blocks match **pattern**, a regular expression, by default
 (g_|gen_).*, as Verible's generate-label-prefix rule does.
 
-|unfixable|
-
 **Violation**
 
 .. code-block:: systemverilog
@@ -62,8 +58,6 @@ sv_generate_003
 Alias: :code:`sv_generate_v2001_begin`
 
 This rule checks for begin-end blocks directly in a generate region, a Verilog-2001 form.
-
-|unfixable|
 
 **Violation**
 
@@ -116,8 +110,6 @@ sv_generate_005
 Alias: :code:`sv_generate_legacy_genvar`
 
 This rule checks for genvar declarations outside of a for loop; declare the genvar in the loop instead.
-
-|unfixable|
 
 **Violation**
 

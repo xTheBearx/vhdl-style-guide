@@ -8,8 +8,6 @@ class rule_001(TreeRule, structure.Rule):
     """
     This rule checks for begin-end blocks directly in a module, outside of any generate construct.
 
-    |unfixable|
-
     **Violation**
 
     .. code-block:: systemverilog

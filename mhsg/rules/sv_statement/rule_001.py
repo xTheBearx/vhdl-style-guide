@@ -26,8 +26,6 @@ class rule_001(TreeRule, structure.Rule):
     This rule checks that the statement of an if, else, for, foreach, while, repeat, forever, always or initial
     is a begin-end block, as Verible's explicit-begin rule does. An else if needs no block of its own.
 
-    |unfixable|
-
     **Violation**
 
     .. code-block:: systemverilog

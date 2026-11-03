@@ -12,8 +12,6 @@ class rule_002(TreeRule, structure.Rule):
     This rule checks that the labels of generate blocks match **pattern**, a regular expression, by default
     (g_|gen_).*, as Verible's generate-label-prefix rule does.
 
-    |unfixable|
-
     **Violation**
 
     .. code-block:: systemverilog
