@@ -1,0 +1,143 @@
+# DO-254 coding standards plus further good practice.
+#
+# Includes every check of the do254 rule set, which keep their DO254- labels, and adds checks from
+# general VHDL good practice: the synthesizable subset, numeric types, state machines, traceability
+# and the HDLbits VHDL coding guidelines (https://www.hdlbits.com/guides/). Where those guidelines
+# conflict with DO-254, DO-254 wins: for example every register needs a reset (DO254-SS14), not only
+# control registers.
+#
+# Checks without rules record their status, as in do254.yaml.
+
+name: DO-254 plus
+prefix: DO254PLUS
+version: "1"
+title: DO-254 coding standards with further good practice
+source: do254 rule set, IEEE 1076.6 synthesizable subset, HDLbits VHDL coding guidelines
+extends: do254
+
+checks:
+
+  # Synthesis and simulation agree
+
+  SIM:
+    title: Avoid simulation-only constructs in synthesizable code
+    severity: Warning
+    rules: [lint_014]
+  PRAGMA:
+    title: Justify code hidden from synthesis or coverage
+    severity: Note
+    rules: [lint_015]
+  PROCALL:
+    title: Use process (all) for combinational processes
+    severity: Note
+    rules: [lint_025]
+  DEFAULT:
+    title: Give signals default values at the start of combinational processes
+    severity: Note
+    rules: [lint_024]
+
+  # Types and arithmetic
+
+  PKG:
+    title: Use numeric_std, not the non-standard arithmetic packages
+    severity: Error
+    rules: [use_clause_001]
+    configuration:
+      use_clause_001: {names: [std_logic_arith, std_logic_unsigned, std_logic_signed, std_logic_misc]}
+  INT:
+    title: Give integer signals and ports a range
+    severity: Warning
+    rules: [lint_016]
+  SIGNED:
+    title: Convert explicitly between signed, unsigned and std_logic_vector
+    severity: Warning
+    status: design
+
+  # Clocks, resets and registers
+
+  CLK:
+    title: Use rising_edge or falling_edge, and one clock edge per process
+    severity: Warning
+    rules: [lint_020]
+  VAR:
+    title: Avoid variables that hold state in clocked processes
+    severity: Warning
+    rules: [lint_022]
+  REGOUT:
+    title: Register module outputs
+    severity: Note
+    status: design
+  ASYNCREG:
+    title: Mark synchronizer flip-flops with the vendor attribute, such as ASYNC_REG
+    severity: Warning
+    status: design
+  CDCBUS:
+    title: Cross multi-bit values with a handshake, Gray code or asynchronous FIFO
+    severity: Error
+    status: design
+
+  # State machines
+
+  FSMSAFE:
+    title: Recover from illegal states, and keep the recovery logic in synthesis
+    severity: Error
+    rules: [lint_017]
+  FSMDOC:
+    title: Document states and transitions in a diagram
+    severity: Note
+    status: manual
+
+  # Structure and hierarchy
+
+  PORT:
+    title: Avoid buffer ports, and inout ports below the top level
+    severity: Warning
+    rules: [lint_019]
+  NAMED:
+    title: Use named association in port and generic maps
+    severity: Warning
+    rules: [port_map_008, generic_map_008]
+  ENTITY:
+    title: Instantiate entities directly
+    severity: Note
+    rules: [lint_026]
+  FILE:
+    title: One entity per file, named after the entity
+    severity: Note
+    rules: [lint_021]
+  GENERIC:
+    title: Check generic values with assertions
+    severity: Note
+    rules: [lint_023]
+  IFACE:
+    title: Document the interface of each module, including clock, reset, protocol and latency
+    severity: Note
+    status: manual
+
+  # Readability and traceability
+
+  REQ:
+    title: Tag entities and processes with the requirements they implement
+    severity: Note
+    rules: [lint_018]
+  DEAD:
+    title: Remove commented-out code
+    severity: Note
+    rules: [comment_013]
+  NAMES:
+    title: Follow the naming conventions
+    severity: Note
+    rules: [instantiation_601, type_600, constant_004, generic_007]
+    configuration:
+      instantiation_601: {prefixes: [u_]}
+      type_600: {suffixes: [_t]}
+      constant_004: {case: upper}
+      generic_007: {case: upper}
+  LINE:
+    title: Keep lines short enough to review
+    severity: Note
+    rules: [length_001]
+  CONSTRAINT:
+    title: Justify every timing constraint exception
+    severity: Note
+    status: manual

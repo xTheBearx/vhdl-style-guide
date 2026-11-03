@@ -66,6 +66,46 @@ dExpected = {
     13: (13, [(5, "Remove the initial value of port q"), (12, "Remove the initial value of signal count"), (13, "Remove the initial value of signal a, b")]),
 }
 
+# Rules of the do254_plus rule set: rule number: [(line, message), ...], each run on its own test input
+dPlusExpected = {
+    14: [
+        (4, "Replace the real type with a fixed point or integer type; synthesis does not support it"),
+        (6, "Remove the shared variable; synthesis does not support it"),
+        (7, "Remove the access type; synthesis does not support it"),
+        (8, "Remove the file declaration; synthesis does not support it"),
+        (12, "Remove the after delay; synthesis does not support it"),
+        (13, "Remove the transport delay; synthesis does not support it"),
+        (13, "Remove the after delay; synthesis does not support it"),
+        (17, "Remove the wait statement; synthesis does not support it"),
+    ],
+    15: [(6, "Code from here is hidden from synthesis; justify the region"), (14, "Code from here is hidden from coverage; justify the region")],
+    16: [
+        (4, "Give the natural a range, such as range 0 to 15"),
+        (12, "Give the natural a range, such as range 0 to 15"),
+        (14, "Give the positive a range, such as range 0 to 15"),
+    ],
+    17: [
+        (20, "Assign a defined state in the when others choice of the state machine on state"),
+        (17, "Give state one of the attributes fsm_safe_state so synthesis keeps the recovery logic"),
+    ],
+    18: [(7, "Add a requirement tag matching \\bREQ\\s*:\\s*\\S+ to the entity"), (20, "Add a requirement tag matching \\bREQ\\s*:\\s*\\S+ to the process")],
+    19: [(4, "Replace the buffer port with an out port and an internal signal"), (5, "Use inout ports only on the top level, for device pins")],
+    20: [
+        (8, "Use rising_edge(clk) or falling_edge(clk) instead of clk'event"),
+        (13, "The process uses more than one clock edge (rising edge of clk1, rising edge of clk2); use one process for each"),
+    ],
+    21: [(5, "Move entity ram to a file of its own; this file already declares fifo"), (2, "Name the file after entity fifo")],
+    22: [(11, "Variable count is read before it is written, so it holds its value from the previous clock edge like a register")],
+    23: [(3, "Check the generics of entity top with an assertion")],
+    24: [(11, "Give state_next a default value at the start of the process")],
+    25: [(6, "Use process (all) for the combinational process")],
+    26: [(18, "Instantiate fifo with entity work.fifo instead of a component")],
+    27: [(18, "Declare the states of fsm_state with an enumerated type instead of std_logic_vector")],
+}
+
+# Options set for a rule before it runs
+dOptions = {17: {"attributes": ["fsm_safe_state"]}}
+
 
 def read(iInput):
     lFile, eError = vhdlFile.utils.read_vhdlfile(os.path.join(sTestDir, f"rule_{iInput:03d}_test_input.vhd"))
@@ -80,8 +120,25 @@ class test_lint_rules(unittest.TestCase):
                 oRule.analyze(read(iInput))
                 self.assertEqual(lExpected, [(o.get_line_number(), o.get_solution()) for o in oRule.violations])
 
+    def test_plus_violations(self):
+        for iRule, lExpected in dPlusExpected.items():
+            with self.subTest(rule=iRule):
+                oRule = getattr(lint, f"rule_{iRule:03d}")()
+                for sOption, oValue in dOptions.get(iRule, {}).items():
+                    setattr(oRule, sOption, oValue)
+                oFile = read(iRule)
+                # rule_021 compares the entity with the file name
+                oFile.filename = os.path.join(sTestDir, f"rule_{iRule:03d}_test_input.vhd")
+                oRule.analyze(oFile)
+                self.assertEqual(lExpected, [(o.get_line_number(), o.get_solution()) for o in oRule.violations])
+
+    def test_rule_017_without_attributes_option(self):
+        oRule = lint.rule_017()
+        oRule.analyze(read(17))
+        self.assertEqual([20], [o.get_line_number() for o in oRule.violations])
+
     def test_rule_attributes(self):
-        for iRule in dExpected:
+        for iRule in list(dExpected) + list(dPlusExpected):
             with self.subTest(rule=iRule):
                 oRule = getattr(lint, f"rule_{iRule:03d}")()
                 self.assertEqual("lint", oRule.name)

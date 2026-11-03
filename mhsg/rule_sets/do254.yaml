@@ -37,7 +37,7 @@ checks:
   CP5:
     title: Ensure consistent FSM state encoding style
     severity: Error
-    status: planned
+    rules: [lint_027]
   CP6:
     title: Ensure safe FSM transitions
     severity: Error

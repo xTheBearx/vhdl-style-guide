@@ -493,3 +493,415 @@ Initial values of input ports are defaults for unconnected inputs and are not re
 .. code-block:: vhdl
 
    signal count : unsigned(3 downto 0);
+
+lint_014
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_simulation_only_construct`
+
+This rule checks for constructs that only simulation supports, in code meant for synthesis.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254_plus rule set.
+
+Wait statements, after delays, transport delays, shared variables, files, access types and signals or variables of type
+real are ignored or rejected by synthesis, so simulation and hardware can behave differently.
+Constants of type real are allowed, since they are evaluated at elaboration.
+Run lint mode on synthesizable code only, or disable this rule for testbenches.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   q <= d after 1 ns;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   q <= d;
+
+lint_015
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_hidden_region`
+
+This rule checks for regions of code hidden from synthesis or from coverage by pragmas.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254_plus rule set.
+
+Code between :code:`-- synthesis translate_off` and :code:`translate_on` is simulated but not synthesized,
+and code between :code:`-- coverage off` and :code:`coverage on` is not counted in coverage.
+Each such region should be justified, for example with a comment on the same line as the pragma.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   -- synthesis translate_off
+   assert width > 0 report "width must be positive";
+   -- synthesis translate_on
+
+lint_016
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_integer_without_range`
+
+This rule checks that integer signals and ports have a range.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254_plus rule set.
+
+An integer, natural or positive signal without a range synthesizes to 32 bits and hides its real width.
+Constants, generics and variables are not checked.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   signal count : natural;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   signal count : natural range 0 to 15;
+
+lint_017
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_state_machine_recovery`
+
+This rule checks that a state machine recovers from illegal states.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254_plus rule set.
+
+A state machine is a case statement on a signal of an enumerated type declared in the file.
+Its :code:`when others` choice must assign a state, so an illegal state caused by a single event upset leads back to a defined state.
+Synthesis tools remove that recovery logic unless told to keep it, so the :code:`attributes` option can list attributes,
+such as :code:`fsm_safe_state`, of which the state signal must have at least one.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   case state is
+     when IDLE => state <= START;
+     when START => state <= IDLE;
+     when others => null;
+   end case;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   case state is
+     when IDLE => state <= START;
+     when START => state <= IDLE;
+     when others => state <= IDLE;
+   end case;
+
+lint_018
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_requirement_tag`
+
+This rule checks that entities and processes carry a requirement tag, for traceability to the hardware requirements.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254_plus rule set.
+
+One of the comment lines directly above the entity or process, or the first comment inside it, must match the
+:code:`pattern` option, a regular expression. The default accepts tags such as :code:`-- REQ: HWR-123`.
+Set the pattern to the tag format of your project.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   -- Output register
+   proc_out : process (clk) is
+
+**Fix**
+
+.. code-block:: vhdl
+
+   -- Output register
+   -- REQ: HWR-123
+   proc_out : process (clk) is
+
+lint_019
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_buffer_or_inout_port`
+
+This rule checks for buffer and inout ports.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254_plus rule set.
+
+A buffer port can be replaced by an out port and an internal signal, which every tool handles the same way.
+An inout port implies a tri-state driver and belongs only on the top level, for device pins.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   port (
+     count : buffer unsigned(3 downto 0)
+   );
+
+**Fix**
+
+.. code-block:: vhdl
+
+   port (
+     count : out unsigned(3 downto 0)
+   );
+
+lint_020
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_clock_edge_style`
+
+This rule checks how processes use clock edges.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254_plus rule set.
+
+A clock edge should be written with :code:`rising_edge` or :code:`falling_edge`, which ignore transitions from metavalues,
+rather than with :code:`clk'event`. A process should use one edge of one clock; registers on other clocks or edges belong in a process of their own.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   if clk'event and clk = '1' then
+
+**Fix**
+
+.. code-block:: vhdl
+
+   if rising_edge(clk) then
+
+lint_021
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_one_entity_per_file`
+
+This rule checks that a file holds one entity, named like the file.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254_plus rule set.
+
+One entity and its architectures per file, in a file named after the entity, makes a design easy to navigate and review.
+Files without an entity, such as packages, are not checked.
+
+**Violation**
+
+A file :code:`top.vhd` that declares the entities :code:`fifo` and :code:`ram`.
+
+**Fix**
+
+The entities in files :code:`fifo.vhd` and :code:`ram.vhd`.
+
+lint_022
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_variable_holds_state`
+
+This rule checks for variables in a clocked process that are read before they are written.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254_plus rule set.
+
+Such a variable keeps its value from the previous clock edge, so synthesis makes it a register.
+That register is easy to overlook, because it has no signal.
+Write the variable before reading it, or make the register a signal.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   process (clk) is
+     variable count : natural range 0 to 15;
+   begin
+     if rising_edge(clk) then
+       count := count + 1;
+     end if;
+   end process;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   process (clk) is
+   begin
+     if rising_edge(clk) then
+       count_r <= count_r + 1;
+     end if;
+   end process;
+
+lint_023
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_generic_assertion`
+
+This rule checks that an entity with generics checks their values with an assertion.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254_plus rule set.
+
+A generic value outside the range a design supports, such as a width of zero, otherwise goes unnoticed until the hardware fails.
+The rule accepts any assert statement in the file, in the entity or in an architecture.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   entity fifo is
+     generic (
+       DEPTH : positive
+     );
+
+**Fix**
+
+.. code-block:: vhdl
+
+   assert DEPTH mod 2 = 0
+     report "DEPTH must be a power of two"
+     severity failure;
+
+lint_024
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_default_assignment`
+
+This rule checks that a combinational process gives every signal it assigns a default value at its start.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254_plus rule set.
+
+A default assignment before the if and case statements makes sure every path assigns the signal, so no latch can be inferred,
+and shows the value of the signal when no branch changes it.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   process (all) is
+   begin
+     case state is
+       when IDLE => state_next <= START;
+       when others => state_next <= IDLE;
+     end case;
+   end process;
+
+**Fix**
+
+.. code-block:: vhdl
+
+   process (all) is
+   begin
+     state_next <= state;
+     case state is
+       when IDLE => state_next <= START;
+       when others => state_next <= IDLE;
+     end case;
+   end process;
+
+lint_025
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_process_all`
+
+This rule checks that combinational processes use :code:`process (all)`.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254_plus rule set.
+
+The VHDL-2008 sensitivity list :code:`all` is always complete, so simulation and synthesis cannot disagree about it.
+Code for tools without VHDL-2008 support should disable this rule.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   process (a, b) is
+
+**Fix**
+
+.. code-block:: vhdl
+
+   process (all) is
+
+lint_026
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_direct_entity_instantiation`
+
+This rule checks that entities are instantiated directly, with :code:`entity work.name`, instead of through a component.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254_plus rule set.
+
+Direct instantiation needs no component declaration, which could differ from the entity.
+Components whose entity is not in the file or the run, such as vendor primitives, are not reported.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   u_fifo : fifo
+     port map (
+
+**Fix**
+
+.. code-block:: vhdl
+
+   u_fifo : entity work.fifo
+     port map (
+
+lint_027
+########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`lint_enumerated_state_type`
+
+This rule checks that state machines declare their states with an enumerated type.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and implements DO-254 check CP5.
+
+A state machine is a case statement on a signal whose name contains the word state, fsm or st.
+Single-bit signals, such as a toggle, are not checked.
+With an enumerated type, tools show state names and the synthesis tool chooses the encoding, which can then be changed without editing the code.
+Projects that require hard-coded encodings should disable this rule.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   signal state : std_logic_vector(1 downto 0);
+
+**Fix**
+
+.. code-block:: vhdl
+
+   type state_t is (IDLE, START, STOP);
+   signal state : state_t;
