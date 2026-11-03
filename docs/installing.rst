@@ -1,7 +1,7 @@
 Installation
 ============
 
-There are two methods to install MHSG.
+MHSG needs Python 3.12 or newer. There are two methods to install MHSG.
 
 PIP
 ---

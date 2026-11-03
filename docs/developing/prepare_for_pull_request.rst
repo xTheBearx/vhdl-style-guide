@@ -14,7 +14,7 @@ The continuous integration also runs the tests against every supported version o
 
 .. code-block:: bash
 
-   $ uv run --python 3.8 pytest
+   $ uv run --python 3.13 pytest
 
 When this passes create a pull request.
 
