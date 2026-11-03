@@ -2991,6 +2991,15 @@
       "description": "Attribute names, such as fsm_safe_state, of which a state signal must have one so synthesis keeps the recovery logic. Empty means not checked.",
       "item_type": "string"
     },
+    "begin_style": {
+      "type": "enum",
+      "label": "Indent of begin",
+      "description": "Where a begin on its own line under a control statement goes, aligned with the statement or one level in, with its items one level further.",
+      "values": [
+        "aligned",
+        "indented"
+      ]
+    },
     "blank_line_ends_group": {
       "type": "enum",
       "label": "Blank line ends group",
@@ -3402,6 +3411,11 @@
       "label": "Length",
       "description": "Second, usually larger, line length limit in characters with its own severity.",
       "minimum": 1
+    },
+    "list_indent": {
+      "type": "integer",
+      "label": "Levels of lists",
+      "description": "The number of levels the ports and parameters of a declaration and the connections of an instance are indented."
     },
     "localparam_pattern": {
       "type": "string",
@@ -62095,6 +62109,16 @@
           "name": "user_error_message",
           "default": "",
           "definition": "user_error_message"
+        },
+        {
+          "name": "list_indent",
+          "default": 1,
+          "definition": "list_indent"
+        },
+        {
+          "name": "begin_style",
+          "default": "aligned",
+          "definition": "begin_style"
         }
       ]
     },

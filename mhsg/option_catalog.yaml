@@ -538,6 +538,15 @@ options:
     item_type: string
     label: Verilator warnings
     description: The warnings of Verilator to report, by Verilator's names, such as BLKSEQ and COMBDLY.
+  begin_style:
+    type: enum
+    values: [aligned, indented]
+    label: Indent of begin
+    description: Where a begin on its own line under a control statement goes, aligned with the statement or one level in, with its items one level further.
+  list_indent:
+    type: integer
+    label: Levels of lists
+    description: The number of levels the ports and parameters of a declaration and the connections of an instance are indented.
   allowed_numbers:
     type: list
     item_type: string
