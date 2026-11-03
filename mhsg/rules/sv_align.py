@@ -43,7 +43,7 @@ class Rule(TreeRule, alignment.Rule):
         raise NotImplementedError
 
     def problems(self, oFile):
-        dPlaces, dBefore, setLineStarts = places(oFile.lAllObjects)
+        dPlaces, dBefore, setLineStarts, setAfterTab = places(oFile.lAllObjects)
         setBlankLines = blank_lines(oFile.lAllObjects)
         bBlankEnds = utils.convert_yes_no_option_to_boolean(self.blank_line_ends_group)
         for lGroup in self.alignment_groups(oFile):
@@ -53,7 +53,8 @@ class Rule(TreeRule, alignment.Rule):
                 oTarget = oFile.token_at(oSyntaxTarget) if oSyntaxTarget is not None else None
                 oLeft = dBefore.get(id(oTarget)) if oTarget is not None else None
                 oStart = oFile.token_at(oItem.getFirstToken()) if oItem is not None else None
-                if oLeft is None or id(oTarget) not in dPlaces or oStart is None or id(oStart) not in setLineStarts:
+                # A tab before the token makes its column unknown; the tab rules replace tabs first
+                if oLeft is None or id(oTarget) not in dPlaces or oStart is None or id(oStart) not in setLineStarts or id(oTarget) in setAfterTab:
                     lRows.append(None)
                     continue
                 (iLeftLine, iLeftColumn), (iLine, iColumn) = dPlaces[id(oLeft)], dPlaces[id(oTarget)]
@@ -109,11 +110,14 @@ class Rule(TreeRule, alignment.Rule):
 def places(lTokens):
     """
     Returns ({id of token: (line, column)}, {id of token: the token before it on its line}, ids of the tokens that start
-    a line) for the tokens of a file, columns from 0; whitespace and comments are not tokens before another.
+    a line, ids of the tokens after a tab on their line) for the tokens of a file, columns from 0; whitespace and
+    comments are not tokens before another.
     """
     dReturn = {}
     dBefore = {}
     setLineStarts = set()
+    setAfterTab = set()
+    bTab = False
     iLine, iColumn = 1, 0
     oPrevious = None
     bLineStart = True
@@ -123,8 +127,12 @@ def places(lTokens):
             iColumn = 0
             oPrevious = None
             bLineStart = True
+            bTab = False
             continue
         dReturn[id(oToken)] = (iLine, iColumn)
+        if bTab:
+            setAfterTab.add(id(oToken))
+        bTab = bTab or "\t" in oToken.get_value()
         iColumn += len(oToken.get_value())
         if isinstance(oToken, (parser.whitespace, parser.blank_line)):
             continue
@@ -134,7 +142,7 @@ def places(lTokens):
             setLineStarts.add(id(oToken))
         bLineStart = False
         oPrevious = None if isinstance(oToken, parser.comment) else oToken
-    return dReturn, dBefore, setLineStarts
+    return dReturn, dBefore, setLineStarts, setAfterTab
 
 
 def blank_lines(lTokens):
