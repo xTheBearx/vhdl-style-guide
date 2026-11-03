@@ -8,4 +8,20 @@ architecture rtl of fifo is
 
 begin
 
+  proc_test : process is
+
+    variable data_inputs : integer_array_vec_t(input_valid'range) := (
+      others => null_integer_array
+    );
+    variable data_result : integer_array_t := new_1d(
+      length=>num_words,
+      bit_width=>8
+    );
+
+  begin
+
+    wait;
+
+  end process proc_test;
+
 end architecture rtl;
