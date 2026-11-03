@@ -1,0 +1,918 @@
+# Designs of the real world projects used by scripts/real_world_design_check.py.
+#
+# Each entry is a design section for mhsg --design, with paths relative to the project root, the
+# environment variables it needs (paths relative to the project root), and the findings known for it.
+# A finding listed under known does not fail the run; each should be explained by a comment.
+# The projects and their commits are listed in scripts/real_world_projects.yaml.
+
+designs:
+- name: neorv32_top
+  project: neorv32
+  environment:
+    NEORV32_HOME: .
+  design:
+    top: neorv32_top
+    libraries:
+    - name: neorv32
+      files_from: rtl/file_list_core.f
+  known: []
+- name: neorv32_wrapper
+  project: neorv32
+  environment:
+    NEORV32_HOME: .
+  design:
+    top: neorv32_verilog_wrapper
+    libraries:
+    - name: neorv32
+      files_from: rtl/file_list_core.f
+      files:
+      - rtl/verilog/neorv32_verilog_wrapper.vhd
+  known:
+  # Read only by the serial shifter, which is not generated with the fast shifter of this configuration
+  - rtl/core/neorv32_cpu_alu_bitmanip.vhd(234)design_006 -- Register shifter_start in neorv32_cpu_alu_bitmanip_c0357a32ed1f6a03be92dd094476f7f1a2e214ec is never used
+  # Real: loops in functions unrolled into chains of about 90 multiplexers in one clock cycle
+  - rtl/core/neorv32_cpu_alu_bitmanip.vhd(593)design_007 -- Path of 97 logic levels to register res_o in neorv32_cpu_alu_bitmanip_c0357a32ed1f6a03be92dd094476f7f1a2e214ec, more than 48
+  # Core select for the dual-core configuration; DUAL_CORE_EN is false here, so it is constant and its reads are removed
+  - rtl/core/neorv32_tracebuf.vhd(101)design_006 -- Register ctrl_hsel in neorv32_tracebuf_32_5ba93c9db0cff93f52b521d7420e43f6eda2784f is never used
+  # Same register: assigned data and DUAL_CORE_EN, which is false here
+  - 'rtl/core/neorv32_tracebuf.vhd(113)design_005 -- Register ctrl_hsel in neorv32_tracebuf_32_5ba93c9db0cff93f52b521d7420e43f6eda2784f never changes: it is always 0'
+- name: neorv32_latch_regfile
+  project: neorv32
+  environment:
+    NEORV32_HOME: .
+  design:
+    top: neorv32_top
+    libraries:
+    - name: neorv32
+      files_from: rtl/file_list_core.f
+    generics:
+      CPU_RF_ARCH_SEL: 3
+  known:
+  # Intended: CPU_RF_ARCH_SEL 3 selects the register file built from latches
+  - rtl/core/neorv32_cpu_regfile.vhd(215)design_002 -- Synthesis infers a latch for regfile in neorv32_cpu_regfile_5_3 (31 latches)
+- name: olo_axi_lite_slave
+  project: open-logic
+  design:
+    top: olo_axi_lite_slave
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: &id001
+      - 3rdParty/*
+      - src/fix/*
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+  known: []
+- name: olo_axi_master_full
+  project: open-logic
+  design:
+    top: olo_axi_master_full
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+  known: []
+- name: olo_axi_master_simple
+  project: open-logic
+  design:
+    top: olo_axi_master_simple
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+  known: []
+- name: olo_axi_pl_stage
+  project: open-logic
+  design:
+    top: olo_axi_pl_stage
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+  known: []
+- name: olo_base_arb_prio
+  project: open-logic
+  design:
+    top: olo_base_arb_prio
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Width_g: 8
+  known: []
+- name: olo_base_arb_rr
+  project: open-logic
+  design:
+    top: olo_base_arb_rr
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Width_g: 8
+  known: []
+- name: olo_base_arb_wrr
+  project: open-logic
+  design:
+    top: olo_base_arb_wrr
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      GrantWidth_g: 4
+      WeightWidth_g: 4
+  known: []
+- name: olo_base_cam
+  project: open-logic
+  design:
+    top: olo_base_cam
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Addresses_g: 16
+      ContentWidth_g: 8
+  known: []
+- name: olo_base_cc_bits
+  project: open-logic
+  design:
+    top: olo_base_cc_bits
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+  known: []
+- name: olo_base_cc_handshake
+  project: open-logic
+  design:
+    top: olo_base_cc_handshake
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Width_g: 16
+  known: []
+- name: olo_base_cc_n2xn
+  project: open-logic
+  design:
+    top: olo_base_cc_n2xn
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+  known: []
+- name: olo_base_cc_pulse
+  project: open-logic
+  design:
+    top: olo_base_cc_pulse
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+  known: []
+- name: olo_base_cc_reset
+  project: open-logic
+  design:
+    top: olo_base_cc_reset
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+  known: []
+- name: olo_base_cc_simple
+  project: open-logic
+  design:
+    top: olo_base_cc_simple
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+  known: []
+- name: olo_base_cc_status
+  project: open-logic
+  design:
+    top: olo_base_cc_status
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Width_g: 16
+  known:
+  # Real: RstOutI_Sync is assigned in the reset branch only and never read
+  - src/base/vhdl/olo_base_cc_status.vhd(83)design_006 -- Register rstouti_sync in olo_base_cc_status is never used
+- name: olo_base_cc_xn2n
+  project: open-logic
+  design:
+    top: olo_base_cc_xn2n
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Width_g: 16
+  known: []
+- name: olo_base_crc
+  project: open-logic
+  design:
+    top: olo_base_crc
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      DataWidth_g: 8
+      Polynomial_g: '00000111'
+  known: []
+- name: olo_base_crc_append
+  project: open-logic
+  design:
+    top: olo_base_crc_append
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      DataWidth_g: 8
+      CrcPolynomial_g: '00000111'
+  known: []
+- name: olo_base_crc_check
+  project: open-logic
+  design:
+    top: olo_base_crc_check
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      DataWidth_g: 8
+      CrcPolynomial_g: '00000111'
+  known: []
+- name: olo_base_decode_firstbit
+  project: open-logic
+  design:
+    top: olo_base_decode_firstbit
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      InWidth_g: 32
+  known: []
+- name: olo_base_delay
+  project: open-logic
+  design:
+    top: olo_base_delay
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Width_g: 8
+      Delay_g: 4
+  known: []
+- name: olo_base_delay_cfg
+  project: open-logic
+  design:
+    top: olo_base_delay_cfg
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Width_g: 8
+  known: []
+- name: olo_base_dyn_sft
+  project: open-logic
+  design:
+    top: olo_base_dyn_sft
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Direction_g: LEFT
+      MaxShift_g: 16
+      Width_g: 32
+  known: []
+- name: olo_base_fifo_async
+  project: open-logic
+  design:
+    top: olo_base_fifo_async
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Width_g: 16
+      Depth_g: 32
+  known: []
+- name: olo_base_fifo_packet
+  project: open-logic
+  design:
+    top: olo_base_fifo_packet
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Width_g: 16
+      Depth_g: 64
+  known: []
+- name: olo_base_fifo_sync
+  project: open-logic
+  design:
+    top: olo_base_fifo_sync
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Width_g: 16
+      Depth_g: 32
+  known: []
+- name: olo_base_flowctrl_handler
+  project: open-logic
+  design:
+    top: olo_base_flowctrl_handler
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      InWidth_g: 16
+      OutWidth_g: 16
+      SamplesToAbsorb_g: 4
+  known: []
+- name: olo_base_latency_comp
+  project: open-logic
+  design:
+    top: olo_base_latency_comp
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Width_g: 8
+  known: []
+- name: olo_base_pl_stage
+  project: open-logic
+  design:
+    top: olo_base_pl_stage
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Width_g: 16
+  known: []
+- name: olo_base_prbs
+  project: open-logic
+  design:
+    top: olo_base_prbs
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Polynomial_g: '1100000'
+      Seed_g: '0000001'
+  known: []
+- name: olo_base_ram_sdp
+  project: open-logic
+  design:
+    top: olo_base_ram_sdp
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Depth_g: 256
+      Width_g: 16
+  known: []
+- name: olo_base_ram_sp
+  project: open-logic
+  design:
+    top: olo_base_ram_sp
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Depth_g: 256
+      Width_g: 16
+  known: []
+- name: olo_base_ram_tdp
+  project: open-logic
+  design:
+    top: olo_base_ram_tdp
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Depth_g: 256
+      Width_g: 16
+  known: []
+- name: olo_base_rate_limit
+  project: open-logic
+  design:
+    top: olo_base_rate_limit
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Width_g: 8
+      Period_g: 4
+  known: []
+- name: olo_base_reset_gen
+  project: open-logic
+  design:
+    top: olo_base_reset_gen
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+  known: []
+- name: olo_base_sample_hold
+  project: open-logic
+  design:
+    top: olo_base_sample_hold
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Width_g: 8
+      ResetValue_g: '00000000'
+  known:
+  # With the default ResetValid_g true, the reset value and the only assigned value are both 1
+  - 'src/base/vhdl/olo_base_sample_hold.vhd(84)design_005 -- Register Out_Valid in olo_base_sample_hold never changes: it is always 1'
+- name: olo_base_strobe_div
+  project: open-logic
+  design:
+    top: olo_base_strobe_div
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      MaxRatio_g: 16
+  known: []
+- name: olo_base_strobe_gen
+  project: open-logic
+  design:
+    top: olo_base_strobe_gen
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      FreqClkHz_g: 100000000.0
+      FreqStrobeHz_g: 1000000.0
+  known: []
+- name: olo_base_tdm_mux
+  project: open-logic
+  design:
+    top: olo_base_tdm_mux
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Channels_g: 4
+      Width_g: 8
+  known: []
+- name: olo_base_wconv_n2m
+  project: open-logic
+  design:
+    top: olo_base_wconv_n2m
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+  known: []
+- name: olo_base_wconv_n2xn
+  project: open-logic
+  design:
+    top: olo_base_wconv_n2xn
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      InWidth_g: 8
+      OutWidth_g: 32
+  known: []
+- name: olo_base_wconv_xn2n
+  project: open-logic
+  design:
+    top: olo_base_wconv_xn2n
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      InWidth_g: 32
+      OutWidth_g: 8
+  known: []
+- name: olo_ft_ecc_decode
+  project: open-logic
+  design:
+    top: olo_ft_ecc_decode
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Width_g: 32
+  known: []
+- name: olo_ft_ecc_encode
+  project: open-logic
+  design:
+    top: olo_ft_ecc_encode
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Width_g: 32
+  known: []
+- name: olo_ft_fifo_packet
+  project: open-logic
+  design:
+    top: olo_ft_fifo_packet
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Width_g: 16
+      Depth_g: 64
+  known: []
+- name: olo_ft_fifo_sync
+  project: open-logic
+  design:
+    top: olo_ft_fifo_sync
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Width_g: 16
+      Depth_g: 32
+  known: []
+- name: olo_ft_ram_sdp
+  project: open-logic
+  design:
+    top: olo_ft_ram_sdp
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Depth_g: 256
+      Width_g: 16
+  known: []
+- name: olo_ft_ram_sdp_scrub
+  project: open-logic
+  design:
+    top: olo_ft_ram_sdp_scrub
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Depth_g: 256
+      Width_g: 16
+      ScrubClkHz_g: 100000000.0
+  known: []
+- name: olo_ft_ram_sp
+  project: open-logic
+  design:
+    top: olo_ft_ram_sp
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Depth_g: 256
+      Width_g: 16
+  known: []
+- name: olo_ft_ram_sp_scrub
+  project: open-logic
+  design:
+    top: olo_ft_ram_sp_scrub
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      Depth_g: 256
+      Width_g: 16
+      ScrubClkHz_g: 100000000.0
+  known: []
+- name: olo_intf_clk_meas
+  project: open-logic
+  design:
+    top: olo_intf_clk_meas
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      ClkFrequency_g: 100000000.0
+  known: []
+- name: olo_intf_debounce
+  project: open-logic
+  design:
+    top: olo_intf_debounce
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      ClkFrequency_g: 100000000.0
+  known: []
+- name: olo_intf_i2c_master
+  project: open-logic
+  design:
+    top: olo_intf_i2c_master
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      ClkFrequency_g: 100000000.0
+  known: []
+- name: olo_intf_spi_master
+  project: open-logic
+  design:
+    top: olo_intf_spi_master
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      ClkFreq_g: 100000000.0
+  known: []
+- name: olo_intf_spi_slave
+  project: open-logic
+  design:
+    top: olo_intf_spi_slave
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+  known: []
+- name: olo_intf_sync
+  project: open-logic
+  design:
+    top: olo_intf_sync
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+  known: []
+- name: olo_intf_uart
+  project: open-logic
+  design:
+    top: olo_intf_uart
+    libraries:
+    - name: olo
+      files_from: compile_order.txt
+      exclude: *id001
+    ghdl_options:
+    - -frelaxed-rules
+    - -Wno-hide
+    - -Wno-shared
+    generics:
+      ClkFreq_g: 100000000.0
+  known: []

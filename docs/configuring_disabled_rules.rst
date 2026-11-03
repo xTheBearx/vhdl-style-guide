@@ -54,6 +54,11 @@ Rules Disabled by Default
 * `context_ref_009 <context_ref_rules.html#context-ref-009>`_
 * `design_001 <design_rules.html#design-001>`_
 * `design_002 <design_rules.html#design-002>`_
+* `design_003 <design_rules.html#design-003>`_
+* `design_004 <design_rules.html#design-004>`_
+* `design_005 <design_rules.html#design-005>`_
+* `design_006 <design_rules.html#design-006>`_
+* `design_007 <design_rules.html#design-007>`_
 * `expression_001 <expression_rules.html#expression-001>`_
 * `file_100 <file_rules.html#file-100>`_
 * `function_600 <function_rules.html#function-600>`_

@@ -287,6 +287,14 @@ def describe_settings():
             "default": {},
         },
         {
+            "path": ["design", "work_directory"],
+            "type": "string",
+            "nullable": True,
+            "label": "Design work directory",
+            "description": "Keeps the files of GHDL and Yosys in this directory. A temporary directory is used and removed when it is not set.",
+            "default": None,
+        },
+        {
             "path": ["design", "ghdl_options"],
             "type": "list",
             "item_type": "string",

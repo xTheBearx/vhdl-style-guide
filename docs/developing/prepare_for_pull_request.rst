@@ -21,3 +21,4 @@ When this passes create a pull request.
 .. NOTE:: `Issue 1157 <https://github.com/jeremiah-c-leary/vhdl-style-guide/issues/1157>`_ is still being resolved and should not gate any PR creation.
 
 If the change touches the parser, or a rule whose fix moves tokens between lines, also run the :ref:`real_world_check`.
+If it touches design analysis, also run its design analysis check.

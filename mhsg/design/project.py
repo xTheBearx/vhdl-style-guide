@@ -12,11 +12,13 @@ The description of a design, read from the design section of a configuration fil
             - src/*.vhd
         - name: vendor
           files_from: ip/files.f
+          exclude: ["*_tb.vhd"]
       generics:
         DEPTH: 16
       ghdl_options: [-frelaxed-rules]
 """
 
+import fnmatch
 import glob
 import os
 
@@ -41,6 +43,8 @@ class Design:
         self.libraries = []
         self.generics = {}
         self.ghdl_options = []
+        # Where GHDL and Yosys write their files; a temporary directory, removed after the run, if not given
+        self.work_directory = None
 
     def all_files(self):
         return [sFile for oLibrary in self.libraries for sFile in oLibrary.files]
@@ -63,12 +67,16 @@ def from_configuration(dConfiguration):
         if not isinstance(dLibrary, dict) or "name" not in dLibrary:
             raise exceptions.ConfigurationError("ERROR: each design library needs a name and a list of files")
         lPatterns = read_file_list(dLibrary["files_from"]) if dLibrary.get("files_from") else []
-        oDesign.libraries.append(Library(str(dLibrary["name"]), expand_files(lPatterns + list(dLibrary.get("files") or []))))
+        lExclude = [os.path.expandvars(str(s)) for s in dLibrary.get("exclude") or []]
+        lPatterns = [s for s in lPatterns + list(dLibrary.get("files") or []) if not excluded(s, lExclude)]
+        oDesign.libraries.append(Library(str(dLibrary["name"]), [s for s in expand_files(lPatterns) if not excluded(s, lExclude)]))
     if not oDesign.all_files():
         raise exceptions.ConfigurationError("ERROR: the design section lists no files that exist")
     oDesign.top_library = str(dDesign.get("top_library") or oDesign.libraries[-1].name)
     oDesign.generics = dict(dDesign.get("generics") or {})
     oDesign.ghdl_options = [str(s) for s in dDesign.get("ghdl_options") or []]
+    if dDesign.get("work_directory"):
+        oDesign.work_directory = os.path.expandvars(str(dDesign["work_directory"]))
     return oDesign
 
 
@@ -95,6 +103,12 @@ def read_file_list(sFileList):
     return lReturn
 
 
+def excluded(sFile, lExclude):
+    """Returns whether a file matches one of the exclude patterns, such as */test/* or *_tb.vhd."""
+    sFile = os.path.normpath(os.path.expandvars(str(sFile)))
+    return any(fnmatch.fnmatch(sFile, os.path.normpath(s)) or fnmatch.fnmatch(sFile, s) for s in lExclude)
+
+
 def expand_files(lPatterns):
     """
     Returns the files matching the patterns, in the order of the patterns, which is the compile order.
@@ -107,6 +121,7 @@ def expand_files(lPatterns):
         for sFile in lMatches:
             if not os.path.isfile(sFile):
                 raise exceptions.ConfigurationError(f"ERROR: design file {sFile} does not exist")
+            sFile = os.path.normpath(sFile)
             if sFile not in lReturn:
                 lReturn.append(sFile)
     return lReturn

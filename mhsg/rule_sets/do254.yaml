@@ -48,7 +48,7 @@ checks:
   CP7:
     title: Avoid mismatching ranges
     severity: Warning
-    status: design
+    rules: [design_001]
   CP8:
     title: Ensure complete sensitivity list
     severity: Warning
@@ -90,6 +90,7 @@ checks:
     title: Avoid implied logic
     severity: Warning
     status: planned
+    note: GHDL removes chains of inverters and buffers before the netlist, so delay chains need a per-file check.
   SS2:
     title: Ensure proper case statement specification
     severity: Error
@@ -97,7 +98,7 @@ checks:
   SS3:
     title: Avoid combinational feedback
     severity: Error
-    rules: [lint_008]
+    rules: [lint_008, design_003]
   SS4:
     title: Avoid latch inference
     severity: Warning
@@ -109,7 +110,7 @@ checks:
   SS6:
     title: Avoid multiple drivers
     severity: Error
-    rules: [lint_010]
+    rules: [lint_010, design_004]
   SS7:
     title: Avoid uninitialized VHDL deferred constants
     severity: Warning
@@ -153,15 +154,17 @@ checks:
   SS17:
     title: Avoid undriven and unused logic
     severity: Error
-    status: planned
+    rules: [design_006]
+    note: Unused combinational signals need a per-file check, planned.
   SS18:
     title: Ensure register controllability
     severity: Warning
-    status: design
+    rules: [design_005]
+    note: Registers stuck through the logic that drives them need formal analysis, planned.
   SS19:
     title: Avoid snake paths
     severity: Warning
-    status: design
+    rules: [design_007]
   SS20:
     title: Ensure nesting limits
     severity: Warning

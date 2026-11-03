@@ -1,7 +1,7 @@
 {
   "format": "mhsg-options",
   "format_version": 1,
-  "mhsg_version": "3.35.0.post394+git.a2cd7883.dirty",
+  "mhsg_version": "3.35.0.post400+git.5a7c0f31.dirty",
   "documentation_url": "https://github.com/xTheBearx/vhdl-style-guide/blob/master/docs/",
   "settings": [
     {
@@ -141,6 +141,17 @@
       "label": "Top generics",
       "description": "Values of the generics of the top entity, by name.",
       "default": {}
+    },
+    {
+      "path": [
+        "design",
+        "work_directory"
+      ],
+      "type": "string",
+      "nullable": true,
+      "label": "Design work directory",
+      "description": "Keeps the files of GHDL and Yosys in this directory. A temporary directory is used and removed when it is not set.",
+      "default": null
     },
     {
       "path": [
@@ -1848,7 +1859,12 @@
       "name": "design",
       "rules": [
         "design_001",
-        "design_002"
+        "design_002",
+        "design_003",
+        "design_004",
+        "design_005",
+        "design_006",
+        "design_007"
       ]
     },
     {
@@ -3203,6 +3219,12 @@
       "type": "integer",
       "label": "Max header column",
       "description": "Total length of the header line, including its indent.",
+      "minimum": 1
+    },
+    "maximum_depth": {
+      "type": "integer",
+      "label": "Maximum logic depth",
+      "description": "The most logic levels a combinational path may have, counting operators such as adders, comparisons and multiplexers.",
       "minimum": 1
     },
     "method": {
@@ -18646,6 +18668,246 @@
           "name": "user_error_message",
           "default": "",
           "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_003",
+      "alias": "design_combinational_loop",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports combinational loops in the synthesized design.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_004",
+      "alias": "design_multiple_drivers",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports signals with more than one driver in the synthesized design.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_005",
+      "alias": "design_constant_register",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports registers that never change in the synthesized design.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_006",
+      "alias": "design_unused_logic",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports registers that are never used, and signals that are read but never assigned, in the elaborated design.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_007",
+      "alias": "design_logic_depth",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports combinational paths with more logic levels than maximum_depth in the synthesized design.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 2,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "maximum_depth",
+          "default": 48,
+          "definition": "maximum_depth"
         }
       ]
     },

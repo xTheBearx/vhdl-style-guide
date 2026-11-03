@@ -16,6 +16,8 @@ import os
 import re
 import subprocess
 
+from mhsg.design import top
+
 # GHDL writes file:line:column:severity: text, or file:line:column:(assert severity): text for assertion reports
 reMessage = re.compile(
     r"^(?P<file>.+?):(?P<line>\d+):(?P<column>\d+):\s*(?:(?P<severity>error|warning|note):|\(assert (?P<assert>note|warning|error|failure)\):|\(report (?P<report>note|warning|error|failure)\):)?\s*(?P<text>.*)$",
@@ -43,16 +45,28 @@ class Result:
         self.netlist = None
         self.yosys_log = ""
         self.commands = []
+        # Patched copy of a file -> the original, whose name the findings use
+        self.file_map = {}
+
+    def unpatch(self, sText):
+        """Replaces the names of patched copies in the output of a tool with the names of the original files."""
+        for sCopy, sOriginal in self.file_map.items():
+            sText = sText.replace(sCopy, sOriginal)
+        return sText
 
 
 def ghdl_options(oDesign, sWorkDirectory):
     return [f"--std={oDesign.standard}", f"--workdir={sWorkDirectory}", f"-P{sWorkDirectory}"] + oDesign.ghdl_options
 
 
-def elaboration_options(oDesign, sWorkDirectory):
-    """Returns the options for elaborating the top entity; they come before the unit names, see top_units."""
+def elaboration_options(oDesign, sWorkDirectory, lPatched=()):
+    """
+    Returns the options for elaborating the top entity; they come before the unit names, see top_units.
+    Generics in lPatched are set in a copy of the top file instead, see top.patch_real_generics.
+    """
     lOptions = ghdl_options(oDesign, sWorkDirectory) + [f"--work={oDesign.top_library}", "--latches"]
-    lOptions += [f"-g{sName}={value_text(oValue)}" for sName, oValue in oDesign.generics.items()]
+    setPatched = {s.lower() for s in lPatched}
+    lOptions += [f"-g{sName}={value_text(oValue)}" for sName, oValue in oDesign.generics.items() if sName.lower() not in setPatched]
     return lOptions
 
 
@@ -70,25 +84,31 @@ def run(oDesign, oTools, sWorkDirectory):
     """Runs the steps in the work directory and returns a Result. Stops at the first step that fails."""
     oResult = Result()
     os.makedirs(sWorkDirectory, exist_ok=True)
+    oPatch = top.patch_real_generics(oDesign, sWorkDirectory)
+    lPatched = []
+    if oPatch is not None:
+        sOriginal, sCopy, lPatched = oPatch
+        oResult.file_map[sCopy] = sOriginal
     for oLibrary in oDesign.libraries:
         if not oLibrary.files:
             continue
-        lCommand = [oTools.ghdl, "-a"] + ghdl_options(oDesign, sWorkDirectory) + [f"--work={oLibrary.name}"] + oLibrary.files
+        lFiles = [{v: k for k, v in oResult.file_map.items()}.get(s, s) for s in oLibrary.files]
+        lCommand = [oTools.ghdl, "-a"] + ghdl_options(oDesign, sWorkDirectory) + [f"--work={oLibrary.name}"] + lFiles
         if not run_ghdl(oResult, oTools, lCommand, "analysis"):
             return oResult
 
     oResult.verilog_file = os.path.join(sWorkDirectory, "design.v")
-    lCommand = [oTools.ghdl, "synth"] + elaboration_options(oDesign, sWorkDirectory) + ["--out=verilog"] + top_units(oDesign)
+    lCommand = [oTools.ghdl, "synth"] + elaboration_options(oDesign, sWorkDirectory, lPatched) + ["--out=verilog"] + top_units(oDesign)
     if not run_ghdl(oResult, oTools, lCommand, "elaboration", oResult.verilog_file):
         return oResult
 
     sNetlist = os.path.join(sWorkDirectory, "design.json")
     sLog = os.path.join(sWorkDirectory, "yosys.log")
-    sScript = "ghdl " + " ".join(elaboration_options(oDesign, sWorkDirectory) + top_units(oDesign)) + f"; proc; check; write_json {sNetlist}"
+    sScript = "ghdl " + " ".join(elaboration_options(oDesign, sWorkDirectory, lPatched) + top_units(oDesign)) + f"; proc; check; write_json {sNetlist}"
     lCommand = [oTools.yosys, "-m", "ghdl", "-q", "-l", sLog, "-p", sScript]
     oResult.commands.append(lCommand)
     oProcess = subprocess.run(lCommand, capture_output=True, text=True, env=oTools.environment, check=False)
-    oResult.messages.extend(parse_messages(oProcess.stderr, "yosys"))
+    oResult.messages.extend(parse_messages(oResult.unpatch(oProcess.stderr), "yosys"))
     if os.path.isfile(sLog):
         with open(sLog, encoding="utf-8", errors="replace") as oFile:
             oResult.yosys_log = oFile.read()
@@ -104,10 +124,10 @@ def run_ghdl(oResult, oTools, lCommand, sStage, sOutput=None):
     """Runs a GHDL command, records its messages, and returns True if it succeeded."""
     oResult.commands.append(lCommand)
     oProcess = subprocess.run(lCommand, capture_output=True, text=True, env=oTools.environment, check=False)
-    oResult.messages.extend(parse_messages(oProcess.stderr, sStage))
+    oResult.messages.extend(parse_messages(oResult.unpatch(oProcess.stderr), sStage))
     if sOutput is not None:
         with open(sOutput, "w", encoding="utf-8") as oFile:
-            oFile.write(oProcess.stdout)
+            oFile.write(oResult.unpatch(oProcess.stdout))
     if oProcess.returncode != 0:
         oResult.failed_stage = sStage
         if not any(o.severity in (None, "error") for o in oResult.messages if o.stage == sStage):

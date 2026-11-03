@@ -105,6 +105,11 @@ With multiple options available, the user is required to make the decision.
 * `constant_602 <constant_rules.html#constant-602>`_
 * `design_001 <design_rules.html#design-001>`_
 * `design_002 <design_rules.html#design-002>`_
+* `design_003 <design_rules.html#design-003>`_
+* `design_004 <design_rules.html#design-004>`_
+* `design_005 <design_rules.html#design-005>`_
+* `design_006 <design_rules.html#design-006>`_
+* `design_007 <design_rules.html#design-007>`_
 * `function_600 <function_rules.html#function-600>`_
 * `function_601 <function_rules.html#function-601>`_
 * `generate_017 <generate_rules.html#generate-017>`_
