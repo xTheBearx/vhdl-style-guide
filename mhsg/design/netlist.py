@@ -160,6 +160,41 @@ def normalise(sFile):
     return os.path.normcase(os.path.normpath(os.path.abspath(sFile)))
 
 
+# The attribute of a black box module made for a Verilog design whose inout ports are inputs or outputs by instance,
+# see verilog_black_boxes.py
+INFERRED_DIRECTIONS = "mhsg_inferred_directions"
+
+
+def infer_directions(dModules, setTypes):
+    """
+    Makes each inout port of an instance of the given black box types an input when something else drives the bits it
+    connects to, or it connects to constants, and an output otherwise.
+    """
+    if not setTypes:
+        return
+    for dModule in dModules.values():
+        dCells = dModule.get("cells", {})
+        lInstances = [d for d in dCells.values() if d.get("type") in setTypes]
+        if not lInstances:
+            continue
+        setDriven = set()
+        for dPort in dModule.get("ports", {}).values():
+            if dPort.get("direction") in ("input", "inout"):
+                setDriven.update(b for b in dPort.get("bits", []) if isinstance(b, int))
+        for dCell in dCells.values():
+            dDirections = dCell.get("port_directions", {})
+            for sPort, lBits in dCell.get("connections", {}).items():
+                if dDirections.get(sPort) == "output" or (dDirections.get(sPort) == "inout" and dCell.get("type") not in setTypes):
+                    setDriven.update(b for b in lBits if isinstance(b, int))
+        for dCell in lInstances:
+            dDirections = dCell.setdefault("port_directions", {})
+            for sPort, lBits in dCell.get("connections", {}).items():
+                if dDirections.get(sPort) != "inout":
+                    continue
+                lVariables = [b for b in lBits if isinstance(b, int)]
+                dDirections[sPort] = "input" if not lVariables or any(b in setDriven for b in lVariables) else "output"
+
+
 class Netlist:
     """The modules of a Yosys JSON netlist, with the location of each cell and the names of its nets."""
 
@@ -171,6 +206,7 @@ class Netlist:
         self.black_boxes = {s: d for s, d in dModules.items() if is_black_box(d)}
         self.modules = {s: d for s, d in dModules.items() if s not in self.black_boxes}
         self.locations = dLocations
+        infer_directions(self.modules, {s for s, d in self.black_boxes.items() if INFERRED_DIRECTIONS in d.get("attributes", {})})
 
     def cells(self, lTypes=None):
         """Yields (module name, cell name, cell) for every cell, or for the cells of the given types."""
