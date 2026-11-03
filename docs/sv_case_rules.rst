@@ -13,8 +13,6 @@ Alias: :code:`sv_case_missing_default`
 This rule checks that a case statement has a default item, unless it is unique or unique0 and
 **exempt_unique** is yes, the default.
 
-|unfixable|
-
 **Violation**
 
 .. code-block:: systemverilog
@@ -43,8 +41,6 @@ Alias: :code:`sv_case_default_last`
 
 This rule checks that the default item of a case statement is its last item.
 
-|unfixable|
-
 **Violation**
 
 .. code-block:: systemverilog
@@ -62,3 +58,27 @@ This rule checks that the default item of a case statement is its last item.
        Idle:    state_d = Busy;
        default: state_d = Idle;
    endcase
+
+sv_case_003
+###########
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_case_constant_selector`
+
+This rule checks for case statements whose selector is a constant, such as case (1'b1), as the STARC guide
+asks (2.8.5.2). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   case (1'b1)
+       a: y = 0;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   if (a) begin
+       y = 0;

@@ -1,0 +1,41 @@
+rule:
+  sv_always_005:
+    disable: false
+  sv_always_006:
+    disable: false
+  sv_case_003:
+    disable: false
+  sv_comment_001:
+    disable: false
+  sv_file_003:
+    disable: false
+  sv_file_004:
+    disable: false
+  sv_function_005:
+    disable: false
+  sv_literal_003:
+    disable: false
+  sv_literal_004:
+    disable: false
+  sv_literal_005:
+    disable: false
+  sv_naming_008:
+    disable: false
+  sv_naming_009:
+    disable: false
+  sv_naming_010:
+    disable: false
+  sv_naming_011:
+    disable: false
+  sv_naming_012:
+    disable: false
+  sv_naming_013:
+    disable: false
+  sv_statement_003:
+    disable: false
+  sv_statement_004:
+    disable: false
+  sv_statement_005:
+    disable: false
+  sv_statement_006:
+    disable: false

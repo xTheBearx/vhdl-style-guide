@@ -12,6 +12,7 @@ so the fix pipeline and the rules that only look at whitespace, comments and lin
 languages they apply to, see rule.Rule.languages.
 """
 
+import bisect
 import importlib
 
 import pyslang
@@ -73,6 +74,7 @@ class svFile(vhdl.vhdlFile):
         # The source manager is kept with the tree, which refers to its buffers
         self.lAllObjects, (self.syntax_tree, self.source_manager), self.dNodes = build_tokens(sText, self.filename or "source.sv", bTree=True)
         self.dTokenAtOffset = {o.offset: o for o in self.lAllObjects if getattr(o, "offset", None) is not None}
+        self.syntax_errors = syntax_errors(self.syntax_tree)
         vhdl.set_code_tags(self.lAllObjects)
         self.oTokenMap = self.build_token_map()
 
@@ -89,6 +91,12 @@ class svFile(vhdl.vhdlFile):
         for sKind in lKinds:
             lReturn.extend(self.dNodes.get(sKind, []))
         return lReturn
+
+    def token_at_or_after(self, iOffset):
+        """The first token of the file at or after an offset, or None."""
+        lOffsets = sorted(self.dTokenAtOffset)
+        iIndex = bisect.bisect_left(lOffsets, iOffset)
+        return self.dTokenAtOffset[lOffsets[iIndex]] if iIndex < len(lOffsets) else None
 
     def token_at(self, oSyntaxToken):
         """The mhsg token for a token of the syntax tree, or None for one not in the file as written."""
@@ -110,6 +118,28 @@ class svFile(vhdl.vhdlFile):
 
     def set_token_indent(self):
         """Indentation of SystemVerilog is not configured yet."""
+
+
+# Diagnostics of a file checked on its own, without its include files and the defines of other files: they do not
+# make the syntax tree wrong where the rules look
+PREPROCESSOR_DIAGNOSTICS = {"UnknownDirective", "CouldNotOpenIncludeFile", "UndefinedMacro", "UnknownDiagPragma"}
+# Diagnostics of style that sv_label_001 reports and fixes; the syntax tree is complete
+STYLE_DIAGNOSTICS = {"EndNameMismatch", "EndNameNotEmpty"}
+
+
+def node_offset(oNode):
+    oFirst = oNode.getFirstToken()
+    return oFirst.location.offset if oFirst is not None else -1
+
+
+def syntax_errors(oTree):
+    """The syntax errors of a tree as (offset, name of the error), leaving out those of the preprocessor."""
+    lReturn = []
+    for oDiagnostic in oTree.diagnostics:
+        sName = str(oDiagnostic.code).replace("DiagCode(", "").rstrip(")")
+        if oDiagnostic.isError() and sName not in PREPROCESSOR_DIAGNOSTICS | STYLE_DIAGNOSTICS:
+            lReturn.append((oDiagnostic.location.offset, sName))
+    return lReturn
 
 
 def build_tokens(sText, sFileName, bTree=False):
@@ -145,6 +175,9 @@ def build_tokens(sText, sFileName, bTree=False):
         add_text(lReturn, oNew)
     mark_blank_lines(lReturn)
     set_comment_indents(lReturn)
+    # The nodes of each kind in the order of the file
+    for lNodes in dNodes.values():
+        lNodes.sort(key=node_offset)
     if bTree:
         return lReturn, (oTree, oSourceManager), dNodes
     return lReturn

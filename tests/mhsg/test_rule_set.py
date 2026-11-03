@@ -289,12 +289,12 @@ class test_starc(unittest.TestCase):
         self.assertEqual(["length_001"], dChecks["3.1.4.5"].rules)
 
     def test_systemverilog(self):
-        sText = "module m;\n  logic a;\n\tlogic b;\n  assign a = " + "b" * 90 + ";\n  assign a = " + "b" * 110 + ";\nendmodule\n"
-        iStatus, lOutput = run_on_text(sText, "m.sv", ["--rule_set", "starc"])
+        sText = "module counter;\n  logic aa;\n\tlogic bb;\n  assign aa = " + "b" * 90 + ";\n  assign aa = " + "b" * 110 + ";\nendmodule\n"
+        iStatus, lOutput = run_on_text(sText, "counter.sv", ["--rule_set", "starc"])
         self.assertEqual(
             [
-                "WARNING: m.sv(3)STARC-3.1.4.2/STARC-3.1.4.3 (sv_indent_001) -- Use 2 spaces for indent",
-                "WARNING: m.sv(5)STARC-3.1.4.5 (length_001) -- Reduce line to less than 110 characters",
+                "WARNING: counter.sv(3)STARC-3.1.4.2/STARC-3.1.4.3 (sv_indent_001) -- Use 2 spaces for indent",
+                "WARNING: counter.sv(5)STARC-3.1.4.5 (length_001) -- Reduce line to less than 110 characters",
             ],
             lOutput,
         )
@@ -309,7 +309,7 @@ class test_starc(unittest.TestCase):
 class test_rule_sets_and_languages(unittest.TestCase):
     def test_do254_on_systemverilog(self):
         # The VHDL rules of the default rule set are left out for a SystemVerilog file
-        self.assertEqual((0, []), run_on_text("module m;\nendmodule\n", "m.sv", ["--lint"]))
+        self.assertEqual((0, []), run_on_text("module counter;\nendmodule\n", "counter.sv", ["--lint"]))
 
     def test_unknown_rule_still_fails(self):
         oRules = rule_list.rule_list(vhdlFile.vhdlFile([""]), None)

@@ -2,7 +2,7 @@
 
 from mhsg.rule_group import structure
 from mhsg.rules.sv_always.rule_003 import id_of
-from mhsg.rules.sv_tree import Problem, TreeRule, descendants
+from mhsg.rules.sv_tree import Problem, TreeRule, descendants, elements
 
 ALWAYS = ("AlwaysBlock", "AlwaysFFBlock", "AlwaysCombBlock", "AlwaysLatchBlock")
 
@@ -11,8 +11,6 @@ class rule_004(TreeRule, structure.Rule):
     """
     This rule checks that an always block does not mix blocking (=) and nonblocking (<=) assignments.
     Assignments in the header of a for loop are not counted.
-
-    |unfixable|
 
     **Violation**
 
@@ -43,7 +41,7 @@ class rule_004(TreeRule, structure.Rule):
             sLoopHeaders = set()
             for oNode in lNodes:
                 if oNode.kind.name == "ForLoopStatement":
-                    for oPart in list(oNode.initializers) + list(oNode.steps):
+                    for oPart in elements(oNode.initializers) + elements(oNode.steps):
                         sLoopHeaders.add(id_of(oPart))
             lBlocking = [o for o in lNodes if o.kind.name == "AssignmentExpression" and id_of(o) not in sLoopHeaders]
             lNonblocking = [o for o in lNodes if o.kind.name == "NonblockingAssignmentExpression"]

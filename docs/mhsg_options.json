@@ -2136,6 +2136,19 @@
         "subtype_600",
         "subtype_601",
         "subtype_602",
+        "sv_naming_001",
+        "sv_naming_002",
+        "sv_naming_003",
+        "sv_naming_004",
+        "sv_naming_005",
+        "sv_naming_006",
+        "sv_naming_007",
+        "sv_naming_008",
+        "sv_naming_009",
+        "sv_naming_010",
+        "sv_naming_011",
+        "sv_naming_012",
+        "sv_naming_013",
         "type_015",
         "type_600",
         "type_601",
@@ -2342,19 +2355,46 @@
         "sv_always_002",
         "sv_always_003",
         "sv_always_004",
+        "sv_always_005",
+        "sv_always_006",
         "sv_case_001",
         "sv_case_002",
+        "sv_case_003",
+        "sv_comment_001",
+        "sv_declaration_001",
+        "sv_dimension_001",
+        "sv_dimension_002",
+        "sv_file_001",
+        "sv_file_002",
+        "sv_file_003",
+        "sv_file_004",
+        "sv_function_001",
+        "sv_function_002",
+        "sv_function_003",
+        "sv_function_004",
+        "sv_function_005",
         "sv_generate_001",
         "sv_generate_002",
         "sv_generate_003",
         "sv_generate_004",
         "sv_generate_005",
         "sv_label_001",
+        "sv_literal_001",
+        "sv_literal_002",
+        "sv_literal_003",
+        "sv_literal_004",
+        "sv_literal_005",
         "sv_module_001",
         "sv_module_002",
         "sv_statement_001",
         "sv_statement_002",
         "sv_statement_003",
+        "sv_statement_004",
+        "sv_statement_005",
+        "sv_statement_006",
+        "sv_syntax_001",
+        "sv_typedef_001",
+        "sv_typedef_002",
         "type_008",
         "type_009",
         "type_017",
@@ -3303,6 +3343,12 @@
       "description": "Second, usually larger, line length limit in characters with its own severity.",
       "minimum": 1
     },
+    "localparam_pattern": {
+      "type": "string",
+      "label": "Localparam pattern",
+      "description": "Regular expression a localparam name must match in full; the default is UpperCamelCase, as in Verible.",
+      "format": "regex"
+    },
     "loop_control_statements_ends_group": {
       "type": "enum",
       "label": "Loop control statements end group",
@@ -3330,6 +3376,12 @@
       "description": "Total length of the header line, including its indent.",
       "minimum": 1
     },
+    "maximum": {
+      "type": "integer",
+      "label": "Longest name",
+      "description": "The most characters in a name other than that of a module or instance.",
+      "minimum": 1
+    },
     "maximum_depth": {
       "type": "integer",
       "label": "Maximum logic depth",
@@ -3349,6 +3401,24 @@
       "type": "integer",
       "label": "Minimum height",
       "description": "Minimum number of consecutive comment lines before they are treated as a block comment.",
+      "minimum": 1
+    },
+    "minimum": {
+      "type": "integer",
+      "label": "Shortest name",
+      "description": "The fewest characters in a name other than that of a module or instance.",
+      "minimum": 1
+    },
+    "module_maximum": {
+      "type": "integer",
+      "label": "Longest module name",
+      "description": "The most characters in the name of a module or instance.",
+      "minimum": 1
+    },
+    "module_minimum": {
+      "type": "integer",
+      "label": "Shortest module name",
+      "description": "The fewest characters in the name of a module or instance.",
       "minimum": 1
     },
     "move_generics": {
@@ -3446,6 +3516,12 @@
         "name"
       ]
     },
+    "parameter_pattern": {
+      "type": "string",
+      "label": "Parameter pattern",
+      "description": "Regular expression a parameter name must match in full; the default is UpperCamelCase or ALL_CAPS, as in Verible.",
+      "format": "regex"
+    },
     "parenthesis": {
       "type": "enum",
       "label": "Parenthesis",
@@ -3461,10 +3537,52 @@
       "description": "Regular expression a requirement tag comment must match, such as the default for -- REQ HWR-123 written with a colon after REQ.",
       "format": "regex"
     },
+    "pattern:sv_comment_001": {
+      "type": "string",
+      "label": "Pattern",
+      "description": "Regular expression searched for in comments; a comment it matches is reported.",
+      "format": "regex"
+    },
     "pattern:sv_generate_002": {
       "type": "string",
       "label": "Pattern",
       "description": "Regular expression the label of a generate block must match in full; the default (g_|gen_).* follows Verible.",
+      "format": "regex"
+    },
+    "pattern:sv_naming_002": {
+      "type": "string",
+      "label": "Pattern",
+      "description": "Regular expression the name of an enum type must match in full.",
+      "format": "regex"
+    },
+    "pattern:sv_naming_003": {
+      "type": "string",
+      "label": "Pattern",
+      "description": "Regular expression the name of a struct or union type must match in full.",
+      "format": "regex"
+    },
+    "pattern:sv_naming_004": {
+      "type": "string",
+      "label": "Pattern",
+      "description": "Regular expression the name of an interface must match in full.",
+      "format": "regex"
+    },
+    "pattern:sv_naming_005": {
+      "type": "string",
+      "label": "Pattern",
+      "description": "Regular expression the name of a macro must match in full; macros named uvm_ may be lower case.",
+      "format": "regex"
+    },
+    "pattern:sv_naming_006": {
+      "type": "string",
+      "label": "Pattern",
+      "description": "Regular expression the name of a constraint must match in full.",
+      "format": "regex"
+    },
+    "pattern:sv_naming_008": {
+      "type": "string",
+      "label": "Pattern",
+      "description": "Regular expression the name of a signal or port must match in full.",
       "format": "regex"
     },
     "patterns": {
@@ -3490,6 +3608,12 @@
       "type": "list",
       "label": "Prefixes",
       "description": "Allowed prefixes, compared ignoring case. The fix uses the first one.",
+      "item_type": "string"
+    },
+    "prefixes:sv_naming_011": {
+      "type": "list",
+      "label": "Prefixes",
+      "description": "Prefixes no name may start with, compared ignoring case; by default those of power and ground nets.",
       "item_type": "string"
     },
     "qualifier_words": {
@@ -59466,6 +59590,100 @@
       ]
     },
     {
+      "id": "sv_always_005",
+      "alias": "sv_always_single_event_control",
+      "category": "sv_always",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that an always block has a single event control, at its start, as the STARC guide asks (2.2.2.3). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_always_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_always_006",
+      "alias": "sv_always_one_top_level_statement",
+      "category": "sv_always",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that an always block holds at most one if or case statement at its top level, as the STARC guide asks (2.6.2.1). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_always_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
       "id": "sv_blank_line_001",
       "alias": "sv_blank_line_end_of_file",
       "category": "sv_blank_line",
@@ -59592,6 +59810,669 @@
         {
           "name": "disable",
           "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_case_003",
+      "alias": "sv_case_constant_selector",
+      "category": "sv_case",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for case statements whose selector is a constant, such as case (1'b1), as the STARC guide asks (2.8.5.2). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_case_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_comment_001",
+      "alias": "sv_comment_tool_directives",
+      "category": "sv_comment",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for synthesis directives and scripts in comments, such as synopsys full_case, parallel_case or dc_script_begin, as the STARC guide asks (2.8.1.5, 2.8.5.1, 3.1.2.7). pattern is the regular expression searched for in comments. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_comment_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "pattern",
+          "default": "(synopsys|synthesis|ambit|pragma)\\s+(full_case|parallel_case|dc_script_begin)",
+          "definition": "pattern:sv_comment_001"
+        }
+      ]
+    },
+    {
+      "id": "sv_declaration_001",
+      "alias": "sv_declaration_explicit_parameter_storage_type",
+      "category": "sv_declaration",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that parameters and localparams are declared with a type, such as int or logic [7:0], as Verible's explicit-parameter-storage-type rule does.",
+      "documentation": "sv_declaration_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_dimension_001",
+      "alias": "sv_dimension_packed_range_ordering",
+      "category": "sv_dimension",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that packed dimensions are written from the most to the least significant bit, such as [7:0], as Verible's packed-dimensions-range-ordering rule does.",
+      "documentation": "sv_dimension_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_dimension_002",
+      "alias": "sv_dimension_unpacked_range_ordering",
+      "category": "sv_dimension",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that unpacked dimensions are written as [0:N-1] or [N], as Verible's unpacked-dimensions-range-ordering rule does.",
+      "documentation": "sv_dimension_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_file_001",
+      "alias": "sv_file_module_filename",
+      "category": "sv_file",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks a file holding modules is named after one of them, as Verible's module-filename rule does: counter.sv holds module counter.",
+      "documentation": "sv_file_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_file_002",
+      "alias": "sv_file_package_filename",
+      "category": "sv_file",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks a file holding a package is named after it, as Verible's package-filename rule does: fifo_pkg.sv holds package fifo_pkg.",
+      "documentation": "sv_file_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_file_003",
+      "alias": "sv_file_one_module_per_file",
+      "category": "sv_file",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks a file holds at most one module, as the STARC guide asks (1.1.1.1). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_file_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_file_004",
+      "alias": "sv_file_include_relative_path",
+      "category": "sv_file",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that include directives name files by relative paths, as the STARC guide asks (3.2.2.4). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_file_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_function_001",
+      "alias": "sv_function_explicit_function_lifetime",
+      "category": "sv_function",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that functions outside classes are declared automatic or static, as Verible's explicit-function-lifetime rule does; the fix adds automatic.",
+      "documentation": "sv_function_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_function_002",
+      "alias": "sv_function_explicit_task_lifetime",
+      "category": "sv_function",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that tasks outside classes are declared automatic or static, as Verible's explicit-task-lifetime rule does; the fix adds automatic.",
+      "documentation": "sv_function_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_function_003",
+      "alias": "sv_function_explicit_function_task_parameter_type",
+      "category": "sv_function",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that the arguments of functions and tasks are declared with a type, as Verible's explicit-function-task-parameter-type rule does.",
+      "documentation": "sv_function_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_function_004",
+      "alias": "sv_function_nonblocking_assignment",
+      "category": "sv_function",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for nonblocking assignments (<=) in functions, as the STARC guide asks (2.1.2.2). Methods of classes, such as the drivers of a testbench writing to a virtual interface, are not checked.",
+      "documentation": "sv_function_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_function_005",
+      "alias": "sv_function_no_tasks",
+      "category": "sv_function",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for tasks in design code, as the STARC guide asks (2.1.2.4): use functions. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_function_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
           "definition": "disable"
         },
         {
@@ -59946,6 +60827,241 @@
       ]
     },
     {
+      "id": "sv_literal_001",
+      "alias": "sv_literal_undersized_binary",
+      "category": "sv_literal",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that a sized binary literal has a digit for each bit, as Verible's undersized-binary-literal rule does; the fix adds leading zeros. Zero, as in 4'b0, is allowed.",
+      "documentation": "sv_literal_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_literal_002",
+      "alias": "sv_literal_truncated_numeric",
+      "category": "sv_literal",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that the value of a sized literal fits its width, as Verible's truncated-numeric-literal rule does.",
+      "documentation": "sv_literal_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_literal_003",
+      "alias": "sv_literal_parameter_base",
+      "category": "sv_literal",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that parameter values are written with an explicit base, such as 'd8, as the STARC guide asks (1.1.4.8). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_literal_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_literal_004",
+      "alias": "sv_literal_wide_unsized",
+      "category": "sv_literal",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that a literal whose value needs more than 32 bits has an explicit width, as the STARC guide asks (1.1.4.9). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_literal_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_literal_005",
+      "alias": "sv_literal_x_z_comparison",
+      "category": "sv_literal",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for comparisons with x or z, which are never true in synthesis, as the STARC guide asks (2.10.1.4). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_literal_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
       "id": "sv_module_001",
       "alias": "sv_module_begin_block",
       "category": "sv_module",
@@ -60036,6 +61152,688 @@
           "name": "user_error_message",
           "default": "",
           "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_naming_001",
+      "alias": "sv_naming_parameter_name_style",
+      "category": "sv_naming",
+      "groups": [
+        "naming"
+      ],
+      "summary": "This rule checks that parameter names match parameter_pattern and localparam names match localparam_pattern, regular expressions, by default UpperCamelCase or ALL_CAPS for parameters and UpperCamelCase for localparams, as Verible's parameter-name-style rule does.",
+      "documentation": "sv_naming_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "parameter_pattern",
+          "default": "([A-Z0-9]+[a-z0-9]*)+(_[0-9]+)?|[A-Z_0-9]+",
+          "definition": "parameter_pattern"
+        },
+        {
+          "name": "localparam_pattern",
+          "default": "([A-Z0-9]+[a-z0-9]*)+(_[0-9]+)?",
+          "definition": "localparam_pattern"
+        }
+      ]
+    },
+    {
+      "id": "sv_naming_002",
+      "alias": "sv_naming_enum_name_style",
+      "category": "sv_naming",
+      "groups": [
+        "naming"
+      ],
+      "summary": "This rule checks that the names of enum types match pattern, a regular expression, by default [a-z_0-9]+(_t|_e), as Verible's enum-name-style rule does.",
+      "documentation": "sv_naming_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "pattern",
+          "default": "[a-z_0-9]+(_t|_e)",
+          "definition": "pattern:sv_naming_002"
+        }
+      ]
+    },
+    {
+      "id": "sv_naming_003",
+      "alias": "sv_naming_struct_union_name_style",
+      "category": "sv_naming",
+      "groups": [
+        "naming"
+      ],
+      "summary": "This rule checks that the names of struct and union types match pattern, a regular expression, by default [a-z_0-9]+_t, as Verible's struct-union-name-style rule does.",
+      "documentation": "sv_naming_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "pattern",
+          "default": "[a-z_0-9]+_t",
+          "definition": "pattern:sv_naming_003"
+        }
+      ]
+    },
+    {
+      "id": "sv_naming_004",
+      "alias": "sv_naming_interface_name_style",
+      "category": "sv_naming",
+      "groups": [
+        "naming"
+      ],
+      "summary": "This rule checks that interface names match pattern, a regular expression, by default [a-z_0-9]+_if, as Verible's interface-name-style rule does.",
+      "documentation": "sv_naming_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "pattern",
+          "default": "[a-z_0-9]+_if",
+          "definition": "pattern:sv_naming_004"
+        }
+      ]
+    },
+    {
+      "id": "sv_naming_005",
+      "alias": "sv_naming_macro_name_style",
+      "category": "sv_naming",
+      "groups": [
+        "naming"
+      ],
+      "summary": "This rule checks that macro names match pattern, a regular expression, by default [A-Z_0-9]+, as Verible's macro-name-style rule does; macros whose names start with uvm_ or UVM_ may be lower case.",
+      "documentation": "sv_naming_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "pattern",
+          "default": "[A-Z_0-9]+",
+          "definition": "pattern:sv_naming_005"
+        }
+      ]
+    },
+    {
+      "id": "sv_naming_006",
+      "alias": "sv_naming_constraint_name_style",
+      "category": "sv_naming",
+      "groups": [
+        "naming"
+      ],
+      "summary": "This rule checks that constraint names match pattern, a regular expression, by default ([a-z0-9]+_)+c, as Verible's constraint-name-style rule does.",
+      "documentation": "sv_naming_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "pattern",
+          "default": "([a-z0-9]+_)+c",
+          "definition": "pattern:sv_naming_006"
+        }
+      ]
+    },
+    {
+      "id": "sv_naming_007",
+      "alias": "sv_naming_positive_meaning_parameter_name",
+      "category": "sv_naming",
+      "groups": [
+        "naming"
+      ],
+      "summary": "This rule checks that no parameter name starts with disable; name it after what it enables, as Verible's positive-meaning-parameter-name rule does.",
+      "documentation": "sv_naming_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_naming_008",
+      "alias": "sv_naming_signal_name_style",
+      "category": "sv_naming",
+      "groups": [
+        "naming"
+      ],
+      "summary": "This rule checks that the names of signals and ports match pattern, a regular expression, by default lower_snake_case [a-z_0-9]+, as Verible's signal-name-style rule does. It is disabled by default, as in Verible.",
+      "documentation": "sv_naming_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "pattern",
+          "default": "[a-z_0-9]+",
+          "definition": "pattern:sv_naming_008"
+        }
+      ]
+    },
+    {
+      "id": "sv_naming_009",
+      "alias": "sv_naming_identifier_characters",
+      "category": "sv_naming",
+      "groups": [
+        "naming"
+      ],
+      "summary": "This rule checks that names use only letters, digits and underscores and start with a letter, as the STARC guide asks (1.1.1.2): no escaped identifiers and no leading underscore. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_naming_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_naming_010",
+      "alias": "sv_naming_vhdl_keywords",
+      "category": "sv_naming",
+      "groups": [
+        "naming"
+      ],
+      "summary": "This rule checks that no name is a VHDL keyword, in any case, as the STARC guide asks (1.1.1.3), so the design can be translated or mixed with VHDL. SystemVerilog keywords cannot be names. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_naming_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_naming_011",
+      "alias": "sv_naming_power_names",
+      "category": "sv_naming",
+      "groups": [
+        "naming"
+      ],
+      "summary": "This rule checks that no name starts with VDD, VSS, VCC, GND or VREF, in any case, as the STARC guide asks (1.1.1.4). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_naming_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "prefixes",
+          "default": [
+            "VDD",
+            "VSS",
+            "VCC",
+            "GND",
+            "VREF"
+          ],
+          "definition": "prefixes:sv_naming_011"
+        }
+      ]
+    },
+    {
+      "id": "sv_naming_012",
+      "alias": "sv_naming_case_only_difference",
+      "category": "sv_naming",
+      "groups": [
+        "naming"
+      ],
+      "summary": "This rule checks that no two names of a file differ only in case, as the STARC guide asks (1.1.1.5). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_naming_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_naming_013",
+      "alias": "sv_naming_name_length",
+      "category": "sv_naming",
+      "groups": [
+        "naming"
+      ],
+      "summary": "This rule checks the length of names, as the STARC guide asks: modules and instances module_minimum to module_maximum characters, 2 to 32 by default (1.1.2.1); other names minimum to maximum, 2 to 40 by default (1.1.3.3). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_naming_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "module_minimum",
+          "default": 2,
+          "definition": "module_minimum"
+        },
+        {
+          "name": "module_maximum",
+          "default": 32,
+          "definition": "module_maximum"
+        },
+        {
+          "name": "minimum",
+          "default": 2,
+          "definition": "minimum"
+        },
+        {
+          "name": "maximum",
+          "default": 40,
+          "definition": "maximum"
         }
       ]
     },
@@ -60166,6 +61964,288 @@
         {
           "name": "fixable",
           "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_004",
+      "alias": "sv_statement_no_initial",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for initial blocks in design code, which synthesis ignores, as the STARC guide asks (2.3.4.1, 2.3.4.2). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_005",
+      "alias": "sv_statement_no_fork",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for fork-join blocks in design code, as the STARC guide asks (2.7.4.3). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_006",
+      "alias": "sv_statement_empty_branch",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for empty branches of if and case statements, such as a case item with only a semicolon, as the STARC guide asks (2.7.2.3). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_syntax_001",
+      "alias": "sv_syntax_error",
+      "category": "sv_syntax",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule reports code slang cannot parse. The rules on constructs, such as always blocks and labels, skip a file with syntax errors, as its syntax tree has constructs missing or misplaced.",
+      "documentation": "sv_syntax_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_typedef_001",
+      "alias": "sv_typedef_enums",
+      "category": "sv_typedef",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that enum types are declared with typedef, not anonymously in a declaration, as Verible's typedef-enums rule does.",
+      "documentation": "sv_typedef_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_typedef_002",
+      "alias": "sv_typedef_structs_unions",
+      "category": "sv_typedef",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that struct and union types are declared with typedef, not anonymously in a declaration, as Verible's typedef-structs-unions rule does.",
+      "documentation": "sv_typedef_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
           "definition": "fixable"
         },
         {

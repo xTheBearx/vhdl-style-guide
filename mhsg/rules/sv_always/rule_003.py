@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg.rule_group import structure
-from mhsg.rules.sv_tree import Problem, TreeRule, descendants
+from mhsg.rules.sv_tree import Problem, TreeRule, descendants, elements
 from mhsg.vhdlFile import utils
 
 
@@ -10,8 +10,6 @@ class rule_003(TreeRule, structure.Rule):
     This rule checks that sequential logic, in always_ff blocks and in always blocks clocked on an edge, uses
     nonblocking assignments (<=). Blocking assignments in the header of a for loop are allowed; with
     **waive_for_locals** set to yes, so are blocking assignments to variables declared in the block.
-
-    |unfixable|
 
     **Violation**
 
@@ -46,7 +44,7 @@ class rule_003(TreeRule, structure.Rule):
             sLoopHeaders = set()
             for oNode in lNodes:
                 if oNode.kind.name == "ForLoopStatement":
-                    for oPart in list(oNode.initializers) + list(oNode.steps):
+                    for oPart in elements(oNode.initializers) + elements(oNode.steps):
                         sLoopHeaders.update(id_of(o) for o in descendants(oPart))
                         sLoopHeaders.add(id_of(oPart))
             for oNode in lNodes:
@@ -77,7 +75,7 @@ def local_variables(lNodes):
     sReturn = set()
     for oNode in lNodes:
         if oNode.kind.name == "DataDeclaration":
-            sReturn.update(o.name.rawText for o in oNode.declarators)
+            sReturn.update(o.name.rawText for o in elements(oNode.declarators))
         elif oNode.kind.name == "ForVariableDeclaration":
             sReturn.add(oNode.declarator.name.rawText)
     return sReturn

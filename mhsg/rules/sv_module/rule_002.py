@@ -8,8 +8,6 @@ class rule_002(TreeRule, structure.Rule):
     """
     This rule checks for defparam statements; set parameters in the instantiation instead.
 
-    |unfixable|
-
     **Violation**
 
     .. code-block:: systemverilog

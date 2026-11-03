@@ -37,6 +37,7 @@ class TreeRule:  # pylint: disable=no-member
         self.languages = (language.SYSTEMVERILOG,)
         self.configuration_documentation_link = None
         self.fixable = False
+        self.checks_syntax_errors = False
 
     def problems(self, oFile):
         """Yields the Problems in a file."""
@@ -44,6 +45,10 @@ class TreeRule:  # pylint: disable=no-member
 
     def _get_tokens_of_interest(self, oFile):
         if getattr(oFile, "dNodes", None) is None:
+            return []
+        # Code slang cannot parse makes a syntax tree with constructs missing or misplaced: sv_syntax_001 reports
+        # it, and the rules on constructs leave the file alone
+        if oFile.syntax_errors and not self.checks_syntax_errors:
             return []
         dIndexes = {id(o): i for i, o in enumerate(oFile.lAllObjects)}
         lReturn = []
@@ -79,6 +84,11 @@ def descendants(oNode):
             if isinstance(oChild, SyntaxNode):
                 yield oChild
                 lStack.append(oChild)
+
+
+def elements(lList):
+    """The syntax nodes of a list, without the commas of a separated list."""
+    return [o for o in (lList or []) if isinstance(o, SyntaxNode)]
 
 
 def child_tokens(oNode):

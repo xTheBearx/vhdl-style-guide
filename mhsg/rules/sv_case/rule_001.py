@@ -10,8 +10,6 @@ class rule_001(TreeRule, structure.Rule):
     This rule checks that a case statement has a default item, unless it is unique or unique0 and
     **exempt_unique** is yes, the default.
 
-    |unfixable|
-
     **Violation**
 
     .. code-block:: systemverilog

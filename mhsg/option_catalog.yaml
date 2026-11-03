@@ -374,6 +374,11 @@ options:
         description: Maximum number of lines in a process.
       length_004:
         description: "Second, usually larger, line length limit in characters with its own severity."
+  localparam_pattern:
+    type: string
+    format: regex
+    label: Localparam pattern
+    description: Regular expression a localparam name must match in full; the default is UpperCamelCase, as in Verible.
   loop_control_statements_ends_group:
     type: enum
     values: ["yes", "no"]
@@ -394,6 +399,11 @@ options:
     minimum: 1
     label: Max header column
     description: "Total length of the header line, including its indent."
+  maximum:
+    type: integer
+    minimum: 1
+    label: Longest name
+    description: The most characters in a name other than that of a module or instance.
   maximum_depth:
     type: integer
     minimum: 1
@@ -409,6 +419,21 @@ options:
     minimum: 1
     label: Minimum height
     description: Minimum number of consecutive comment lines before they are treated as a block comment.
+  minimum:
+    type: integer
+    minimum: 1
+    label: Shortest name
+    description: The fewest characters in a name other than that of a module or instance.
+  module_maximum:
+    type: integer
+    minimum: 1
+    label: Longest module name
+    description: The most characters in the name of a module or instance.
+  module_minimum:
+    type: integer
+    minimum: 1
+    label: Shortest module name
+    description: The fewest characters in the name of a module or instance.
   move_generics:
     type: enum
     values: [never, when_safe]
@@ -465,6 +490,11 @@ options:
         values: [declaration, name]
         item_type: null
         description: declaration follows the port order of the entity or component declaration; name sorts the associations by formal name.
+  parameter_pattern:
+    type: string
+    format: regex
+    label: Parameter pattern
+    description: Regular expression a parameter name must match in full; the default is UpperCamelCase or ALL_CAPS, as in Verible.
   parenthesis:
     type: enum
     values: [insert, remove]
@@ -478,6 +508,20 @@ options:
     by_rule:
       sv_generate_002:
         description: Regular expression the label of a generate block must match in full; the default (g_|gen_).* follows Verible.
+      sv_naming_002:
+        description: Regular expression the name of an enum type must match in full.
+      sv_naming_003:
+        description: Regular expression the name of a struct or union type must match in full.
+      sv_naming_004:
+        description: Regular expression the name of an interface must match in full.
+      sv_naming_005:
+        description: Regular expression the name of a macro must match in full; macros named uvm_ may be lower case.
+      sv_naming_006:
+        description: Regular expression the name of a constraint must match in full.
+      sv_naming_008:
+        description: Regular expression the name of a signal or port must match in full.
+      sv_comment_001:
+        description: Regular expression searched for in comments; a comment it matches is reported.
   patterns:
     type: list
     item_type: string
@@ -499,6 +543,9 @@ options:
     item_type: string
     label: Prefixes
     description: "Allowed prefixes, compared ignoring case. The fix uses the first one."
+    by_rule:
+      sv_naming_011:
+        description: Prefixes no name may start with, compared ignoring case; by default those of power and ground nets.
   qualifier_words:
     type: list
     item_type: string

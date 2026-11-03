@@ -12,8 +12,6 @@ Alias: :code:`sv_module_begin_block`
 
 This rule checks for begin-end blocks directly in a module, outside of any generate construct.
 
-|unfixable|
-
 **Violation**
 
 .. code-block:: systemverilog
@@ -40,8 +38,6 @@ sv_module_002
 Alias: :code:`sv_module_defparam`
 
 This rule checks for defparam statements; set parameters in the instantiation instead.
-
-|unfixable|
 
 **Violation**
 

@@ -47,6 +47,35 @@ what a Verible lint rule checks, its alias is the Verible rule's name.
   or g\_; no begin-end blocks directly in generate regions; no generate regions; genvars declared in their loop
 * :code:`sv_label_001`: end labels that match their begin labels
 * :code:`sv_module_001`, :code:`sv_module_002`: no begin-end blocks directly in a module; no defparam
+* :code:`sv_file_001` to :code:`sv_file_004`: files named after their module or package; one module per file
+  and relative include paths (disabled by default)
+* :code:`sv_naming_001` to :code:`sv_naming_013`: the name styles of Verible (parameters and localparams, enum,
+  struct and union types, interfaces, macros and constraints; signals, disabled as in Verible) and no parameter
+  starting with disable; the naming rules of the STARC guide (disabled by default): identifier characters, no VHDL
+  keywords, no power net prefixes, no names differing only in case, and name lengths
+* :code:`sv_literal_001` to :code:`sv_literal_005`: binary literals with a digit for each bit (fixed); values that
+  fit their width; and, disabled by default, parameter values with a base, a width on literals wider than 32 bits
+  and no comparison with x or z
+* :code:`sv_declaration_001`: a type on every parameter
+* :code:`sv_function_001` to :code:`sv_function_005`: functions and tasks declared automatic or static (fixed),
+  typed arguments, no nonblocking assignments in functions; no tasks (disabled by default)
+* :code:`sv_typedef_001`, :code:`sv_typedef_002`: enum, struct and union types declared with typedef
+* :code:`sv_dimension_001`, :code:`sv_dimension_002`: packed dimensions as [msb:lsb], unpacked as [0:N-1] or [N]
+* rules of the STARC guide, disabled by default: no initial blocks, fork-join or empty branches
+  (:code:`sv_statement_004` to :code:`sv_statement_006`), no constant case selector (:code:`sv_case_003`), one event
+  control and at most one top-level if or case per always block (:code:`sv_always_005`, :code:`sv_always_006`), no
+  synthesis directives in comments (:code:`sv_comment_001`)
+* :code:`sv_syntax_001`: code slang cannot parse
+
+The **starc** rule set enables the rules of the STARC guide that are disabled by default.
+
+Syntax errors
+#############
+
+Each file is parsed on its own, so macros defined in other files and include files that are not found are not
+errors. Other syntax errors are reported by :code:`sv_syntax_001`, and the rules on constructs, from
+:code:`sv_always` to :code:`sv_typedef`, skip the file: its syntax tree has constructs missing or misplaced, and
+fixing it would be unsafe. The rules on spaces, indentation and lines still check it.
 
 After a fix that changes the structure of the code, such as replacing always @* with always_comb or removing a
 generate region, the file is parsed again, so the rules that follow, such as the indentation, see the fixed code.

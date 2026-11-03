@@ -8,8 +8,6 @@ class rule_005(TreeRule, structure.Rule):
     """
     This rule checks for genvar declarations outside of a for loop; declare the genvar in the loop instead.
 
-    |unfixable|
-
     **Violation**
 
     .. code-block:: systemverilog
