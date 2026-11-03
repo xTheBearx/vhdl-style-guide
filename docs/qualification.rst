@@ -32,7 +32,7 @@ Verilator; without them their cases are not run, and the report says so. The exi
 
 :code:`--qualify_report` also writes the report to a file: JSON for a file ending in .json, otherwise text. The report
 records the rule set and the suite with their versions and SHA-256 digests, the cases with their checks, the rules
-of the set that have no example, and the record of the run, see :ref:`run_record`.
+of the set that have no example, and the record of the run, see :ref:`the record of the run <run_record>`.
 
 The suite
 ---------
