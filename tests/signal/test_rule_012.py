@@ -94,7 +94,7 @@ class test_rule(unittest.TestCase):
         oRule.analyze(self.oFile)
         self.assertEqual(lExpected, utils.extract_violation_lines_from_violation_object(oRule.violations))
 
-    def test_fix_rule_012_yes_no_no(self):
+    def test_fix_rule_012_yes_yes_no(self):
         oRule = signal.rule_012()
         oRule.compact_alignment = "yes"
         oRule.blank_line_ends_group = "yes"

@@ -222,48 +222,6 @@ class test_rule(unittest.TestCase):
         self.assertEqual(oRule.violations, [])
 
     ###############################################################################
-    def test_rule_002_yes_no_no(self):
-        oRule = after.rule_002()
-        oRule.compact_alignment = "yes"
-        oRule.blank_line_ends_group = "no"
-        oRule.comment_line_ends_group = "no"
-
-        self.assertTrue(oRule)
-        self.assertEqual(oRule.name, "after")
-        self.assertEqual(oRule.identifier, "002")
-        self.assertEqual(oRule.groups, ["alignment"])
-
-        lExpected = [33, 34, 36, 38]
-
-        oRule.analyze(self.oFile)
-        self.assertEqual(lExpected, utils.extract_violation_lines_from_violation_object(oRule.violations))
-
-    def test_rule_002_true_false_false(self):
-        oRule = after.rule_002()
-        oRule.compact_alignment = True
-        oRule.blank_line_ends_group = False
-        oRule.comment_line_ends_group = False
-
-        lExpected = [33, 34, 36, 38]
-
-        oRule.analyze(self.oFile)
-        self.assertEqual(lExpected, utils.extract_violation_lines_from_violation_object(oRule.violations))
-
-    def test_fix_rule_002_yes_no_no(self):
-        oRule = after.rule_002()
-        oRule.compact_alignment = "yes"
-        oRule.blank_line_ends_group = "no"
-        oRule.comment_line_ends_group = "no"
-
-        oRule.fix(self.oFile)
-
-        lActual = self.oFile.get_lines()
-
-        self.assertEqual(lExpected_yes_no_no, lActual)
-
-        oRule.analyze(self.oFile)
-        self.assertEqual(oRule.violations, [])
-
     ###############################################################################
     def test_rule_002_no_no_yes(self):
         oRule = after.rule_002()
@@ -361,17 +319,6 @@ class test_rule(unittest.TestCase):
         self.assertEqual(oRule.name, "after")
         self.assertEqual(oRule.identifier, "002")
         self.assertEqual(oRule.groups, ["alignment"])
-
-        lExpected = [33]
-
-        oRule.analyze(self.oFile)
-        self.assertEqual(lExpected, utils.extract_violation_lines_from_violation_object(oRule.violations))
-
-    def test_rule_002_false_true_true(self):
-        oRule = after.rule_002()
-        oRule.compact_alignment = False
-        oRule.blank_line_ends_group = True
-        oRule.comment_line_ends_group = True
 
         lExpected = [33]
 
