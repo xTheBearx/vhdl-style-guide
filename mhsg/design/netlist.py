@@ -62,7 +62,11 @@ class Netlist:
     """The modules of a Yosys JSON netlist, with the location of each cell and the names of its nets."""
 
     def __init__(self, dNetlist, dLocations):
-        self.modules = dNetlist.get("modules", {})
+        dModules = dNetlist.get("modules", {})
+        # GHDL writes an empty module, marked blackbox, for each component without an entity, such as a vendor
+        # primitive: those are black boxes, not modules with no logic
+        self.black_boxes = {s: d for s, d in dModules.items() if is_black_box(d)}
+        self.modules = {s: d for s, d in dModules.items() if s not in self.black_boxes}
         self.locations = dLocations
 
     def cells(self, lTypes=None):
@@ -118,6 +122,17 @@ class Netlist:
                 lReturn.append(sName)
         lReturn.sort(key=lambda s: (s.startswith("$"), s in dPorts, s))
         return lReturn
+
+
+def is_black_box(dModule):
+    """Returns whether a module of the netlist is a black box: it has the blackbox attribute."""
+    oValue = dModule.get("attributes", {}).get("blackbox")
+    if oValue is None:
+        return False
+    try:
+        return int(str(oValue), 2) != 0 if isinstance(oValue, str) else bool(oValue)
+    except ValueError:
+        return True
 
 
 def verilog_instance_name(sName):
