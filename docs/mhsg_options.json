@@ -1,7 +1,7 @@
 {
   "format": "mhsg-options",
   "format_version": 1,
-  "mhsg_version": "3.35.0.post426+git.fbb7e06d",
+  "mhsg_version": "3.35.0.post432+git.b8aa9c03",
   "documentation_url": "https://github.com/xTheBearx/vhdl-style-guide/blob/master/docs/",
   "settings": [
     {
@@ -1350,6 +1350,7 @@
         "subtype_200",
         "subtype_201",
         "subtype_202",
+        "sv_blank_line_001",
         "type_010",
         "type_011",
         "type_200",
@@ -2587,6 +2588,21 @@
         "subtype_100",
         "subtype_101",
         "subtype_102",
+        "sv_whitespace_001",
+        "sv_whitespace_002",
+        "sv_whitespace_003",
+        "sv_whitespace_004",
+        "sv_whitespace_005",
+        "sv_whitespace_006",
+        "sv_whitespace_007",
+        "sv_whitespace_008",
+        "sv_whitespace_009",
+        "sv_whitespace_010",
+        "sv_whitespace_011",
+        "sv_whitespace_012",
+        "sv_whitespace_013",
+        "sv_whitespace_014",
+        "sv_whitespace_015",
         "type_006",
         "type_007",
         "type_100",
@@ -3549,6 +3565,11 @@
         "yes",
         "no"
       ]
+    },
+    "spaces": {
+      "type": "integer",
+      "label": "Spaces",
+      "description": "The least number of spaces between code and a comment at the end of its line."
     },
     "spaces_after": {
       "type": "integer",
@@ -59211,6 +59232,53 @@
       "option_documentation": "configuring_prefix_and_suffix_rules.rst"
     },
     {
+      "id": "sv_blank_line_001",
+      "alias": "sv_blank_line_end_of_file",
+      "category": "sv_blank_line",
+      "groups": [
+        "blank_line"
+      ],
+      "summary": "This rule checks for blank lines at the end of a file, which Verible's formatter removes.",
+      "documentation": "sv_blank_line_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 3,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
       "id": "sv_indent_001",
       "alias": "sv_indent_code",
       "category": "sv_indent",
@@ -59254,6 +59322,716 @@
           "name": "user_error_message",
           "default": "",
           "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_whitespace_001",
+      "alias": "sv_whitespace_before_comma",
+      "category": "sv_whitespace",
+      "groups": [
+        "whitespace"
+      ],
+      "summary": "This rule checks for no space before a comma, as Verible's formatter does.",
+      "documentation": "sv_whitespace_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 2,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_whitespace_002",
+      "alias": "sv_whitespace_after_comma",
+      "category": "sv_whitespace",
+      "groups": [
+        "whitespace"
+      ],
+      "summary": "This rule checks for at least one space after a comma, as Verible's formatter does.",
+      "documentation": "sv_whitespace_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 2,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_whitespace_003",
+      "alias": "sv_whitespace_before_semicolon",
+      "category": "sv_whitespace",
+      "groups": [
+        "whitespace"
+      ],
+      "summary": "This rule checks for no space before a semicolon, except one after the colon of an empty case item (default: ;), as Verible's formatter does.",
+      "documentation": "sv_whitespace_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 2,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_whitespace_004",
+      "alias": "sv_whitespace_after_semicolon",
+      "category": "sv_whitespace",
+      "groups": [
+        "whitespace"
+      ],
+      "summary": "This rule checks for at least one space after a semicolon followed by more code on the line, as in a for loop, as Verible's formatter does.",
+      "documentation": "sv_whitespace_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 2,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_whitespace_005",
+      "alias": "sv_whitespace_control_keyword",
+      "category": "sv_whitespace",
+      "groups": [
+        "whitespace"
+      ],
+      "summary": "This rule checks for one space between if, for, foreach, while, repeat, wait or case and its opening parenthesis, as Verible's formatter does.",
+      "documentation": "sv_whitespace_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 2,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_whitespace_006",
+      "alias": "sv_whitespace_event_control",
+      "category": "sv_whitespace",
+      "groups": [
+        "whitespace"
+      ],
+      "summary": "This rule checks for no space between @ and its parenthesis or *, and one space between an always keyword and @, as Verible's formatter does.",
+      "documentation": "sv_whitespace_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 2,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_whitespace_007",
+      "alias": "sv_whitespace_hash",
+      "category": "sv_whitespace",
+      "groups": [
+        "whitespace"
+      ],
+      "summary": "This rule checks for no space after # in parameter lists and delays, as Verible's formatter does.",
+      "documentation": "sv_whitespace_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 2,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_whitespace_008",
+      "alias": "sv_whitespace_binary_operator",
+      "category": "sv_whitespace",
+      "groups": [
+        "whitespace"
+      ],
+      "summary": "This rule checks for at least one space around binary and assignment operators and the ? and : of a conditional expression, except in the brackets of a select or a dimension, as Verible's formatter does.",
+      "documentation": "sv_whitespace_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 2,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_whitespace_009",
+      "alias": "sv_whitespace_unary_operator",
+      "category": "sv_whitespace",
+      "groups": [
+        "whitespace"
+      ],
+      "summary": "This rule checks for no space between a unary operator and its operand, as Verible's formatter does.",
+      "documentation": "sv_whitespace_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 2,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_whitespace_010",
+      "alias": "sv_whitespace_increment",
+      "category": "sv_whitespace",
+      "groups": [
+        "whitespace"
+      ],
+      "summary": "This rule checks for no space between ++ or -- and its operand, as Verible's formatter does.",
+      "documentation": "sv_whitespace_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 2,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_whitespace_011",
+      "alias": "sv_whitespace_call",
+      "category": "sv_whitespace",
+      "groups": [
+        "whitespace"
+      ],
+      "summary": "This rule checks for no space between the name of a function, task or system task and its argument list, as Verible's formatter does.",
+      "documentation": "sv_whitespace_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 2,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_whitespace_012",
+      "alias": "sv_whitespace_select",
+      "category": "sv_whitespace",
+      "groups": [
+        "whitespace"
+      ],
+      "summary": "This rule checks for no space between a name and the bracket of a select, such as data[0]; the packed dimensions of a type, as in data_t [1:0], keep their space, as Verible's formatter does.",
+      "documentation": "sv_whitespace_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 2,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_whitespace_013",
+      "alias": "sv_whitespace_label_colon",
+      "category": "sv_whitespace",
+      "groups": [
+        "whitespace"
+      ],
+      "summary": "This rule checks for one space on each side of the colon of a block label, such as begin : name and end : name, as Verible's formatter does.",
+      "documentation": "sv_whitespace_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 2,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_whitespace_014",
+      "alias": "sv_whitespace_case_item_colon",
+      "category": "sv_whitespace",
+      "groups": [
+        "whitespace"
+      ],
+      "summary": "This rule checks for no space before the colon of a case item and at least one after it, as Verible's formatter does.",
+      "documentation": "sv_whitespace_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 2,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_whitespace_015",
+      "alias": "sv_whitespace_trailing_comment",
+      "category": "sv_whitespace",
+      "groups": [
+        "whitespace"
+      ],
+      "summary": "This rule checks for at least spaces spaces, 2 by default, between code and a comment at the end of its line, as Verible's formatter does.",
+      "documentation": "sv_whitespace_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 2,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "spaces",
+          "default": 2,
+          "definition": "spaces"
         }
       ]
     },

@@ -242,6 +242,8 @@ def classify(oTree, iBuffer, sLineStarts):
     # The indent levels of the tokens that start an item, such as a statement or a port: {offset: level}
     dItemStarts = {}
     lStack = [(oTree.root, (), 0)]
+    # The offsets of the tokens in the arguments of macro uses
+    sMacroArguments = set()
     first_offset = _first_offset_function(iBuffer)
     iRoot = first_offset(oTree.root)
     if iRoot is not None:
@@ -263,7 +265,8 @@ def classify(oTree, iBuffer, sLineStarts):
                 continue
             if isinstance(oChild, Token):
                 iOffset = oChild.location.offset
-                if oChild.location.buffer.id == iBuffer and iOffset not in sUnparsed:
+                # Zero-width tokens, such as the placeholder of an implicit type, share the offset of the next token
+                if oChild.location.buffer.id == iBuffer and iOffset not in sUnparsed and oChild.rawText:
                     sField, _ = dFields.get(("T", iOffset), (None, False))
                     sChildKind = oChild.kind.name
                     iIndent = dItemStarts.get(iOffset)
@@ -273,6 +276,9 @@ def classify(oTree, iBuffer, sLineStarts):
                     dReturn[iOffset] = token_info(tPath, sField, sChildKind, iIndent, bClosing)
                 for oTrivia in oChild.trivia:
                     oSyntax = oTrivia.syntax()
+                    if oSyntax is not None and oSyntax.kind.name == "MacroUsage" and oSyntax.args is not None:
+                        # The arguments of a macro use are text the macro places; rules leave them alone
+                        sMacroArguments.update(token_offsets(oSyntax.args, iBuffer))
                     if oSyntax is not None:
                         # A directive stands on its own, whichever token it comes before; it is not indented yet
                         lStack.append((oSyntax, (), None))
@@ -292,7 +298,24 @@ def classify(oTree, iBuffer, sLineStarts):
                         # Inside an expression, lines are continuations, which are not checked
                         iChildLevel = None
                 lStack.append((oChild, tPath, iChildLevel))
+    for iOffset in sMacroArguments:
+        dReturn.pop(iOffset, None)
     return dReturn
+
+
+def token_offsets(oNode, iBuffer):
+    """The offsets of all tokens under a syntax node, in the file's buffer."""
+    sReturn = set()
+    lStack = [oNode]
+    while lStack:
+        oItem = lStack.pop()
+        for oChild in oItem:
+            if isinstance(oChild, Token):
+                if oChild.location.buffer.id == iBuffer:
+                    sReturn.add(oChild.location.offset)
+            elif isinstance(oChild, SyntaxNode):
+                lStack.append(oChild)
+    return sReturn
 
 
 def _first_offset_function(iBuffer):

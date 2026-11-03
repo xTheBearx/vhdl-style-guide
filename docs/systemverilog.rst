@@ -20,7 +20,8 @@ Both kinds can be given in one run:
 Files are read with `slang <https://github.com/MikePopoloski/slang>`_, through its Python package pyslang, which is
 installed with MHSG. The file is kept exactly as written: directives such as :code:`\`define` and :code:`\`ifdef`,
 macro uses and the code in inactive :code:`\`ifdef` branches are all kept, and a fix changes only what the rules
-change.
+change. The arguments of macro uses and the code in inactive branches are not parsed, so rules leave them alone, and
+spaces next to a macro use are not changed.
 
 Rules
 -----
@@ -31,6 +32,12 @@ Verible checks, except that indentation is 4 spaces and lines are 80 characters,
 what a Verible lint rule checks, its alias is the Verible rule's name.
 
 * :code:`sv_indent_001`: indentation, 4 spaces per level
+* :code:`sv_whitespace_001` to :code:`sv_whitespace_015`: the spaces between tokens, as Verible's formatter sets
+  them: none before a comma or semicolon, after @ or #, around ++ or after a unary operator, before the parenthesis
+  of a call or the bracket of a select; at least one after a comma and around binary and assignment operators; one
+  between if, for or case and its parenthesis and around the colon of a block label; at least two before a comment
+  at the end of a line
+* :code:`sv_blank_line_001`: no blank lines at the end of the file
 
 The rules that apply to every language check SystemVerilog files as well:
 
