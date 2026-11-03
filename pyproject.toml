@@ -37,11 +37,12 @@ dependencies = [
     "PyYAML>=5.1",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
+# Development dependencies, managed with uv: uv sync installs the dev group, which includes tests.
 dev = [
+    {include-group = "tests"},
     "pre-commit>=3.2.0",
     "pylint",
-    "wheel",
 ]
 tests = [
     "pytest",
@@ -71,6 +72,9 @@ Upstream = "https://github.com/jeremiah-c-leary/vhdl-style-guide"
 
 [project.scripts]
 mhsg = "mhsg.__main__:main"
+
+[tool.uv]
+required-version = ">=0.5.0"
 
 [tool.setuptools-git-versioning]
 enabled = true

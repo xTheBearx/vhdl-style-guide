@@ -19,13 +19,14 @@ sRoot = os.path.dirname(os.path.dirname(sTestDir))
 
 
 def tools_installed():
-    if shutil.which("ghdl") is None or shutil.which("yosys") is None:
-        return False
+    """Returns whether GHDL, Yosys and the plugin can run. With MHSG_REQUIRE_DESIGN_TOOLS set, raises instead of returning False."""
     try:
         from mhsg.design import tools
 
         tools.find()
     except exceptions.DesignError:
+        if os.environ.get("MHSG_REQUIRE_DESIGN_TOOLS"):
+            raise
         return False
     return True
 

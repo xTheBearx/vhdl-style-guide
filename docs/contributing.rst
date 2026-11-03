@@ -73,7 +73,7 @@ Because generated code can look correct while hiding mistakes, the following app
 * **Prove it.**
   Bug fixes must include a test that fails without the fix and passes with it.
   New features must include tests covering their behavior.
-  Run :code:`tox` before submitting, so the style checks and the full test suite pass.
+  Run :code:`uv run pre-commit run --all-files` and :code:`uv run pytest` before submitting, so the style checks and the full test suite pass.
 * **Expect review.**
   A maintainer reviews every pull request before it is merged, and may ask questions about the change or decline it if it cannot be explained.
 
