@@ -110,6 +110,27 @@ The SystemVerilog files of a run are compiled together, once, with the files of 
 package against the files that use it. A file that still uses a module, package or macro the run does not know is not
 checked for unused, undriven and implicit signals, as a signal driven or read there would look undriven or unused.
 
+**Verilator.** When Verilator is installed, it lints the files of the run too (:code:`verilator --lint-only -Wall`),
+and :code:`sv_lint_011` reports the warnings of the checks slang does not make: blocking assignments in clocked
+processes (BLKSEQ), non-blocking ones in combinational processes (COMBDLY), signals assigned in several processes
+(MULTIDRIVEN), incomplete case statements (CASEINCOMPLETE), and others; its **verilator_warnings** option lists them.
+Verilator runs only when :code:`sv_lint_011` is enabled: always in lint mode without a rule set
+(:code:`--lint --rule_set none`), and with a rule set when the configuration enables it, as the built in rule sets
+do not list it:
+
+.. code-block:: yaml
+
+   rule:
+     sv_lint_011:
+       disable: false
+   systemverilog:
+     verilator: /opt/verilator/bin/verilator   # optional: the program, or false to not run Verilator
+
+Verilator needs every module and package a file uses. Files defining packages are given to it first; a module the run
+instantiates but does not define gets an empty stub with the ports and parameters its instances name. Files slang
+cannot parse, files importing a package the run does not define, such as uvm_pkg, and files Verilator stops at, such
+as one using a construct it does not support, are left out, and a warning on standard error says how many.
+
 .. code-block:: text
 
    $ mhsg -f rtl/*.sv --lint_only -c project.yaml

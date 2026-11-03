@@ -50,6 +50,12 @@ def record(commandLineArguments, oConfig, oTools=None):
         dRecord["rule_sets"] = [{"name": o.name, "version": o.version, "sha256": file_digest(o.filename)} for o in oRuleSet.all_sets()]
     if getattr(commandLineArguments, "local_rules", None):
         dRecord["local_rules"] = commandLineArguments.local_rules
+    if dRecord["lint_mode"] is not None:
+        # Verilator lints SystemVerilog files in lint mode, see sv_lint_011
+        from mhsg.svFile import verilator  # pylint: disable=import-outside-toplevel
+
+        sVerilator = verilator.find(oConfig.dConfig)
+        dRecord["verilator"] = verilator.version(sVerilator) if sVerilator else None
     if oTools is not None:
         dRecord["ghdl"] = oTools.ghdl_version or None
         dRecord["yosys"] = oTools.yosys_version or None
@@ -60,7 +66,7 @@ def record(commandLineArguments, oConfig, oTools=None):
 def summary(dRecord):
     """Returns the record as lines of text, for text reports."""
     lTools = [f"mhsg {dRecord['mhsg']}", f"Python {dRecord['python']}"]
-    for sKey, sName in (("pyslang", "pyslang"), ("ghdl", "GHDL"), ("yosys", "Yosys")):
+    for sKey, sName in (("pyslang", "pyslang"), ("verilator", "Verilator"), ("ghdl", "GHDL"), ("yosys", "Yosys")):
         if dRecord.get(sKey):
             lTools.append(f"{sName} {dRecord[sKey]}")
     lLines = ["Tools: " + ", ".join(lTools)]
@@ -75,7 +81,7 @@ def summary(dRecord):
 def properties(dRecord):
     """Returns the record as (name, value) pairs, for the properties of a JUnit report."""
     lReturn = [("mhsg.version", dRecord["mhsg"]), ("python.version", dRecord["python"])]
-    for sKey in ("pyslang", "ghdl", "yosys"):
+    for sKey in ("pyslang", "verilator", "ghdl", "yosys"):
         if dRecord.get(sKey):
             lReturn.append((sKey + ".version", dRecord[sKey]))
     lReturn.append(("command_line", " ".join(dRecord["command_line"])))

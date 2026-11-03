@@ -2094,7 +2094,8 @@
         "sv_lint_007",
         "sv_lint_008",
         "sv_lint_009",
-        "sv_lint_010"
+        "sv_lint_010",
+        "sv_lint_011"
       ]
     },
     {
@@ -4045,6 +4046,12 @@
       "type": "string",
       "label": "User error message",
       "description": "Extra text appended to the solution of every violation of this rule. Empty means no message."
+    },
+    "verilator_warnings": {
+      "type": "list",
+      "label": "Verilator warnings",
+      "description": "The warnings of Verilator to report, by Verilator's names, such as BLKSEQ and COMBDLY.",
+      "item_type": "string"
     },
     "waive_for_locals": {
       "type": "enum",
@@ -61777,6 +61784,67 @@
           "name": "user_error_message",
           "default": "",
           "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_lint_011",
+      "alias": "sv_lint_verilator",
+      "category": "sv_lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule reports the warnings of Verilator, when it is installed, for checks slang does not make: blocking assignments in clocked processes (BLKSEQ), non-blocking assignments in combinational ones (COMBDLY), signals assigned in more than one process (MULTIDRIVEN), case statements that do not cover every value (CASEINCOMPLETE), and others. The verilator_warnings option lists the warnings reported, by Verilator's names; by default those whose checks slang does not make.",
+      "documentation": "sv_lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "verilator_warnings",
+          "default": [
+            "ALWCOMBORDER",
+            "BLKSEQ",
+            "CASEINCOMPLETE",
+            "CASEX",
+            "COMBDLY",
+            "INITIALDLY",
+            "MULTIDRIVEN",
+            "SYNCASYNCNET"
+          ],
+          "definition": "verilator_warnings"
         }
       ]
     },

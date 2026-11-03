@@ -177,6 +177,7 @@ Rules Disabled by Default
 * `sv_lint_008 <sv_lint_rules.html#sv-lint-008>`_
 * `sv_lint_009 <sv_lint_rules.html#sv-lint-009>`_
 * `sv_lint_010 <sv_lint_rules.html#sv-lint-010>`_
+* `sv_lint_011 <sv_lint_rules.html#sv-lint-011>`_
 * `sv_literal_003 <sv_literal_rules.html#sv-literal-003>`_
 * `sv_literal_004 <sv_literal_rules.html#sv-literal-004>`_
 * `sv_literal_005 <sv_literal_rules.html#sv-literal-005>`_
