@@ -6,6 +6,7 @@ settings the test files were written for, see tests/conftest.py and tests/test_d
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -48,6 +49,21 @@ class test_defaults(unittest.TestCase):
         # length_001 is a warning, which does not fail the run
         self.assertEqual(0, iStatus)
         self.assertEqual([f"WARNING: {os.path.join(sDirectory, 'long_line.vhd')}(21)length_001 -- Reduce line to less than 80 characters"], lOutput)
+
+    def test_reindent_multiline_constraint_once(self):
+        # Re-indenting moves the continuation lines of a multiline constraint, and with them its :=, so the :=
+        # of the declarations are aligned after them (signal_400 before declarative_part_400): one fix is enough
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sCopy = os.path.join(sTemporary, "multiline_constraint.vhd")
+            shutil.copy(os.path.join(sDirectory, "multiline_constraint.vhd"), sCopy)
+            lFixed = []
+            for _ in range(2):
+                run(["-f", sCopy, "--fix"])
+                with open(sCopy, encoding="utf-8") as oFile:
+                    lFixed.append(oFile.read())
+            self.assertEqual(lFixed[0], lFixed[1])
+            lLines = lFixed[0].splitlines()
+            self.assertEqual(lLines[5].index(":="), lLines[6].index(":="))
 
     def test_styles_keep_two_spaces(self):
         with tempfile.TemporaryDirectory() as sTemporary:
