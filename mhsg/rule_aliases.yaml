@@ -1184,3 +1184,13 @@ sv_always_005: sv_always_single_event_control
 sv_always_006: sv_always_one_top_level_statement
 sv_comment_001: sv_comment_tool_directives
 sv_syntax_001: sv_syntax_error
+sv_lint_001: sv_lint_widths
+sv_lint_002: sv_lint_latches
+sv_lint_003: sv_lint_multiple_drivers
+sv_lint_004: sv_lint_implicit_nets
+sv_lint_005: sv_lint_unused
+sv_lint_006: sv_lint_case_items
+sv_lint_007: sv_lint_signedness
+sv_lint_008: sv_lint_sensitivity_list
+sv_lint_009: sv_lint_other_warnings
+sv_lint_010: sv_lint_undriven

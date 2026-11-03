@@ -601,13 +601,15 @@ checks:
     title: Function call argument widths must match the input declarations
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_lint_001
     note: Verilog only.
   2.1.3.2:
     title: Function return width must match the width of the assigned target
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_lint_001
     note: Verilog only.
   2.1.3.3:
     title: Return several values from a function via concatenation
@@ -710,7 +712,8 @@ checks:
     title: Assign every output on all paths of combinational blocks to avoid latches
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_lint_002
   2.2.1.2:
     title: Review lint and synthesis warnings for inferred latches
     level: Suggestion
@@ -720,7 +723,8 @@ checks:
     title: Combinational sensitivity lists must contain every signal read
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_lint_008
   2.2.2.2:
     title: Keep constants and unused signals out of sensitivity lists
     level: Recommendation 2
@@ -1052,7 +1056,8 @@ checks:
     title: Case items must not overlap
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_lint_006
   2.8.1.4:
     title: Every case statement needs a default branch
     level: Recommendation 1
@@ -1280,13 +1285,15 @@ checks:
     title: Bitwise-operator operands should match the assignment target width
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_lint_001
     note: Verilog only.
   2.10.3.3:
     title: The right-hand side of an assignment must not be wider than the left
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_lint_001
     note: Verilog only.
   2.10.3.4:
     title: The right-hand side of an assignment should not be narrower than the left
@@ -1330,7 +1337,8 @@ checks:
     title: Check widths when assigning integers to reg or wire
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_lint_001
     note: Verilog only.
   2.10.4.4:
     title: Be careful comparing integers with reg/wire values
@@ -1390,7 +1398,8 @@ checks:
     title: Handle sign extension and operand widths in signed arithmetic
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_lint_007
   2.10.6.3:
     title: Do not mix signed and unsigned operands in one statement
     level: Recommendation 3

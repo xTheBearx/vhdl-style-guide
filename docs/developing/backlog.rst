@@ -97,7 +97,15 @@ files with pyslang and running the language neutral rules, is done; see :doc:`..
 * **STARC rule set**: 41 of the 613 items of the STARC guide have rules. The per-file items (216) are planned with
   the SystemVerilog rules, the clock and reset items with design analysis of Verilog designs. The catalogue the set
   was made from records each item's limits and its Verible equivalent, kept in the notes of the set.
-* **Lint and design analysis** of SystemVerilog (Verilator, yosys-slang) are later steps of the plan.
+* **Lint of a whole design**: each file is elaborated on its own, so unused, undriven and implicit signals are
+  only checked in files that use nothing from other files (on the corpus, 466 of 2,685 unused findings remain).
+  Elaborating the files of a design together, from a file list or the design section of the configuration, would
+  check them everywhere and let slang check port connections across modules.
+* **Verilator** is not used yet: its warnings (BLKSEQ, COMBDLY, MULTIDRIVEN, CASEINCOMPLETE and others) could add
+  checks slang does not make, as an optional tool like GHDL.
+* **Sensitivity lists** (sv_lint_008) are compared with the names the block reads, by name; reads through
+  functions and hierarchical names are not followed.
+* **Design analysis** of SystemVerilog (yosys-slang) is a later step of the plan.
 * **Real-world SystemVerilog check**: ibex, common_cells and picorv32 (914 files) were checked by hand; they should be
   added to :code:`scripts/real_world_designs.yaml` once it can hold SystemVerilog projects.
 

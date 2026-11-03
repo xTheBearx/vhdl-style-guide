@@ -167,6 +167,16 @@ Rules Disabled by Default
 * `sv_file_003 <sv_file_rules.html#sv-file-003>`_
 * `sv_file_004 <sv_file_rules.html#sv-file-004>`_
 * `sv_function_005 <sv_function_rules.html#sv-function-005>`_
+* `sv_lint_001 <sv_lint_rules.html#sv-lint-001>`_
+* `sv_lint_002 <sv_lint_rules.html#sv-lint-002>`_
+* `sv_lint_003 <sv_lint_rules.html#sv-lint-003>`_
+* `sv_lint_004 <sv_lint_rules.html#sv-lint-004>`_
+* `sv_lint_005 <sv_lint_rules.html#sv-lint-005>`_
+* `sv_lint_006 <sv_lint_rules.html#sv-lint-006>`_
+* `sv_lint_007 <sv_lint_rules.html#sv-lint-007>`_
+* `sv_lint_008 <sv_lint_rules.html#sv-lint-008>`_
+* `sv_lint_009 <sv_lint_rules.html#sv-lint-009>`_
+* `sv_lint_010 <sv_lint_rules.html#sv-lint-010>`_
 * `sv_literal_003 <sv_literal_rules.html#sv-literal-003>`_
 * `sv_literal_004 <sv_literal_rules.html#sv-literal-004>`_
 * `sv_literal_005 <sv_literal_rules.html#sv-literal-005>`_
