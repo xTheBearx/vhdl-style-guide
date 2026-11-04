@@ -540,7 +540,7 @@ design_020
 Alias: :code:`design_memory_output_in_condition`
 
 This rule reports the outputs of memories that decide a condition: the condition of an if statement or of a
-conditional assignment, or the selector of a case statement, directly or through logic.
+conditional assignment, or the selector of a case statement, directly or through comparisons and logical operators.
 
 .. NOTE:: This is a design rule. It runs in design analysis.
 
@@ -548,7 +548,8 @@ A memory location that was never written reads as unknown in simulation. An if s
 on an unknown condition and a case statement its others choice, while the hardware takes either, so simulation
 hides what the hardware can do. A case statement whose others choice assigns unknown values, :code:`'X'`, keeps
 the unknown in simulation and is not reported. Memories that are never written, which hold constants, are not
-reported either.
+reported either. A memory output that is computed with first, such as by an adder, or selected by a
+multiplexer, is not followed.
 
 **Violation**
 
