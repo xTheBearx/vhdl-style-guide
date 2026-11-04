@@ -114,8 +114,10 @@ A module the Verilog files instantiate but none defines, such as a vendor primit
 a VHDL component without an entity is (see `Black boxes`_). Yosys reads a module without logic for it before the
 design, so its hierarchy check does not stop there, with the ports the instances connect:
 
-* when the design names a black box library Yosys has cell models for, :code:`black_box_libraries: [xilinx]`, the
-  primitives come from those models (:code:`+/xilinx/cells_sim.v` and :code:`cells_xtra.v`), with their ports;
+* when the design names a black box library Yosys has cell models for, such as :code:`black_box_libraries: [xilinx]`,
+  the primitives come from those models, with their ports: :code:`+/xilinx/cells_sim.v` and :code:`cells_xtra.v` for
+  xilinx, :code:`+/ecp5/cells_sim.v`, :code:`cells_bb.v` and :code:`+/ice40/cells_sim.v` for lattice, and
+  :code:`+/sf2/cells_sim.v` for the SmartFusion2 macros of microchip;
 * otherwise a port's direction comes from its role in the declaration: a clock, an enable, a reset input or a static
   port is an input, a path, a clock output, a reset output or a synchronized output is an output, and so is each port
   another role names as its input;
@@ -487,8 +489,8 @@ black box type that has none, with its instances, generic values, ports, directi
 ``TODO``. Fill it in, then add it to **black_box_libraries** or copy it into the design section; design_017 reports
 every ``TODO`` that remains.
 
-**Libraries that come with MHSG.** Two declaration libraries come with MHSG, for AMD/Xilinx and for Microchip. A
-design includes them by name, so using them stays your decision:
+**Libraries that come with MHSG.** Four declaration libraries come with MHSG, for AMD/Xilinx, Microchip, Intel and
+Lattice. A design includes them by name, so using them stays your decision:
 
 .. code-block:: yaml
 
@@ -502,15 +504,22 @@ design includes them by name, so using them stays your decision:
 
 The declarations are taken from the vendors' published libraries guides, not from vendor files. A declaration in the
 design section, or a library listed earlier, takes precedence port by port, so a single port can be changed. Ports
-whose behaviour depends on how a primitive is used, such as the ECC ports of block RAM or the latch mode of the
+whose behaviour depends on how a primitive is used, such as the cascade ports of the SERDES or the latch mode of the
 Microchip SLE, are left out on purpose, so design_017 asks for them. Check the declarations against the guides of your
-tool versions.
+tool versions. The port names of the primitives Yosys has cell models for were checked against those models.
 
 * **xilinx**: clock buffers, input and output buffers, MMCM and PLL, registers, shift registers, DSP, IDDR and ODDR,
-  IDELAY, block RAM, configuration primitives, and the XPM CDC macros, FIFOs and memories. The output of a clock
-  multiplexer is a clock of its own; MMCM and PLL outputs are derived from CLKIN1.
-* **microchip**: global and regional clock buffers, input and output buffers, SLE, the large SRAM blocks, and the
-  PF_CCC, PF_OSC, PF_INIT_MONITOR and CoreReset_PF cores, matched by the names Libero gives them, such as PF_CCC_C0.
+  IDELAY and ODELAY, ISERDES and OSERDES, block RAM with its ECC and cascade ports, configuration primitives, and the
+  XPM CDC macros, FIFOs and memories. The output of a clock multiplexer is a clock of its own; MMCM and PLL outputs
+  are derived from CLKIN1.
+* **microchip**: global and regional clock buffers, input and output buffers, SLE, the large SRAM blocks, micro SRAM,
+  the math block, and the PF_CCC, PF_OSC, PF_INIT_MONITOR and CoreReset_PF cores, matched by the names Libero gives
+  them, such as PF_CCC_C0.
+* **intel**: the GLOBAL buffer, altpll, altsyncram, dcfifo, scfifo, altddio_in and altddio_out. The side B ports of
+  altsyncram follow the clock its ADDRESS_REG_B and OUTDATA_REG_B parameters select.
+* **lattice**: for ECP5, the DCCA and DCSC clock primitives, EHXPLLL, OSCG, IB, OB, OBZ and BB buffers, IDDRX1F and
+  ODDRX1F, the FD1S3 and FD1P3 registers, DP16KD and PDPW16KD block RAM and GSR; for iCE40, SB_GB, SB_GB_IO, the
+  SB_PLL40 PLLs, the oscillators, SB_RAM40_4K and the SB_DFF registers.
 
 xilinx
 ~~~~~~
@@ -521,6 +530,16 @@ microchip
 ~~~~~~~~~
 
 .. include:: black_box_library_microchip.rst
+
+intel
+~~~~~
+
+.. include:: black_box_library_intel.rst
+
+lattice
+~~~~~~~
+
+.. include:: black_box_library_lattice.rst
 
 **Report.** The crossing report lists each black box type, where it is declared, its reference and reviewer, the
 outputs synchronized inside black boxes for manual review, the static ports with their justification and reviewer,
