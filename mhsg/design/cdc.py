@@ -603,6 +603,12 @@ class Analysis:
             lNets = [t[0].connections[t[1]][t[2]] for t in lPoints if t[0] is not None and not t[0].is_black_box()]
             if any(self.is_synchronizer_output(b) for b in lNets):
                 return True
+            # Or the output of a synchronizer black box
+            for oPoint, sPort, _ in lPoints:
+                if oPoint is not None and oPoint.is_black_box():
+                    oRole = self.box_role(oPoint, sPort)
+                    if oRole is not None and oRole.kind == "synchronized":
+                        return True
         return False
 
     def classify(self, oCrossing):
@@ -669,6 +675,40 @@ class Analysis:
                     oCrossing.status = sStatus
                     oCrossing.detail = f"{len(setBits)} bits of {self.flat.cell_name(oSource)}" + (", gray coded" if sStatus == GRAY else " cross separately")
 
+    def box_gray_buses(self):
+        """
+        Returns {(id of a black box cell, synchronized port): (source register, destination clock group)} for the black
+        box synchronizers whose inputs are bits of one gray coded register, two or more, each straight from the register.
+        """
+        dGroups = {}
+        for oInstance, sPort, oRole, _, oDestination in self.box_synchronizers:
+            if sPort is None or oDestination is None or not oRole.source:
+                continue
+            lNets = [n for n in self.box_nets(oInstance.cell, oRole.source) if graph.is_variable(n)]
+            if len(lNets) != 1:
+                continue
+            # Through buffers, such as the continuous assignments read_slang writes as $buf cells
+            oNet, _ = self.through_transparent(lNets[0])
+            tDriver = self.flat.driver(oNet)
+            if tDriver is None or tDriver[0] is None or not is_register(tDriver[0]) or tDriver[1] != "Q":
+                continue
+            tKey = (tDriver[0], oDestination.group)
+            dGroups.setdefault((id(tDriver[0]), oDestination.group), (tKey, []))[1].append(((id(oInstance.cell), sPort), tDriver[2]))
+        dReturn = {}
+        for tKey, lMembers in dGroups.values():
+            setBits = {iBit for _, iBit in lMembers}
+            if len(setBits) > 1 and self.gray_coded(tKey[0], setBits):
+                for tBox, _ in lMembers:
+                    dReturn[tBox] = tKey
+        return dReturn
+
+    def box_nets(self, oCell, sPort):
+        """The nets connected to a port of a black box cell, matching the name of the port without regard to case."""
+        for sName, lNets in oCell.connections.items():
+            if sName.lower() == sPort.lower():
+                return lNets
+        return []
+
     def _find_reconvergence(self, bFollowResets):
         """
         Each synchronizer delivers its signal one or two destination cycles after the change, at random, so two
@@ -708,14 +748,23 @@ class Analysis:
                 _, oLast, iLast = self.chain(oCrossing.cell, iIndex)
                 tNode = ("r", id(oLast), iLast)
                 dSeeds[tNode] = dSeeds.get(tNode, 0) | (1 << iTag)
-        # Outputs synchronized inside black boxes, such as vendor synchronizer macros, are synchronizers too
+        # Outputs synchronized inside black boxes, such as vendor synchronizer macros, are synchronizers too. The bits
+        # of a gray coded register, each synchronized by a black box of its own, are one bus and share a tag
+        dBoxBuses = self.box_gray_buses()
         for oInstance, sPort, oRole, oSource, oDestination in self.box_synchronizers:
             if sPort is None or oDestination is None:
                 continue
             sGroup = oSource.group if isinstance(oSource, Clock) else "async"
-            iTag = len(self.sync_tags)
-            sFrom = f"{oInstance.cell!r}.{oRole.source}" if oRole.source else f"{oInstance.cell!r}"
-            self.sync_tags.append((sFrom, f"{oInstance.cell!r}.{sPort}", oSource if isinstance(oSource, Clock) else "async", (sGroup, oDestination.group)))
+            tBus = dBoxBuses.get((id(oInstance.cell), sPort))
+            if tBus is not None and tBus in dBusTags:
+                iTag = dBusTags[tBus]
+            else:
+                iTag = len(self.sync_tags)
+                sFrom = f"{oInstance.cell!r}.{oRole.source}" if oRole.source else f"{oInstance.cell!r}"
+                if tBus is not None:
+                    dBusTags[tBus] = iTag
+                    sFrom = self.flat.cell_name(tBus[0])
+                self.sync_tags.append((sFrom, f"{oInstance.cell!r}.{sPort}", oSource if isinstance(oSource, Clock) else "async", (sGroup, oDestination.group)))
             tNode = ("b", id(oInstance.cell), sPort.lower())
             dSeeds[tNode] = dSeeds.get(tNode, 0) | (1 << iTag)
         if len(self.sync_tags) < 2:
@@ -1033,7 +1082,7 @@ class Analysis:
         if tDriver is not None and tDriver[0] is not None and tDriver[0].type in ("$xor", "$xnor"):
             oXor, _, iOut = tDriver
             lInputs = [graph.extend(oXor.connections.get("A", []), iOut, False), graph.extend(oXor.connections.get("B", []), iOut, False)]
-            return {(): {b for b in lInputs if graph.is_variable(b)}}
+            return {(): {self.same_value(b) for b in (self.shifted_bit(b) for b in lInputs) if graph.is_variable(b)}}
         if tDriver is not None and tDriver[0] is not None and tDriver[0].type == "$mux" and iDepth < 3:
             oMux, _, iOut = tDriver
             lSelect = oMux.connections.get("S", [])
@@ -1045,6 +1094,48 @@ class Analysis:
                     dReturn[((sSelect, iBranch), *tKey)] = setInputs
             return dReturn
         return {(): {oNet}}
+
+    def same_value(self, oNet):
+        """
+        Returns a key equal for nets that logic computes alike, as GHDL computes an expression written twice, such as
+        b + 1 in (b + 1) xor shift_right(b + 1, 1), twice: the cell type, its inputs and parameters, and the bit.
+        """
+        tDriver = self.flat.driver(oNet)
+        if tDriver is None or tDriver[0] is None or tDriver[0].is_black_box() or graph.is_state(tDriver[0].cell):
+            return oNet
+        oCell, sPort, iIndex = tDriver
+        lInputs = tuple(sorted((k, tuple(v)) for k, v in oCell.connections.items() if self.flat.direction(oCell, k) == "input"))
+        lParameters = tuple(sorted((k, str(v)) for k, v in oCell.cell.get("parameters", {}).items()))
+        return (oCell.type, lInputs, lParameters, sPort, iIndex)
+
+    def shifted_bit(self, oNet):
+        """
+        Follows a net back through buffers and shifts by a constant to the bit it copies, as in a ^ (a >> 1), or to
+        the constant a shift fills in.
+        """
+        for _ in range(8):
+            tDriver = self.flat.driver(oNet) if graph.is_variable(oNet) else None
+            if tDriver is None or tDriver[0] is None:
+                return oNet
+            oCell, _, iOut = tDriver
+            lA = oCell.connections.get("A", [])
+            if oCell.type in ("$pos", "$buf"):
+                oNet = graph.extend(lA, iOut, oCell.parameter("A_SIGNED"))
+                continue
+            if oCell.type not in ("$shr", "$shl", "$sshr", "$sshl"):
+                return oNet
+            lB = oCell.connections.get("B", [])
+            if not lB or not all(b in ("0", "1") for b in lB):
+                return oNet
+            iShift = int("".join(reversed(lB)), 2)
+            iIndex = iOut + iShift if oCell.type in ("$shr", "$sshr") else iOut - iShift
+            if 0 <= iIndex < len(lA):
+                oNet = lA[iIndex]
+            elif oCell.type == "$sshr" and oCell.parameter("A_SIGNED") and lA:
+                oNet = lA[-1]
+            else:
+                return "0"
+        return oNet
 
     # Resets
 

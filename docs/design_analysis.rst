@@ -125,7 +125,8 @@ under **generics**. With :code:`order: auto`, the VHDL files are those these ent
   set from an expression;
 * GHDL names the module after the entity in lower case; the Verilog may write the name in any case, as long as all its
   instances write it the same way;
-* with read_slang, this has not been tried yet.
+* with read_slang, each set of values is elaborated in the same way, as read_slang does not set the parameters of the
+  modules Yosys holds.
 
 A module the Verilog files instantiate but none defines, such as a vendor primitive or encrypted IP, is a black box, as
 a VHDL component without an entity is (see `Black boxes`_). Yosys reads a module without logic for it before the
@@ -142,7 +143,10 @@ design, so its hierarchy check does not stop there, with the ports the instances
   something else drives what it connects to, and an output when nothing does.
 
 The modules are written to :code:`black_boxes.v` in the work directory. design_017 reports a black box without a
-declaration. With read_slang, this has not been tried yet.
+declaration. With read_slang, which connects only nets to inout ports, the stubs are read with the design, and a port
+whose direction no declaration gives is an input when an instance connects it to a constant, an input of the module
+holding the instance or a signal that module assigns, an output when it connects it to a signal nothing there drives,
+and otherwise an input or an output by the suffix of its name, such as :code:`clk_i` or :code:`data_o`.
 
 Running design analysis
 -----------------------
@@ -541,8 +545,8 @@ override them:
 | ``memory``,            |                                                   | listed for manual review                 |
 | ``dual_clock_fifo``    |                                                   |                                          |
 +------------------------+---------------------------------------------------+------------------------------------------+
-| ``synchronizer``       | source_clock, destination_clock, input, output,   | a synchronized output                    |
-|                        | stages                                            |                                          |
+| ``synchronizer``       | source_clock, destination_clock, input, output,   | a synchronized output, and an            |
+|                        | stages, reset                                     | asynchronous reset input                 |
 +------------------------+---------------------------------------------------+------------------------------------------+
 | ``async_input``        | outputs (all)                                     | asynchronous outputs                     |
 +------------------------+---------------------------------------------------+------------------------------------------+

@@ -31,6 +31,10 @@ YOSYS_MODELS = {
     "microchip": ["sf2/cells_sim.v"],
 }
 
+# Suffixes of port names that tell their direction, as in the lowRISC and PULP styles
+INPUT_SUFFIXES = ("_i", "_ni", "_in")
+OUTPUT_SUFFIXES = ("_o", "_no", "_out")
+
 # The attribute of a stub whose inout ports are made inputs or outputs for each instance, see netlist.py
 INFERRED_DIRECTIONS = "mhsg_inferred_directions"
 
@@ -49,7 +53,11 @@ def file_trees(oDesign):
     lReturn = []
     for sFile in oDesign.verilog_files():
         try:
-            lReturn.append((sFile, SyntaxTree.fromFile(sFile, oOptions) if oOptions is not None else SyntaxTree.fromFile(sFile)))
+            if oOptions is None:
+                lReturn.append((sFile, SyntaxTree.fromFile(sFile)))
+            else:
+                # With options pyslang needs the source manager too
+                lReturn.append((sFile, SyntaxTree.fromFile(sFile, SyntaxTree.getDefaultSourceManager(), oOptions)))
         except (OSError, RuntimeError, ValueError):
             continue
     return lReturn
@@ -286,8 +294,12 @@ def declared_ports(oDesign, sModule):
     return lReturn
 
 
-def stub(oDesign, sModule, dInstances):
-    """The text of a module with the ports and parameters of a black box and no logic."""
+def stub(oDesign, sModule, dInstances, bSlang=False):
+    """
+    The text of a module with the ports and parameters of a black box and no logic. For read_slang, which connects
+    only nets to inout ports, a port without a declared direction is an input or an output when its name says so by
+    the usual suffixes, such as clk_i and data_o.
+    """
     lPorts = list(dInstances["ports"])
     for sPort in declared_ports(oDesign, sModule):
         if not any(s.lower() == sPort.lower() for s in lPorts):
@@ -295,11 +307,73 @@ def stub(oDesign, sModule, dInstances):
     lPorts += [f"mhsg_port_{i}" for i in range(dInstances["ordered_ports"]) if f"mhsg_port_{i}" not in lPorts]
     lParameters = dInstances["parameters"] + [f"mhsg_parameter_{i}" for i in range(dInstances["ordered_parameters"])]
     dDirections = directions(oDesign, sModule, lPorts)
+    if bSlang:
+        dConnected = dInstances.get("connected", {})
+        dDirections = {s: (dConnected.get(s) or suffix_direction(s)) if d == "inout" else d for s, d in dDirections.items()}
     sParameters = " #(" + ", ".join(f"parameter {s} = 0" for s in lParameters) + ")" if lParameters else ""
     sPorts = " (" + ", ".join(f"{dDirections[s]} wire {s}" for s in lPorts) + ")" if lPorts else ""
     # The inout ports of each instance are made inputs or outputs from what drives them, see netlist.py
     sAttribute = f"(* {INFERRED_DIRECTIONS} *) " if "inout" in dDirections.values() else ""
     return f"{sAttribute}module {sModule}{sParameters}{sPorts};\nendmodule\n"
+
+
+def connection_directions(oDesign, setModules):
+    """
+    Returns {module: {port: input | output}} for the ports of black boxes that read_slang needs a direction for, from
+    what their instances connect: a port connected to a constant, or to a signal an assignment of the module holding
+    the instance drives, or to an input of that module, is an input; one connected only to signals nothing there
+    drives is an output. Ports connected both ways, or not by name, are left out.
+    """
+    dFound = {}
+    for oTree in trees(oDesign):
+        for oNode in verilator.nodes(oTree):
+            if oNode.kind not in verilator.DEFINITIONS:
+                continue
+            setDriven = driven_names(oNode)
+            for oInstance in verilator.descendants(oNode):
+                if oInstance.kind != SyntaxKind.HierarchyInstantiation or verilator.name_of(oInstance.type) not in setModules:
+                    continue
+                sModule = verilator.name_of(oInstance.type)
+                for oItem in verilator.elements(oInstance.instances):
+                    for oConnection in verilator.elements(oItem.connections):
+                        if oConnection.kind != SyntaxKind.NamedPortConnection or oConnection.expr is None:
+                            continue
+                        lNames = identifiers(oConnection.expr)
+                        sDirection = "input" if not lNames or any(s in setDriven for s in lNames) else "output"
+                        dFound.setdefault(sModule, {}).setdefault(verilator.name_of(oConnection.name), set()).add(sDirection)
+    return {m: {p: next(iter(s)) for p, s in d.items() if len(s) == 1} for m, d in dFound.items()}
+
+
+def driven_names(oModule):
+    """The names a module drives: its inputs, and the targets of its assignments."""
+    setReturn = set()
+    for oNode in verilator.descendants(oModule):
+        if oNode.kind == SyntaxKind.ImplicitAnsiPort:
+            if "input" in str(getattr(oNode.header, "direction", "") or ""):
+                setReturn.add(verilator.name_of(oNode.declarator.name))
+        elif oNode.kind == SyntaxKind.PortDeclaration:
+            if "input" in str(getattr(oNode.header, "direction", "") or ""):
+                setReturn.update(verilator.name_of(o.name) for o in verilator.elements(oNode.declarators))
+        elif oNode.kind in (SyntaxKind.AssignmentExpression, SyntaxKind.NonblockingAssignmentExpression):
+            setReturn.update(identifiers(oNode.left)[:1])
+    return setReturn
+
+
+def identifiers(oExpression):
+    """The names an expression reads, in order."""
+    if oExpression.kind == SyntaxKind.IdentifierName:
+        return [str(oExpression).strip()]
+    return [str(o).strip() for o in verilator.descendants(oExpression) if o.kind == SyntaxKind.IdentifierName]
+
+
+def suffix_direction(sPort):
+    """input or output from the suffix of a port name, as in clk_i, rst_ni, data_o and valid_no; else inout."""
+    sLower = sPort.lower()
+    if sLower.endswith(INPUT_SUFFIXES):
+        return "input"
+    if sLower.endswith(OUTPUT_SUFFIXES):
+        return "output"
+    return "inout"
 
 
 def read_commands(oDesign, sWorkDirectory, sDataDirectory, lLibraries, setExclude=()):
@@ -308,24 +382,41 @@ def read_commands(oDesign, sWorkDirectory, sDataDirectory, lLibraries, setExclud
     vendors in lLibraries that define some of them, and a file of stubs for the others, written to the work directory.
     Modules in setExclude, such as the VHDL entities of a Verilog top, are not black boxes.
     """
+    sCommands, sStubFile, _ = black_boxes(oDesign, sWorkDirectory, sDataDirectory, lLibraries, setExclude)
+    lCommands = [sCommands] if sCommands else []
+    if sStubFile is not None:
+        lCommands.append(f"read_verilog -lib {sStubFile}")
+    return "; ".join(lCommands)
+
+
+def black_boxes(oDesign, sWorkDirectory, sDataDirectory, lLibraries, setExclude=(), bSlang=False):
+    """
+    Returns (Yosys commands that read the cell models of the black boxes, the file of stubs for the others or None,
+    the names of the modules of the stubs). read_slang reads the stub file with the design, so that the parameters
+    the instances set are known, see read_commands for the others.
+    """
     dUndefined = undefined_modules(oDesign, setExclude)
     if not dUndefined:
-        return ""
+        return "", None, []
     dModels = model_modules(sDataDirectory, [s for sLibrary in lLibraries for s in YOSYS_MODELS.get(sLibrary, [])])
+    if bSlang:
+        dConnected = connection_directions(oDesign, set(dUndefined))
+        dUndefined = {s: dict(d, connected=dConnected.get(s, {})) for s, d in dUndefined.items()}
     lModelFiles = []
     lStubs = []
+    lNames = []
     for sModule, dInstances in dUndefined.items():
         sModel = dModels.get(sModule)
         if sModel is not None:
             if sModel not in lModelFiles:
                 lModelFiles.append(sModel)
         else:
-            lStubs.append(stub(oDesign, sModule, dInstances))
-    lCommands = [f"read_verilog -lib -specify +/{s}" for s in lModelFiles]
+            lStubs.append(stub(oDesign, sModule, dInstances, bSlang))
+            lNames.append(sModule)
+    sStubFile = None
     if lStubs:
         sStubFile = os.path.join(sWorkDirectory, "black_boxes.v")
         with open(sStubFile, "w", encoding="utf-8") as oFile:
             oFile.write("// Black boxes: modules the design instantiates but no file defines, see mhsg/design/verilog_black_boxes.py\n")
             oFile.write("".join(lStubs))
-        lCommands.append(f"read_verilog -lib {sStubFile}")
-    return "; ".join(lCommands)
+    return "; ".join(f"read_verilog -lib -specify +/{s}" for s in lModelFiles), sStubFile, lNames

@@ -44,6 +44,52 @@ class test_stubs(unittest.TestCase):
         self.assertEqual("module pll (input wire clk_in, output wire clk_out);\nendmodule\n", verilog_black_boxes.stub(oDesign, "pll", dInstances))
 
 
+class VerilogDesign(Design):
+    def __init__(self, dBlackBoxes, lFiles):
+        super().__init__(dBlackBoxes)
+        self.files = lFiles
+        self.defines = {}
+        self.include_directories = []
+
+    def verilog_files(self):
+        return self.files
+
+
+class test_slang_stubs(unittest.TestCase):
+    """read_slang connects only nets to inout ports: the stubs give each port a direction where they can."""
+
+    def test_directions_from_connections_and_suffixes(self):
+        with tempfile.TemporaryDirectory() as sDirectory:
+            sFile = os.path.join(sDirectory, "top.sv")
+            with open(sFile, "w", encoding="utf-8") as oFile:
+                oFile.write(
+                    "module top (input logic clk, input logic a, output logic q);\n"
+                    "  logic irq, r;\n"
+                    "  always_ff @(posedge clk) r <= a;\n"
+                    "  vendor_ip u_ip (.aclk(clk), .data(r), .irq(irq), .cfg(1'b0), .status_o(), .ready_i(q));\n"
+                    "  assign q = irq;\n"
+                    "endmodule\n",
+                )
+            oDesign = VerilogDesign({}, [sFile])
+            dDirections = verilog_black_boxes.connection_directions(oDesign, {"vendor_ip"})
+            # An input of the module, a signal it assigns and a constant are inputs; a signal nothing drives is an output.
+            # q is assigned, so ready_i is an input; status_o connects nothing and is left out
+            self.assertEqual({"aclk": "input", "data": "input", "irq": "output", "cfg": "input", "ready_i": "input"}, dDirections["vendor_ip"])
+            dInstances = {"parameters": [], "ordered_parameters": 0, "ports": ["aclk", "data", "irq", "cfg", "status_o", "spare"], "ordered_ports": 0}
+            dInstances["connected"] = dDirections["vendor_ip"]
+            self.assertEqual(
+                "(* mhsg_inferred_directions *) module vendor_ip "
+                "(input wire aclk, input wire data, output wire irq, input wire cfg, output wire status_o, inout wire spare);\nendmodule\n",
+                verilog_black_boxes.stub(oDesign, "vendor_ip", dInstances, bSlang=True),
+            )
+
+    def test_suffixes(self):
+        self.assertEqual(
+            ["input", "input", "output", "output", "inout"],
+            [verilog_black_boxes.suffix_direction(s) for s in ("clk_i", "rst_ni", "data_o", "valid_no", "pad")],
+        )
+
+
 class test_cell_models(unittest.TestCase):
     """The black box libraries against the cell models of Yosys, when Yosys and its models are installed."""
 
