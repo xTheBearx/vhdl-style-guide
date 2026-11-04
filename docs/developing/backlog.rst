@@ -72,8 +72,6 @@ under way: the entries below.
   check runs without them.
 * **STARC lint items needing data flow**: about 100 per-file items of the STARC guide, such as widths of function
   arguments, loop bounds, reset polarity and resource sharing, need more than slang's warnings.
-* **Spaces inside parentheses and braces** and around :code:`) (` between parameter and port lists are not checked;
-  Verible's formatter sets them by context.
 * **STARC rule set**: 50 of the 613 items of the STARC guide have rules. The per-file items (216) are planned with
   the SystemVerilog rules, the clock and reset items with design analysis of Verilog designs. The catalogue the set
   was made from records each item's limits and its Verible equivalent, kept in the notes of the set.

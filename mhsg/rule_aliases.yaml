@@ -1141,6 +1141,9 @@ sv_whitespace_012: sv_whitespace_select
 sv_whitespace_013: sv_whitespace_label_colon
 sv_whitespace_014: sv_whitespace_case_item_colon
 sv_whitespace_015: sv_whitespace_trailing_comment
+sv_whitespace_016: sv_whitespace_parenthesis
+sv_whitespace_017: sv_whitespace_brace
+sv_whitespace_018: sv_whitespace_parameter_port_list
 sv_blank_line_001: sv_blank_line_end_of_file
 sv_always_001: sv_always_comb
 sv_always_002: sv_always_comb_blocking

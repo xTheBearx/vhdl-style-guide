@@ -327,3 +327,82 @@ line, as Verible's formatter does.
 .. code-block:: systemverilog
 
    logic valid;  // the data is valid
+
+sv_whitespace_016
+#################
+
+|phase_2| |error| |whitespace|
+
+Alias: :code:`sv_whitespace_parenthesis`
+
+This rule checks for no space after an opening parenthesis and before a closing one, as Verible's formatter does.
+A parenthesis at the end or the start of a line, or followed by a comment, is not checked.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   assign y = ( a & b ) | c;
+   sub u_sub ( .a(a), .y(y) );
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign y = (a & b) | c;
+   sub u_sub (.a(a), .y(y));
+
+sv_whitespace_017
+#################
+
+|phase_2| |error| |whitespace|
+
+Alias: :code:`sv_whitespace_brace`
+
+This rule checks for no space after the opening brace and before the closing brace of a concatenation, a
+replication or an assignment pattern, as Verible's formatter does. Other braces, such as those of a struct, are
+not checked. A brace at the end or the start of a line, or followed by a comment, is not checked.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   assign word = { high, low };
+   assign mask = '{ default: 1'b0 };
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign word = {high, low};
+   assign mask = '{default: 1'b0};
+
+sv_whitespace_018
+#################
+
+|phase_2| |error| |whitespace|
+
+Alias: :code:`sv_whitespace_parameter_port_list`
+
+This rule checks for one space between the parenthesis closing the parameter list of a module, interface or
+program and the parenthesis opening its port list, as in ) (, as Verible's formatter does.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   module fifo #(
+       parameter int Depth = 4
+   )(
+       input logic clk_i
+   );
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   module fifo #(
+       parameter int Depth = 4
+   ) (
+       input logic clk_i
+   );
