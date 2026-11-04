@@ -486,6 +486,18 @@ class test_rules(unittest.TestCase):
             lOutput,
         )
 
+    def test_sensitivity_list(self):
+        # The signals gate and twice read count for the first block; q, which copy writes first, the member of cfg and
+        # the package item do not count for the second; the hierarchical name counts for the third
+        _, lOutput, _ = self.run_mhsg(["--lint_only", "--rule_set", "none"], "sensitivity.sv")
+        self.assertEqual(
+            [
+                "ERROR: sensitivity.sv(29)sv_lint_008 -- Add b_i, c_i to the sensitivity list, or use always_comb",
+                "ERROR: sensitivity.sv(38)sv_lint_008 -- Add u_sub.valid to the sensitivity list, or use always_comb",
+            ],
+            [s for s in lOutput if "sv_lint_008" in s],
+        )
+
     def test_lint_do254(self):
         # The default rule set of lint mode labels the SystemVerilog rules with the DO-254 checks they implement
         _, lOutput, _ = self.run_mhsg(["--lint_only"], "lint.sv")
