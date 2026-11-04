@@ -27,8 +27,9 @@ Design analysis
 
 * **Formal reachability (plan step 6).** Cover checks per branch and state with SymbiYosys, assumptions, time budgets
   and three-way results. SymbiYosys is not packaged for Ubuntu; it needs the YosysHQ OSS CAD Suite.
-* **Black box libraries for more primitives.** Transceivers, SERDES (ISERDES, OSERDES), math blocks, Microchip micro
-  SRAM, block RAM ECC and cascade ports, and the Intel and Lattice primitives have no declarations yet.
+* **Black box libraries for more primitives.** Transceivers, PCIe and memory interface cores have no declarations;
+  the Intel and Lattice libraries cover the common primitives only. The names of the Intel megafunctions could not be
+  checked against cell models, as Yosys has none for them.
 * **Stand-in models and pragmas for black boxes** (options 4 and 5 of the black box plan): an analysis-only VHDL
   architecture for complex IP, and comment pragmas in component declarations. Not planned unless asked for.
 * **Netlist checks and declarations of single instances.** design_003 and design_007 follow the path roles of black

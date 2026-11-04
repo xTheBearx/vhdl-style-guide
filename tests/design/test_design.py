@@ -536,7 +536,7 @@ class test_black_box_declarations(unittest.TestCase):
 
 class test_declaration_libraries(unittest.TestCase):
     def test_libraries_parse(self):
-        self.assertEqual(["microchip", "xilinx"], black_box.built_in_libraries())
+        self.assertEqual(["intel", "lattice", "microchip", "xilinx"], black_box.built_in_libraries())
         for sName in black_box.built_in_libraries():
             with self.subTest(sName):
                 oLibrary = black_box.from_design({"black_box_libraries": [sName]})
@@ -565,7 +565,7 @@ class test_declaration_libraries(unittest.TestCase):
     def test_unknown_library(self):
         with self.assertRaises(exceptions.ConfigurationError) as oContext:
             black_box.from_design({"black_box_libraries": ["acme"]})
-        self.assertIn("not a file or a library that comes with mhsg (microchip, xilinx)", oContext.exception.message)
+        self.assertIn("not a file or a library that comes with mhsg (intel, lattice, microchip, xilinx)", oContext.exception.message)
 
 
 class test_vendor_libraries(unittest.TestCase):
