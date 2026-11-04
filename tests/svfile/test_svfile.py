@@ -310,6 +310,23 @@ class test_rules(unittest.TestCase):
         self.assertEqual(read("brackets.fixed.sv"), sAfter)
         self.assertEqual([], only(lOutput, "sv_whitespace"))
 
+    def test_alignment_columns(self):
+        # The types after the directions, then the packed dimensions, are aligned before the names; a port without a
+        # type and a declaration without a dimension stay in their groups. The dimension of b_o is in its column until
+        # the fix moves the types
+        _, lOutput, sAfter = self.run_mhsg(["--fix"], "columns.sv")
+        self.assertEqual(read("columns.fixed.sv"), sAfter)
+        _, lOutput, _ = self.run_mhsg(["-ap"], "columns.sv")
+        self.assertEqual(
+            [
+                "ERROR: columns.sv(2)sv_alignment_009 -- Align logic in column 12",
+                "ERROR: columns.sv(3)sv_alignment_009 -- Align logic in column 12",
+                "ERROR: columns.sv(9)sv_alignment_010 -- Align [ in column 11",
+                "ERROR: columns.sv(11)sv_alignment_010 -- Align [ in column 11",
+            ],
+            only(lOutput, "sv_alignment"),
+        )
+
     def test_whitespace_fix(self):
         # The fix keeps the space before the packed dimension of a type, the empty case item, the empty argument,
         # the operators in brackets and the arguments of the macro; it removes the blank lines at the end

@@ -52,3 +52,42 @@ def parameter_equals(oItem):
     if len(lDeclarators) != 1 or lDeclarators[0].initializer is None:
         return None
     return lDeclarators[0].initializer.equals
+
+
+def port_type(oPort):
+    """
+    The first token of the type of an ANSI port declaration after its direction, such as logic or wire, or None for a
+    port without one, such as input [7:0] data or input clk.
+    """
+    if oPort.kind.name != "ImplicitAnsiPort" or oPort.header is None or getattr(oPort.header, "direction", None) is None:
+        return None
+    oHeader = oPort.header
+    if oHeader.kind.name == "NetPortHeader" and oHeader.netType is not None and oHeader.netType.rawText:
+        return oHeader.netType
+    for sField in ("varKeyword", "dataType"):
+        oNode = getattr(oHeader, sField, None)
+        if oNode is None:
+            continue
+        oFirst = oNode.getFirstToken() if hasattr(oNode, "getFirstToken") else oNode
+        if oFirst is not None and oFirst.rawText and oFirst.rawText != "[":
+            return oFirst
+    return None
+
+
+def packed_dimension(oType):
+    """The opening bracket of the first packed dimension of a data type, or None."""
+    lDimensions = elements(getattr(oType, "dimensions", None) or [])
+    return lDimensions[0].openBracket if lDimensions else None
+
+
+def port_dimension(oPort):
+    if oPort.kind.name != "ImplicitAnsiPort" or oPort.header is None:
+        return None
+    return packed_dimension(getattr(oPort.header, "dataType", None))
+
+
+def declared_dimension(oItem):
+    """The opening bracket of the first packed dimension of a variable or net declaration, or None."""
+    if oItem.kind.name not in ("DataDeclaration", "NetDeclaration"):
+        return None
+    return packed_dimension(oItem.type)

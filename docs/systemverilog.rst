@@ -57,9 +57,10 @@ what a Verible lint rule checks, its alias is the Verible rule's name.
   between if, for or case and its parenthesis and around the colon of a block label; at least two before a comment
   at the end of a line
 * :code:`sv_blank_line_001`: no blank lines at the end of the file
-* :code:`sv_alignment_001` to :code:`sv_alignment_008`: columns of port declarations, named port and parameter
+* :code:`sv_alignment_001` to :code:`sv_alignment_010`: columns of port declarations, named port and parameter
   connections, declarations, assignments, parameters, case items and struct members, aligned or flush left by how
-  the author wrote them, as Verible's formatter infers it
+  the author wrote them, as Verible's formatter infers it; before the names, the types of port declarations after
+  their directions and the packed dimensions of declarations, the columns left to right
 * :code:`sv_always_001` to :code:`sv_always_004`: always_comb instead of always @*, blocking assignments in
   always_comb, nonblocking assignments in sequential logic, no mixing of the two in one block
 * :code:`sv_case_001`, :code:`sv_case_002`: a default item in every case statement that is not unique, and last
