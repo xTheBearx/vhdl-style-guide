@@ -414,6 +414,7 @@ combines them can see a state the source never had, for example a request withou
 Two synchronizers of the same signal can disagree for a cycle in the same way.
 Every synchronizer tags its output, and the tags follow the signal through logic, registers and memories of the destination domain.
 A reconvergence is reported where tags of two synchronizers first meet: at a register, a memory, a black box input or an output.
+The inputs a black box declares synchronous to one of its clock pins count as one place, and a declared path through a black box is followed.
 Synchronize one signal and derive the others from it in the destination domain, use a handshake, or gray code a counter.
 The bits of one bus count as one signal: a gray-coded bus is meant to be combined, and design_009 reports other buses.
 A synchronous reset, an input that loads a constant into two or more registers, is a reset path rather than data

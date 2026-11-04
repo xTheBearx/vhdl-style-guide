@@ -36,8 +36,6 @@ Design analysis
   architecture for complex IP, and comment pragmas in component declarations. Not planned unless asked for.
 * **Netlist checks and black boxes.** design_002 to design_007 still assume a black box registers its outputs and uses
   all of its inputs; they could use the declarations, as the clock domain checks do.
-* **Reconvergence inside black boxes.** What a black box does with its inputs is not known, so only logic before it
-  counts. A declaration could say which inputs combine.
 * **Reconvergence through clocked resets only.** Synchronous resets that feed two or more registers are not followed
   unless :code:`follow_resets` is set; a finer rule could tell resets from clears.
 * **Reset domain crossings through logic** are not checked.
