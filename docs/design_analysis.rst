@@ -624,9 +624,10 @@ Limitations
 * Vendor primitives must be given as VHDL sources or component declarations which GHDL can elaborate as black boxes.
   The netlist checks, design_002 to design_007, take a black box output to be registered unless the declaration of
   the black box type gives it a :code:`path` role: design_003 then finds loops through it and design_007 follows paths
-  through it, without counting a logic level for the box. A declaration of single instances applies when the same
-  one applies to every instance of the cell in the design, as each module is checked once for all its instances.
-  Every input of a black box counts as used, whatever its role.
+  through it, without counting a logic level for the box. When declarations of single instances differ between the
+  instances of a module, design_003 and design_007 check a copy of the module for each instance, so each declaration
+  applies to its instance; the other netlist checks see the declaration of the black box type. Every input of a black
+  box counts as used, whatever its role.
 * GHDL simplifies the logic while it builds the netlist: it removes registers nothing reads, which design_006 finds by
   comparing the netlist with the clocked processes, and it removes inverter and buffer chains and unused combinational
   signals, which a netlist cannot show. Checks for those are planned for the per-file lint.

@@ -291,5 +291,8 @@ def instance_number(sName):
 
 
 def module_name(sModule):
-    """Returns a module name as GHDL writes it in Verilog: without the backslash Yosys adds."""
-    return sModule.lstrip("\\")
+    """
+    Returns a module name as GHDL writes it in Verilog: without the backslash Yosys adds, and without the instance path
+    of a copy of the module, see graph.instance_copies.
+    """
+    return sModule.split("$mhsg$")[0].lstrip("\\")
