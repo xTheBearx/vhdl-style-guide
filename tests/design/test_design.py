@@ -906,8 +906,9 @@ class test_design_analysis(unittest.TestCase):
             self.assertEqual((1, [f"ERROR: {sFile}(21)design_008 -- raw (clk_b) captures flag_a (clk_a) without a synchronizer"]), (iStatus, lOutput), sOrder)
 
     def test_verilog_top_generics(self):
-        # Each set of generic values is elaborated on its own; an instance whose values are an expression is analyzed
-        # with the defaults, which design_001 reports
+        # Each set of generic values is elaborated on its own, with the values pyslang computes: expressions and
+        # parameters of the module holding the instance too. An instance in a generate loop that sets other values in
+        # each iteration is analyzed with the defaults, which design_001 reports
         with tempfile.TemporaryDirectory() as sDirectory:
             iStatus, lOutput = self.run_design(
                 "vtop_generics",
@@ -921,19 +922,27 @@ class test_design_analysis(unittest.TestCase):
             (
                 1,
                 [
-                    f"ERROR: {sFile}(23)design_001 -- Design configuration error: Instance u_expression of vtop_reg is analyzed with the "
-                    "defaults of its generics, as its own values cannot be set: a parameter is not a literal",
+                    f"ERROR: {sFile}(31)design_001 -- Design configuration error: Instance u_loop of vtop_reg is analyzed with the "
+                    "defaults of its generics, as its own values cannot be set: the elaborations of module vtop_generics give it "
+                    "different values",
                 ],
             ),
             (iStatus, [s for s in lOutput if "design_001" in s]),
         )
         dTypes = {c: d["type"] for c, d in dModules["vtop_generics"]["cells"].items() if not d["type"].startswith("$")}
         dWidths = {c: len(dModules[t]["ports"]["d"]["bits"]) for c, t in dTypes.items()}
-        self.assertEqual({"u_named": 8, "u_position": 16, "g_reg.u_generate": 4, "u_expression": 4}, dWidths)
+        self.assertEqual(
+            {"u_named": 8, "u_position": 16, "g_reg.u_generate": 4, "u_expression": 8, "g_loop[1].u_loop": 4, "g_loop[2].u_loop": 4},
+            dWidths,
+        )
         # The instances with values of their own each have a module, elaborated from the entity with those values
-        self.assertEqual("vtop_reg", dTypes["u_expression"])
-        self.assertEqual(3, len({dTypes["u_named"], dTypes["u_position"], dTypes["g_reg.u_generate"]}))
-        self.assertTrue(all(dTypes[s].startswith("vtop_reg__mhsg") for s in ("u_named", "u_position", "g_reg.u_generate")))
+        self.assertEqual("vtop_reg", dTypes["g_loop[1].u_loop"])
+        self.assertEqual(4, len({dTypes[s] for s in ("u_named", "u_position", "g_reg.u_generate", "u_expression")}))
+        self.assertTrue(all(dTypes[s].startswith("vtop_reg__mhsg") for s in ("u_named", "u_position", "g_reg.u_generate", "u_expression")))
+        # The instance in the module with a parameter gets the width that parameter gives it
+        sInner = dModules[dModules["vtop_generics"]["cells"]["u_mid"]["type"]]["cells"]["u_inner"]["type"]
+        self.assertTrue(sInner.startswith("vtop_reg__mhsg"))
+        self.assertEqual(6, len(dModules[sInner]["ports"]["d"]["bits"]))
 
     def test_combinational_loops(self):
         self.assertEqual(
@@ -1018,8 +1027,10 @@ class test_design_analysis(unittest.TestCase):
         )
 
     def test_mapped_logic_depth(self):
-        # Disabled by default; enabled, it maps the design to look-up tables and counts them on the longest path
-        self.assertEqual([], [t for t in self.findings("depth_top", "depth.vhd") if t[2] == "design_019"])
+        # Disabled by default, also in design analysis; enabled, it maps the design to look-up tables and counts them
+        # on the longest path
+        dRules = {"design_019": {"maximum_levels": 1}}
+        self.assertEqual([], [t for t in self.findings("depth_top", "depth.vhd", dRules=dRules) if t[2] == "design_019"])
         dRules = {"design_019": {"disable": False, "maximum_levels": 1}}
         self.assertEqual(
             [("depth.vhd", 50, "design_019", "Path of 2 levels of 6-input look-up tables after mapping, from b_r(3), more than 1")],

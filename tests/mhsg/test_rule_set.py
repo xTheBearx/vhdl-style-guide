@@ -289,12 +289,15 @@ class test_starc(unittest.TestCase):
         self.assertEqual(["length_001"], dChecks["3.1.4.5"].rules)
 
     def test_systemverilog(self):
-        sText = "module counter;\n  logic aa;\n\tlogic bb;\n  assign aa = " + "b" * 90 + ";\n  assign aa = " + "b" * 110 + ";\nendmodule\n"
+        # A module that follows the other items of the guide: a header, a time unit, ports and comments
+        sHeader = "// Module: counter\n// Function: counts\n// Author: A. Designer\n// Date: 2026-11-04\n`timescale 1ns / 1ps\n"
+        sText = sHeader + "module counter (\n  input logic clk_i  // clock\n);\n  logic aa;  // first\n\tlogic bb;  // second\n"
+        sText += "  assign aa = " + "b" * 90 + ";\n  assign aa = " + "b" * 110 + ";\nendmodule\n"
         iStatus, lOutput = run_on_text(sText, "counter.sv", ["--rule_set", "starc"])
         self.assertEqual(
             [
-                "WARNING: counter.sv(3)STARC-3.1.4.2/STARC-3.1.4.3 (sv_indent_001) -- Use 2 spaces for indent",
-                "WARNING: counter.sv(5)STARC-3.1.4.5 (length_001) -- Reduce line to less than 110 characters",
+                "WARNING: counter.sv(10)STARC-2.7.3.3/STARC-3.1.4.2/STARC-3.1.4.3 (sv_indent_001) -- Use 2 spaces for indent",
+                "WARNING: counter.sv(12)STARC-3.1.4.5 (length_001) -- Reduce line to less than 110 characters",
             ],
             lOutput,
         )

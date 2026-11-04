@@ -115,9 +115,14 @@ instantiates with the ghdl command, before it reads the Verilog and elaborates t
 under **generics**. With :code:`order: auto`, the VHDL files are those these entities need. Limits:
 
 * an instance that sets parameters gets the entity elaborated with those values, once for each set of values, by
-  name or by position, also in a generate block. The values must be literals, such as :code:`8`, :code:`16'd16` or
-  :code:`"FAST"`, and the module that holds the instance must have no parameters of its own; otherwise design_001
-  reports the instance, which is analyzed with the defaults of the generics;
+  name or by position, also in a generate block. pyslang elaborates the Verilog from the top first, with a stand-in
+  module for each entity, to compute the values: literals, such as :code:`8`, :code:`16'd16` or :code:`"FAST"`, and
+  expressions of parameters, also of the module that holds the instance. Yosys then reads a copy of each file with
+  such instances, in which each names the module elaborated with its values; findings and messages name the original
+  file. An instance whose values differ between the times the elaboration meets it, as in a generate loop that gives
+  each iteration other values, or in a module elaborated with several sets of parameters, is reported by design_001
+  and analyzed with the defaults of the generics; so is one whose values cannot be computed, and a string generic
+  set from an expression;
 * GHDL names the module after the entity in lower case; the Verilog may write the name in any case, as long as all its
   instances write it the same way;
 * with read_slang, this has not been tried yet.

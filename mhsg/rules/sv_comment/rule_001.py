@@ -10,7 +10,8 @@ from mhsg.rules.sv_tree import Problem, TreeRule
 class rule_001(TreeRule, structure.Rule):
     """
     This rule checks for synthesis directives and scripts in comments, such as synopsys full_case, parallel_case
-    or dc_script_begin, as the STARC guide asks (2.8.1.5, 2.8.5.1, 3.1.2.7). **pattern** is the regular
+    or dc_script_begin, the set and reset directives such as sync_set_reset, and implementation directives, as the
+    STARC guide asks (2.8.1.5, 2.8.5.1, 3.1.2.7, 1.3.1.5, 5.6.2). **pattern** is the regular
     expression searched for in comments. It is disabled by default; the starc rule set enables it.
 
     **Violation**
@@ -30,7 +31,9 @@ class rule_001(TreeRule, structure.Rule):
         super().__init__()
         self.disable = True
         self.solution = "See the rule documentation"
-        self.pattern = "(synopsys|synthesis|ambit|pragma)\\s+(full_case|parallel_case|dc_script_begin)"
+        self.pattern = (
+            "(synopsys|synthesis|ambit|pragma)\\s+(full_case|parallel_case|dc_script_begin|(a)?sync_set_reset\\w*|one_hot|one_cold|infer_\\w+|implementation)"
+        )
         self.configuration.append("pattern")
 
     def problems(self, oFile):

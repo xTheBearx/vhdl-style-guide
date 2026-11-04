@@ -182,3 +182,17 @@ VHDL_KEYWORDS = set(
     select sequence severity shared signal sla sll sra srl strong subtype then to transport type unaffected units
     until use variable view vmode vpkg vprop vunit wait when while with xnor xor""".split(),
 )
+
+
+def source(oNode):
+    """The text of a syntax node as written, without the white space and comments before it."""
+    sText = str(oNode)
+    oFirst = oNode.getFirstToken()
+    if oFirst is not None:
+        sRest = sText[sum(len(o.getRawText()) for o in oFirst.trivia) :]
+        if sRest.startswith(oFirst.rawText):
+            return sRest.strip()
+    lLines = sText.strip().splitlines()
+    while lLines and lLines[0].strip().startswith("//"):
+        lLines.pop(0)
+    return "\n".join(lLines).strip()
