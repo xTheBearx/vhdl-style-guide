@@ -9,9 +9,25 @@ MEMORY_TYPES = {"$mem", "$mem_v2"}
 MUX_TYPES = {"$mux", "$pmux"}
 # The logic of a condition: comparisons and logical operators, through which a memory output still decides it directly
 CONDITION_TYPES = {
-    "$eq", "$ne", "$eqx", "$nex", "$lt", "$le", "$gt", "$ge",
-    "$logic_not", "$logic_and", "$logic_or", "$not", "$and", "$or", "$pos", "$buf",
-    "$reduce_and", "$reduce_or", "$reduce_bool",
+    "$eq",
+    "$ne",
+    "$eqx",
+    "$nex",
+    "$lt",
+    "$le",
+    "$gt",
+    "$ge",
+    "$logic_not",
+    "$logic_and",
+    "$logic_or",
+    "$not",
+    "$and",
+    "$or",
+    "$pos",
+    "$buf",
+    "$reduce_and",
+    "$reduce_or",
+    "$reduce_bool",
 }
 
 
@@ -100,10 +116,10 @@ def conditions(oFlat, lStart):
             for sOutput, lNets in oReader.connections.items():
                 if oFlat.direction(oReader, sOutput) != "output":
                     continue
-                for oOutput in lNets:
-                    if graph.is_variable(oOutput) and oOutput not in setSeen:
-                        setSeen.add(oOutput)
-                        lWork.append(oOutput)
+                for oNext in lNets:
+                    if graph.is_variable(oNext) and oNext not in setSeen:
+                        setSeen.add(oNext)
+                        lWork.append(oNext)
 
 
 def memory_id(oCell):

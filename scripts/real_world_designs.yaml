@@ -110,7 +110,6 @@ designs:
     - -frelaxed-rules
     - -Wno-hide
     - -Wno-shared
-  known: []
   known:
   # Real by STARC 2.10.1.7: memory outputs compared in conditions read as unknown in simulation before they are written
   - 'src/axi/vhdl/olo_axi_master_simple.vhd(439)design_020 -- Output of memory i_axi.g_write.i_fifo_wr_trans.i_ram.g_nobe.i_ram.mem_v is used in a condition'
@@ -128,7 +127,6 @@ designs:
     - -frelaxed-rules
     - -Wno-hide
     - -Wno-shared
-  known: []
   known:
   # Real by STARC 2.10.1.7: memory outputs compared in conditions read as unknown in simulation before they are written
   - 'src/axi/vhdl/olo_axi_master_simple.vhd(439)design_020 -- Output of memory g_write.i_fifo_wr_trans.i_ram.g_nobe.i_ram.mem_v is used in a condition'
@@ -376,7 +374,6 @@ designs:
     generics:
       DataWidth_g: 8
       CrcPolynomial_g: '00000111'
-  known: []
   known:
   # Real by STARC 2.10.1.7: memory outputs compared in conditions read as unknown in simulation before they are written
   - 'src/base/vhdl/olo_base_fifo_packet.vhd(393)design_020 -- Output of memory g_drop.i_fifo.b_ram.i_ram.g_nobe.i_ram.mem_v is used in a condition'
@@ -475,7 +472,6 @@ designs:
     generics:
       Width_g: 16
       Depth_g: 64
-  known: []
   known:
   # Real by STARC 2.10.1.7: memory outputs compared in conditions read as unknown in simulation before they are written
   - 'src/base/vhdl/olo_base_fifo_packet.vhd(292)design_020 -- Output of memory g_small_fifo.i_pktend_fifo.i_ram.g_nobe.i_ram.mem_v is used in a condition'
@@ -790,7 +786,6 @@ designs:
     generics:
       Width_g: 16
       Depth_g: 64
-  known: []
   known:
   # Real by STARC 2.10.1.7: memory outputs compared in conditions read as unknown in simulation before they are written
   - 'src/base/vhdl/olo_base_fifo_packet.vhd(292)design_020 -- Output of memory i_fifo.g_small_fifo.i_pktend_fifo.i_ram.g_nobe.i_ram.mem_v is used in a condition'

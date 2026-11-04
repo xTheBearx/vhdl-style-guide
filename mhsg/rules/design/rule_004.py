@@ -46,4 +46,3 @@ class rule_004(Rule):
                 sFile, iLine = self.locate(oContext, sModule, lCells, sName)
                 lReturn.append(Finding(sFile, iLine, f"Signal {sName} in {module_text(sModule)} has {len(setDrivers)} drivers: {', '.join(lNames)}"))
         return lReturn
-

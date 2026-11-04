@@ -105,8 +105,8 @@ def reaches_register(oFlat, oMux):
             if graph.is_state(oReader.cell) and sPort == "D":
                 return True
             if oReader.type in ("$mux", "$pmux") and sPort in ("A", "B"):
-                for oOutput in oReader.connections.get("Y", []):
-                    if graph.is_variable(oOutput) and oOutput not in setSeen:
-                        setSeen.add(oOutput)
-                        lWork.append(oOutput)
+                for oNext in oReader.connections.get("Y", []):
+                    if graph.is_variable(oNext) and oNext not in setSeen:
+                        setSeen.add(oNext)
+                        lWork.append(oNext)
     return False

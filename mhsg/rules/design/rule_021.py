@@ -41,7 +41,7 @@ class rule_021(Rule):
             if len(lCells) <= int(self.maximum_drivers):
                 continue
             sBus = reIndex.sub("", oFlat.net_name(oNet))
-            iCount, lFirst = dBuses.get(sBus, (0, []))
+            iCount, _ = dBuses.get(sBus, (0, []))
             if len(lCells) > iCount:
                 dBuses[sBus] = (len(lCells), lCells)
         lReturn = []
