@@ -1079,3 +1079,51 @@ designs:
   # Real by the rule: the ready flag of each side, which only changes after a reset, meets the gray coded pointer
   - 'base/fifo/rtl/inferred/FifoRdFsm.vhd(314)design_016 -- Separately synchronized gen_async.fifoasync_1.u_wr_fsm.r (by gen_async.fifoasync_1.u_wrindex.crossdomainsyncreg) and gen_async.fifoasync_1.u_wr_fsm.r(0) (by gen_async.fifoasync_1.u_wrrdy.crossdomainsyncreg(0)) from wr_clk meet again in gen_async.fifoasync_1.u_rd_fsm.r (rd_clk)'
   - 'base/fifo/rtl/inferred/FifoWrFsm.vhd(230)design_016 -- Separately synchronized gen_async.fifoasync_1.u_rd_fsm.r (by gen_async.fifoasync_1.u_rdindex.crossdomainsyncreg) and gen_async.fifoasync_1.u_rd_fsm.r(0) (by gen_async.fifoasync_1.u_rdrdy.crossdomainsyncreg(0)) from rd_clk meet again in gen_async.fifoasync_1.u_wr_fsm.r (wr_clk)'
+- name: surf_clink_data_clk
+  project: surf
+  # Clocks from an MMCM through global buffers, its configuration port written from another clock domain
+  design:
+    top: ClinkDataClk
+    top_library: surf
+    order: auto
+    ghdl_options: [-fsynopsys, -frelaxed]
+    vendor_libraries:
+    - vendor: xilinx
+      stubs: true
+    black_box_libraries: [xilinx]
+    libraries:
+    - name: surf
+      files:
+      - base/**/rtl/**/*.vhd
+      - base/ram/inferred/*.vhd
+      - axi/**/rtl/**/*.vhd
+      - xilinx/general/rtl/*.vhd
+      - xilinx/7Series/general/rtl/*.vhd
+      - protocols/clink/7Series/*.vhd
+      - protocols/clink/rtl/*.vhd
+  known: []
+- name: surf_clink_data_clk_regional
+  project: surf
+  # The same with regional and I/O clock buffers
+  design:
+    top: ClinkDataClk
+    top_library: surf
+    order: auto
+    ghdl_options: [-fsynopsys, -frelaxed]
+    generics:
+      REG_BUFF_EN_G: true
+    vendor_libraries:
+    - vendor: xilinx
+      stubs: true
+    black_box_libraries: [xilinx]
+    libraries:
+    - name: surf
+      files:
+      - base/**/rtl/**/*.vhd
+      - base/ram/inferred/*.vhd
+      - axi/**/rtl/**/*.vhd
+      - xilinx/general/rtl/*.vhd
+      - xilinx/7Series/general/rtl/*.vhd
+      - protocols/clink/7Series/*.vhd
+      - protocols/clink/rtl/*.vhd
+  known: []
