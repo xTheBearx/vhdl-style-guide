@@ -37,8 +37,6 @@ Design analysis
 * **Netlist checks and declarations of single instances.** design_003 and design_007 follow the path roles of black
   box types; the declarations of single instances name flat paths, which the module graphs do not know. design_006
   counts every black box input as used, since the roles describe clock domains, not which inputs matter.
-* **Reconvergence inside black boxes.** What a black box does with its inputs is not known, so only logic before it
-  counts. A declaration could say which inputs combine.
 * **Reconvergence through clocked resets only.** Synchronous resets that feed two or more registers are not followed
   unless :code:`follow_resets` is set; a finer rule could tell resets from clears.
 * **Reset domain crossings through logic** are not checked.

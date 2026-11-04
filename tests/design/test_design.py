@@ -887,6 +887,26 @@ class test_design_analysis(unittest.TestCase):
             self.findings("loop_top", "loop.vhd"),
         )
 
+    def test_reconvergence_in_black_boxes(self):
+        # u_same samples both synchronized signals on its clock pin: they meet inside it. u_apart samples them on two
+        # pins, so nothing is known about their meeting
+        dDeclared = {
+            "black_boxes": {"SAMPLER": {"ports": {"CLK": "clock", "CLK2": "clock", "A": {"sync": "CLK"}, "B": {"sync": "CLK"}, "Y": {"sync": "CLK"}}}},
+            "black_box_instances": {"u_apart": {"ports": {"B": {"sync": "CLK2"}}}},
+        }
+        lFindings = self.findings("box_reconvergence_top", "box_reconvergence.vhd", dDesignKeys=dDeclared, dCdc={"clocks": {"clk_a": "a", "clk_b": "b"}})
+        self.assertEqual(
+            [
+                (
+                    "box_reconvergence.vhd",
+                    55,
+                    "design_016",
+                    "Separately synchronized mode_a (by mode_meta) and start_a (by start_meta) from clk_a meet again in u_same",
+                ),
+            ],
+            lFindings,
+        )
+
     def test_paths_through_black_boxes(self):
         # A black box registers its outputs unless a declared path leads through it: then the loop through it and the
         # path through it count

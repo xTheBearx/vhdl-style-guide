@@ -409,7 +409,9 @@ libraries, and a declaration of an instance, by path or pattern, over the declar
 | ``clock``                                         | A clock input.                                                   |
 +---------------------------------------------------+------------------------------------------------------------------+
 | ``{sync: <clock pin>}``                           | Data timed by a clock pin of the black box. Data from another    |
-|                                                   | clock domain into such an input is a crossing.                   |
+|                                                   | clock domain into such an input is a crossing. The inputs timed  |
+|                                                   | by one pin are taken together: separately synchronized signals   |
+|                                                   | that enter two of them meet in the box (design_016).             |
 +---------------------------------------------------+------------------------------------------------------------------+
 | ``{path: [<inputs>]}``                            | An output that follows inputs without a register, such as an     |
 |                                                   | input buffer. Clocks and data are followed through it.           |
@@ -539,6 +541,7 @@ Limitations
   signals, which a netlist cannot show. Checks for those are planned for the per-file lint.
 * Findings depend on the generics: logic that a generic disables may be constant or unused. Each finding names the
   entity with its generics, as GHDL names it, such as :code:`neorv32_cpu_regfile_5_3`.
-* What a black box does with its inputs is not known, so reconvergence counts only the logic before it.
+* What a black box does with its inputs is known only from its declaration: reconvergence follows its paths and
+  takes the inputs timed by one clock pin together; other inputs count one bit at a time.
   Reset domain crossings through logic are not checked yet.
 * Formal reachability is planned.
