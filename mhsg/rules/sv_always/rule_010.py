@@ -2,7 +2,7 @@
 
 from mhsg.rule_group import structure
 from mhsg.rules.sv_nodes import declared_names, text
-from mhsg.rules.sv_tree import Problem, TreeRule, descendants, elements
+from mhsg.rules.sv_tree import Problem, TreeRule, descendants
 
 LITERALS = ("IntegerLiteralExpression", "IntegerVectorExpression", "UnbasedUnsizedLiteralExpression")
 

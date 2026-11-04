@@ -3,7 +3,7 @@
 from mhsg.rule_group import structure
 from mhsg.rules.sv_always.rule_007 import reset_names
 from mhsg.rules.sv_nodes import text
-from mhsg.rules.sv_tree import Problem, TreeRule, descendants, elements
+from mhsg.rules.sv_tree import Problem, TreeRule, descendants
 
 
 class rule_012(TreeRule, structure.Rule):

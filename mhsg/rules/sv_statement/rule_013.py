@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg.rule_group import structure
-from mhsg.rules.sv_nodes import text
-from mhsg.rules.sv_tree import Problem, TreeRule, descendants, elements
+from mhsg.rules.sv_tree import Problem, TreeRule
 
 PLAIN = ("IdentifierName", "IdentifierSelectName", "IntegerLiteralExpression", "IntegerVectorExpression", "ScopedName")
 

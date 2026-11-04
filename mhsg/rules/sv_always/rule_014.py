@@ -2,8 +2,7 @@
 
 from mhsg.rule_group import structure
 from mhsg.rules.sv_always.rule_012 import clock_events
-from mhsg.rules.sv_nodes import text
-from mhsg.rules.sv_tree import Problem, TreeRule, descendants, elements
+from mhsg.rules.sv_tree import Problem, TreeRule
 
 
 class rule_014(TreeRule, structure.Rule):

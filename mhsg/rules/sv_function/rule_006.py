@@ -3,7 +3,7 @@
 from mhsg.rule_group import structure
 from mhsg.rules.sv_lint.rule_008 import Subprogram, read_names
 from mhsg.rules.sv_nodes import declared_names, text
-from mhsg.rules.sv_tree import Problem, TreeRule, descendants, elements
+from mhsg.rules.sv_tree import Problem, TreeRule
 
 
 class rule_006(TreeRule, structure.Rule):
