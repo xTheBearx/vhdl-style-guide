@@ -413,6 +413,11 @@ options:
     minimum: 1
     label: Longest name
     description: The most characters in a name other than that of a module or instance.
+  maximum_ports:
+    type: integer
+    minimum: 1
+    label: Most ports
+    description: The most ports one module may have.
   maximum_states:
     type: integer
     minimum: 1

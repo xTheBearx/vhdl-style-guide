@@ -608,3 +608,217 @@ writes the values at the end of the time step. It is disabled by default; the st
 .. code-block:: systemverilog
 
    $fstrobe(log, "%h", data);
+
+sv_statement_026
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_bitwise_operators`
+
+This rule checks for the logical operators &&, || and !, as the STARC guide recommends (2.1.4.2): use the bitwise
+operators &, | and ~, also on single bits. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   if (valid && !stall) q <= d;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   if (valid & ~stall) q <= d;
+
+sv_statement_027
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_merge_ifs`
+
+This rule checks for an if without else whose only statement is another if without else, as the STARC guide
+recommends (2.7.3.4): merge their conditions. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   if (valid)
+       if (ready) q <= d;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   if (valid & ready) q <= d;
+
+sv_statement_028
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_dont_care_conditions`
+
+This rule checks that don't care signals, the signals the file assigns a value with x digits, are not tested in
+if conditions or used as case selectors, as the STARC guide asks (2.8.3.4, 2.8.3.6, 2.8.3.7). A case statement
+whose default assigns x may use them. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   default: sel = 2'bxx;
+   ...
+   if (sel == 2'b01) y = a;
+
+**Fix**
+
+Assign sel a value in every branch, or do not test it.
+
+sv_statement_029
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_loop_computation`
+
+This rule checks for arithmetic, comparisons and logic on signals inside for loops, as the STARC guide recommends
+(2.9.2.1, 2.9.2.2): in a loop, compute only with the loop variable and constants. Indexes are not checked. It is
+disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   for (int i = 0; i < 4; i++) y[i] = a[i] + b;
+
+**Fix**
+
+Compute with signals outside the loop, and use only the loop variable and constants in it.
+
+sv_statement_030
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_delay_parameters`
+
+This rule checks for delays computed with arithmetic in always blocks, such as #(Period / 2), as the STARC guide
+recommends (4.1.6.1): compute clock periods once, as parameters. It is disabled by default; the starc rule set
+enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always #(Period / 2) clk = ~clk;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   localparam int HalfPeriod = Period / 2;
+   always #HalfPeriod clk = ~clk;
+
+sv_statement_031
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_one_clock_per_block`
+
+This rule checks that a procedural block toggles at most one signal, with an assignment such as clk = ~clk, as
+the STARC guide recommends (4.1.7.1): generate each clock in a block of its own. It is disabled by default; the
+starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always begin
+       #5 clk_a = ~clk_a;
+       #5 clk_b = ~clk_b;
+   end
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always #5 clk_a = ~clk_a;
+   always #7 clk_b = ~clk_b;
+
+sv_statement_032
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_level_waits`
+
+This rule checks for edge events on signals other than clocks in initial blocks and tasks, such as @(posedge
+done), as the STARC guide recommends (4.1.8.4): wait for levels with wait or test them on a clock edge. Clocks
+are told by the words of their names, as for port_028. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   initial @(posedge done) $finish;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   initial begin
+       wait (done);
+       $finish;
+   end
+
+sv_statement_033
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_translate_off`
+
+This rule checks that system tasks for simulation, such as $display or $finish, in modules with ports are between
+translate_off and translate_on pragma comments, as the STARC guide asks (4.3.11.3). It is disabled by default;
+the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i) if (err) $display("error");
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   // synopsys translate_off
+   always_ff @(posedge clk_i) if (err) $display("error");
+   // synopsys translate_on
+
+sv_statement_034
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_testbench_delays`
+
+This rule checks for delays given as numbers in testbenches, modules without ports, as the STARC guide recommends
+(4.1.1.2): give testbench timing with parameters. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   initial #100 rst_n = 1'b1;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   localparam int ResetTime = 100;
+   initial #ResetTime rst_n = 1'b1;

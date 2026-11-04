@@ -296,7 +296,7 @@ class test_starc(unittest.TestCase):
         iStatus, lOutput = run_on_text(sText, "counter.sv", ["--rule_set", "starc"])
         self.assertEqual(
             [
-                "WARNING: counter.sv(10)STARC-3.1.4.2/STARC-3.1.4.3 (sv_indent_001) -- Use 2 spaces for indent",
+                "WARNING: counter.sv(10)STARC-2.7.3.3/STARC-3.1.4.2/STARC-3.1.4.3 (sv_indent_001) -- Use 2 spaces for indent",
                 "WARNING: counter.sv(12)STARC-3.1.4.5 (length_001) -- Reduce line to less than 110 characters",
             ],
             lOutput,

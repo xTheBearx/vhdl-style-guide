@@ -247,7 +247,8 @@ checks:
     title: Prefer asynchronous reset for initializing registers
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_always_021
   1.3.1.3:
     title: Use asynchronous set/reset pins only for the initial reset
     level: Recommendation 1
@@ -280,7 +281,8 @@ checks:
     title: No logic on reset lines inside local modules; generate resets in a dedicated module
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_always_023
   1.3.2.2:
     title: Only the initial reset may drive flip-flop asynchronous reset pins
     level: Recommendation 1
@@ -348,7 +350,8 @@ checks:
     title: Clocks may drive only flip-flop clock pins, not data or logic
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_always_022
   1.4.3.5:
     title: Never route clocks to black boxes, bidirectional pins or reset lines
     level: Recommendation 3
@@ -517,7 +520,8 @@ checks:
     title: A ~40,000-gate basic block should have at most 500 I/O ports
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_module_009
     note: 'Limits: max ports 500; applies at gates 40000.'
   1.6.5.1:
     title: Datapath and controller use different styles; keep them separate
@@ -571,7 +575,8 @@ checks:
     title: Inside functions, cover every branch condition completely (full case/if)
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_function_011
     note: Verilog only.
   2.1.1.3:
     title: Use a syntax/lint checker to catch mistakes
@@ -583,7 +588,8 @@ checks:
     title: Do not use function calls for async-reset logic in flip-flop always blocks
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_always_024
     note: Verilog only.
   2.1.2.2:
     title: No non-blocking assignments inside functions
@@ -656,7 +662,8 @@ checks:
     title: Prefer bitwise operators to logical ones, even for single-bit expressions
     level: Suggestion
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_026
     note: Verilog only.
   2.1.4.3:
     title: Equation-level code can save area and improve speed
@@ -888,17 +895,20 @@ checks:
     title: Keep latch inference clearly separate from combinational logic
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_module_010
   2.4.1.2:
     title: Infer latches only inside dedicated latch-only modules
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_module_010
   2.4.1.3:
     title: No latches with asynchronous set or reset
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_always_025
   2.4.1.4:
     title: No combinational feedback loops through latches
     level: Rule
@@ -914,7 +924,8 @@ checks:
     title: Place tri-state buffers in dedicated modules
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_module_011
   2.5.1.2:
     title: Tri-state enable should be a plain signal, not a logic expression
     level: Recommendation 2
@@ -1062,12 +1073,14 @@ checks:
     title: Indent nested ifs consistently to avoid pairing mistakes
     level: Suggestion
     severity: Note
-    status: planned
+    rules:
+    - sv_indent_001
   2.7.3.4:
     title: Merge if statements that can be combined
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_027
   2.7.4.1:
     title: A single statement need not be wrapped in begin/end
     level: Suggestion
@@ -1078,7 +1091,8 @@ checks:
     title: Wrap multiple statements in begin/end
     level: Suggestion
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_001
     note: 'Verilog only. Verible: explicit-begin.'
   2.7.4.3:
     title: No fork/join in RTL
@@ -1167,7 +1181,8 @@ checks:
     title: Signals that may be assigned x (don't-care) must not feed if conditions
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_statement_028
   2.8.3.5:
     title: The default branch must be the last case item
     level: Rule
@@ -1179,12 +1194,14 @@ checks:
     title: Don't-care signals not used as case selectors unless default assigns x
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_statement_028
   2.8.3.7:
     title: Don't-care signals not used as casex selectors
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_statement_028
   2.8.4.1:
     title: Complex casex statements degrade circuit quality
     level: Suggestion
@@ -1258,12 +1275,14 @@ checks:
     title: Arithmetic inside loops only on the loop variable and constants
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_statement_029
   2.9.2.2:
     title: Logical/relational operations in loops only on loop variable and constants
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_029
   2.9.2.3:
     title: 'Loops doing other logical/relational operations: at most 10 iterations'
     level: Recommendation 1
@@ -1410,13 +1429,15 @@ checks:
     title: Never assign a negative value to an integer
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_literal_009
     note: Verilog only.
   2.10.4.6:
     title: Never assign a negative value to reg or wire signals
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_literal_009
     note: Verilog only.
   2.10.5.1:
     title: Wide arithmetic/relational operators (8+ bits) create large logic
@@ -1550,7 +1571,8 @@ checks:
     title: Put each state machine in its own module
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_case_010
   2.11.3.1:
     title: Separating state register and next-state/output case eases verification
     level: Suggestion
@@ -1602,7 +1624,8 @@ checks:
     title: Avoid technology-dependent code (e.g. instantiated library cells)
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_module_012
   3.1.2.3:
     title: Keep the clocking scheme simple
     level: Recommendation 3
@@ -1868,7 +1891,8 @@ checks:
     title: A clock must never feed a flip-flop D input
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_always_022
   3.3.3.2:
     title: Do not tie flip-flop inputs to constant 0/1
     level: Recommendation 2
@@ -2064,12 +2088,14 @@ checks:
     title: Reference files by relative paths
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_file_004
   3.5.2.1:
     title: File references use relative paths via the master directory
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_file_004
   3.5.2.2:
     title: RTL file name is the module name plus .v
     level: Recommendation 1
@@ -2174,7 +2200,8 @@ checks:
     title: Use a standard file header template
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_comment_003
     note: 'Limits: header template configurable.'
   3.5.3.4:
     title: Consider CVS when needed
@@ -2325,7 +2352,8 @@ checks:
     title: Define testbench timing with parameters or text macros
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_034
   4.1.2.1:
     title: Use parameters instead of hard-coded numbers in test code
     level: Recommendation 1
@@ -2389,12 +2417,14 @@ checks:
     title: Do not compute clock periods inside always blocks
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_statement_030
   4.1.7.1:
     title: Generate each clock in its own block
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_031
   4.1.8.1:
     title: Sample signals at a different time from when they are driven
     level: Recommendation 1
@@ -2414,7 +2444,8 @@ checks:
     title: Avoid edge events on non-clock signals in testbenches
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_statement_032
   4.1.8.5:
     title: Take care with asynchronous reset timing in testbenches
     level: Recommendation 2
@@ -2672,7 +2703,8 @@ checks:
     title: Fence non-synthesizable debug code in RTL with translate_off/on
     level: Suggestion
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_033
     note: 'Verilog only. Limits: required pragmas translate_off, translate_on.'
   4.4.1.1:
     title: Both RTL and gate-level verification are required
