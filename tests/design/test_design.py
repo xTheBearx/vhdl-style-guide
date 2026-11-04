@@ -19,6 +19,7 @@ from mhsg.design import (
     black_box,
     cdc,
     flat,
+    formal,
     graph,
     netlist,
     project,
@@ -222,6 +223,86 @@ module top
     n22 <= in_a;
 endmodule
 """
+
+
+class test_formal(unittest.TestCase):
+    """The netlists and runs of SymbiYosys for design_025, without running it."""
+
+    def setUp(self):
+        self.modules = {
+            "top": {
+                "ports": {"rst": {"direction": "input", "bits": [2]}, "sel": {"direction": "input", "bits": [3, 4]}},
+                "netnames": {"rst": {"bits": [2]}},
+                "cells": {
+                    "m": {"type": "$mux", "connections": {"A": [5], "B": [6], "S": [3], "Y": [7]}},
+                    "n": {"type": "$mux", "connections": {"A": [8], "B": [9], "S": [3], "Y": [10]}},
+                    "p": {"type": "$pmux", "connections": {"A": [5], "B": [6, 7], "S": [3, 4], "Y": [11]}},
+                    "k": {"type": "$mux", "connections": {"A": [5], "B": [6], "S": ["1"], "Y": [12]}},
+                    "e": {"type": "$eq", "connections": {"A": [5], "B": ["1"], "Y": [3]}},
+                    "u_box": {"type": "box", "connections": {"O": [13]}},
+                    "a": {"type": "$assert", "connections": {"A": [5], "EN": ["1"]}},
+                },
+            },
+            "box": {"attributes": {"blackbox": "1"}, "ports": {"O": {"direction": "output", "bits": [2]}}},
+        }
+
+    def test_branches(self):
+        # A select used twice is one branch; a constant select has none; a $pmux has a branch per choice and its others
+        lBranches = formal.branches({"top": self.modules["top"]})
+        self.assertEqual(
+            [("m", (3,), 1), ("m", (3,), 0), ("p", (3, 4), 0), ("p", (3, 4), 1), ("p", (3, 4), None)],
+            [(o.cell, tuple(o.select), o.value) for o in lBranches],
+        )
+        # Located at the logic that computes the condition first
+        self.assertEqual(["e", "m"], lBranches[0].cells)
+        self.assertEqual(["p"], lBranches[4].cells)
+        self.assertEqual("this condition is never false", lBranches[1].describe())
+        self.assertEqual("the others choice of this case statement is never taken", lBranches[4].describe())
+
+    def test_netlist(self):
+        lBranches = formal.branches({"top": self.modules["top"]})
+        dNetlist = formal.formal_netlist({"modules": self.modules}, "top", lBranches, "$cover", {("rst", 0): 0}, {"sel": 2}, {"box"})
+        dCells = dNetlist["modules"]["top"]["cells"]
+        self.assertNotIn("box", dNetlist["modules"])
+        self.assertNotIn("u_box", dCells)
+        self.assertNotIn("a", dCells)
+        lCovers = sorted(s for s, d in dCells.items() if d["type"] == "$cover")
+        self.assertEqual([f"\\mhsg_check_{i}" for i in range(5)], lCovers)
+        self.assertEqual({"src": "mhsg_branch_0"}, dCells["\\mhsg_check_0"]["attributes"])
+        self.assertEqual([3], dCells["\\mhsg_check_0"]["connections"]["A"])
+        # The reset is active in the first cycle; sel is 2 in every cycle: bit 0 is 0, bit 1 is 1
+        self.assertEqual(3, sum(1 for d in dCells.values() if d["type"] == "$assume"))
+        self.assertEqual(1, sum(1 for d in dCells.values() if d["type"] == "$initstate"))
+        # The original is unchanged
+        self.assertIn("u_box", self.modules["top"]["cells"])
+
+    def test_results(self):
+        sLog = (
+            "SBY 16:34:58 [cover] engine_0: ##   0:00:00  Reached cover statement in step 0 at top: mhsg_check_1\n"
+            "SBY 16:34:58 [cover] engine_0: ##   0:00:00  Reached cover statement in step 4 at top: u_a.mhsg_check_12\n"
+            "SBY 16:34:58 [cover] summary:   reached cover statement top.mhsg_check_3 at mhsg_branch_3 step 6\n"
+            "SBY 16:34:58 [cover] summary: unreached cover statements:\n"
+            "SBY 16:34:58 [cover] summary:   top.mhsg_check_4 at mhsg_branch_4\n"
+        )
+        self.assertEqual({1, 3, 12}, formal.cover_results(sLog))
+
+    def test_sby_text(self):
+        sText = formal.sby_text("top", "cover", 20, 60, False)
+        self.assertIn("mode cover\ndepth 20\ntimeout 60\n", sText)
+        self.assertIn("[engines]\nsmtbmc\n", sText)
+        self.assertIn("async2sync\n", sText)
+        sText = formal.sby_text("top", "prove", 20, 60, True)
+        self.assertIn("[engines]\nabc pdr\n", sText)
+        self.assertIn("multiclock on\n", sText)
+        self.assertNotIn("async2sync", sText)
+        self.assertNotIn("depth", sText)
+
+    def test_assumptions(self):
+        from mhsg.rules.design.rule_025 import (
+            assumption_values,  # pylint: disable=import-outside-toplevel
+        )
+
+        self.assertEqual({"test_mode": 0, "mode": 31}, assumption_values(["test_mode=0", "mode = 0x1f"]))
 
 
 class test_slang_netlists(unittest.TestCase):
@@ -1177,6 +1258,18 @@ class test_design_analysis(unittest.TestCase):
             ],
             [t for t in self.findings("inout_wire_top", "inout_wire.v") if t[2] == "design_023"],
         )
+
+    def test_unreachable_branches(self):
+        # Disabled by default, also in design analysis. Enabled, it proves with SymbiYosys that count never reaches 7;
+        # without SymbiYosys it says it cannot check
+        self.assertEqual([], [t for t in self.findings("reach_top", "reach.vhd") if t[2] == "design_025"])
+        dRules = {"design_025": {"disable": False}}
+        lFindings = [t for t in self.findings("reach_top", "reach.vhd", dRules=dRules) if t[2] == "design_025"]
+        if formal.find_sby() is None:
+            self.assertEqual(1, len(lFindings))
+            self.assertEqual("SymbiYosys (sby) is not installed: reachability is not checked", lFindings[0][3])
+        else:
+            self.assertEqual([("reach.vhd", 33, "design_025", "Branch in reach_top proven unreachable: this condition is never true")], lFindings)
 
     def test_multiple_drivers(self):
         # The bidirectional pin is not reported

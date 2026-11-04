@@ -533,6 +533,35 @@ options:
     minimum: 1
     label: Most tri-state drivers
     description: The most tri-state drivers one bus may have.
+  depth:
+    type: integer
+    minimum: 1
+    label: Cycles searched from reset
+    description: The clock cycles from reset in which the search for a way to take each branch looks.
+  timeout:
+    type: integer
+    minimum: 1
+    label: Time limit of a proof
+    description: The most seconds a proof that a branch can never be taken may take.
+  cover_timeout:
+    type: integer
+    minimum: 1
+    label: Time limit of the search
+    description: The most seconds the search for ways to take the branches may take; the branches reached by then count as reached.
+  maximum_proofs:
+    type: integer
+    minimum: 0
+    label: Most proofs
+    description: The most branches not reached by the search that get a proof.
+  report_undecided:
+    type: boolean
+    label: Report undecided branches
+    description: Also report the branches neither reached by the search nor proven unreachable.
+  assumptions:
+    type: list
+    item_type: string
+    label: Assumptions
+    description: "Top inputs held at a value in every cycle, written port=value, such as test_mode=0."
   maximum_gates:
     type: integer
     minimum: 1

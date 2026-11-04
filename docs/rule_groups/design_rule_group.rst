@@ -28,3 +28,4 @@ Rules Enforcing Design Rule Group
 * `design_022 <../design_rules.html#design-022>`_
 * `design_023 <../design_rules.html#design-023>`_
 * `design_024 <../design_rules.html#design-024>`_
+* `design_025 <../design_rules.html#design-025>`_

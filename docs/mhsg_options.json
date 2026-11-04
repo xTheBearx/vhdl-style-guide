@@ -1953,7 +1953,8 @@
         "design_021",
         "design_022",
         "design_023",
-        "design_024"
+        "design_024",
+        "design_025"
       ]
     },
     {
@@ -3124,6 +3125,12 @@
         "ignore"
       ]
     },
+    "assumptions": {
+      "type": "list",
+      "label": "Assumptions",
+      "description": "Top inputs held at a value in every cycle, written port=value, such as test_mode=0.",
+      "item_type": "string"
+    },
     "attributes": {
       "type": "list",
       "label": "Attributes",
@@ -3266,6 +3273,18 @@
       "type": "integer",
       "label": "Levels of continuation lines",
       "description": "The number of levels the fix indents a continuation line more than the line that starts its statement, when no continuation line before it shows the indent."
+    },
+    "cover_timeout": {
+      "type": "integer",
+      "label": "Time limit of the search",
+      "description": "The most seconds the search for ways to take the branches may take; the branches reached by then count as reached.",
+      "minimum": 1
+    },
+    "depth": {
+      "type": "integer",
+      "label": "Cycles searched from reset",
+      "description": "The clock cycles from reset in which the search for a way to take each branch looks.",
+      "minimum": 1
     },
     "differential_suffixes": {
       "type": "list",
@@ -3727,6 +3746,12 @@
       "description": "The most ports one module may have.",
       "minimum": 1
     },
+    "maximum_proofs": {
+      "type": "integer",
+      "label": "Most proofs",
+      "description": "The most branches not reached by the search that get a proof.",
+      "minimum": 0
+    },
     "maximum_states": {
       "type": "integer",
       "label": "Most states",
@@ -4087,6 +4112,11 @@
       "description": "Suffixes removed from a local declaration before the fix adds the first allowed suffix.",
       "item_type": "string"
     },
+    "report_undecided": {
+      "type": "boolean",
+      "label": "Report undecided branches",
+      "description": "Also report the branches neither reached by the search nor proven unreachable."
+    },
     "required_fields": {
       "type": "list",
       "label": "Required header fields",
@@ -4426,6 +4456,12 @@
       "label": "Testbench file names",
       "description": "File name patterns with * and ? that the names of files holding a testbench, a module without ports, match.",
       "item_type": "string"
+    },
+    "timeout": {
+      "type": "integer",
+      "label": "Time limit of a proof",
+      "description": "The most seconds a proof that a branch can never be taken may take.",
+      "minimum": 1
     },
     "units": {
       "type": "enum",
@@ -20420,6 +20456,83 @@
           "name": "maximum_gates",
           "default": 40000,
           "definition": "maximum_gates"
+        }
+      ]
+    },
+    {
+      "id": "design_025",
+      "alias": "design_unreachable_branch",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports branches that can never be taken from reset: conditions never true or never false, and case choices never selected, proven with SymbiYosys.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "depth",
+          "default": 20,
+          "definition": "depth"
+        },
+        {
+          "name": "timeout",
+          "default": 60,
+          "definition": "timeout"
+        },
+        {
+          "name": "cover_timeout",
+          "default": 300,
+          "definition": "cover_timeout"
+        },
+        {
+          "name": "maximum_proofs",
+          "default": 20,
+          "definition": "maximum_proofs"
+        },
+        {
+          "name": "report_undecided",
+          "default": false,
+          "definition": "report_undecided"
+        },
+        {
+          "name": "assumptions",
+          "default": [],
+          "definition": "assumptions"
         }
       ]
     },

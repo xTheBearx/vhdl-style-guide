@@ -25,8 +25,10 @@ Deferred for now: these need Vivado and Libero installed.
 Design analysis
 ---------------
 
-* **Formal reachability (plan step 6).** Cover checks per branch and state with SymbiYosys, assumptions, time budgets
-  and three-way results. SymbiYosys is not packaged for Ubuntu; it needs the YosysHQ OSS CAD Suite.
+* **Formal reachability of states and liveness.** design_025 checks branches with SymbiYosys; states are covered
+  through the branches that enter them. Cover checks of states as such, properties that something always happens
+  again (liveness), and proofs of more branches in parallel are not done. SymbiYosys is not packaged for Ubuntu; it
+  needs the YosysHQ OSS CAD Suite, so CI runs design_025 only to the message that it is missing.
 * **Black box libraries for more primitives.** Memory interface cores have no declarations, nor have the transceivers
   of Intel, Lattice and Microchip; the Intel and Lattice libraries cover the common primitives only. The timing of
   the ports of the Xilinx transceivers and PCI Express blocks was taken from the user guides without a vendor
