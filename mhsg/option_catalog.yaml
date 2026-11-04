@@ -404,11 +404,30 @@ options:
     minimum: 1
     label: Longest name
     description: The most characters in a name other than that of a module or instance.
+  maximum_outputs:
+    type: integer
+    minimum: 0
+    label: Most outputs of an always block
+    description: The most signals one always block may assign.
+  maximum_lines:
+    type: integer
+    minimum: 1
+    label: Most lines of an always block
+    description: The most lines one always block may have.
+  maximum_items:
+    type: integer
+    minimum: 1
+    label: Most case items
+    description: The most items one case statement may have.
   maximum_depth:
     type: integer
     minimum: 1
     label: Maximum logic depth
     description: The most logic levels a combinational path may have, counting operators such as adders, comparisons and multiplexers.
+    by_rule:
+      sv_statement_008:
+        label: Most nested if statements
+        description: The deepest an if statement may be nested in others; an else if does not nest deeper.
   method:
     type: enum
     values: [component, entity]

@@ -86,7 +86,13 @@ what a Verible lint rule checks, its alias is the Verible rule's name.
 * rules of the STARC guide, disabled by default: no initial blocks, fork-join or empty branches
   (:code:`sv_statement_004` to :code:`sv_statement_006`), no constant case selector (:code:`sv_case_003`), one event
   control and at most one top-level if or case per always block (:code:`sv_always_005`, :code:`sv_always_006`), no
-  synthesis directives in comments (:code:`sv_comment_001`)
+  synthesis directives in comments (:code:`sv_comment_001`); no falling clock edges, at most 15 outputs and 300 lines
+  per always block (:code:`sv_always_007` to :code:`sv_always_009`); no nested conditional operators, if nesting at
+  most 7 deep, no change of a loop variable in its loop (:code:`sv_statement_007` to :code:`sv_statement_009`); at
+  most 200 case items (:code:`sv_case_004`); packed dimensions numbered from 0 (:code:`sv_dimension_003`); no x or z
+  in literals (:code:`sv_literal_006`); ports connected by name (:code:`sv_module_003`); a default value on every
+  parameter (:code:`sv_declaration_002`); line comments (:code:`sv_comment_002`); no trailing or double underscores
+  in names, and instances named after their module (:code:`sv_naming_014`, :code:`sv_naming_015`)
 * :code:`sv_syntax_001`: code slang cannot parse
 
 The **starc** rule set enables the rules of the STARC guide that are disabled by default.

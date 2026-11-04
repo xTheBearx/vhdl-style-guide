@@ -508,6 +508,49 @@ class test_rules(unittest.TestCase):
             [s for s in lOutput if "sv_lint_008" in s],
         )
 
+    def test_starc_checks(self):
+        # One violation of each: the case default may assign x, and the asynchronous reset may use negedge
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "starc", "-ap"], "starc_more.sv")
+        lRules = ("sv_naming_014", "sv_naming_015", "sv_always_007", "sv_statement_007", "sv_statement_009", "sv_dimension_003")
+        lRules += ("sv_literal_006", "sv_module_003", "sv_declaration_002", "sv_comment_002")
+        self.assertEqual(
+            [
+                "WARNING: starc_more.sv(4)STARC-3.1.5.3 (sv_declaration_002) -- Give Depth a default value",
+                "WARNING: starc_more.sv(6)STARC-1.1.1.6 (sv_naming_014) -- Rename clk__i, which has two underscores in a row",
+                "WARNING: starc_more.sv(8)STARC-2.1.6.2 (sv_dimension_003) -- Number the bits from 0",
+                "WARNING: starc_more.sv(10)STARC-1.1.1.6 (sv_naming_014) -- Rename flag_, which ends with an underscore",
+                "WARNING: starc_more.sv(12)STARC-3.5.6.7 (sv_comment_002) -- Use // comments",
+                "WARNING: starc_more.sv(18)STARC-1.4.3.6 (sv_always_007) -- Clock the register on the rising edge",
+                "ERROR: starc_more.sv(26)STARC-2.1.6.5/STARC-2.10.1.6 (sv_literal_006) -- Do not use x or z in a literal",
+                "WARNING: starc_more.sv(26)STARC-2.1.5.1 (sv_statement_007) -- Do not nest the conditional operator",
+                "ERROR: starc_more.sv(30)STARC-2.9.1.2 (sv_statement_009) -- Do not change the loop variable i in the loop",
+                "ERROR: starc_more.sv(34)STARC-3.2.3.1 (sv_module_003) -- Connect the ports by name",
+                "WARNING: starc_more.sv(34)STARC-1.1.1.8 (sv_naming_015) -- Name the instance sub, or sub_<number>",
+            ],
+            [s for s in lOutput if any(f"({r})" in s for r in lRules)],
+        )
+        # The limits of the sizes, made small
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sConfiguration = os.path.join(sTemporary, "small.yaml")
+            with open(sConfiguration, "w", encoding="utf-8") as oFile:
+                oFile.write(
+                    "rule:\n  sv_always_008:\n    maximum_outputs: 0\n  sv_always_009:\n    maximum_lines: 6\n"
+                    "  sv_statement_008:\n    maximum_depth: 0\n  sv_case_004:\n    maximum_items: 1\n",
+                )
+            _, lOutput, _ = self.run_mhsg(["--rule_set", "starc", "-ap", "-c", sConfiguration], "starc_more.sv")
+        lRules = ("sv_always_008", "sv_always_009", "sv_statement_008", "sv_case_004")
+        self.assertEqual(
+            [
+                "WARNING: starc_more.sv(18)STARC-2.6.1.3 (sv_always_008) -- Split the always block: it assigns 1 signal, more than 0",
+                "WARNING: starc_more.sv(18)STARC-2.6.1.4 (sv_always_009) -- Split the always block: it has 7 lines, more than 6",
+                "WARNING: starc_more.sv(19)STARC-2.7.3.1 (sv_statement_008) -- Nest if statements at most 0 deep",
+                "WARNING: starc_more.sv(28)STARC-2.6.1.3 (sv_always_008) -- Split the always block: it assigns 1 signal, more than 0",
+                "WARNING: starc_more.sv(38)STARC-2.6.1.3 (sv_always_008) -- Split the always block: it assigns 1 signal, more than 0",
+                "WARNING: starc_more.sv(39)STARC-2.8.2.2 (sv_case_004) -- Split the case statement: it has 2 items, more than 1",
+            ],
+            [s for s in lOutput if any(f"({r})" in s for r in lRules)],
+        )
+
     def test_lint_do254(self):
         # The default rule set of lint mode labels the SystemVerilog rules with the DO-254 checks they implement
         _, lOutput, _ = self.run_mhsg(["--lint_only"], "lint.sv")

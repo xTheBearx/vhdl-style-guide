@@ -161,3 +161,66 @@ guide asks (2.6.2.1). It is disabled by default; the starc rule set enables it.
    always_comb begin
        if (b) z = 1;
    end
+
+sv_always_007
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_falling_edge_clock`
+
+This rule checks for registers clocked on the falling edge of their clock, as the STARC guide recommends
+(1.4.3.6). In an always block with several events, those tested by its first if are asynchronous resets, which
+may use negedge; the others are clocks. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_ff @(negedge clk_i) begin
+       q <= d;
+   end
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i) begin
+       q <= d;
+   end
+
+sv_always_008
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_outputs`
+
+This rule checks that an always block assigns at most **maximum_outputs** signals, 15 by default, as the STARC
+guide asks (2.6.1.3; it recommends 5). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+An always block that assigns 16 signals.
+
+**Fix**
+
+Split it into always blocks of related signals.
+
+sv_always_009
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_length`
+
+This rule checks that an always block is at most **maximum_lines** lines long, 300 by default, as the STARC
+guide asks (2.6.1.4). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+An always block of 301 lines.
+
+**Fix**
+
+Split it into always blocks of related signals.

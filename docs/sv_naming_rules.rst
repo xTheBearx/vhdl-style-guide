@@ -296,3 +296,48 @@ by default (1.1.3.3). It is disabled by default; the starc rule set enables it.
 .. code-block:: systemverilog
 
    logic valid;
+
+sv_naming_014
+#############
+
+|phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`sv_naming_underscores`
+
+This rule checks that the names of modules and ports do not end with an underscore, and that no name has two
+underscores in a row, as the STARC guide asks (1.1.1.6). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   module fifo_ (input logic clk__i);
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   module fifo (input logic clk_i);
+
+sv_naming_015
+#############
+
+|phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`sv_naming_instance_after_module`
+
+This rule checks that an instance is named after the module it instantiates, or after it and a number for
+several instances, such as fifo or fifo_1, as the STARC guide recommends (1.1.1.8). It is disabled by default; the
+starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   fifo buffer (.clk_i(clk_i));
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   fifo fifo (.clk_i(clk_i));

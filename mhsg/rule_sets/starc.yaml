@@ -64,7 +64,8 @@ checks:
     title: No trailing underscore on top-level ports or module names; no consecutive underscores
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_naming_014
   1.1.1.7:
     title: Mark active-low signals with a suffix such as _X or _N
     level: Recommendation 2
@@ -75,7 +76,8 @@ checks:
     title: Instance name = module name; repeated instances become <module>_<number>
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_naming_015
     note: 'Limits: instance name pattern <module>_<n>.'
   1.1.1.9:
     title: 'Top-level module and port names: at most 16 characters, not case-distinguished'
@@ -345,7 +347,8 @@ checks:
     title: Avoid negative-edge-triggered flip-flops
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_always_007
   1.4.4.1:
     title: Where possible, give each clock domain its own hierarchical block
     level: Suggestion
@@ -666,7 +669,8 @@ checks:
     title: 'Do not nest the conditional operator ?: (single level only)'
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_007
     note: 'Verilog only. Limits: max ternary nesting 1.'
   2.1.5.2:
     title: 'With an x select, ?: merges both branches bitwise, unlike if'
@@ -691,7 +695,8 @@ checks:
     title: The LSB index of a vector should be 0
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_dimension_003
     note: 'Limits: lsb index 0.'
   2.1.6.3:
     title: Index arrays with plain signal names, not expressions
@@ -707,7 +712,8 @@ checks:
     title: Never use x or z in an array index
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_literal_006
   2.2.1.1:
     title: Assign every output on all paths of combinational blocks to avoid latches
     level: Rule
@@ -952,13 +958,15 @@ checks:
     title: Aim for at most five outputs per always block; never more than 15
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_always_008
     note: 'Limits: max outputs 5; hard max outputs 15.'
   2.6.1.4:
     title: Keep always blocks to 300 lines or fewer
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_always_009
     note: 'Limits: max lines 300.'
   2.6.2.1:
     title: At most one top-level if or case statement per always block
@@ -1006,7 +1014,8 @@ checks:
     title: if nesting depth 7 or less; never above 15
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_008
     note: 'Limits: max if nesting 7; hard max if nesting 15.'
   2.7.3.2:
     title: Deeply nested if/else pairing is hard to follow
@@ -1092,7 +1101,8 @@ checks:
     title: At most 200 items per case statement
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_case_004
     note: 'Limits: max case items 200.'
   2.8.2.3:
     title: Restructure truth tables for HDL before coding them as case
@@ -1201,7 +1211,8 @@ checks:
     title: Loop bounds must be constant; never modify the loop variable in the body
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_statement_009
   2.9.2.1:
     title: Arithmetic inside loops only on the loop variable and constants
     level: Rule
@@ -1253,7 +1264,8 @@ checks:
     title: Do not use literals containing x or z
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_literal_006
   2.10.1.7:
     title: Do not use RAM outputs directly in if conditions
     level: Recommendation 1
@@ -1638,7 +1650,8 @@ checks:
     title: Give parameters default values
     level: Suggestion
     severity: Note
-    status: planned
+    rules:
+    - sv_declaration_002
   3.1.6.1:
     title: Parameter values may be selected with `ifdef
     level: Suggestion
@@ -1709,7 +1722,8 @@ checks:
     title: Connect instance ports by name, never by position
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_module_003
   3.2.3.2:
     title: Net width must match the width of the instance port it connects to
     level: Rule
@@ -2157,7 +2171,8 @@ checks:
     title: Use // line comments
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_comment_002
   3.5.7.1:
     title: RTL can be version-managed with CVS
     level: Suggestion

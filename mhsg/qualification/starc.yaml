@@ -97,6 +97,20 @@ cases:
 - rule: sv_always_006
   file: examples/svfile/alignment.fixed.sv
   expected: []
+- rule: sv_always_007
+  file: examples/svfile/starc_more.sv
+  expected:
+  - - 18
+    - Clock the register on the rising edge
+- rule: sv_always_007
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_always_008
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_always_009
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
 - rule: sv_case_001
   file: examples/svfile/structure.fixed.sv
   expected:
@@ -135,6 +149,9 @@ cases:
 - rule: sv_case_003
   file: examples/svfile/alignment.fixed.sv
   expected: []
+- rule: sv_case_004
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
 - rule: sv_comment_001
   file: examples/svfile/declarations.sv
   expected:
@@ -143,12 +160,50 @@ cases:
 - rule: sv_comment_001
   file: examples/svfile/alignment.fixed.sv
   expected: []
+- rule: sv_comment_002
+  file: examples/svfile/code_tags.sv
+  expected:
+  - - 10
+    - Use // comments
+  - - 14
+    - Use // comments
+  - - 16
+    - Use // comments
+- rule: sv_comment_002
+  file: examples/svfile/sample.sv
+  expected:
+  - - 4
+    - Use // comments
+- rule: sv_comment_002
+  file: examples/svfile/starc_more.sv
+  expected:
+  - - 12
+    - Use // comments
+- rule: sv_comment_002
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_declaration_002
+  file: examples/svfile/starc_more.sv
+  expected:
+  - - 4
+    - Give Depth a default value
+- rule: sv_declaration_002
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
 - rule: sv_dimension_001
   file: examples/svfile/declarations.sv
   expected:
   - - 14
     - Write the packed dimension as [msb:lsb]
 - rule: sv_dimension_001
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_dimension_003
+  file: examples/svfile/starc_more.sv
+  expected:
+  - - 8
+    - Number the bits from 0
+- rule: sv_dimension_003
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_file_001
@@ -162,10 +217,10 @@ cases:
   - - 1
     - Name the file after module brackets
 - rule: sv_file_001
-  file: examples/svfile/structure.fixed.sv
+  file: examples/svfile/sensitivity.sv
   expected:
-  - - 1
-    - Name the file after module structure
+  - - 3
+    - Name the file after module sens
 - rule: sv_file_001
   file: examples/svfile/alignment.sv
   expected: []
@@ -202,6 +257,11 @@ cases:
   file: examples/svfile/indent.sv
   expected:
   - - 89
+    - Use a function instead of a task
+- rule: sv_function_005
+  file: examples/svfile/sensitivity.sv
+  expected:
+  - - 23
     - Use a function instead of a task
 - rule: sv_function_005
   file: examples/svfile/alignment.fixed.sv
@@ -377,6 +437,13 @@ cases:
   - - 21
     - Add b_i to the sensitivity list, or use always_comb
 - rule: sv_lint_008
+  file: examples/svfile/sensitivity.sv
+  expected:
+  - - 29
+    - Add b_i, c_i to the sensitivity list, or use always_comb
+  - - 38
+    - Add u_sub.valid to the sensitivity list, or use always_comb
+- rule: sv_lint_008
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_lint_013
@@ -441,6 +508,14 @@ cases:
 - rule: sv_literal_005
   file: examples/svfile/alignment.fixed.sv
   expected: []
+- rule: sv_literal_006
+  file: examples/svfile/starc_more.sv
+  expected:
+  - - 26
+    - Do not use x or z in a literal
+- rule: sv_literal_006
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
 - rule: sv_module_002
   file: examples/svfile/structure.fixed.sv
   expected:
@@ -452,6 +527,14 @@ cases:
   - - 3
     - Set the parameter in the instantiation instead of with defparam
 - rule: sv_module_002
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_module_003
+  file: examples/svfile/starc_more.sv
+  expected:
+  - - 34
+    - Connect the ports by name
+- rule: sv_module_003
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_naming_009
@@ -474,6 +557,11 @@ cases:
   expected:
   - - 111
     - Rename new, a VHDL keyword
+- rule: sv_naming_010
+  file: examples/svfile/starc_more.sv
+  expected:
+  - - 34
+    - Rename buffer, a VHDL keyword
 - rule: sv_naming_010
   file: examples/svfile/alignment.fixed.sv
   expected: []
@@ -524,6 +612,34 @@ cases:
     - Use 2 to 40 characters for port b
 - rule: sv_naming_013
   file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_naming_014
+  file: examples/svfile/starc_more.sv
+  expected:
+  - - 6
+    - Rename clk__i, which has two underscores in a row
+  - - 10
+    - Rename flag_, which ends with an underscore
+- rule: sv_naming_014
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_naming_015
+  file: examples/svfile/alignment.fixed.sv
+  expected:
+  - - 13
+    - Name the instance sub, or sub_<number>
+- rule: sv_naming_015
+  file: examples/svfile/alignment.sv
+  expected:
+  - - 13
+    - Name the instance sub, or sub_<number>
+- rule: sv_naming_015
+  file: examples/svfile/brackets.fixed.sv
+  expected:
+  - - 10
+    - Name the instance sub, or sub_<number>
+- rule: sv_naming_015
+  file: examples/svfile/code_tags.sv
   expected: []
 - rule: sv_statement_003
   file: examples/svfile/structure.fixed.sv
@@ -584,6 +700,25 @@ cases:
   - - 15
     - Remove the empty branch or give it a statement
 - rule: sv_statement_006
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_007
+  file: examples/svfile/starc_more.sv
+  expected:
+  - - 26
+    - Do not nest the conditional operator
+- rule: sv_statement_007
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_008
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_009
+  file: examples/svfile/starc_more.sv
+  expected:
+  - - 30
+    - Do not change the loop variable i in the loop
+- rule: sv_statement_009
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: whitespace_002

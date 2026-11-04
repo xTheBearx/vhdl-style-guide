@@ -2195,6 +2195,8 @@
         "sv_naming_011",
         "sv_naming_012",
         "sv_naming_013",
+        "sv_naming_014",
+        "sv_naming_015",
         "type_015",
         "type_600",
         "type_601",
@@ -2403,13 +2405,20 @@
         "sv_always_004",
         "sv_always_005",
         "sv_always_006",
+        "sv_always_007",
+        "sv_always_008",
+        "sv_always_009",
         "sv_case_001",
         "sv_case_002",
         "sv_case_003",
+        "sv_case_004",
         "sv_comment_001",
+        "sv_comment_002",
         "sv_declaration_001",
+        "sv_declaration_002",
         "sv_dimension_001",
         "sv_dimension_002",
+        "sv_dimension_003",
         "sv_file_001",
         "sv_file_002",
         "sv_file_003",
@@ -2430,14 +2439,19 @@
         "sv_literal_003",
         "sv_literal_004",
         "sv_literal_005",
+        "sv_literal_006",
         "sv_module_001",
         "sv_module_002",
+        "sv_module_003",
         "sv_statement_001",
         "sv_statement_002",
         "sv_statement_003",
         "sv_statement_004",
         "sv_statement_005",
         "sv_statement_006",
+        "sv_statement_007",
+        "sv_statement_008",
+        "sv_statement_009",
         "sv_syntax_001",
         "sv_typedef_001",
         "sv_typedef_002",
@@ -3465,6 +3479,30 @@
       "label": "Maximum logic depth",
       "description": "The most logic levels a combinational path may have, counting operators such as adders, comparisons and multiplexers.",
       "minimum": 1
+    },
+    "maximum_depth:sv_statement_008": {
+      "type": "integer",
+      "label": "Most nested if statements",
+      "description": "The deepest an if statement may be nested in others; an else if does not nest deeper.",
+      "minimum": 1
+    },
+    "maximum_items": {
+      "type": "integer",
+      "label": "Most case items",
+      "description": "The most items one case statement may have.",
+      "minimum": 1
+    },
+    "maximum_lines": {
+      "type": "integer",
+      "label": "Most lines of an always block",
+      "description": "The most lines one always block may have.",
+      "minimum": 1
+    },
+    "maximum_outputs": {
+      "type": "integer",
+      "label": "Most outputs of an always block",
+      "description": "The most signals one always block may assign.",
+      "minimum": 0
     },
     "method": {
       "type": "enum",
@@ -61068,6 +61106,157 @@
       ]
     },
     {
+      "id": "sv_always_007",
+      "alias": "sv_always_falling_edge_clock",
+      "category": "sv_always",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for registers clocked on the falling edge of their clock, as the STARC guide recommends (1.4.3.6). In an always block with several events, those tested by its first if are asynchronous resets, which may use negedge; the others are clocks. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_always_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_always_008",
+      "alias": "sv_always_outputs",
+      "category": "sv_always",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that an always block assigns at most maximum_outputs signals, 15 by default, as the STARC guide asks (2.6.1.3; it recommends 5). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_always_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "maximum_outputs",
+          "default": 15,
+          "definition": "maximum_outputs"
+        }
+      ]
+    },
+    {
+      "id": "sv_always_009",
+      "alias": "sv_always_length",
+      "category": "sv_always",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that an always block is at most maximum_lines lines long, 300 by default, as the STARC guide asks (2.6.1.4). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_always_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "maximum_lines",
+          "default": 300,
+          "definition": "maximum_lines"
+        }
+      ]
+    },
+    {
       "id": "sv_blank_line_001",
       "alias": "sv_blank_line_end_of_file",
       "category": "sv_blank_line",
@@ -61261,6 +61450,58 @@
       ]
     },
     {
+      "id": "sv_case_004",
+      "alias": "sv_case_items",
+      "category": "sv_case",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that a case statement has at most maximum_items items, 200 by default, as the STARC guide asks (2.8.2.2). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_case_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "maximum_items",
+          "default": 200,
+          "definition": "maximum_items"
+        }
+      ]
+    },
+    {
       "id": "sv_comment_001",
       "alias": "sv_comment_tool_directives",
       "category": "sv_comment",
@@ -61313,6 +61554,53 @@
       ]
     },
     {
+      "id": "sv_comment_002",
+      "alias": "sv_comment_line_comments",
+      "category": "sv_comment",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that comments are line comments, starting with //, not block comments between / and /, as the STARC guide asks (3.5.6.7). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_comment_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
       "id": "sv_declaration_001",
       "alias": "sv_declaration_explicit_parameter_storage_type",
       "category": "sv_declaration",
@@ -61340,6 +61628,53 @@
         {
           "name": "disable",
           "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_declaration_002",
+      "alias": "sv_declaration_parameter_default",
+      "category": "sv_declaration",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that every parameter has a default value, as the STARC guide asks (3.1.5.3). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_declaration_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
           "definition": "disable"
         },
         {
@@ -61434,6 +61769,53 @@
         {
           "name": "disable",
           "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_dimension_003",
+      "alias": "sv_dimension_lsb_zero",
+      "category": "sv_dimension",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that the least significant bit of a packed dimension is 0, as the STARC guide asks (2.1.6.2), for dimensions whose bounds are numbers. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_dimension_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
           "definition": "disable"
         },
         {
@@ -63079,6 +63461,53 @@
       ]
     },
     {
+      "id": "sv_literal_006",
+      "alias": "sv_literal_x_or_z",
+      "category": "sv_literal",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for literals with x or z digits, as the STARC guide asks (2.10.1.6, and 2.1.6.5 for indexes). The don't-care of the default item of a case statement (2.8.3.1) and the wildcards of casez and casex items are allowed; comparisons with x or z are checked by sv_literal_005. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_literal_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
       "id": "sv_module_001",
       "alias": "sv_module_begin_block",
       "category": "sv_module",
@@ -63153,6 +63582,53 @@
         {
           "name": "disable",
           "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_module_003",
+      "alias": "sv_module_ports_by_name",
+      "category": "sv_module",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that the ports of an instance are connected by name, never by position, as the STARC guide asks (3.2.3.1). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_module_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
           "definition": "disable"
         },
         {
@@ -63855,6 +64331,100 @@
       ]
     },
     {
+      "id": "sv_naming_014",
+      "alias": "sv_naming_underscores",
+      "category": "sv_naming",
+      "groups": [
+        "naming"
+      ],
+      "summary": "This rule checks that the names of modules and ports do not end with an underscore, and that no name has two underscores in a row, as the STARC guide asks (1.1.1.6). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_naming_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_naming_015",
+      "alias": "sv_naming_instance_after_module",
+      "category": "sv_naming",
+      "groups": [
+        "naming"
+      ],
+      "summary": "This rule checks that an instance is named after the module it instantiates, or after it and a number for several instances, such as fifo or fifo_1, as the STARC guide recommends (1.1.1.8). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_naming_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
       "id": "sv_statement_001",
       "alias": "sv_statement_explicit_begin",
       "category": "sv_statement",
@@ -64097,6 +64667,152 @@
         "structure"
       ],
       "summary": "This rule checks for empty branches of if and case statements, such as a case item with only a semicolon, as the STARC guide asks (2.7.2.3). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_007",
+      "alias": "sv_statement_nested_conditional_operator",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for conditional operators nested in the branches of another, as the STARC guide asks (2.1.5.1): one level only. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_008",
+      "alias": "sv_statement_if_depth",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that if statements are nested at most maximum_depth deep, 7 by default, as the STARC guide asks (2.7.3.1). An else if continues its if, so it does not nest deeper. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "maximum_depth",
+          "default": 7,
+          "definition": "maximum_depth:sv_statement_008"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_009",
+      "alias": "sv_statement_loop_variable",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that the body of a for loop does not change its loop variable, as the STARC guide asks (2.9.1.2). It is disabled by default; the starc rule set enables it.",
       "documentation": "sv_statement_rules.rst",
       "options": [
         {

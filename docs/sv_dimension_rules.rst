@@ -46,3 +46,25 @@ unpacked-dimensions-range-ordering rule does.
 .. code-block:: systemverilog
 
    logic [7:0] mem [16];
+
+sv_dimension_003
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_dimension_lsb_zero`
+
+This rule checks that the least significant bit of a packed dimension is 0, as the STARC guide asks (2.1.6.2),
+for dimensions whose bounds are numbers. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   logic [8:1] data;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   logic [7:0] data;

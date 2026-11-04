@@ -25,3 +25,27 @@ expression searched for in comments. It is disabled by default; the starc rule s
 .. code-block:: systemverilog
 
    unique case (state_q)
+
+sv_comment_002
+##############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_comment_line_comments`
+
+This rule checks that comments are line comments, starting with //, not block comments between /* and */, as the
+STARC guide asks (3.5.6.7). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   /* The width of the data */
+   localparam int Width = 8;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   // The width of the data
+   localparam int Width = 8;

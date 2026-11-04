@@ -24,3 +24,25 @@ Verible's explicit-parameter-storage-type rule does.
 .. code-block:: systemverilog
 
    parameter int Depth = 8;
+
+sv_declaration_002
+##################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_declaration_parameter_default`
+
+This rule checks that every parameter has a default value, as the STARC guide asks (3.1.5.3). It is disabled by
+default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   module fifo #(parameter int Depth) ();
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   module fifo #(parameter int Depth = 4) ();
