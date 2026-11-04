@@ -16,6 +16,7 @@ assumptions can hold top inputs at a value in every cycle. Black boxes are taken
 they can take any value in any cycle. Assertions of the design are left out; its assumptions are kept.
 """
 
+import concurrent.futures
 import copy
 import json
 import os
@@ -89,16 +90,37 @@ def branches(dModules):
             else:
                 lValues = list(range(len(lSelect))) + [None]
             for oValue in lValues:
+                if only_unknown(dCell, oValue):
+                    # A branch that selects unknown values is how synthesis writes values never meant to occur, such
+                    # as the others choice of a case statement on a state that assigns 'X', or the encodings no
+                    # state uses: not a branch of the code
+                    continue
                 tKey = (tuple(lSelect), oValue)
                 if tKey in setSeen:
                     continue
                 setSeen.add(tKey)
                 oBranch = Branch(len(lReturn), sModule, sCell, list(lSelect), oValue)
                 oBit = lSelect[oValue] if isinstance(oValue, int) and len(lSelect) > 1 else (lSelect[0] if oValue is not None else None)
-                if dDrivers.get(oBit) is not None:
-                    oBranch.cells.insert(0, dDrivers[oBit])
+                sDriver = dDrivers.get(oBit)
+                if sDriver is not None and not graph.is_state(dModule["cells"][sDriver]):
+                    oBranch.cells.insert(0, sDriver)
                 lReturn.append(oBranch)
     return lReturn
+
+
+def only_unknown(dCell, oValue):
+    """Whether the data a branch of a multiplexer selects is unknown, 'x', in every bit."""
+    dConnections = dCell.get("connections", {})
+    lA = dConnections.get("A", [])
+    lB = dConnections.get("B", [])
+    if dCell.get("type") == "$mux":
+        lData = lB if oValue == 1 else lA
+    elif oValue is None:
+        lData = lA
+    else:
+        iWidth = len(lA) or 1
+        lData = lB[oValue * iWidth : (oValue + 1) * iWidth]
+    return bool(lData) and all(b == "x" for b in lData)
 
 
 class Builder:
@@ -307,8 +329,15 @@ def reachability(sSby, dNetlist, sTop, oFlat, setBlackBoxes, iDepth, iTimeout, i
             oBranch.status = REACHABLE
         else:
             lOpen.append(oBranch)
-    for oBranch in lOpen[:iMaximumProofs]:
+
+    def prove(oBranch):
         dProve = formal_netlist(dNetlist, sTop, [oBranch], "$assert", dResets, dAssumptions, setBlackBoxes)
         sResult, _ = run_sby(sSby, dProve, sTop, "prove", iDepth, iTimeout, bMulticlock)
         oBranch.status = {"PASS": UNREACHABLE, "FAIL": REACHABLE}.get(sResult, UNDECIDED)
+
+    # The proofs are independent: one SymbiYosys run each, as many at a time as there are processors
+    lProofs = lOpen[:iMaximumProofs]
+    if lProofs:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, min(len(lProofs), os.cpu_count() or 1))) as oPool:
+            list(oPool.map(prove, lProofs))
     return lBranches, lOpen[iMaximumProofs:], None

@@ -85,6 +85,10 @@ and adds the library and the values of the generics, such as
 and the library out of the names, keeping the values, when no two modules would then share one
 (:code:`mhsg/design/netlist.py`).
 
+**Quirk: GHDL 7 names the instances of a generate loop by index from 0**, such as :code:`core_complex_gen[0]`, where
+GHDL 4 writes :code:`core_complex_gen:1`. Findings that name such instances differ between the two; the real-world
+design check of the VHDL designs runs with GHDL 4, whose names its known findings use.
+
 GHDL plugin for Yosys
 ---------------------
 
