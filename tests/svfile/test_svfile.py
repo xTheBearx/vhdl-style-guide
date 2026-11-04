@@ -341,6 +341,22 @@ class test_rules(unittest.TestCase):
             only(lOutput, "sv_alignment"),
         )
 
+    def test_alignment_inside_dimensions(self):
+        # The colons of the packed dimensions aligned in a column are aligned too, by spaces after the bracket; a
+        # dimension much wider than the others leaves them flush left
+        _, lOutput, sAfter = self.run_mhsg(["--fix"], "dimensions.sv")
+        self.assertEqual(read("dimensions.fixed.sv"), sAfter)
+        _, lOutput, _ = self.run_mhsg(["-ap"], "dimensions.sv")
+        self.assertEqual(
+            [
+                "ERROR: dimensions.sv(3)sv_alignment_011 -- Use 1 space(s) after [ to align the colon",
+                "ERROR: dimensions.sv(7)sv_alignment_011 -- Use 1 space(s) after [ to align the colon",
+                "ERROR: dimensions.sv(9)sv_alignment_011 -- Use 1 space(s) after [ to align the colon",
+            ],
+            only(lOutput, "sv_alignment"),
+        )
+        self.assertEqual([], only(self.run_mhsg(["-ap"], "dimensions.fixed.sv")[1], "sv_alignment"))
+
     def test_escaped_identifier_keeps_its_space(self):
         # An escaped identifier ends at whitespace: removing the space before the semicolon would change the code
         with tempfile.TemporaryDirectory() as sTemporary:
@@ -613,6 +629,7 @@ class test_rules(unittest.TestCase):
                 "ERROR: alignment.sv(7)sv_alignment_006 -- Use 1 space(s) before =",
                 "ERROR: alignment.sv(8)sv_alignment_004 -- Align valid in column 18",
                 "ERROR: alignment.sv(9)sv_alignment_004 -- Align data in column 18",
+                "ERROR: alignment.sv(9)sv_alignment_011 -- Use 1 space(s) after [ to align the colon",
                 "ERROR: alignment.sv(10)sv_alignment_004 -- Align wide in column 18",
                 "ERROR: alignment.sv(16)sv_alignment_002 -- Align ( in column 19",
             ],
