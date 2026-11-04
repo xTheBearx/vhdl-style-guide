@@ -46,8 +46,8 @@ checks:
   CP6:
     title: Ensure safe FSM transitions
     severity: Error
-    rules: [lint_037]
-    note: 'Per file: states never entered, and states never left. Unreachable states through the logic need design analysis.'
+    rules: [lint_037, design_025]
+    note: 'Per file: states never entered, and states never left. Through the logic: branches never taken from reset, proven with SymbiYosys by design_025.'
   CP7:
     title: Avoid mismatching ranges
     severity: Warning

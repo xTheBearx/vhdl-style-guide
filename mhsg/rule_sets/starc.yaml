@@ -1075,6 +1075,7 @@ checks:
     severity: Warning
     rules:
     - sv_statement_020
+    - design_025
   2.7.2.3:
     title: Avoid empty branches (e.g. a case item with only ';')
     level: Recommendation 1
