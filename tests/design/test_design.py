@@ -966,6 +966,15 @@ class test_design_analysis(unittest.TestCase):
         lFindings = self.findings("box_path_top", "box_path.vhd", dRules=dRules)
         self.assertEqual([], [t for t in lFindings if t[2] in ("design_003", "design_007")])
 
+    def test_mapped_logic_depth(self):
+        # Disabled by default; enabled, it maps the design to look-up tables and counts them on the longest path
+        self.assertEqual([], [t for t in self.findings("depth_top", "depth.vhd") if t[2] == "design_019"])
+        dRules = {"design_019": {"disable": False, "maximum_levels": 1}}
+        self.assertEqual(
+            [("depth.vhd", 50, "design_019", "Path of 2 levels of 6-input look-up tables after mapping, from b_r(3), more than 1")],
+            [t for t in self.findings("depth_top", "depth.vhd", dRules=dRules) if t[2] == "design_019"],
+        )
+
     def test_multiple_drivers(self):
         # The bidirectional pin is not reported
         self.assertEqual(
