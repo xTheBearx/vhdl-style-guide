@@ -108,7 +108,17 @@ cell, and a finding is moved to the line of the assignment, as for VHDL.
 
 In a mixed design with a VHDL top, GHDL elaborates the VHDL as for a VHDL design and leaves the instances of
 components without a VHDL entity unbound; Yosys reads the Verilog files and links those instances to the Verilog
-modules of the same name, so the analysis sees through them. A Verilog top with VHDL modules is not supported yet.
+modules of the same name, so the analysis sees through them.
+
+In a mixed design with a Verilog top, GHDL analyzes the VHDL files and Yosys elaborates each VHDL entity the Verilog
+instantiates with the ghdl command, before it reads the Verilog and elaborates the top module with its parameters set
+under **generics**. With :code:`order: auto`, the VHDL files are those these entities need. Limits:
+
+* each VHDL entity is elaborated once, with the defaults of its generics: parameters an instance sets in Verilog do not
+  reach it;
+* GHDL names the module after the entity in lower case; the Verilog may write the name in any case, as long as all its
+  instances write it the same way;
+* with read_slang, this has not been tried yet.
 
 A module the Verilog files instantiate but none defines, such as a vendor primitive or encrypted IP, is a black box, as
 a VHDL component without an entity is (see `Black boxes`_). Yosys reads a module without logic for it before the

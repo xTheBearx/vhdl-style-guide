@@ -74,8 +74,9 @@ under way: the entries below.
   functions and hierarchical names are not followed.
 * **SystemVerilog designs without the yosys-slang plugin**: Yosys' own reader handles Verilog and part of
   SystemVerilog; ibex and common_cells need the plugin, which is not packaged for Ubuntu. Not yet tried with it.
-* **Mixed designs with a Verilog top** and VHDL modules: Yosys would need each VHDL entity the Verilog instantiates
-  elaborated with the ghdl command first; the design section could list them.
+* **Generics of VHDL entities under a Verilog top**: each entity is elaborated once with the defaults of its generics;
+  the parameters a Verilog instance sets would need an elaboration of the entity per set of values, under a name of
+  its own.
 * **Black boxes in Verilog designs with read_slang**: the modules made for black boxes are read with read_verilog
   -lib before the design; whether read_slang links instances to them is not known. Yosys has cell models for Xilinx
   only among the vendors with black box libraries.
