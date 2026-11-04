@@ -1031,14 +1031,25 @@ class test_design_analysis(unittest.TestCase):
             [t for t in lFindings if t[2] in ("design_003", "design_007")],
         )
 
+    def test_declarations_of_single_instances_differ(self):
+        # box_instances_cell is instantiated twice, and only u_a.u_loop is declared with a path: the module gets a copy
+        # for each instance, so the loop through u_a.u_loop is found, once
+        dBoxes = {"black_boxes": {"LUT_BUF": {"ports": {"O": "async", "I": "async"}}}}
+        dDeclared = dict(dBoxes, black_box_instances={"u_a.u_loop": {"ports": {"O": {"path": ["I"]}}}})
+        self.assertEqual(
+            [("box_instances.vhd", 28, "design_003", "Combinational loop through e, f in box_instances_cell and instance u_loop")],
+            [t for t in self.findings("box_instances_top", "box_instances.vhd", dDesignKeys=dDeclared) if t[2] in ("design_003", "design_007")],
+        )
+        self.assertEqual([], [t for t in self.findings("box_instances_top", "box_instances.vhd", dDesignKeys=dBoxes) if t[2] in ("design_003", "design_007")])
+
     def test_mapped_logic_depth(self):
-        # Disabled by default, also in design analysis; enabled, it maps the design to look-up tables and counts them
-        # on the longest path
+        # Disabled by default, also in design analysis; enabled, it maps the design to look-up tables and reports each
+        # register on a path of more tables than allowed, at its assignment
         dRules = {"design_019": {"maximum_levels": 1}}
         self.assertEqual([], [t for t in self.findings("depth_top", "depth.vhd", dRules=dRules) if t[2] == "design_019"])
         dRules = {"design_019": {"disable": False, "maximum_levels": 1}}
         self.assertEqual(
-            [("depth.vhd", 50, "design_019", "Path of 2 levels of 6-input look-up tables after mapping, from b_r(3), more than 1")],
+            [("depth.vhd", 53, "design_019", "Path of 3 levels of 6-input look-up tables after mapping from b_r(1) to q, more than 1")],
             [t for t in self.findings("depth_top", "depth.vhd", dRules=dRules) if t[2] == "design_019"],
         )
 

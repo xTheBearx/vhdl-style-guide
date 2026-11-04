@@ -516,17 +516,18 @@ design_019
 
 Alias: :code:`design_mapped_logic_depth`
 
-This rule reports the longest combinational path of the design after it is mapped to look-up tables of
-**lut_size** inputs, 6 by default, when it has more than **maximum_levels** levels, 8 by default.
+This rule reports the registers and output ports of the design reached by a combinational path of more than
+**maximum_levels** levels, 8 by default, after the design is mapped to look-up tables of **lut_size** inputs, 6 by
+default: each register once, with its deepest path.
 
 .. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: mapping takes longer than
           the other checks.
 
 design_007 counts the operators of a path before synthesis, which tells where a path is deep but not how deep it
 is in the device. This rule flattens the design, maps it with Yosys to look-up tables, and counts the tables on
-the longest path between registers, memories and the ports of the design, which is closer to the timing of the
-device. Mapping renames most signals, so the finding names the signal the path starts at, when it has a name, and
-is reported at the top of the design.
+the paths between registers, memories and the ports of the design, which is closer to the timing of the device.
+Mapping keeps the registers but renames the logic between them, so a finding names the register or port a path
+starts at, when it has a name, and the register it ends at, and is reported at the assignment of that register.
 
 **Violation**
 
