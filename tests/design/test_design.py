@@ -249,7 +249,10 @@ class test_formal(unittest.TestCase):
     def test_branches(self):
         # A select used twice is one branch; a constant select has none; a $pmux has a branch per choice and its others
         lBranches = formal.branches({"top": self.modules["top"]})
-        self.assertEqual([("m", (3,), 1), ("m", (3,), 0), ("p", (3, 4), 0), ("p", (3, 4), 1), ("p", (3, 4), None)], [(o.cell, tuple(o.select), o.value) for o in lBranches])
+        self.assertEqual(
+            [("m", (3,), 1), ("m", (3,), 0), ("p", (3, 4), 0), ("p", (3, 4), 1), ("p", (3, 4), None)],
+            [(o.cell, tuple(o.select), o.value) for o in lBranches],
+        )
         # Located at the logic that computes the condition first
         self.assertEqual(["e", "m"], lBranches[0].cells)
         self.assertEqual(["p"], lBranches[4].cells)
@@ -295,9 +298,13 @@ class test_formal(unittest.TestCase):
         self.assertNotIn("depth", sText)
 
     def test_assumptions(self):
-        from mhsg.rules.design.rule_025 import assumption_values  # pylint: disable=import-outside-toplevel
+        from mhsg.rules.design.rule_025 import (
+            assumption_values,  # pylint: disable=import-outside-toplevel
+        )
 
         self.assertEqual({"test_mode": 0, "mode": 31}, assumption_values(["test_mode=0", "mode = 0x1f"]))
+
+
 class test_slang_netlists(unittest.TestCase):
     """The netlists of read_slang are made to look like those of read_verilog and GHDL."""
 

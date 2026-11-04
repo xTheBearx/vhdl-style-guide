@@ -1075,7 +1075,7 @@ checks:
     severity: Warning
     rules:
     - sv_statement_020
-    - design_025
+    note: 'Conditions unreachable through the logic: design_025, which needs SymbiYosys and is enabled on its own.'
   2.7.2.3:
     title: Avoid empty branches (e.g. a case item with only ';')
     level: Recommendation 1
