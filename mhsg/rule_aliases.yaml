@@ -289,6 +289,7 @@ design_014: design_generated_reset
 design_015: design_reset_release
 design_016: design_reconvergence
 design_017: design_black_box_declaration
+design_018: design_reset_domain_crossing
 element_association_100: element_association_space_between_others_and_arrow
 element_association_101: element_association_space_after_arrow
 element_association_102: element_association_space_before_arrow

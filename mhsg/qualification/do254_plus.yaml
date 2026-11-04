@@ -2671,3 +2671,79 @@ design_cases:
   name: deep logic
   design: *id011
   expected: []
+- rule: design_001
+  name: reset domain crossing
+  design: &id012
+    top: rdc_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/rdc.vhd
+  expected: []
+- rule: design_002
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_003
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_004
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_005
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_006
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_007
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_008
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_009
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_010
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_011
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_012
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_013
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_014
+  name: reset domain crossing
+  design: *id012
+  expected:
+  - - examples/design/rdc.vhd
+    - 79
+    - Asynchronous reset rst_ab is made by logic
+- rule: design_015
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_016
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_017
+  name: reset domain crossing
+  design: *id012
+  expected: []

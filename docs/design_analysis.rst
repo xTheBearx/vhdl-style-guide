@@ -186,6 +186,8 @@ Design rules
 
 * :code:`design_008` to :code:`design_016` check clock domain crossings, clocks and resets, see below.
 * :code:`design_017` reports black boxes whose clock domain behaviour is not declared, see below.
+* :code:`design_018` reports reset domain crossings: data from a register with one asynchronous reset into a register
+  of the same clock that another asynchronous reset clears, unless that reset also comes from the first.
 
 See :doc:`design_rules`. Design rules are configured like other rules, for example with a different severity:
 
@@ -281,8 +283,15 @@ clock is too (design_015), and a reset made by logic or by another register is i
        waivers:
          - signal: u_status.flags_meta
            justification: Quasi-static status bits, read only after the run has stopped
+       clears:
+         # Synchronous clears computed by logic, followed like data by design_016
+         - u_ctrl.clear_r
 
 A waiver names the destination register of a crossing, as the report names it, or a pattern such as ``u_status.*``.
+**clears** names registers, or patterns, that load a constant into other registers as a clear rather than a reset.
+design_016 does not follow a synchronous reset of two or more registers, unless :code:`follow_resets` is set; a clear
+it lists is followed like data. Structure cannot tell the two apart: reset crossing circuits compute their resets
+with logic too.
 A waiver without a justification is reported by design_008. Other findings of design analysis are waived with the
 waivers of the configuration, see :ref:`waivers`.
 
@@ -603,5 +612,4 @@ Limitations
   entity with its generics, as GHDL names it, such as :code:`neorv32_cpu_regfile_5_3`.
 * What a black box does with its inputs is known only from its declaration: reconvergence follows its paths and
   takes the inputs timed by one clock pin together; other inputs count one bit at a time.
-  Reset domain crossings through logic are not checked yet.
 * Formal reachability is planned.

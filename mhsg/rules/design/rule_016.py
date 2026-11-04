@@ -20,6 +20,9 @@ class rule_016(Rule):
     The bits of one bus count as one signal: a gray-coded bus is meant to be combined, and design_009 reports other buses.
     A synchronous reset, an input that loads a constant into two or more registers, is a reset path rather than data
     and is not followed, unless :code:`follow_resets` is true; the crossing report lists the meetings through resets either way.
+    A synchronous clear that logic computes, such as a state machine, is data: list it under :code:`clears` in the cdc
+    section of the design, and it is followed. Structure cannot tell a clear from a reset, as reset crossing circuits
+    compute their resets with logic too.
 
     **Violation**
 
