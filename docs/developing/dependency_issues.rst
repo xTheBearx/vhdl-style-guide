@@ -149,6 +149,20 @@ out when there are errors with a location.
 **Quirk: opt removes logic and turns registers that are never enabled into latches.** MHSG writes the netlist before
 :code:`opt` runs.
 
+SymbiYosys
+----------
+
+**Limitation: SymbiYosys is not packaged for Ubuntu.** design_025 needs the YosysHQ OSS CAD Suite (sby of 2026-11,
+with yices and abc pdr), and runs the tools beside :code:`sby`, as it calls :code:`yosys`, :code:`yosys-smtbmc` and the
+solvers by name (:code:`mhsg/design/formal.py`).
+
+**Quirk: a cover run stopped by its time limit names no reached branches in its summary.** smtbmc names each cover cell
+as it reaches it; MHSG names the cells after the branches and reads those lines too, so the branches reached before
+the limit count.
+
+**Quirk: in cover mode, assertions of the design are checked too**, and a failing one ends the run. MHSG leaves the
+assertions and covers of the design out of the formal netlist and keeps its assumptions.
+
 Verilator
 ---------
 

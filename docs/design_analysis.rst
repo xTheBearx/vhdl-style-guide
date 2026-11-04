@@ -209,6 +209,11 @@ Design rules
 * :code:`design_023` reports inout ports wired directly to an input or output port of the same module (STARC 2.5.1.6).
 * :code:`design_024`, disabled by default as it takes longer, maps the design to gates and reports modules whose own
   logic has more than :code:`maximum_gates` NAND gate equivalents, 40000 by default (STARC 1.6.1.1).
+* :code:`design_025`, disabled by default as it needs SymbiYosys and takes longer, reports branches that can never be
+  taken from reset: it searches :code:`depth` cycles from reset for a way to take each branch, then tries to prove
+  each branch it did not reach unreachable, within :code:`timeout` seconds each. Branches neither reached nor proven
+  are undecided, and reported with :code:`report_undecided`. :code:`assumptions` hold top inputs at a value, such as
+  :code:`[test_mode=0]`.
 
 See :doc:`design_rules`. Design rules are configured like other rules, for example with a different severity:
 
@@ -647,4 +652,7 @@ Limitations
   entity with its generics, as GHDL names it, such as :code:`neorv32_cpu_regfile_5_3`.
 * What a black box does with its inputs is known only from its declaration: reconvergence follows its paths and
   takes the inputs timed by one clock pin together; other inputs count one bit at a time.
-* Formal reachability is planned.
+* Formal reachability (design_025) checks the branches of the netlist: the conditions of if statements and the choices
+  of case statements, also those synthesis adds, such as the decoding of state encodings no state uses. A state that
+  is never entered shows as the branches that would enter it. Its results hold for the generics of the run, from
+  reset, with free black box outputs: a branch that only a black box output can take is reachable.

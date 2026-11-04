@@ -655,3 +655,37 @@ blocks of the device or the library.
 **Violation**
 
 An entity with more logic than allowed, instead of instances of smaller entities.
+
+design_025
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_unreachable_branch`
+
+This rule reports branches that can never be taken from reset: conditions never true or never false, and case
+choices never selected, proven with SymbiYosys.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: it needs SymbiYosys, as in
+          the YosysHQ OSS CAD Suite, and formal checks take longer than the other checks.
+
+Each branch, a value of the select input of a multiplexer, is first looked for in a search of **depth** clock
+cycles from reset, 20 by default, which takes at most **cover_timeout** seconds, 300 by default; the branches it
+reached by then count as reached. A branch the search does not reach gets a proof of its own, which takes at most
+**timeout** seconds, 60 by default, for at most **maximum_proofs** branches, 20 by default. A branch proven
+unreachable is reported. A branch neither reached nor proven is undecided, and reported when
+**report_undecided** is set.
+
+The design starts from reset: the top inputs that drive asynchronous resets are active in the first cycle.
+**assumptions** hold top inputs at a value in every cycle, such as a test mode input, as in
+:code:`[test_mode=0]`. Black boxes are taken out, and their outputs can take any value. A branch is reported in
+every instance of its entity only when no instance takes it.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   -- count wraps at 5
+   if count = 7 then
+     alarm <= '1';
+   end if;
