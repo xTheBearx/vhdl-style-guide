@@ -2202,6 +2202,7 @@
         "sv_naming_014",
         "sv_naming_015",
         "sv_naming_016",
+        "sv_naming_017",
         "type_015",
         "type_600",
         "type_601",
@@ -2420,6 +2421,10 @@
         "sv_always_014",
         "sv_always_015",
         "sv_always_016",
+        "sv_always_017",
+        "sv_always_018",
+        "sv_always_019",
+        "sv_always_020",
         "sv_case_001",
         "sv_case_002",
         "sv_case_003",
@@ -2427,9 +2432,13 @@
         "sv_case_005",
         "sv_case_006",
         "sv_case_007",
+        "sv_case_008",
+        "sv_case_009",
         "sv_comment_001",
         "sv_comment_002",
         "sv_comment_003",
+        "sv_comment_004",
+        "sv_comment_005",
         "sv_declaration_001",
         "sv_declaration_002",
         "sv_declaration_003",
@@ -2443,6 +2452,7 @@
         "sv_file_004",
         "sv_file_005",
         "sv_file_006",
+        "sv_file_007",
         "sv_function_001",
         "sv_function_002",
         "sv_function_003",
@@ -2452,6 +2462,7 @@
         "sv_function_007",
         "sv_function_008",
         "sv_function_009",
+        "sv_function_010",
         "sv_generate_001",
         "sv_generate_002",
         "sv_generate_003",
@@ -2488,6 +2499,17 @@
         "sv_statement_012",
         "sv_statement_013",
         "sv_statement_014",
+        "sv_statement_015",
+        "sv_statement_016",
+        "sv_statement_017",
+        "sv_statement_018",
+        "sv_statement_019",
+        "sv_statement_020",
+        "sv_statement_021",
+        "sv_statement_022",
+        "sv_statement_023",
+        "sv_statement_024",
+        "sv_statement_025",
         "sv_syntax_001",
         "sv_typedef_001",
         "sv_typedef_002",
@@ -2829,6 +2851,11 @@
         "same_line",
         "move_left"
       ]
+    },
+    "active_low_pattern": {
+      "type": "string",
+      "label": "Active low name pattern",
+      "description": "A regular expression, matched ignoring case, that the names of active low resets match, such as rst_n."
     },
     "after_generic_map_aspect": {
       "type": "enum",
@@ -3573,6 +3600,12 @@
       "description": "The most signals one always block may assign.",
       "minimum": 0
     },
+    "maximum_states": {
+      "type": "integer",
+      "label": "Most states",
+      "description": "The most states, items of its case statement, one state machine may have.",
+      "minimum": 1
+    },
     "method": {
       "type": "enum",
       "label": "Instantiation method",
@@ -3969,6 +4002,11 @@
         "all"
       ]
     },
+    "state_pattern": {
+      "type": "string",
+      "label": "State name pattern",
+      "description": "A regular expression, matched ignoring case, that the selector of the case statement of a state machine matches."
+    },
     "strip_prefixes": {
       "type": "list",
       "label": "Prefixes to ignore",
@@ -4224,6 +4262,12 @@
       "type": "list",
       "label": "Suffixes",
       "description": "Allowed suffixes, compared ignoring case. The fix uses the first one.",
+      "item_type": "string"
+    },
+    "testbench_patterns": {
+      "type": "list",
+      "label": "Testbench file names",
+      "description": "File name patterns with * and ? that the names of files holding a testbench, a module without ports, match.",
       "item_type": "string"
     },
     "units": {
@@ -61831,6 +61875,194 @@
       ]
     },
     {
+      "id": "sv_always_017",
+      "alias": "sv_always_assign_once",
+      "category": "sv_always",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that a sequential always block assigns a signal once in a sequence of statements, not first a default and then again in a later statement, as the STARC guide asks (2.2.3.3); in a combinational block it checks nonblocking assignments the same way (2.2.3.2). The signals are compared by their whole target, so q[0] and q[1] are different. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_always_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_always_018",
+      "alias": "sv_always_one_driver_block",
+      "category": "sv_always",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that a signal is assigned in one procedural block only, one always or initial block, as the STARC guide asks (4.1.4.1, 4.1.4.2). Variables declared inside a block are not checked, nor blocks in different branches of generate constructs. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_always_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_always_019",
+      "alias": "sv_always_no_constant_registers",
+      "category": "sv_always",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for registers that an edge triggered always block only ever assigns one constant, so their data input is constant, as the STARC guide recommends (2.3.5.1, 3.3.3.2). A part of a signal, such as q[0], is not reported if the block also assigns other values to the signal, nor are the registers of blocks that call tasks, which may assign them too. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_always_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_always_020",
+      "alias": "sv_always_reset_loops",
+      "category": "sv_always",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that a for loop of an always block with an asynchronous reset does not hold the reset test, an if on one of the signals of its event control, as the STARC guide recommends (2.9.2.4): use one loop in the reset branch and another in the other branch. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_always_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
       "id": "sv_blank_line_001",
       "alias": "sv_blank_line_end_of_file",
       "category": "sv_blank_line",
@@ -62217,6 +62449,115 @@
       ]
     },
     {
+      "id": "sv_case_008",
+      "alias": "sv_case_state_encodings",
+      "category": "sv_case",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that the items of a case statement on a state, a selector matching state_pattern, a regular expression matched ignoring case, by default names holding state, are named encodings, parameters or enum values, not numbers, as the STARC guide asks (2.11.1.3, 2.11.4.2). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_case_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "state_pattern",
+          "default": ".*state.*",
+          "definition": "state_pattern"
+        }
+      ]
+    },
+    {
+      "id": "sv_case_009",
+      "alias": "sv_case_state_count",
+      "category": "sv_case",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that a state machine, a case statement whose selector matches state_pattern, has at most maximum_states items, 60 by default, as the STARC guide asks (2.11.1.4, 2.11.1.5): split larger ones. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_case_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "state_pattern",
+          "default": ".*state.*",
+          "definition": "state_pattern"
+        },
+        {
+          "name": "maximum_states",
+          "default": 60,
+          "definition": "maximum_states"
+        }
+      ]
+    },
+    {
       "id": "sv_comment_001",
       "alias": "sv_comment_tool_directives",
       "category": "sv_comment",
@@ -62369,6 +62710,100 @@
             "date|created"
           ],
           "definition": "header_fields"
+        }
+      ]
+    },
+    {
+      "id": "sv_comment_004",
+      "alias": "sv_comment_declarations",
+      "category": "sv_comment",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that each port and each signal of a module is declared with a comment, at the end of its line or on the line before, as the STARC guide recommends (3.5.6.3). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_comment_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_comment_005",
+      "alias": "sv_comment_ascii",
+      "category": "sv_comment",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that comments hold only ASCII characters, as the STARC guide recommends (3.5.6.4, 3.5.6.5): write comments in English, as some tools cannot read other characters. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_comment_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
         }
       ]
     },
@@ -62994,6 +63429,64 @@
       ]
     },
     {
+      "id": "sv_file_007",
+      "alias": "sv_file_testbench_names",
+      "category": "sv_file",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that a file holding a testbench, a module without ports, has a name matching one of testbench_patterns, file name patterns with  and ?, by default _tb.v, _tb.sv, _test.v, _test.sv and .vt, as the STARC guide recommends (3.5.2.3). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_file_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "testbench_patterns",
+          "default": [
+            "*_tb.v",
+            "*_tb.sv",
+            "*_test.v",
+            "*_test.sv",
+            "*.vt"
+          ],
+          "definition": "testbench_patterns"
+        }
+      ]
+    },
+    {
       "id": "sv_function_001",
       "alias": "sv_function_explicit_function_lifetime",
       "category": "sv_function",
@@ -63377,6 +63870,53 @@
         "structure"
       ],
       "summary": "This rule checks that a function ends by assigning its result, with a return statement or an assignment to its name, as the STARC guide recommends (2.1.3.4). Functions returning void and methods of classes are not checked. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_function_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_function_010",
+      "alias": "sv_function_task_outputs",
+      "category": "sv_function",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for output and inout arguments of tasks, as the STARC guide recommends (4.2.3.2) for the tasks that drive test stimulus. It is disabled by default; the starc rule set enables it.",
       "documentation": "sv_function_rules.rst",
       "options": [
         {
@@ -66075,6 +66615,58 @@
       ]
     },
     {
+      "id": "sv_naming_017",
+      "alias": "sv_naming_active_low_resets",
+      "category": "sv_naming",
+      "groups": [
+        "naming"
+      ],
+      "summary": "This rule checks that asynchronous resets that are active low, tested on negedge or with !, have names marking them so, matching active_low_pattern, a regular expression matched ignoring case, by default names ending in _n, _x, _b or _l, with i or o after it for ports, or such as rstn, as the STARC guide recommends (1.1.1.7). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_naming_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "active_low_pattern",
+          "default": ".*_(n|x|b|l)(i|o|io)?|.*(rst|reset|clr|clear|set)(n|b)(_(i|o|io))?",
+          "definition": "active_low_pattern"
+        }
+      ]
+    },
+    {
       "id": "sv_statement_001",
       "alias": "sv_statement_explicit_begin",
       "category": "sv_statement",
@@ -66739,6 +67331,523 @@
           "name": "maximum_lines",
           "default": 5,
           "definition": "maximum_lines:sv_statement_014"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_015",
+      "alias": "sv_statement_integer_delays",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that delays are non-negative integers, not real or negative numbers, as the STARC guide asks (2.3.1.5). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_016",
+      "alias": "sv_statement_delays_in_always",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for delays in continuous assignments and net declarations, as the STARC guide recommends (2.3.1.4): give delays only in always blocks. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_017",
+      "alias": "sv_statement_tristate_enable",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that the enable of a tri-state buffer, the condition of a conditional operator with a z value, is a plain signal, not an expression, as the STARC guide recommends (2.5.1.2). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_018",
+      "alias": "sv_statement_tristate_conditions",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that tri-state signals, the signals the file assigns a value with z digits, are not tested in if conditions or used as case selectors, as the STARC guide asks (2.5.1.7, 2.5.1.8, 2.5.1.9). A case statement whose default assigns x may use them. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_019",
+      "alias": "sv_statement_same_branches",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for branches of an if, else if chain with the same statements, as the STARC guide recommends (2.7.2.1): merge their conditions. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_020",
+      "alias": "sv_statement_repeated_conditions",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for conditions of an if, else if chain that repeat an earlier condition of the chain, so their branch is never taken, as the STARC guide asks (2.7.2.2). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_021",
+      "alias": "sv_statement_arithmetic_parentheses",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that an expression with two or more arithmetic operators, such as a + b - c, has parentheses showing their order, as the STARC guide recommends (2.10.1.3). It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_022",
+      "alias": "sv_statement_conditional_arithmetic",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for arithmetic in the values of a conditional operator in an assignment, such as sel ? a + b : c + d, as the STARC guide recommends (2.10.5.5): select the operands first, so one adder serves both. Arithmetic in indexes is not checked. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_023",
+      "alias": "sv_statement_plain_indexes",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that an index that reads a signal is the signal alone, such as mem[addr], not an expression such as mem[addr + 1], as the STARC guide recommends (2.1.6.3). Indexes with only constants, parameters and loop variables are not checked. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_024",
+      "alias": "sv_statement_blocking_stimulus",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for nonblocking assignments in initial blocks, as the STARC guide recommends (4.1.2.2): drive test stimulus with blocking assignments. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_025",
+      "alias": "sv_statement_fstrobe",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for $fdisplay, as the STARC guide recommends (4.1.11.1): write result files with $fstrobe, which writes the values at the end of the time step. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
         }
       ]
     },

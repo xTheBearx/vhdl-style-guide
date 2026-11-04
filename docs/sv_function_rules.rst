@@ -215,3 +215,25 @@ It is disabled by default; the starc rule set enables it.
        $display("parity");
        parity = ^data;
    endfunction
+
+sv_function_010
+###############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_function_task_outputs`
+
+This rule checks for output and inout arguments of tasks, as the STARC guide recommends (4.2.3.2) for the tasks
+that drive test stimulus. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   task automatic send(input logic [7:0] data, output logic done);
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   task automatic send(input logic [7:0] data);

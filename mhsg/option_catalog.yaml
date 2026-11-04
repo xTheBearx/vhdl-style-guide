@@ -20,6 +20,10 @@ options:
       record_type_definition_001:
         values: [new_line, same_line, move_left]
         description: new_line moves the record keyword to its own line; same_line (default) and move_left keep it on the line of the type declaration. Any value other than new_line moves it left.
+  active_low_pattern:
+    type: string
+    label: Active low name pattern
+    description: A regular expression, matched ignoring case, that the names of active low resets match, such as rst_n.
   after_generic_map_aspect:
     type: enum
     values: [add_new_line, remove_new_line]
@@ -409,6 +413,11 @@ options:
     minimum: 1
     label: Longest name
     description: The most characters in a name other than that of a module or instance.
+  maximum_states:
+    type: integer
+    minimum: 1
+    label: Most states
+    description: The most states, items of its case statement, one state machine may have.
   port_pattern:
     type: string
     label: Port name pattern
@@ -578,6 +587,15 @@ options:
     maximum: 7
     label: Phase
     description: Phase (1 to 7) in which the rule runs; rules run in increasing phase order. Changing it is rarely needed and can break the ordering between rules.
+  state_pattern:
+    type: string
+    label: State name pattern
+    description: A regular expression, matched ignoring case, that the selector of the case statement of a state machine matches.
+  testbench_patterns:
+    type: list
+    item_type: string
+    label: Testbench file names
+    description: File name patterns with * and ? that the names of files holding a testbench, a module without ports, match.
   verilator_warnings:
     type: list
     item_type: string

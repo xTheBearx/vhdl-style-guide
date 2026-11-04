@@ -101,6 +101,11 @@ cases:
   - - 18
     - Clock the register on the rising edge
 - rule: sv_always_007
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 22
+    - Clock the register on the rising edge
+- rule: sv_always_007
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_always_008
@@ -129,6 +134,11 @@ cases:
   file: examples/svfile/starc_more2.sv
   expected:
   - - 40
+    - Clock the always block on one edge of one clock
+- rule: sv_always_012
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 22
     - Clock the always block on one edge of one clock
 - rule: sv_always_012
   file: examples/svfile/alignment.fixed.sv
@@ -168,6 +178,80 @@ cases:
   - - 18
     - Reset s too, or assign it in an always block without reset
 - rule: sv_always_016
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_always_017
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 16
+    - 'Assign q once: it is already assigned before in the block'
+- rule: sv_always_017
+  file: examples/svfile/structure.fixed.sv
+  expected:
+  - - 29
+    - 'Assign q once: it is already assigned before in the block'
+  - - 32
+    - 'Assign q once: it is already assigned before in the block'
+  - - 37
+    - 'Assign q once: it is already assigned before in the block'
+- rule: sv_always_017
+  file: examples/svfile/structure.sv
+  expected:
+  - - 31
+    - 'Assign q once: it is already assigned before in the block'
+  - - 34
+    - 'Assign q once: it is already assigned before in the block'
+  - - 39
+    - 'Assign q once: it is already assigned before in the block'
+- rule: sv_always_017
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_always_018
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 46
+    - 'Assign v in one procedural block: another block assigns it too'
+  - - 53
+    - 'Assign v in one procedural block: another block assigns it too'
+  - - 40
+    - 'Assign v in one procedural block: another block assigns it too'
+- rule: sv_always_018
+  file: examples/svfile/starc_more4.sv
+  expected:
+  - - 31
+    - 'Assign q in one procedural block: another block assigns it too'
+- rule: sv_always_018
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 42
+    - 'Assign r in one procedural block: another block assigns it too'
+- rule: sv_always_018
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_always_019
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 50
+    - 'The register v is always assigned the same constant: use the constant'
+- rule: sv_always_019
+  file: examples/svfile/lint.sv
+  expected:
+  - - 19
+    - 'The register m_o is always assigned the same constant: use the constant'
+- rule: sv_always_019
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 21
+    - 'The register ready is always assigned the same constant: use the constant'
+- rule: sv_always_019
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_always_020
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 23
+    - Use one for loop in the reset branch and another in the other branch
+- rule: sv_always_020
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_case_001
@@ -240,6 +324,17 @@ cases:
 - rule: sv_case_007
   file: examples/svfile/alignment.fixed.sv
   expected: []
+- rule: sv_case_008
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 34
+    - Name the state encoding 2'b00 with a parameter
+- rule: sv_case_008
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_case_009
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
 - rule: sv_comment_001
   file: examples/svfile/declarations.sv
   expected:
@@ -285,6 +380,56 @@ cases:
   expected:
   - - 1
     - Start the file with a header comment
+- rule: sv_comment_004
+  file: examples/svfile/alignment.fixed.sv
+  expected:
+  - - 2
+    - Describe clk_i in a comment
+  - - 3
+    - Describe data_i in a comment
+  - - 4
+    - Describe valid_o in a comment
+  - - 8
+    - Describe valid in a comment
+  - - 9
+    - Describe data in a comment
+  - - 10
+    - Describe wide in a comment
+- rule: sv_comment_004
+  file: examples/svfile/alignment.sv
+  expected:
+  - - 2
+    - Describe clk_i in a comment
+  - - 3
+    - Describe data_i in a comment
+  - - 4
+    - Describe valid_o in a comment
+  - - 8
+    - Describe valid in a comment
+  - - 9
+    - Describe data in a comment
+  - - 10
+    - Describe wide in a comment
+- rule: sv_comment_004
+  file: examples/svfile/brackets.fixed.sv
+  expected:
+  - - 4
+    - Describe a_i in a comment
+  - - 5
+    - Describe y_o in a comment
+  - - 8
+    - Describe s in a comment
+- rule: sv_comment_004
+  file: examples/svfile/verilator/vl_pkg.sv
+  expected: []
+- rule: sv_comment_005
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 1
+    - Write the comment with ASCII characters only
+- rule: sv_comment_005
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
 - rule: sv_declaration_002
   file: examples/svfile/starc_more.sv
   expected:
@@ -405,6 +550,24 @@ cases:
 - rule: sv_file_006
   file: examples/svfile/verilator/vl_pkg.sv
   expected: []
+- rule: sv_file_007
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 56
+    - Name the file of the testbench second like *_tb.v, *_tb.sv, *_test.v, *_test.sv, *.vt
+- rule: sv_file_007
+  file: examples/svfile/structure.fixed.sv
+  expected:
+  - - 1
+    - Name the file of the testbench structure like *_tb.v, *_tb.sv, *_test.v, *_test.sv, *.vt
+- rule: sv_file_007
+  file: examples/svfile/structure.sv
+  expected:
+  - - 1
+    - Name the file of the testbench structure like *_tb.v, *_tb.sv, *_test.v, *_test.sv, *.vt
+- rule: sv_file_007
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
 - rule: sv_function_004
   file: examples/svfile/declarations.sv
   expected:
@@ -483,6 +646,19 @@ cases:
   - - 22
     - End the function parity by assigning its result
 - rule: sv_function_009
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_function_010
+  file: examples/svfile/sensitivity.sv
+  expected:
+  - - 23
+    - Do not give the task copy the output o
+- rule: sv_function_010
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 38
+    - Do not give the task send the output done
+- rule: sv_function_010
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_indent_001
@@ -731,6 +907,11 @@ cases:
   file: examples/svfile/starc_more.sv
   expected:
   - - 26
+    - Do not use x or z in a literal
+- rule: sv_literal_006
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 11
     - Do not use x or z in a literal
 - rule: sv_literal_006
   file: examples/svfile/alignment.fixed.sv
@@ -1016,6 +1197,14 @@ cases:
 - rule: sv_naming_016
   file: examples/svfile/alignment.fixed.sv
   expected: []
+- rule: sv_naming_017
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 12
+    - Mark the active low reset rst_i with a suffix such as _n
+- rule: sv_naming_017
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
 - rule: sv_statement_003
   file: examples/svfile/structure.fixed.sv
   expected:
@@ -1044,9 +1233,9 @@ cases:
   - - 26
     - Remove the initial block from design code
 - rule: sv_statement_004
-  file: examples/svfile/structure.fixed.sv
+  file: examples/svfile/starc_more5.sv
   expected:
-  - - 12
+  - - 41
     - Remove the initial block from design code
 - rule: sv_statement_004
   file: examples/svfile/alignment.fixed.sv
@@ -1139,6 +1328,102 @@ cases:
   - - 27
     - 'Shorten the fork join block: it has 6 lines, more than 5'
 - rule: sv_statement_014
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_015
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 39
+    - Use a non-negative integer delay
+- rule: sv_statement_015
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_016
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 11
+    - Give delays only in always blocks
+- rule: sv_statement_016
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_017
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 11
+    - Use a plain signal as the enable of the tri-state buffer
+- rule: sv_statement_017
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_018
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 27
+    - Do not test the tri-state signal bus
+  - - 29
+    - Do not test the tri-state signal bus
+- rule: sv_statement_018
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_019
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 21
+    - Merge this branch with the one on line 20, which has the same statements
+  - - 28
+    - Merge this branch with the one on line 27, which has the same statements
+  - - 30
+    - Merge this branch with the one on line 29, which has the same statements
+- rule: sv_statement_019
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_020
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 29
+    - 'Remove the branch: its condition repeats the one on line 27'
+- rule: sv_statement_020
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_021
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 31
+    - Add parentheses to s - r + q
+- rule: sv_statement_021
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_022
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 31
+    - Compute r + s outside the conditional operator
+  - - 31
+    - Compute s - r + q outside the conditional operator
+- rule: sv_statement_022
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_023
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 25
+    - Index with a signal, not the expression addr + 1
+- rule: sv_statement_023
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_024
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 42
+    - Use a blocking assignment (=) in the initial block
+- rule: sv_statement_024
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_025
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 43
+    - Use $fstrobe instead of $fdisplay
+- rule: sv_statement_025
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: whitespace_002

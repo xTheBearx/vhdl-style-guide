@@ -658,6 +658,62 @@ class test_rules(unittest.TestCase):
             [s for s in lOutput if any(f"({r})" in s for r in lRules)],
         )
 
+    def test_starc_checks_5(self):
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "starc", "-ap"], "starc_more5.sv")
+        lRules = (
+            "sv_naming_017",
+            "sv_always_017",
+            "sv_always_018",
+            "sv_always_019",
+            "sv_always_020",
+            "sv_statement_015",
+            "sv_statement_016",
+            "sv_statement_017",
+            "sv_statement_018",
+            "sv_statement_019",
+            "sv_statement_020",
+            "sv_statement_021",
+            "sv_statement_022",
+            "sv_statement_023",
+            "sv_statement_024",
+            "sv_statement_025",
+            "sv_function_010",
+            "sv_file_007",
+            "sv_comment_004",
+            "sv_comment_005",
+            "sv_case_008",
+            "sv_case_009",
+        )
+        self.assertEqual(
+            [
+                "WARNING: starc_more5.sv(1)STARC-3.5.6.4/STARC-3.5.6.5 (sv_comment_005) -- Write the comment with ASCII characters only",
+                "WARNING: starc_more5.sv(9)STARC-3.5.6.3 (sv_comment_004) -- Describe mem in a comment",
+                "WARNING: starc_more5.sv(11)STARC-2.3.1.4 (sv_statement_016) -- Give delays only in always blocks",
+                "WARNING: starc_more5.sv(11)STARC-2.5.1.2 (sv_statement_017) -- Use a plain signal as the enable of the tri-state buffer",
+                "WARNING: starc_more5.sv(12)STARC-1.1.1.7 (sv_naming_017) -- Mark the active low reset rst_i with a suffix such as _n",
+                "ERROR: starc_more5.sv(16)STARC-2.2.3.2/STARC-2.2.3.3 (sv_always_017) -- Assign q once: it is already assigned before in the block",
+                "WARNING: starc_more5.sv(21)STARC-2.3.5.1/STARC-3.3.3.2 (sv_always_019) -- The register ready is always assigned the same constant: use the constant",
+                "WARNING: starc_more5.sv(21)STARC-2.7.2.1 (sv_statement_019) -- Merge this branch with the one on line 20, which has the same statements",
+                "ERROR: starc_more5.sv(23)STARC-2.9.2.4 (sv_always_020) -- Use one for loop in the reset branch and another in the other branch",
+                "WARNING: starc_more5.sv(25)STARC-2.1.6.3 (sv_statement_023) -- Index with a signal, not the expression addr + 1",
+                "WARNING: starc_more5.sv(27)STARC-2.5.1.7/STARC-2.5.1.8/STARC-2.5.1.9 (sv_statement_018) -- Do not test the tri-state signal bus",
+                "WARNING: starc_more5.sv(28)STARC-2.7.2.1 (sv_statement_019) -- Merge this branch with the one on line 27, which has the same statements",
+                "WARNING: starc_more5.sv(29)STARC-2.5.1.7/STARC-2.5.1.8/STARC-2.5.1.9 (sv_statement_018) -- Do not test the tri-state signal bus",
+                "WARNING: starc_more5.sv(29)STARC-2.7.2.2 (sv_statement_020) -- Remove the branch: its condition repeats the one on line 27",
+                "WARNING: starc_more5.sv(30)STARC-2.7.2.1 (sv_statement_019) -- Merge this branch with the one on line 29, which has the same statements",
+                "WARNING: starc_more5.sv(31)STARC-2.10.1.3 (sv_statement_021) -- Add parentheses to s - r + q",
+                "WARNING: starc_more5.sv(31)STARC-2.10.5.5 (sv_statement_022) -- Compute r + s outside the conditional operator",
+                "WARNING: starc_more5.sv(31)STARC-2.10.5.5 (sv_statement_022) -- Compute s - r + q outside the conditional operator",
+                "WARNING: starc_more5.sv(34)STARC-2.11.1.3/STARC-2.11.4.2 (sv_case_008) -- Name the state encoding 2'b00 with a parameter",
+                "WARNING: starc_more5.sv(38)STARC-4.2.3.2 (sv_function_010) -- Do not give the task send the output done",
+                "ERROR: starc_more5.sv(39)STARC-2.3.1.5 (sv_statement_015) -- Use a non-negative integer delay",
+                "WARNING: starc_more5.sv(42)STARC-4.1.4.1/STARC-4.1.4.2 (sv_always_018) -- Assign r in one procedural block: another block assigns it too",
+                "WARNING: starc_more5.sv(42)STARC-4.1.2.2 (sv_statement_024) -- Use a blocking assignment (=) in the initial block",
+                "WARNING: starc_more5.sv(43)STARC-4.1.11.1 (sv_statement_025) -- Use $fstrobe instead of $fdisplay",
+            ],
+            [s for s in lOutput if any(f"({r})" in s for r in lRules)],
+        )
+
     def test_sensitivity_list_branches(self):
         # t is written in both branches before it is read; u only in one, so its old value is read
         _, lOutput, _ = self.run_mhsg(["--lint_only", "--rule_set", "none"], "sensitivity_branches.sv")
