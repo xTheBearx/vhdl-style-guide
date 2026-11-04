@@ -33,7 +33,8 @@ class rule_007(Rule):
         self.configuration.append("maximum_depth")
 
     def check_design(self, oContext):
-        oGraph = oContext.graph()
+        # Copies of the modules whose black boxes have declarations of single instances that differ, one per instance
+        oGraph = oContext.instance_graph()
         if oGraph is None:
             return []
         lReturn = []
@@ -61,7 +62,7 @@ class rule_007(Rule):
                                 dWorst["port " + sPort] = (iDepth, oBit)
             for sEnd, (iDepth, iBit) in sorted(dWorst.items()):
                 lReturn.append(self.finding(oContext, oModule, sEnd, iDepth, iBit))
-        return lReturn
+        return unique(lReturn)
 
     def finding(self, oContext, oModule, sEnd, iDepth, iBit):
         sModule = module_text(oModule.name)
@@ -86,3 +87,15 @@ def start_depth(dDepths, iBit):
     """
     iLaunch, iPass = dDepths.get(iBit, (graph.NO_DEPTH, graph.NO_DEPTH))
     return max(iLaunch, iPass)
+
+
+def unique(lFindings):
+    """The findings without repeats: the copies of a module, one per instance, find the same problems in its code."""
+    setSeen = set()
+    lReturn = []
+    for oFinding in lFindings:
+        tKey = (oFinding.file, oFinding.line, oFinding.message)
+        if tKey not in setSeen:
+            setSeen.add(tKey)
+            lReturn.append(oFinding)
+    return lReturn

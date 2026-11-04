@@ -258,6 +258,21 @@ class test_slang_netlists(unittest.TestCase):
         # A load of data is not a reset
         self.assertEqual("$aldff", dData["type"])
 
+    def test_architecture_taken_out_of_module_names(self):
+        # GHDL 7 names the module of an entity instantiated directly fifo_Brtl; Verilog modules, with a src attribute,
+        # and names that would clash keep theirs
+        dModules = {
+            "top": {"cells": {"u_f": {"type": "fifo_Brtl"}, "u_v": {"type": "mod_Bx"}}},
+            "fifo_Brtl": {"cells": {}},
+            "mod_Bx": {"attributes": {"src": "mod.v:1.1"}, "cells": {}},
+            "cell_Ba": {},
+            "cell_Bb": {},
+        }
+        dReturn, dRenamed = netlist.architecture_names(dModules)
+        self.assertEqual({"fifo_Brtl": "fifo"}, dRenamed)
+        self.assertEqual(["top", "fifo", "mod_Bx", "cell_Ba", "cell_Bb"], list(dReturn))
+        self.assertEqual("fifo", dReturn["top"]["cells"]["u_f"]["type"])
+
     def test_module_names_of_instances(self):
         self.assertEqual("ibex_alu", netlist.module_name("ibex_alu$ibex_core.ex_block_i.alu_i"))
         self.assertEqual("box", netlist.module_name("box$mhsg$u_a"))
@@ -1106,15 +1121,61 @@ class test_design_analysis(unittest.TestCase):
             [t for t in lFindings if t[2] in ("design_003", "design_007")],
         )
 
+    def test_declarations_of_single_instances_differ(self):
+        # box_instances_cell is instantiated twice, and only u_a.u_loop is declared with a path: the module gets a copy
+        # for each instance, so the loop through u_a.u_loop is found, once
+        dBoxes = {"black_boxes": {"LUT_BUF": {"ports": {"O": "async", "I": "async"}}}}
+        dDeclared = dict(dBoxes, black_box_instances={"u_a.u_loop": {"ports": {"O": {"path": ["I"]}}}})
+        self.assertEqual(
+            [("box_instances.vhd", 28, "design_003", "Combinational loop through e, f in box_instances_cell and instance u_loop")],
+            [t for t in self.findings("box_instances_top", "box_instances.vhd", dDesignKeys=dDeclared) if t[2] in ("design_003", "design_007")],
+        )
+        self.assertEqual([], [t for t in self.findings("box_instances_top", "box_instances.vhd", dDesignKeys=dBoxes) if t[2] in ("design_003", "design_007")])
+
     def test_mapped_logic_depth(self):
-        # Disabled by default, also in design analysis; enabled, it maps the design to look-up tables and counts them
-        # on the longest path
+        # Disabled by default, also in design analysis; enabled, it maps the design to look-up tables and reports each
+        # register on a path of more tables than allowed, at its assignment
         dRules = {"design_019": {"maximum_levels": 1}}
         self.assertEqual([], [t for t in self.findings("depth_top", "depth.vhd", dRules=dRules) if t[2] == "design_019"])
         dRules = {"design_019": {"disable": False, "maximum_levels": 1}}
         self.assertEqual(
-            [("depth.vhd", 50, "design_019", "Path of 2 levels of 6-input look-up tables after mapping, from b_r(3), more than 1")],
+            [("depth.vhd", 53, "design_019", "Path of 3 levels of 6-input look-up tables after mapping from a_r(0) to q, more than 1")],
             [t for t in self.findings("depth_top", "depth.vhd", dRules=dRules) if t[2] == "design_019"],
+        )
+
+    def test_starc_design_items(self):
+        # Six tri-state drivers on one bus are too many, five are not, and none is a second driver for design_004.
+        # The reset is used both ways. The memory output decides an if statement; the case statement assigns 'X' in its
+        # others choice
+        self.assertEqual(
+            [
+                ("starc_design.vhd", 15, "design_021", "Bus pin_six has 6 tri-state drivers, more than 5"),
+                ("starc_design.vhd", 80, "design_022", "Reset reset is used as an asynchronous reset and as a synchronous reset"),
+                ("starc_design.vhd", 96, "design_020", "Output of memory ram is used in a condition"),
+            ],
+            [t for t in self.findings("starc_design_top", "starc_design.vhd") if t[2] in ("design_004", "design_020", "design_021", "design_022")],
+        )
+        dRules = {"design_021": {"maximum_drivers": 6}}
+        self.assertEqual([], [t for t in self.findings("starc_design_top", "starc_design.vhd", dRules=dRules) if t[2] == "design_021"])
+
+    def test_module_gates(self):
+        # Disabled by default, also in design analysis; enabled, it counts the gates of each module without its instances
+        dRules = {"design_024": {"maximum_gates": 1}}
+        self.assertEqual([], [t for t in self.findings("starc_design_top", "starc_design.vhd", dRules=dRules) if t[2] == "design_024"])
+        dRules = {"design_024": {"disable": False, "maximum_gates": 1}}
+        lFindings = [t for t in self.findings("starc_design_top", "starc_design.vhd", dRules=dRules) if t[2] == "design_024"]
+        self.assertEqual(["Module starc_design_top", "Module starc_driver"], sorted(t[3].split(" has ")[0] for t in lFindings))
+        dRules = {"design_024": {"disable": False, "maximum_gates": 1000}}
+        self.assertEqual([], [t for t in self.findings("starc_design_top", "starc_design.vhd", dRules=dRules) if t[2] == "design_024"])
+
+    def test_inout_port_connections(self):
+        # An inout port wired to an output port, in the top and in the pad
+        self.assertEqual(
+            [
+                ("inout_wire.v", 5, "design_023", "Inout port io of inout_pad is connected directly to output port r"),
+                ("inout_wire.v", 17, "design_023", "Inout port pin of inout_wire_top is connected directly to output port pin_copy"),
+            ],
+            [t for t in self.findings("inout_wire_top", "inout_wire.v") if t[2] == "design_023"],
         )
 
     def test_multiple_drivers(self):

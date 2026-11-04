@@ -87,7 +87,7 @@ This rule reports signals with more than one driver in the synthesized design.
 
 GHDL reports two processes that drive the same signal as an error, see design_001.
 This rule finds the drivers GHDL accepts, such as two instances whose outputs are connected to the same signal.
-Tri-state drivers, which assign :code:`'Z'`, are not reported, and neither is an inout port with one driver inside the entity.
+Tri-state drivers, which assign :code:`'Z'`, are not reported, in the entity or in instances of other entities, and neither is an inout port with one driver inside the entity.
 
 **Violation**
 
@@ -516,18 +516,142 @@ design_019
 
 Alias: :code:`design_mapped_logic_depth`
 
-This rule reports the longest combinational path of the design after it is mapped to look-up tables of
-**lut_size** inputs, 6 by default, when it has more than **maximum_levels** levels, 8 by default.
+This rule reports the registers and output ports of the design reached by a combinational path of more than
+**maximum_levels** levels, 8 by default, after the design is mapped to look-up tables of **lut_size** inputs, 6 by
+default: each register once, with its deepest path.
 
 .. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: mapping takes longer than
           the other checks.
 
 design_007 counts the operators of a path before synthesis, which tells where a path is deep but not how deep it
 is in the device. This rule flattens the design, maps it with Yosys to look-up tables, and counts the tables on
-the longest path between registers, memories and the ports of the design, which is closer to the timing of the
-device. Mapping renames most signals, so the finding names the signal the path starts at, when it has a name, and
-is reported at the top of the design.
+the paths between registers, memories and the ports of the design, which is closer to the timing of the device.
+Mapping keeps the registers but renames the logic between them, so a finding names the register or port a path
+starts at, when it has a name, and the register it ends at, and is reported at the assignment of that register.
 
 **Violation**
 
 A chain of comparisons and multiplexers that maps to more look-up tables than allowed between two registers.
+
+design_020
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_memory_output_in_condition`
+
+This rule reports the outputs of memories that decide a condition: the condition of an if statement or of a
+conditional assignment, or the selector of a case statement, directly or through comparisons and logical operators.
+
+.. NOTE:: This is a design rule. It runs in design analysis.
+
+A memory location that was never written reads as unknown in simulation. An if statement takes its else branch
+on an unknown condition and a case statement its others choice, while the hardware takes either, so simulation
+hides what the hardware can do. A case statement whose others choice assigns unknown values, :code:`'X'`, keeps
+the unknown in simulation and is not reported. Memories that are never written, which hold constants, are not
+reported either. A memory output that is computed with first, such as by an adder, or selected by a
+multiplexer, is not followed.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   data_r <= ram(to_integer(address));
+   if data_r(0) = '1' then
+
+design_021
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_tristate_drivers`
+
+This rule reports buses with more than **maximum_drivers** tri-state drivers, 5 by default.
+
+.. NOTE:: This is a design rule. It runs in design analysis.
+
+Each tri-state driver loads the bus, which slows it down, and makes it harder to check that only one driver
+is enabled at a time. The drivers are counted across the hierarchy, in the flattened design.
+
+**Violation**
+
+Six instances that each drive the same bus with :code:`'Z'` when they are not selected.
+
+design_022
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_reset_asynchronous_and_synchronous`
+
+This rule reports reset signals used both as an asynchronous reset and as a synchronous reset.
+
+.. NOTE:: This is a design rule. It runs in design analysis.
+
+A reset that clears some registers at once and others at the next clock edge leaves the design in a state
+neither reset was meant for, for one clock cycle when the reset is asserted. A synchronous reset is a register
+loaded with a constant when the signal is asserted, in a clocked process.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   process (clk, reset) is
+   begin
+     if reset = '1' then
+       a <= '0';
+     elsif rising_edge(clk) then
+       a <= d;
+     end if;
+   end process;
+
+   process (clk) is
+   begin
+     if rising_edge(clk) then
+       if reset = '1' then
+         b <= '0';
+   ...
+
+design_023
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_inout_port_connection`
+
+This rule reports inout ports connected directly to an input or output port of the same module.
+
+.. NOTE:: This is a design rule. It runs in design analysis.
+
+An output port wired to a bidirectional port drives the bidirectional net with the value it reads, and an input
+port wired to it drives the net without a tri-state driver. In VHDL the modes of ports prevent most such
+connections; in Verilog an assign statement makes them.
+
+**Violation**
+
+.. code-block:: verilog
+
+   module pad (inout wire pin, output wire value);
+     assign value = pin;
+   endmodule
+
+design_024
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_module_gates`
+
+This rule reports modules with more than **maximum_gates** gates, 40000 by default.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: mapping takes longer than
+          the other checks.
+
+Synthesis and timing analysis work best on blocks of a limited size. This rule maps the design with Yosys to
+simple gates, without flattening it, and counts the logic of each module in two-input NAND gate equivalents:
+the logic of the module itself, not of the instances in it. Memories are not counted, as they become memory
+blocks of the device or the library.
+
+**Violation**
+
+An entity with more logic than allowed, instead of instances of smaller entities.

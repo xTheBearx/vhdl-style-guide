@@ -122,6 +122,11 @@ With multiple options available, the user is required to make the decision.
 * `design_017 <design_rules.html#design-017>`_
 * `design_018 <design_rules.html#design-018>`_
 * `design_019 <design_rules.html#design-019>`_
+* `design_020 <design_rules.html#design-020>`_
+* `design_021 <design_rules.html#design-021>`_
+* `design_022 <design_rules.html#design-022>`_
+* `design_023 <design_rules.html#design-023>`_
+* `design_024 <design_rules.html#design-024>`_
 * `function_600 <function_rules.html#function-600>`_
 * `function_601 <function_rules.html#function-601>`_
 * `generate_017 <generate_rules.html#generate-017>`_

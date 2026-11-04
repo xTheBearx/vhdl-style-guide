@@ -195,12 +195,20 @@ Design rules
 * :code:`design_006` reports registers that are never used and signals that are read but never assigned (DO-254 SS17).
 * :code:`design_007` reports combinational paths deeper than :code:`maximum_depth` logic levels, 48 by default (DO-254 SS19).
 * :code:`design_019`, disabled by default as it takes longer, maps the design to look-up tables of :code:`lut_size`
-  inputs and reports the longest path when it has more than :code:`maximum_levels` levels, 8 by default.
+  inputs and reports each register and output port reached by a path of more than :code:`maximum_levels` levels, 8
+  by default, with the register or port the path starts at.
 
 * :code:`design_008` to :code:`design_016` check clock domain crossings, clocks and resets, see below.
 * :code:`design_017` reports black boxes whose clock domain behaviour is not declared, see below.
 * :code:`design_018` reports reset domain crossings: data from a register with one asynchronous reset into a register
   of the same clock that another asynchronous reset clears, unless that reset also comes from the first.
+* :code:`design_020` reports memory outputs that decide an if condition or a case selector (STARC 2.10.1.7, 2.10.1.8).
+* :code:`design_021` reports buses with more than :code:`maximum_drivers` tri-state drivers, 5 by default, counted
+  across the hierarchy (STARC 2.5.1.4).
+* :code:`design_022` reports resets used both as an asynchronous and as a synchronous reset (STARC 1.3.1.6).
+* :code:`design_023` reports inout ports wired directly to an input or output port of the same module (STARC 2.5.1.6).
+* :code:`design_024`, disabled by default as it takes longer, maps the design to gates and reports modules whose own
+  logic has more than :code:`maximum_gates` NAND gate equivalents, 40000 by default (STARC 1.6.1.1).
 
 See :doc:`design_rules`. Design rules are configured like other rules, for example with a different severity:
 
@@ -628,9 +636,10 @@ Limitations
 * Vendor primitives must be given as VHDL sources or component declarations which GHDL can elaborate as black boxes.
   The netlist checks, design_002 to design_007, take a black box output to be registered unless the declaration of
   the black box type gives it a :code:`path` role: design_003 then finds loops through it and design_007 follows paths
-  through it, without counting a logic level for the box. A declaration of single instances applies when the same
-  one applies to every instance of the cell in the design, as each module is checked once for all its instances.
-  Every input of a black box counts as used, whatever its role.
+  through it, without counting a logic level for the box. When declarations of single instances differ between the
+  instances of a module, design_003 and design_007 check a copy of the module for each instance, so each declaration
+  applies to its instance; the other netlist checks see the declaration of the black box type. Every input of a black
+  box counts as used, whatever its role.
 * GHDL simplifies the logic while it builds the netlist: it removes registers nothing reads, which design_006 finds by
   comparing the netlist with the clocked processes, and it removes inverter and buffer chains and unused combinational
   signals, which a netlist cannot show. Checks for those are planned for the per-file lint.

@@ -78,6 +78,10 @@ cell. MHSG passes :code:`--latches` and finds the looped multiplexers too (:code
 
 **Quirk:** :code:`ghdl synth --help` fails with :code:`unknown command option`; the help is :code:`ghdl help synth`.
 
+**Quirk: GHDL 7.0.0-dev names the module of an entity instantiated directly after the entity and its architecture**,
+such as :code:`box_instances_cell_Brtl` for GHDL 4's :code:`box_instances_cell`, as in the OSS CAD Suite of 2026-11.
+MHSG takes the architecture out of the names when no two modules would then share one (:code:`mhsg/design/netlist.py`).
+
 GHDL plugin for Yosys
 ---------------------
 
@@ -93,6 +97,15 @@ such as the OSS CAD Suite's, do write them, and MHSG reads them when present.
 
 **Quirk: errors of GHDL go to standard error; Yosys' log only says** :code:`ERROR: vhdl import failed.` The runner
 reads standard error for the messages.
+
+**Limitation: an inout port the entity does not drive reads as** :code:`'z'`. In the netlist of the plugin,
+:code:`pout <= pin` of an inout port :code:`pin` becomes a constant :code:`z` on both ports, where
+:code:`ghdl synth --out=verilog` keeps :code:`assign pout = pin`. design_023 therefore finds inout ports wired to
+other ports in Verilog modules only; in VHDL the modes of ports forbid most such connections anyway.
+
+**Limitation: two tri-state drivers in one architecture are an error.** GHDL stops with
+:code:`multiple assignments for "bus" offsets 0:0` (design_001) for two concurrent assignments of :code:`'Z'` to one
+resolved signal; tri-state drivers in separate instances are accepted, and design_021 counts those.
 
 Yosys
 -----

@@ -9,6 +9,7 @@ of its outputs without passing a register, which inputs it uses, and the logic d
 A bit is a net bit number of the netlist. Constant bits, "0", "1", "x" and "z", are left out of the graphs.
 """
 
+import copy as copy_module
 import fnmatch
 
 from mhsg.design import netlist
@@ -30,6 +31,9 @@ ARITHMETIC_TYPES = {"$add", "$sub", "$neg"}
 NO_DEPTH = -1
 
 # The output ports of the internal cells of Yosys, for cells written without port directions
+# Cells that can release their output, besides the multiplexers with a 'z' input GHDL builds, see is_tristate
+TRISTATE_TYPES = {"$tribuf", "$_TBUF_"}
+
 OUTPUT_PORTS = {"Y", "Q", "DATA", "RD_DATA", "X", "CO"}
 
 
@@ -52,6 +56,16 @@ def is_state(dCell):
         return True
     # A memory read port with a clock is a register
     return sType in ("$memrd", "$memrd_v2") and parameter(dCell, "CLK_ENABLE") != 0
+
+
+def is_tristate(dCell):
+    """Returns whether a cell can release its output: a tri-state buffer, or a multiplexer with a 'z' input, as GHDL builds them."""
+    if dCell.get("type") in TRISTATE_TYPES:
+        return True
+    if dCell.get("type") in ("$mux", "$pmux"):
+        dConnections = dCell.get("connections", {})
+        return "z" in dConnections.get("A", []) + dConnections.get("B", [])
+    return False
 
 
 def is_variable(oBit):
@@ -81,6 +95,8 @@ class Summary:
         self.pass_depth = {}
         # (input port, index) -> logic depth from the input to a register or memory in the module, or NO_DEPTH
         self.capture = {}
+        # (output port, index) of the outputs only tri-state drivers drive
+        self.tristate = set()
 
 
 class ModuleGraph:
@@ -138,6 +154,16 @@ class ModuleGraph:
 
     def is_instance(self, sCell):
         return not self.cells[sCell].get("type", "$").startswith("$")
+
+    def drives_tristate(self, sCell, sPort, iIndex):
+        """Returns whether an output bit of a cell is a tri-state driver: a tri-state cell, or a tri-state output of an instance."""
+        dCell = self.cells[sCell]
+        if is_tristate(dCell):
+            return True
+        if self.is_instance(sCell):
+            oChild = self.child(sCell)
+            return oChild is not None and (sPort, iIndex) in oChild.tristate
+        return False
 
     def child(self, sCell):
         """Returns the summary of the module an instance cell instantiates, or None for a black box."""
@@ -315,8 +341,19 @@ class ModuleGraph:
             for iIndex, oBit in enumerate(dPort.get("bits", [])):
                 if not is_variable(oBit):
                     continue
-                oSummary.through[(sPort, iIndex)] = dReach.get(oBit, set())
+                if dPort.get("direction") == "inout":
+                    # The bit of an inout port is its input too, which does not drive the output side: only what the
+                    # drivers inside reach does, else every instance with an inout port would be a loop in its parent
+                    setThrough = set()
+                    for iDriver in self.comb_drivers(oBit):
+                        setThrough |= dReach.get(iDriver, set())
+                    oSummary.through[(sPort, iIndex)] = setThrough
+                else:
+                    oSummary.through[(sPort, iIndex)] = dReach.get(oBit, set())
                 iLaunch, iPass = dDepth.get(oBit, (NO_DEPTH, NO_DEPTH))
+                lDrivers = [t for t in self.drivers.get(oBit, []) if t[0] is not None]
+                if lDrivers and all(self.drives_tristate(*t) for t in lDrivers):
+                    oSummary.tristate.add((sPort, iIndex))
                 oSummary.launch[(sPort, iIndex)] = iLaunch
                 oSummary.pass_depth[(sPort, iIndex)] = iPass
         setLive = self.live_bits()
@@ -695,3 +732,76 @@ def strongly_connected(lNodes, fPredecessors):
                         break
                 lReturn.append(lComponent)
     return lReturn
+
+
+# The separator between the name of a module and the instance path of a copy of it, see instance_copies
+COPY_SEPARATOR = "$mhsg$"
+
+
+def instance_copies(oNetlist, oBlackBoxes, fPaths):
+    """
+    Returns (netlist, paths) in which each module whose black boxes have declarations of single instances that differ
+    between its instances, and each module above it, has a copy for each instance, named module$mhsg$path, so the
+    declarations of each instance apply to its copy; or None when no declaration differs. paths gives the flat names
+    of the instances of a black box cell, as fPaths does for the netlist.
+    """
+    if oBlackBoxes is None or not oBlackBoxes.instances or fPaths is None:
+        return None
+    setDiffer = set()
+    for sModule, dModule in oNetlist.modules.items():
+        for sCell, dCell in dModule.get("cells", {}).items():
+            if str(dCell.get("type", "")).startswith("$") or dCell.get("type") in oNetlist.modules:
+                continue
+            lFound = {tuple(id(o) for o in oBlackBoxes.instances if fnmatch.fnmatchcase(s.lower(), o.name.lower())) for s in fPaths(sModule, sCell)}
+            if len(lFound) > 1:
+                setDiffer.add(sModule)
+    if not setDiffer:
+        return None
+    dNeeds = {}
+
+    def needs(sModule, lStack=()):
+        if sModule not in dNeeds:
+            dNeeds[sModule] = sModule in setDiffer or any(
+                needs(d.get("type"), lStack + (sModule,))
+                for d in oNetlist.modules[sModule].get("cells", {}).values()
+                if d.get("type") in oNetlist.modules and d.get("type") not in lStack
+            )
+        return dNeeds[sModule]
+
+    dModules = dict(oNetlist.modules)
+    dPrefixes = {}
+
+    def copy(sModule, tPath):
+        sName = sModule + COPY_SEPARATOR + ".".join(tPath) if tPath else sModule
+        if sName in dPrefixes:
+            return sName
+        dPrefixes[sName] = tPath
+        dModule = dict(oNetlist.modules[sModule])
+        dCells = {}
+        for sCell, dCell in dModule.get("cells", {}).items():
+            sType = dCell.get("type")
+            if sType in oNetlist.modules and needs(sType):
+                dCell = dict(dCell)
+                dCell["type"] = copy(sType, tPath + (sCell.lstrip("\\"),))
+            dCells[sCell] = dCell
+        dModule["cells"] = dCells
+        dModules[sName] = dModule
+        return sName
+
+    setInstantiated = {d.get("type") for m in oNetlist.modules.values() for d in m.get("cells", {}).values()}
+    for sModule in list(oNetlist.modules):
+        if sModule not in setInstantiated and needs(sModule):
+            copy(sModule, ())
+    # The originals that only copies stand for are left out, so they are not checked with no declaration
+    for sModule in setInstantiated:
+        if sModule in dModules and needs(sModule) and sModule not in dPrefixes:
+            del dModules[sModule]
+    oCopy = copy_module.copy(oNetlist)
+    oCopy.modules = dModules
+
+    def paths(sModule, sCell):
+        if COPY_SEPARATOR in sModule:
+            return [".".join(dPrefixes[sModule] + (sCell,))]
+        return fPaths(sModule, sCell)
+
+    return oCopy, paths

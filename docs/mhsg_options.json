@@ -1948,7 +1948,12 @@
         "design_016",
         "design_017",
         "design_018",
-        "design_019"
+        "design_019",
+        "design_020",
+        "design_021",
+        "design_022",
+        "design_023",
+        "design_024"
       ]
     },
     {
@@ -3645,6 +3650,18 @@
       "type": "integer",
       "label": "Widest divisor",
       "description": "The most bits the divisor of a division or remainder may have, unless it is a constant power of two.",
+      "minimum": 1
+    },
+    "maximum_drivers": {
+      "type": "integer",
+      "label": "Most tri-state drivers",
+      "description": "The most tri-state drivers one bus may have.",
+      "minimum": 1
+    },
+    "maximum_gates": {
+      "type": "integer",
+      "label": "Most gates of a module",
+      "description": "The most two-input NAND gate equivalents the logic of one module may have, without the instances in it.",
       "minimum": 1
     },
     "maximum_items": {
@@ -20101,7 +20118,7 @@
       "groups": [
         "design"
       ],
-      "summary": "This rule reports the longest combinational path of the design after it is mapped to look-up tables of lut_size inputs, 6 by default, when it has more than maximum_levels levels, 8 by default.",
+      "summary": "This rule reports the registers and output ports of the design reached by a combinational path of more than maximum_levels levels, 8 by default, after the design is mapped to look-up tables of lut_size inputs, 6 by default: each register once, with its deepest path.",
       "documentation": "design_rules.rst",
       "options": [
         {
@@ -20148,6 +20165,251 @@
           "name": "lut_size",
           "default": 6,
           "definition": "lut_size"
+        }
+      ]
+    },
+    {
+      "id": "design_020",
+      "alias": "design_memory_output_in_condition",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports the outputs of memories that decide a condition: the condition of an if statement or of a conditional assignment, or the selector of a case statement, directly or through comparisons and logical operators.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_021",
+      "alias": "design_tristate_drivers",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports buses with more than maximum_drivers tri-state drivers, 5 by default.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "maximum_drivers",
+          "default": 5,
+          "definition": "maximum_drivers"
+        }
+      ]
+    },
+    {
+      "id": "design_022",
+      "alias": "design_reset_asynchronous_and_synchronous",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports reset signals used both as an asynchronous reset and as a synchronous reset.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_023",
+      "alias": "design_inout_port_connection",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports inout ports connected directly to an input or output port of the same module.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_024",
+      "alias": "design_module_gates",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports modules with more than maximum_gates gates, 40000 by default.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "maximum_gates",
+          "default": 40000,
+          "definition": "maximum_gates"
         }
       ]
     },

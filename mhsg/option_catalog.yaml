@@ -528,6 +528,16 @@ options:
     type: integer
     label: Inputs of a look-up table
     description: The number of inputs of the look-up tables the design is mapped to, such as 6.
+  maximum_drivers:
+    type: integer
+    minimum: 1
+    label: Most tri-state drivers
+    description: The most tri-state drivers one bus may have.
+  maximum_gates:
+    type: integer
+    minimum: 1
+    label: Most gates of a module
+    description: The most two-input NAND gate equivalents the logic of one module may have, without the instances in it.
   method:
     type: enum
     values: [component, entity]

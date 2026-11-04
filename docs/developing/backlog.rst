@@ -34,17 +34,13 @@ Design analysis
   checked against cell models, as Yosys has none for them.
 * **Stand-in models and pragmas for black boxes** (options 4 and 5 of the black box plan): an analysis-only VHDL
   architecture for complex IP, and comment pragmas in component declarations. Not planned unless asked for.
-* **Netlist checks and declarations of single instances.** design_003 and design_007 check each module once, so a
-  declaration of single instances applies only when it applies to every instance of the cell in the design. design_006
-  counts every black box input as used, since the roles describe clock domains, not which inputs matter.
+* **Inputs of black boxes counted as used**: design_006 counts every black box input as used, since the roles describe
+  clock domains, not which inputs matter.
 * **Clears found without a declaration.** A synchronous clear is followed by design_016 when the cdc section lists it
   under clears. Telling clears from resets by structure was tried and dropped: the reset crossing circuits of
   open-logic compute their resets with logic, and were taken for clears.
 * **Reset domain crossings into registers without a reset** are not reported by design_018, as their data during a
   reset is not used; a design that relies on such a register right after a reset would need them.
-* **Logic depth after mapping** (design_019) reports only the longest path of the design, at its top, as mapping
-  renames the signals in between; each path, with names, would need a mapping that keeps them, such as abc's with
-  the -dff and -keepff options, and a report of the path from the timing of the device.
 * **More real-world designs** in :code:`scripts/real_world_designs.yaml`: surf's designs with SimpleDualPortRam wait
   for GHDL, see :doc:`dependency_issues`, and its transceiver wrappers need the Xilinx IP cores they instantiate.
 
@@ -78,11 +74,11 @@ under way: the entries below.
 * **STARC items with judgement**: resource sharing, Gray encoding of states and the like are left to review; the rules
   on loop bounds and common expressions compare the code as written, so loop bounds given by parameters, and
   expressions written differently, are not checked.
-* **STARC rule set**: 218 of the 613 items of the STARC guide have rules, the design rules among them for the items
-  on loops, drivers, generated and gated clocks and resets. Every per-file item has a rule or is left to review
-  (status manual, with the reason in its note). The 57 items with status design need what design analysis does not
-  have: gate counts of hierarchy levels, the test modes of design for test, hierarchy identification characters,
-  and which memories and I/O cells a design uses. The catalogue the set
+* **STARC rule set**: 226 of the 613 items of the STARC guide have rules, the design rules among them for the items
+  on loops, drivers, tri-state buses, memory outputs, generated and gated clocks and resets, and gates per module.
+  Every per-file item has a rule or is left to review (status manual, with the reason in its note). The 49 items
+  with status design need what design analysis does not have: the test modes of design for test, hierarchy
+  identification characters, timing paths across blocks, and which I/O cells a design uses. The catalogue the set
   was made from records each item's limits and its Verible equivalent, kept in the notes of the set.
 * **SystemVerilog designs without the yosys-slang plugin**: Yosys' own reader handles Verilog and part of
   SystemVerilog; ibex and common_cells need the plugin, which is not packaged for Ubuntu. With the plugin of the OSS

@@ -209,6 +209,10 @@ class Netlist:
         # primitive: those are black boxes, not modules with no logic
         for dModule in dModules.values():
             normalise_module(dModule)
+        dModules, dRenamed = architecture_names(dModules)
+        if dRenamed:
+            dNetlist["modules"] = dModules
+            dLocations = {(dRenamed.get(k[0], k[0]), *k[1:]) if isinstance(k, tuple) else k: v for k, v in dLocations.items()}
         self.black_boxes = {s: d for s, d in dModules.items() if is_black_box(d)}
         self.modules = {s: d for s, d in dModules.items() if s not in self.black_boxes}
         self.locations = dLocations
@@ -299,6 +303,34 @@ class Netlist:
         return lReturn
 
 
+# GHDL 7 names the module of an entity instantiated directly after the entity and its architecture, such as
+# fifo_Brtl; GHDL writes entity names in lower case, so the upper case B can only be this suffix
+reArchitecture = re.compile(r"^([a-z0-9_]+?)_B[a-z][a-z0-9_]*$")
+
+
+def architecture_names(dModules):
+    """
+    Returns (the modules with the architecture GHDL 7 adds to some module names taken out, as GHDL 4 names them, unless
+    two modules would then have one name, {old name: new name}). Modules with a src attribute come from Verilog and
+    keep their names.
+    """
+    dRename = {}
+    for sModule, dModule in dModules.items():
+        oMatch = reArchitecture.match(sModule)
+        if oMatch and "src" not in dModule.get("attributes", {}):
+            dRename[sModule] = oMatch.group(1)
+    lNew = [dRename.get(s, s) for s in dModules]
+    setClashes = {s for s in lNew if lNew.count(s) > 1}
+    dRename = {k: v for k, v in dRename.items() if v not in setClashes}
+    if not dRename:
+        return dModules, {}
+    for dModule in dModules.values():
+        for dCell in dModule.get("cells", {}).values():
+            if dCell.get("type") in dRename:
+                dCell["type"] = dRename[dCell["type"]]
+    return {dRename.get(s, s): d for s, d in dModules.items()}, dRename
+
+
 def normalise_module(dModule):
     """
     Makes the netlist of read_slang look like that of read_verilog and GHDL, in place: the nets a $buf cell joins,
@@ -376,7 +408,8 @@ def instance_number(sName):
 def module_name(sModule):
     """
     Returns a module name as GHDL writes it in Verilog: without the backslash Yosys adds, and without what follows a
-    $ in the name of a copy of the module for one instance, such as ibex_alu$ibex_core.alu_i of read_slang.
+    $ in the name of a copy of the module for one instance: the instance path of read_slang, such as
+    ibex_alu$ibex_core.alu_i, or of graph.instance_copies, such as box$mhsg$u_a.
     """
     sName = sModule.lstrip("\\")
     if not sName.startswith("$") and "$" in sName:
