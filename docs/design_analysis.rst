@@ -190,6 +190,8 @@ Design rules
 * :code:`design_005` reports registers that never change (DO-254 SS18).
 * :code:`design_006` reports registers that are never used and signals that are read but never assigned (DO-254 SS17).
 * :code:`design_007` reports combinational paths deeper than :code:`maximum_depth` logic levels, 48 by default (DO-254 SS19).
+* :code:`design_019`, disabled by default as it takes longer, maps the design to look-up tables of :code:`lut_size`
+  inputs and reports the longest path when it has more than :code:`maximum_levels` levels, 8 by default.
 
 * :code:`design_008` to :code:`design_016` check clock domain crossings, clocks and resets, see below.
 * :code:`design_017` reports black boxes whose clock domain behaviour is not declared, see below.

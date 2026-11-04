@@ -296,3 +296,100 @@ by default (1.1.3.3). It is disabled by default; the starc rule set enables it.
 .. code-block:: systemverilog
 
    logic valid;
+
+sv_naming_014
+#############
+
+|phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`sv_naming_underscores`
+
+This rule checks that the names of modules and ports do not end with an underscore, and that no name has two
+underscores in a row, as the STARC guide asks (1.1.1.6). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   module fifo_ (input logic clk__i);
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   module fifo (input logic clk_i);
+
+sv_naming_015
+#############
+
+|phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`sv_naming_instance_after_module`
+
+This rule checks that an instance is named after the module it instantiates, or after it and a number for
+several instances, such as fifo or fifo_1, as the STARC guide recommends (1.1.1.8). It is disabled by default; the
+starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   fifo buffer (.clk_i(clk_i));
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   fifo fifo (.clk_i(clk_i));
+
+sv_naming_016
+#############
+
+|phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`sv_naming_ports_and_signals`
+
+This rule checks that port names match **port_pattern**, a regular expression, by default names ending in _i, _o
+or _io, with an n before it for active low ports, and that the other signals of the module do not, so ports and
+internal signals can be told apart, as the STARC guide asks (1.1.2.5, 1.1.3.1). It is disabled by default; the
+starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   module fifo (input logic clk, output logic full);
+       logic count_o;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   module fifo (input logic clk_i, output logic full_o);
+       logic count;
+
+sv_naming_017
+#############
+
+|phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`sv_naming_active_low_resets`
+
+This rule checks that asynchronous resets that are active low, tested on negedge or with !, have names marking
+them so, matching **active_low_pattern**, a regular expression matched ignoring case, by default names ending in
+_n, _x, _b or _l, with i or o after it for ports, or such as rstn, as the STARC guide recommends (1.1.1.7). It is
+disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i or negedge rst_i)
+       if (!rst_i) q <= 1'b0;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i or negedge rst_ni)
+       if (!rst_ni) q <= 1'b0;

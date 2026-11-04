@@ -41,10 +41,12 @@ svFile = importlib.import_module("mhsg.svFile.svFile")
 class Context:
     """What the design rules see: the design, the result of the tools, the netlist, and the VHDL files when needed."""
 
-    def __init__(self, oDesign, oResult, oNetlist):
+    def __init__(self, oDesign, oResult, oNetlist, oTools=None):
         self.design = oDesign
         self.result = oResult
         self.netlist = oNetlist
+        # The tools, for rules that run them again, such as design_019
+        self.tools = oTools
         self._dFiles = {}
         self._oGraph = None
 
@@ -185,7 +187,7 @@ def design_rules(oConfig, lLocalRules):
     oRules = rule_list.rule_list(vhdlFile.vhdlFile([""]), oConfig.severity_list, lLocalRules)
     lDesignRules = [o for o in oRules.rules if getattr(o, "design", False)]
     for oRule in lDesignRules:
-        oRule.disable = False
+        oRule.disable = oRule.disabled_in_design
     rule_set.apply(oRules, oConfig)
     oRules.configure(oConfig)
     return oRules, [o for o in lDesignRules if not o.disable]
@@ -212,7 +214,7 @@ def run(commandLineArguments, oConfig):
             # Locations come from GHDL's Verilog for VHDL, and from the src attributes of the netlist for Verilog
             dLocations = netlist.read_locations(oResult.verilog_file, lFiles) if oResult.verilog_file else {}
             oNetlist = netlist.Netlist(oResult.netlist, dLocations, lFiles)
-        oContext = Context(oDesign, oResult, oNetlist)
+        oContext = Context(oDesign, oResult, oNetlist, oTools)
         lFindings = [(oRule, oFinding) for oRule in lRules for oFinding in oRule.check_design(oContext)]
         write_cdc_report(getattr(commandLineArguments, "cdc_report", None), oContext, dRecord)
         write_black_box_template(getattr(commandLineArguments, "black_box_template", None), oContext)
