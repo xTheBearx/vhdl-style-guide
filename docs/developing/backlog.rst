@@ -75,10 +75,14 @@ under way: the entries below.
   Checking the code after it would need slang's recovery to be trusted, or each module parsed on its own. The
   defines and include directories of the systemverilog section let fewer files fall in this case; the real-world
   check runs without them.
-* **STARC lint items needing data flow**: the per-file items of the STARC guide on loop bounds, resource sharing and
-  common expressions need more than slang's types, which the rules on widths use.
-* **STARC rule set**: 183 of the 613 items of the STARC guide have rules. The per-file items (216) are planned with
-  the SystemVerilog rules, the clock and reset items with design analysis of Verilog designs. The catalogue the set
+* **STARC items with judgement**: resource sharing, Gray encoding of states and the like are left to review; the rules
+  on loop bounds and common expressions compare the code as written, so loop bounds given by parameters, and
+  expressions written differently, are not checked.
+* **STARC rule set**: 218 of the 613 items of the STARC guide have rules, the design rules among them for the items
+  on loops, drivers, generated and gated clocks and resets. Every per-file item has a rule or is left to review
+  (status manual, with the reason in its note). The 57 items with status design need what design analysis does not
+  have: gate counts of hierarchy levels, the test modes of design for test, hierarchy identification characters,
+  and which memories and I/O cells a design uses. The catalogue the set
   was made from records each item's limits and its Verible equivalent, kept in the notes of the set.
 * **SystemVerilog designs without the yosys-slang plugin**: Yosys' own reader handles Verilog and part of
   SystemVerilog; ibex and common_cells need the plugin, which is not packaged for Ubuntu. Not yet tried with it.

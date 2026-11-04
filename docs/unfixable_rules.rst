@@ -243,6 +243,7 @@ Rules on the design of SystemVerilog and Verilog code that only the designer can
 * `sv_always_023 <sv_always_rules.html#sv-always-023>`_
 * `sv_always_024 <sv_always_rules.html#sv-always-024>`_
 * `sv_always_025 <sv_always_rules.html#sv-always-025>`_
+* `sv_always_026 <sv_always_rules.html#sv-always-026>`_
 * `sv_case_001 <sv_case_rules.html#sv-case-001>`_
 * `sv_case_002 <sv_case_rules.html#sv-case-002>`_
 * `sv_case_003 <sv_case_rules.html#sv-case-003>`_
@@ -253,11 +254,15 @@ Rules on the design of SystemVerilog and Verilog code that only the designer can
 * `sv_case_008 <sv_case_rules.html#sv-case-008>`_
 * `sv_case_009 <sv_case_rules.html#sv-case-009>`_
 * `sv_case_010 <sv_case_rules.html#sv-case-010>`_
+* `sv_case_011 <sv_case_rules.html#sv-case-011>`_
+* `sv_case_012 <sv_case_rules.html#sv-case-012>`_
 * `sv_comment_001 <sv_comment_rules.html#sv-comment-001>`_
 * `sv_comment_002 <sv_comment_rules.html#sv-comment-002>`_
 * `sv_comment_003 <sv_comment_rules.html#sv-comment-003>`_
 * `sv_comment_004 <sv_comment_rules.html#sv-comment-004>`_
 * `sv_comment_005 <sv_comment_rules.html#sv-comment-005>`_
+* `sv_comment_006 <sv_comment_rules.html#sv-comment-006>`_
+* `sv_comment_007 <sv_comment_rules.html#sv-comment-007>`_
 * `sv_declaration_001 <sv_declaration_rules.html#sv-declaration-001>`_
 * `sv_declaration_002 <sv_declaration_rules.html#sv-declaration-002>`_
 * `sv_declaration_003 <sv_declaration_rules.html#sv-declaration-003>`_
@@ -306,6 +311,7 @@ Rules on the design of SystemVerilog and Verilog code that only the designer can
 * `sv_literal_007 <sv_literal_rules.html#sv-literal-007>`_
 * `sv_literal_008 <sv_literal_rules.html#sv-literal-008>`_
 * `sv_literal_009 <sv_literal_rules.html#sv-literal-009>`_
+* `sv_literal_010 <sv_literal_rules.html#sv-literal-010>`_
 * `sv_module_001 <sv_module_rules.html#sv-module-001>`_
 * `sv_module_002 <sv_module_rules.html#sv-module-002>`_
 * `sv_module_003 <sv_module_rules.html#sv-module-003>`_
@@ -318,6 +324,11 @@ Rules on the design of SystemVerilog and Verilog code that only the designer can
 * `sv_module_010 <sv_module_rules.html#sv-module-010>`_
 * `sv_module_011 <sv_module_rules.html#sv-module-011>`_
 * `sv_module_012 <sv_module_rules.html#sv-module-012>`_
+* `sv_module_013 <sv_module_rules.html#sv-module-013>`_
+* `sv_module_014 <sv_module_rules.html#sv-module-014>`_
+* `sv_module_015 <sv_module_rules.html#sv-module-015>`_
+* `sv_module_016 <sv_module_rules.html#sv-module-016>`_
+* `sv_module_017 <sv_module_rules.html#sv-module-017>`_
 * `sv_naming_001 <sv_naming_rules.html#sv-naming-001>`_
 * `sv_naming_002 <sv_naming_rules.html#sv-naming-002>`_
 * `sv_naming_003 <sv_naming_rules.html#sv-naming-003>`_
@@ -335,6 +346,9 @@ Rules on the design of SystemVerilog and Verilog code that only the designer can
 * `sv_naming_015 <sv_naming_rules.html#sv-naming-015>`_
 * `sv_naming_016 <sv_naming_rules.html#sv-naming-016>`_
 * `sv_naming_017 <sv_naming_rules.html#sv-naming-017>`_
+* `sv_naming_018 <sv_naming_rules.html#sv-naming-018>`_
+* `sv_naming_019 <sv_naming_rules.html#sv-naming-019>`_
+* `sv_naming_020 <sv_naming_rules.html#sv-naming-020>`_
 * `sv_statement_001 <sv_statement_rules.html#sv-statement-001>`_
 * `sv_statement_004 <sv_statement_rules.html#sv-statement-004>`_
 * `sv_statement_005 <sv_statement_rules.html#sv-statement-005>`_
@@ -376,6 +390,13 @@ Rules on the design of SystemVerilog and Verilog code that only the designer can
 * `sv_statement_041 <sv_statement_rules.html#sv-statement-041>`_
 * `sv_statement_042 <sv_statement_rules.html#sv-statement-042>`_
 * `sv_statement_043 <sv_statement_rules.html#sv-statement-043>`_
+* `sv_statement_044 <sv_statement_rules.html#sv-statement-044>`_
+* `sv_statement_045 <sv_statement_rules.html#sv-statement-045>`_
+* `sv_statement_046 <sv_statement_rules.html#sv-statement-046>`_
+* `sv_statement_047 <sv_statement_rules.html#sv-statement-047>`_
+* `sv_statement_048 <sv_statement_rules.html#sv-statement-048>`_
+* `sv_statement_049 <sv_statement_rules.html#sv-statement-049>`_
+* `sv_statement_050 <sv_statement_rules.html#sv-statement-050>`_
 * `sv_syntax_001 <sv_syntax_rules.html#sv-syntax-001>`_
 * `sv_typedef_001 <sv_typedef_rules.html#sv-typedef-001>`_
 * `sv_typedef_002 <sv_typedef_rules.html#sv-typedef-002>`_

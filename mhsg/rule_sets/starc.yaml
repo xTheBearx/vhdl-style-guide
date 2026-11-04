@@ -84,13 +84,15 @@ checks:
     title: 'Top-level module and port names: at most 16 characters, not case-distinguished'
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_naming_018
     note: 'Limits: max length 16.'
   1.1.1.10:
     title: Do not reuse names of cells in the target ASIC library for instances or modules
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_naming_019
     note: 'Limits: library cell names none.'
   1.1.2.1:
     title: Module and instance names must be 2 to 32 characters long
@@ -168,13 +170,15 @@ checks:
     title: Use a `define only inside the module where it is defined
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_module_013
     note: Verilog only.
   1.1.4.5:
     title: Prefix module-local parameters with the hierarchy ID characters
     level: Suggestion
     severity: Note
-    status: planned
+    status: manual
+    note: 'The hierarchy ID characters are chosen per project; check the prefixes in review, or with sv_naming rules configured with them.'
   1.1.4.6:
     title: Do not drive output ports directly with constant values
     level: Recommendation 1
@@ -210,7 +214,8 @@ checks:
     title: 'Base names: CLK/CK for clocks, RST_X/RESET_X for resets, EN for enables, plus suffixes'
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_naming_020
     note: 'Limits: clock base names CLK, CK; reset base names RST_X, RESET_X; enable base names EN.'
   1.1.5.3:
     title: Choose names that identify the clock
@@ -237,7 +242,8 @@ checks:
     title: No combinational feedback loops
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - design_003
   1.3.1.1:
     title: Synchronous-reset coding may synthesize to logic that does not reset reliably
     level: Suggestion
@@ -258,7 +264,8 @@ checks:
     title: Put synchronously-reset registers in their own hierarchy level
     level: Suggestion
     severity: Note
-    status: planned
+    rules:
+    - sv_module_014
   1.3.1.5:
     title: Do not use tool-specific synchronous-reset synthesis directives
     level: Recommendation 3
@@ -303,7 +310,8 @@ checks:
     title: External initial reset may need synchronization or a noise filter
     level: Recommendation 3
     severity: Note
-    status: design
+    rules:
+    - design_015
   1.3.3.3:
     title: If reset arrives before clocks run, use asynchronous reset plus a noise filter
     level: Suggestion
@@ -482,7 +490,8 @@ checks:
     title: 'Basic blocks: combinational inputs, registered (flip-flop) outputs'
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_module_017
   1.6.2.2:
     title: Otherwise, a timing path should span at most two blocks
     level: Recommendation 1
@@ -510,7 +519,8 @@ checks:
     title: Modules above basic blocks contain only instances and interconnect, no logic
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_module_015
   1.6.4.2:
     title: On critical paths, even sub-block parents should contain only connections
     level: Recommendation 3
@@ -733,7 +743,8 @@ checks:
     title: Array index range should match the declared bounds
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_lint_009
   2.1.6.5:
     title: Never use x or z in an array index
     level: Rule
@@ -807,12 +818,14 @@ checks:
     title: Use only synthesizable flip-flop coding templates
     level: Rule
     severity: Error
-    status: planned
+    status: manual
+    note: 'The other rules on always blocks cover the templates; whether a template is synthesizable is for the synthesis tool.'
   2.3.1.3:
     title: Add a (unit) delay to flip-flop assignments
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_always_026
   2.3.1.4:
     title: Use flip-flop delay values only inside always blocks
     level: Recommendation 1
@@ -950,7 +963,8 @@ checks:
     title: Never connect multiple non-tri-state drivers to one net
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - design_004
   2.5.1.6:
     title: Do not connect inout ports directly to input or output ports
     level: Rule
@@ -998,7 +1012,8 @@ checks:
     title: Factor logic used in more than two places into an intermediate signal
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_050
     note: 'Limits: max duplicate uses 2.'
   2.6.1.3:
     title: Aim for at most five outputs per always block; never more than 15
@@ -1088,8 +1103,8 @@ checks:
     title: A single statement need not be wrapped in begin/end
     level: Suggestion
     severity: Note
-    status: planned
-    note: Verilog only.
+    status: manual
+    note: 'Verilog only. Contradicts 2.7.4.2 and Verible''s explicit-begin, which sv_statement_001 follows; choose one per project.'
   2.7.4.2:
     title: Wrap multiple statements in begin/end
     level: Suggestion
@@ -1148,7 +1163,8 @@ checks:
     title: Split case tables exceeding 32 I/Os (about 20 inputs, 12 outputs)
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_case_011
     note: 'Limits: max table io 32; max table inputs 20; max table outputs 12.'
   2.8.2.2:
     title: At most 200 items per case statement
@@ -1166,7 +1182,8 @@ checks:
     title: Express don't-care by assigning x in the default branch
     level: Recommendation 3
     severity: Note
-    status: planned
+    status: manual
+    note: 'Whether a default should assign x depends on the logic; 2.10.1.6 and sv_literal_006 limit x to default branches.'
   2.8.3.2:
     title: x in default branches propagates in simulation even if not truly don't-care
     level: Suggestion
@@ -1228,7 +1245,8 @@ checks:
     title: Do not scatter per-bit x wildcards in casex items
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_case_012
     note: Verilog only.
   2.8.5.1:
     title: Do not use tool-specific parallel_case directives
@@ -1267,7 +1285,8 @@ checks:
     title: Use for loops only for simple repetition that creates no priority
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_044
   2.9.1.2:
     title: Loop bounds must be constant; never modify the loop variable in the body
     level: Rule
@@ -1290,7 +1309,8 @@ checks:
     title: 'Loops doing other logical/relational operations: at most 10 iterations'
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_statement_045
     note: 'Limits: max loop iterations 10.'
   2.9.2.4:
     title: Use separate for loops for the reset branch and the functional logic
@@ -1409,8 +1429,8 @@ checks:
     title: Use only reg, wire, tri and integer data types
     level: Rule
     severity: Error
-    status: planned
-    note: 'Verilog only. Limits: allowed types reg, wire, tri, integer.'
+    status: manual
+    note: 'Verilog only. Limits: allowed types reg, wire, tri, integer. SystemVerilog adds logic and other types to those of Verilog; choose the allowed types per project.'
   2.10.4.2:
     title: integer is a 32-bit type
     level: Suggestion
@@ -1459,8 +1479,8 @@ checks:
     title: Do not code three or more arithmetic operations meant to share one resource
     level: Recommendation 1
     severity: Warning
-    status: planned
-    note: 'Limits: max shared operations 2.'
+    status: manual
+    note: 'Limits: max shared operations 2. Which operations should share a resource is a design decision; synthesis reports the resources.'
   2.10.5.4:
     title: Do not rely heavily on automatic resource sharing
     level: Recommendation 3
@@ -1493,7 +1513,8 @@ checks:
     title: Do not mix signed and unsigned operands in one statement
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_046
   2.10.6.4:
     title: Describe datapath structure with continuous assignments
     level: Recommendation 3
@@ -1510,7 +1531,8 @@ checks:
     title: One arithmetic operation per line, except A+B+1-bit carry-in
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_047
   2.10.7.1:
     title: No arithmetic in if conditions
     level: Recommendation 1
@@ -1521,7 +1543,8 @@ checks:
     title: Hoist common expressions out of conditional branches
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_048
   2.10.8.1:
     title: Operands of / and % must be plain signals, not expressions
     level: Rule
@@ -1546,7 +1569,8 @@ checks:
     title: Minimize operand widths of division and modulus
     level: Recommendation 1
     severity: Warning
-    status: planned
+    status: manual
+    note: 'How narrow the operands of a divider can be depends on the values; sv_statement_040 limits the widths.'
   2.11.1.1:
     title: Prefer Moore machines; either style is fine with registered outputs
     level: Recommendation 3
@@ -1556,7 +1580,8 @@ checks:
     title: Encode states to minimize bit changes per transition (Gray code)
     level: Recommendation 3
     severity: Note
-    status: planned
+    status: manual
+    note: 'The encoding of states depends on the transitions; synthesis can choose a Gray encoding.'
   2.11.1.3:
     title: Define state encodings with parameters
     level: Recommendation 3
@@ -1629,7 +1654,8 @@ checks:
     title: Follow the basic naming conventions (section 1.1)
     level: Rule
     severity: Error
-    status: planned
+    status: manual
+    note: 'Section 1.1, whose items have rules of their own, gives the conventions.'
   3.1.2.2:
     title: Avoid technology-dependent code (e.g. instantiated library cells)
     level: Recommendation 1
@@ -1667,7 +1693,8 @@ checks:
     title: Use one consistent order for port declarations, port lists and instance connections
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_module_016
   3.1.3.2:
     title: 'Port order: clock, reset, inputs, outputs, inout ports'
     level: Recommendation 2
@@ -1679,7 +1706,8 @@ checks:
     title: Declare sequential and combinational regs in separate groups
     level: Recommendation 3
     severity: Note
-    status: planned
+    status: manual
+    note: 'Which registers are sequential or combinational follows from the always blocks; the grouping of declarations is left to review.'
   3.1.3.4:
     title: One signal per port/reg/wire declaration line, each commented
     level: Recommendation 3
@@ -1774,7 +1802,8 @@ checks:
     title: Express constants as parameters where possible
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_literal_010
   3.2.2.2:
     title: Put design-wide global parameters in a separate file
     level: Recommendation 3
@@ -1784,8 +1813,8 @@ checks:
     title: Load parameter files with `include
     level: Recommendation 3
     severity: Note
-    status: planned
-    note: Verilog only.
+    status: manual
+    note: 'Verilog only. Where parameter files live is a matter of project organization.'
   3.2.2.4:
     title: '`include paths must be relative (e.g. ../include/common.h)'
     level: Recommendation 1
@@ -1821,7 +1850,9 @@ checks:
     title: Net width must match the width of the instance port it connects to
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - sv_lint_001
+    - sv_lint_009
   3.2.4.1:
     title: 'Override lower-level parameters with #(...) at instantiation'
     level: Suggestion
@@ -1866,7 +1897,9 @@ checks:
     title: Clocks must be directly controllable from primary inputs
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - design_012
+    - design_013
   3.3.1.2:
     title: With selectable clock systems, fix one choice throughout test
     level: Rule
@@ -1876,12 +1909,14 @@ checks:
     title: Do not use random-logic outputs as clocks
     level: Recommendation 1
     severity: Warning
-    status: design
+    rules:
+    - design_013
   3.3.1.4:
     title: Flip-flop resets must be directly controllable from a primary input
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - design_014
   3.3.2.1:
     title: Plan dedicated test circuits for async logic and hard macros
     level: Recommendation 1
@@ -1973,17 +2008,20 @@ checks:
     title: Block random logic driving async set/reset during test
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - design_014
   3.3.6.2:
     title: Keep clock and reset networks separate
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - design_011
   3.3.6.3:
     title: A flip-flop output must not directly drive an async set/reset pin
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - design_014
   3.3.6.4:
     title: A latch output must not directly drive a flip-flop async set/reset
     level: Rule
@@ -2048,7 +2086,8 @@ checks:
     title: In standard ASICs, place gated clocks only at the top level
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - design_012
   3.4.1.2:
     title: Use EDA tools for fine-grained clock gating
     level: Suggestion
@@ -2204,7 +2243,8 @@ checks:
     title: On reuse, header records who changed what
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_comment_006
     note: 'Limits: required header fields modified_by, modification.'
   3.5.3.3:
     title: Use a standard file header template
@@ -2242,7 +2282,8 @@ checks:
     title: Comment liberally for readability
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_comment_007
   3.5.6.2:
     title: Comment the purpose and content of operations
     level: Recommendation 2
@@ -2270,8 +2311,8 @@ checks:
     title: If Japanese text is needed, EUC encoding causes fewest problems
     level: Recommendation 1
     severity: Warning
-    status: planned
-    note: 'Limits: non ascii encoding EUC-JP.'
+    status: manual
+    note: 'Limits: non ascii encoding EUC-JP. The encoding of non-English comments; sv_comment_005 asks for ASCII comments.'
   3.5.6.7:
     title: Use // line comments
     level: Recommendation 3
@@ -2368,7 +2409,8 @@ checks:
     title: Use parameters instead of hard-coded numbers in test code
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_literal_010
   4.1.2.2:
     title: Drive testbench stimulus with blocking assignments
     level: Suggestion
@@ -2393,12 +2435,14 @@ checks:
     title: Apply stimulus offset from the rising clock edge
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_statement_049
   4.1.3.2:
     title: When falling edges are used, offset stimulus from them as well
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_statement_049
   4.1.4.1:
     title: Never drive one signal from several initial blocks
     level: Recommendation 1
@@ -2470,7 +2514,8 @@ checks:
     title: Use non-blocking assignments for transfers between asynchronous clocks in simulation
     level: Recommendation 2
     severity: Note
-    status: planned
+    status: manual
+    note: 'Which transfers cross asynchronous clocks in a testbench is left to review.'
   4.1.9.3:
     title: Vary delay values to expose races
     level: Suggestion
@@ -2540,8 +2585,8 @@ checks:
     title: Do not pass continuously observed signals as task input arguments
     level: Recommendation 1
     severity: Warning
-    status: planned
-    note: Verilog only.
+    status: manual
+    note: 'Verilog only. Which task arguments are continuously observed is left to review.'
   4.3.1.1:
     title: Write test specifications and use them as a checklist
     level: Recommendation 1

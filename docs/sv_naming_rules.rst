@@ -393,3 +393,74 @@ disabled by default; the starc rule set enables it.
 
    always_ff @(posedge clk_i or negedge rst_ni)
        if (!rst_ni) q <= 1'b0;
+
+sv_naming_018
+#############
+
+|phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`sv_naming_top_names`
+
+This rule checks that the names of modules and ports are at most **maximum_name_length** characters long, 16 by
+default, and that no two names of a file differ only in case, as the STARC guide recommends (1.1.1.9) for the top
+level of a design, whose names other tools must handle. It checks every module, as a file does not tell which is
+the top. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   module serial_receiver_with_fifo (input logic Clk, input logic clk);
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   module uart_rx (input logic clk_i);
+
+sv_naming_019
+#############
+
+|phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`sv_naming_no_cell_names`
+
+This rule checks that modules and instances are not named after the cells of the target library, listed in
+**cell_names**, compared ignoring case, as the STARC guide asks (1.1.1.10). The list is empty by default: give
+the cells of your library. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   module AND2 (input logic a, b, output logic y);
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   module and_gate (input logic a, b, output logic y);
+
+sv_naming_020
+#############
+
+|phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`sv_naming_clock_reset_words`
+
+This rule checks the base names of clocks and resets, as the STARC guide recommends (1.1.5.2): the clocks of edge
+triggered always blocks are named with a clock word, such as clk, and their asynchronous resets with a reset
+word, such as rst, as port_028 tells them: **clock_words**, **reset_words** and **qualifier_words**. It is
+disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge sample or negedge init_n) ...
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_sample or negedge rst_n) ...

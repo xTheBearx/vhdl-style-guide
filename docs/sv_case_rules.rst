@@ -255,3 +255,50 @@ disabled by default; the starc rule set enables it.
 **Fix**
 
 Put each state machine in a module of its own.
+
+sv_case_011
+###########
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_case_table_size`
+
+This rule checks the size of the table a case statement makes: at most **maximum_table_inputs** selector bits, 20
+by default, **maximum_table_outputs** bits assigned, 12 by default, and **maximum_table_bits** of both, 32 by
+default, as the STARC guide recommends (2.8.2.1). The widths come from slang's elaboration of the file. It is
+disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   case (opcode)  // 24 bits, assigning 16 bits
+
+**Fix**
+
+Split the table into smaller case statements.
+
+sv_case_012
+###########
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_case_grouped_wildcards`
+
+This rule checks that the wildcard bits, x, z or ?, of the items of a casex or casez statement are next to each
+other, not scattered between other bits, as the STARC guide recommends (2.8.4.4). It is disabled by default; the
+starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   casez (sel)
+       4'b1?0?: y = a;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   casez (sel)
+       4'b10??: y = a;
