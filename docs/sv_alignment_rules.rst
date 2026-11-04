@@ -258,3 +258,29 @@ set to align or flush_left forces one.
 
    logic [7:0] data;
    wire  [3:0] strobe;
+
+sv_alignment_011
+################
+
+|phase_5| |error| |alignment|
+
+Alias: :code:`sv_alignment_dimension_colons`
+
+This rule aligns the colons of the packed dimensions that sv_alignment_010 aligns, by spaces after the opening
+bracket, as Verible's formatter does: [ 4:0] under [31:0]. Only the first packed dimension of a declaration is
+aligned, when it is a range such as [7:0]. By default it infers whether the author meant them aligned, as for the
+other alignment rules; **policy** set to align or flush_left forces one.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   logic [31:0] data;
+   logic [4:0]  count;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   logic [31:0] data;
+   logic [ 4:0] count;

@@ -8,7 +8,8 @@
 # declaration in your design section takes precedence over this library, port by port.
 #
 # Ports whose behaviour depends on how the primitive is used are left out on purpose, so design analysis asks for
-# them: the dynamic clock selection and cascade ports of the SERDES and delays, for example. Transceivers, PCIe, memory
+# them: the dynamic clock selection and cascade ports of the SERDES and delays, for example. The transceivers and
+# PCI Express blocks follow UG476, UG482, UG576, UG578, UG477, UG023, PG156 and PG213 (see their sections). Memory
 # interfaces and other IP cores are not included; declare them in the design section.
 #
 # Choices to review:
@@ -713,3 +714,1056 @@ black_boxes:
     variants:
       - when: {CLOCKING_MODE: common_clock}
         ports: *common_b
+
+  # Transceivers. The clocks, the clock outputs, the DRP port and the resets are declared, the TX and RX ports are
+  # timed by TXUSRCLK2 and RXUSRCLK2 (the channel bonding ports by RXUSRCLK), and the ports the user guides describe
+  # as asynchronous, such as the power down, phase alignment, equalizer and PLL control ports, are asynchronous. The
+  # clock outputs, such as TXOUTCLK, RXOUTCLK and the QPLL outputs, are clocks of their own. The PCI Express ports of
+  # the UltraScale transceivers are left for the design to declare. Generated from the ports of Yosys' cell models.
+  GTPE2_COMMON:
+    reference: UG482, GTPE2_COMMON
+    ports:
+      DRPCLK: clock
+      GTEASTREFCLK0: clock
+      GTEASTREFCLK1: clock
+      GTGREFCLK0: clock
+      GTGREFCLK1: clock
+      GTREFCLK0: clock
+      GTREFCLK1: clock
+      GTWESTREFCLK0: clock
+      GTWESTREFCLK1: clock
+      PLL0LOCKDETCLK: clock
+      PLL1LOCKDETCLK: clock
+      PLL0OUTCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      PLL0OUTREFCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      PLL1OUTCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      PLL1OUTREFCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      REFCLKOUTMONITOR0: {clock_out: {from: GTREFCLK0, relation: independent}}
+      REFCLKOUTMONITOR1: {clock_out: {from: GTREFCLK0, relation: independent}}
+      BGBYPASSB: async
+      BGMONITORENB: async
+      BGPDB: async
+      BGRCALOVRD: async
+      BGRCALOVRDENB: async
+      RCALENB: async
+      "*RSVD*": unused
+      "DRP*": {sync: DRPCLK}
+      "*RESET": {reset_in: async}
+      "*LOCK": async
+      "*CLKLOST": async
+      "*MONITOROUT": async
+      "PLL*": async
+  GTPE2_CHANNEL:
+    reference: UG482, GTPE2_CHANNEL
+    ports:
+      DMONITORCLK: clock
+      DRPCLK: clock
+      PLL0CLK: clock
+      PLL0REFCLK: clock
+      PLL1CLK: clock
+      PLL1REFCLK: clock
+      RXUSRCLK: clock
+      RXUSRCLK2: clock
+      SIGVALIDCLK: clock
+      TXPHDLYTSTCLK: clock
+      TXUSRCLK: clock
+      TXUSRCLK2: clock
+      RXOUTCLK: {clock_out: {from: PLL0REFCLK, relation: independent}}
+      RXOUTCLKFABRIC: {clock_out: {from: PLL0REFCLK, relation: independent}}
+      RXOUTCLKPCS: {clock_out: {from: PLL0REFCLK, relation: independent}}
+      TXOUTCLK: {clock_out: {from: PLL0REFCLK, relation: independent}}
+      TXOUTCLKFABRIC: {clock_out: {from: PLL0REFCLK, relation: independent}}
+      TXOUTCLKPCS: {clock_out: {from: PLL0REFCLK, relation: independent}}
+      TXPD: async
+      RXPD: async
+      TXSYSCLKSEL: async
+      RXSYSCLKSEL: async
+      TXOUTCLKSEL: async
+      RXOUTCLKSEL: async
+      TXUSERRDY: async
+      RXUSERRDY: async
+      TXDIFFCTRL: async
+      TXMAINCURSOR: async
+      TXPOSTCURSOR: async
+      TXPOSTCURSORINV: async
+      TXPRECURSOR: async
+      TXPRECURSORINV: async
+      TXSWING: async
+      TXDEEMPH: async
+      TXMARGIN: async
+      TXBUFDIFFCTRL: async
+      TXINHIBIT: async
+      TXPISOPD: async
+      TXDIFFPD: async
+      TXPDELECIDLEMODE: async
+      RXDDIEN: async
+      RXELECIDLEMODE: async
+      RXELECIDLE: async
+      LOOPBACK: async
+      GTRESETSEL: async
+      RESETOVRD: async
+      EYESCANDATAERROR: async
+      EYESCANMODE: async
+      EYESCANTRIGGER: async
+      SETERRSTATUS: {sync: RXUSRCLK2}
+      PHYSTATUS: {sync: RXUSRCLK2}
+      "GT[HXYP]RX[NP]": unused
+      "GT[HXYP]TX[NP]": unused
+      "*RSVD*": unused
+      TSTIN: unused
+      "DRP*": {sync: DRPCLK}
+      "*RESETDONE": async
+      "*RESET": {reset_in: async}
+      "*LOCK": async
+      "*MONITOROUT": async
+      "*MONITOR": async
+      "TXPH*": async
+      "TXDLY*": async
+      "TXSYNC*": async
+      "TXPIPPM*": async
+      "RXPH*": async
+      "RXDLY*": async
+      "RXSYNC*": async
+      "RXDFE*": async
+      "RXLPM*": async
+      "RXOS*": async
+      "RXCDR*": async
+      "RXCHBOND*": {sync: RXUSRCLK}
+      "TX*": {sync: TXUSRCLK2}
+      "RX*": {sync: RXUSRCLK2}
+  GTXE2_COMMON:
+    reference: UG476, GTXE2_COMMON
+    ports:
+      DRPCLK: clock
+      GTGREFCLK: clock
+      GTNORTHREFCLK0: clock
+      GTNORTHREFCLK1: clock
+      GTREFCLK0: clock
+      GTREFCLK1: clock
+      GTSOUTHREFCLK0: clock
+      GTSOUTHREFCLK1: clock
+      QPLLLOCKDETCLK: clock
+      QPLLOUTCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      QPLLOUTREFCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      REFCLKOUTMONITOR: {clock_out: {from: GTREFCLK0, relation: independent}}
+      BGBYPASSB: async
+      BGMONITORENB: async
+      BGPDB: async
+      BGRCALOVRD: async
+      RCALENB: async
+      "*RSVD*": unused
+      "DRP*": {sync: DRPCLK}
+      "*RESET": {reset_in: async}
+      "*LOCK": async
+      "*CLKLOST": async
+      "*MONITOR": async
+      "QPLL*": async
+  GTXE2_CHANNEL:
+    reference: UG476, GTXE2_CHANNEL
+    ports:
+      CPLLLOCKDETCLK: clock
+      DRPCLK: clock
+      GTGREFCLK: clock
+      GTNORTHREFCLK0: clock
+      GTNORTHREFCLK1: clock
+      GTREFCLK0: clock
+      GTREFCLK1: clock
+      GTSOUTHREFCLK0: clock
+      GTSOUTHREFCLK1: clock
+      QPLLCLK: clock
+      QPLLREFCLK: clock
+      RXUSRCLK: clock
+      RXUSRCLK2: clock
+      TXPHDLYTSTCLK: clock
+      TXUSRCLK: clock
+      TXUSRCLK2: clock
+      GTREFCLKMONITOR: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXOUTCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXOUTCLKFABRIC: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXOUTCLKPCS: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXOUTCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXOUTCLKFABRIC: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXOUTCLKPCS: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXPD: async
+      RXPD: async
+      TXSYSCLKSEL: async
+      RXSYSCLKSEL: async
+      TXOUTCLKSEL: async
+      RXOUTCLKSEL: async
+      TXUSERRDY: async
+      RXUSERRDY: async
+      TXDIFFCTRL: async
+      TXMAINCURSOR: async
+      TXPOSTCURSOR: async
+      TXPOSTCURSORINV: async
+      TXPRECURSOR: async
+      TXPRECURSORINV: async
+      TXSWING: async
+      TXDEEMPH: async
+      TXMARGIN: async
+      TXBUFDIFFCTRL: async
+      TXINHIBIT: async
+      TXPISOPD: async
+      TXDIFFPD: async
+      TXPDELECIDLEMODE: async
+      RXLPMEN: async
+      RXDDIEN: async
+      RXELECIDLEMODE: async
+      RXMONITORSEL: async
+      RXELECIDLE: async
+      LOOPBACK: async
+      GTRESETSEL: async
+      RESETOVRD: async
+      EYESCANDATAERROR: async
+      EYESCANMODE: async
+      EYESCANTRIGGER: async
+      SETERRSTATUS: {sync: RXUSRCLK2}
+      PHYSTATUS: {sync: RXUSRCLK2}
+      "GT[HXYP]RX[NP]": unused
+      "GT[HXYP]TX[NP]": unused
+      "*RSVD*": unused
+      TSTIN: unused
+      TSTOUT: unused
+      "DRP*": {sync: DRPCLK}
+      "*RESETDONE": async
+      "*RESET": {reset_in: async}
+      "*LOCK": async
+      "*CLKLOST": async
+      "*MONITOROUT": async
+      "*MONITOR": async
+      "TXPH*": async
+      "TXDLY*": async
+      "TXQPI*": async
+      "RXPH*": async
+      "RXDLY*": async
+      "RXQPI*": async
+      "RXDFE*": async
+      "RXLPM*": async
+      "RXOS*": async
+      "RXCDR*": async
+      "RXCHBOND*": {sync: RXUSRCLK}
+      "TX*": {sync: TXUSRCLK2}
+      "RX*": {sync: RXUSRCLK2}
+      "CPLL*": async
+  GTHE2_COMMON:
+    reference: UG476, GTHE2_COMMON
+    ports:
+      DRPCLK: clock
+      GTGREFCLK: clock
+      GTNORTHREFCLK0: clock
+      GTNORTHREFCLK1: clock
+      GTREFCLK0: clock
+      GTREFCLK1: clock
+      GTSOUTHREFCLK0: clock
+      GTSOUTHREFCLK1: clock
+      QPLLLOCKDETCLK: clock
+      QPLLOUTCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      QPLLOUTREFCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      REFCLKOUTMONITOR: {clock_out: {from: GTREFCLK0, relation: independent}}
+      BGBYPASSB: async
+      BGMONITORENB: async
+      BGPDB: async
+      BGRCALOVRD: async
+      BGRCALOVRDENB: async
+      RCALENB: async
+      "*RSVD*": unused
+      "DRP*": {sync: DRPCLK}
+      "*RESET": {reset_in: async}
+      "*LOCK": async
+      "*CLKLOST": async
+      "*MONITOR": async
+      "QPLL*": async
+  GTHE2_CHANNEL:
+    reference: UG476, GTHE2_CHANNEL
+    ports:
+      CPLLLOCKDETCLK: clock
+      DMONITORCLK: clock
+      DRPCLK: clock
+      GTGREFCLK: clock
+      GTNORTHREFCLK0: clock
+      GTNORTHREFCLK1: clock
+      GTREFCLK0: clock
+      GTREFCLK1: clock
+      GTSOUTHREFCLK0: clock
+      GTSOUTHREFCLK1: clock
+      QPLLCLK: clock
+      QPLLREFCLK: clock
+      RXUSRCLK: clock
+      RXUSRCLK2: clock
+      SIGVALIDCLK: clock
+      TXPHDLYTSTCLK: clock
+      TXUSRCLK: clock
+      TXUSRCLK2: clock
+      GTREFCLKMONITOR: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXOUTCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXOUTCLKFABRIC: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXOUTCLKPCS: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXOUTCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXOUTCLKFABRIC: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXOUTCLKPCS: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXPD: async
+      RXPD: async
+      TXSYSCLKSEL: async
+      RXSYSCLKSEL: async
+      TXOUTCLKSEL: async
+      RXOUTCLKSEL: async
+      TXUSERRDY: async
+      RXUSERRDY: async
+      TXDIFFCTRL: async
+      TXMAINCURSOR: async
+      TXPOSTCURSOR: async
+      TXPOSTCURSORINV: async
+      TXPRECURSOR: async
+      TXPRECURSORINV: async
+      TXSWING: async
+      TXDEEMPH: async
+      TXMARGIN: async
+      TXBUFDIFFCTRL: async
+      TXINHIBIT: async
+      TXPISOPD: async
+      TXDIFFPD: async
+      TXPDELECIDLEMODE: async
+      RXLPMEN: async
+      RXDDIEN: async
+      RXELECIDLEMODE: async
+      RXMONITORSEL: async
+      RXELECIDLE: async
+      LOOPBACK: async
+      GTRESETSEL: async
+      RESETOVRD: async
+      EYESCANDATAERROR: async
+      EYESCANMODE: async
+      EYESCANTRIGGER: async
+      RSOSINTDONE: async
+      SETERRSTATUS: {sync: RXUSRCLK2}
+      PHYSTATUS: {sync: RXUSRCLK2}
+      "GT[HXYP]RX[NP]": unused
+      "GT[HXYP]TX[NP]": unused
+      "*RSVD*": unused
+      TSTIN: unused
+      "DRP*": {sync: DRPCLK}
+      "*RESETDONE": async
+      "*RESET": {reset_in: async}
+      "*LOCK": async
+      "*CLKLOST": async
+      "*MONITOROUT": async
+      "*MONITOR": async
+      "TXPH*": async
+      "TXDLY*": async
+      "TXSYNC*": async
+      "TXPIPPM*": async
+      "TXQPI*": async
+      "RXPH*": async
+      "RXDLY*": async
+      "RXSYNC*": async
+      "RXQPI*": async
+      "RXDFE*": async
+      "RXLPM*": async
+      "RXOS*": async
+      "RXCDR*": async
+      "RXCHBOND*": {sync: RXUSRCLK}
+      "TX*": {sync: TXUSRCLK2}
+      "RX*": {sync: RXUSRCLK2}
+      "CPLL*": async
+  GTHE3_COMMON:
+    reference: UG576, GTHE3_COMMON
+    ports:
+      DRPCLK: clock
+      GTGREFCLK0: clock
+      GTGREFCLK1: clock
+      GTNORTHREFCLK00: clock
+      GTNORTHREFCLK01: clock
+      GTNORTHREFCLK10: clock
+      GTNORTHREFCLK11: clock
+      GTREFCLK00: clock
+      GTREFCLK01: clock
+      GTREFCLK10: clock
+      GTREFCLK11: clock
+      GTSOUTHREFCLK00: clock
+      GTSOUTHREFCLK01: clock
+      GTSOUTHREFCLK10: clock
+      GTSOUTHREFCLK11: clock
+      QPLL0LOCKDETCLK: clock
+      QPLL1LOCKDETCLK: clock
+      QPLL0OUTCLK: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      QPLL0OUTREFCLK: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      QPLL1OUTCLK: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      QPLL1OUTREFCLK: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      REFCLKOUTMONITOR0: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      REFCLKOUTMONITOR1: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      BGBYPASSB: async
+      BGMONITORENB: async
+      BGPDB: async
+      BGRCALOVRD: async
+      BGRCALOVRDENB: async
+      RCALENB: async
+      "*RSVD*": unused
+      "DRP*": {sync: DRPCLK}
+      "*RESET": {reset_in: async}
+      "*LOCK": async
+      "*CLKLOST": async
+      "RX*": {sync: RXUSRCLK2}
+      "QPLL*": async
+  GTHE3_CHANNEL:
+    reference: UG576, GTHE3_CHANNEL
+    ports:
+      CPLLLOCKDETCLK: clock
+      DMONITORCLK: clock
+      DRPCLK: clock
+      GTGREFCLK: clock
+      GTNORTHREFCLK0: clock
+      GTNORTHREFCLK1: clock
+      GTREFCLK0: clock
+      GTREFCLK1: clock
+      GTSOUTHREFCLK0: clock
+      GTSOUTHREFCLK1: clock
+      QPLL0CLK: clock
+      QPLL0REFCLK: clock
+      QPLL1CLK: clock
+      QPLL1REFCLK: clock
+      RXLATCLK: clock
+      RXSLIPOUTCLK: clock
+      RXUSRCLK: clock
+      RXUSRCLK2: clock
+      SIGVALIDCLK: clock
+      TXLATCLK: clock
+      TXPHDLYTSTCLK: clock
+      TXUSRCLK: clock
+      TXUSRCLK2: clock
+      GTREFCLKMONITOR: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXOUTCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXOUTCLKFABRIC: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXOUTCLKPCS: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXRECCLKOUT: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXOUTCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXOUTCLKFABRIC: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXOUTCLKPCS: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXPD: async
+      RXPD: async
+      TXSYSCLKSEL: async
+      RXSYSCLKSEL: async
+      TXOUTCLKSEL: async
+      RXOUTCLKSEL: async
+      TXPLLCLKSEL: async
+      RXPLLCLKSEL: async
+      TXUSERRDY: async
+      RXUSERRDY: async
+      TXDIFFCTRL: async
+      TXMAINCURSOR: async
+      TXPOSTCURSOR: async
+      TXPOSTCURSORINV: async
+      TXPRECURSOR: async
+      TXPRECURSORINV: async
+      TXSWING: async
+      TXDEEMPH: async
+      TXMARGIN: async
+      TXBUFDIFFCTRL: async
+      TXINHIBIT: async
+      TXPISOPD: async
+      TXDIFFPD: async
+      TXPDELECIDLEMODE: async
+      RXLPMEN: async
+      RXELECIDLEMODE: async
+      RXMONITORSEL: async
+      RXELECIDLE: async
+      LOOPBACK: async
+      GTRESETSEL: async
+      RESETOVRD: async
+      RESETEXCEPTION: async
+      GTPOWERGOOD: async
+      EYESCANDATAERROR: async
+      EYESCANMODE: async
+      EYESCANTRIGGER: async
+      RXSLIPOUTCLKRDY: async
+      RSTCLKENTX: async
+      PHYSTATUS: {sync: RXUSRCLK2}
+      "GT[HXYP]RX[NP]": unused
+      "GT[HXYP]TX[NP]": unused
+      "*RSVD*": unused
+      "*RSRVD*": unused
+      TSTIN: unused
+      "BUFGT*": async
+      "DRP*": {sync: DRPCLK}
+      "*RESETDONE": async
+      "*RESET": {reset_in: async}
+      "*LOCK": async
+      "*CLKLOST": async
+      "*MONITOROUT": async
+      "TXPH*": async
+      "TXDLY*": async
+      "TXSYNC*": async
+      "TXPIPPM*": async
+      "TXQPI*": async
+      "RXPH*": async
+      "RXDLY*": async
+      "RXSYNC*": async
+      "RXQPI*": async
+      "RXDFE*": async
+      "RXLPM*": async
+      "RXOS*": async
+      "RXCDR*": async
+      "RXCHBOND*": {sync: RXUSRCLK}
+      "TX*": {sync: TXUSRCLK2}
+      "RX*": {sync: RXUSRCLK2}
+      "CPLL*": async
+      "LPBK*": async
+      "EVODDPHI*": async
+  GTYE3_COMMON:
+    reference: UG578, GTYE3_COMMON
+    ports:
+      DRPCLK: clock
+      GTGREFCLK0: clock
+      GTGREFCLK1: clock
+      GTNORTHREFCLK00: clock
+      GTNORTHREFCLK01: clock
+      GTNORTHREFCLK10: clock
+      GTNORTHREFCLK11: clock
+      GTREFCLK00: clock
+      GTREFCLK01: clock
+      GTREFCLK10: clock
+      GTREFCLK11: clock
+      GTSOUTHREFCLK00: clock
+      GTSOUTHREFCLK01: clock
+      GTSOUTHREFCLK10: clock
+      GTSOUTHREFCLK11: clock
+      QPLL0LOCKDETCLK: clock
+      QPLL1LOCKDETCLK: clock
+      QPLL0OUTCLK: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      QPLL0OUTREFCLK: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      QPLL1OUTCLK: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      QPLL1OUTREFCLK: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      REFCLKOUTMONITOR0: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      REFCLKOUTMONITOR1: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      BGBYPASSB: async
+      BGMONITORENB: async
+      BGPDB: async
+      BGRCALOVRD: async
+      BGRCALOVRDENB: async
+      RCALENB: async
+      "*RSVD*": unused
+      "DRP*": {sync: DRPCLK}
+      "*RESET": {reset_in: async}
+      "*LOCK": async
+      "*CLKLOST": async
+      "RX*": {sync: RXUSRCLK2}
+      "QPLL*": async
+      "SDM*": async
+  GTYE3_CHANNEL:
+    reference: UG578, GTYE3_CHANNEL
+    ports:
+      CPLLLOCKDETCLK: clock
+      DMONITORCLK: clock
+      DRPCLK: clock
+      GTGREFCLK: clock
+      GTNORTHREFCLK0: clock
+      GTNORTHREFCLK1: clock
+      GTREFCLK0: clock
+      GTREFCLK1: clock
+      GTSOUTHREFCLK0: clock
+      GTSOUTHREFCLK1: clock
+      QPLL0CLK: clock
+      QPLL0REFCLK: clock
+      QPLL1CLK: clock
+      QPLL1REFCLK: clock
+      RXLATCLK: clock
+      RXSLIPOUTCLK: clock
+      RXUSRCLK: clock
+      RXUSRCLK2: clock
+      SIGVALIDCLK: clock
+      TXLATCLK: clock
+      TXPHDLYTSTCLK: clock
+      TXUSRCLK: clock
+      TXUSRCLK2: clock
+      GTREFCLKMONITOR: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXOUTCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXOUTCLKFABRIC: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXOUTCLKPCS: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXRECCLKOUT: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXOUTCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXOUTCLKFABRIC: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXOUTCLKPCS: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXPD: async
+      RXPD: async
+      TXSYSCLKSEL: async
+      RXSYSCLKSEL: async
+      TXOUTCLKSEL: async
+      RXOUTCLKSEL: async
+      TXPLLCLKSEL: async
+      RXPLLCLKSEL: async
+      TXUSERRDY: async
+      RXUSERRDY: async
+      TXDIFFCTRL: async
+      TXMAINCURSOR: async
+      TXPOSTCURSOR: async
+      TXPRECURSOR: async
+      TXSWING: async
+      TXDEEMPH: async
+      TXMARGIN: async
+      TXBUFDIFFCTRL: async
+      TXINHIBIT: async
+      TXPISOPD: async
+      TXDIFFPD: async
+      TXPDELECIDLEMODE: async
+      RXLPMEN: async
+      RXELECIDLEMODE: async
+      RXMONITORSEL: async
+      RXELECIDLE: async
+      LOOPBACK: async
+      GTRESETSEL: async
+      RESETOVRD: async
+      RESETEXCEPTION: async
+      GTPOWERGOOD: async
+      EYESCANDATAERROR: async
+      EYESCANMODE: async
+      EYESCANTRIGGER: async
+      RXSLIPOUTCLKRDY: async
+      RSTCLKENTX: async
+      PHYSTATUS: {sync: RXUSRCLK2}
+      "GT[HXYP]RX[NP]": unused
+      "GT[HXYP]TX[NP]": unused
+      "*RSVD*": unused
+      "*RSRVD*": unused
+      TSTIN: unused
+      "BUFGT*": async
+      "DRP*": {sync: DRPCLK}
+      "*RESETDONE": async
+      "*RESET": {reset_in: async}
+      "*LOCK": async
+      "*CLKLOST": async
+      "*MONITOROUT": async
+      "TXPH*": async
+      "TXDLY*": async
+      "TXSYNC*": async
+      "TXPIPPM*": async
+      "RXPH*": async
+      "RXDLY*": async
+      "RXSYNC*": async
+      "RXDFE*": async
+      "RXLPM*": async
+      "RXOS*": async
+      "RXCDR*": async
+      "RXCKCAL*": async
+      "RXCHBOND*": {sync: RXUSRCLK}
+      "TX*": {sync: TXUSRCLK2}
+      "RX*": {sync: RXUSRCLK2}
+      "CPLL*": async
+      "LPBK*": async
+      "EVODDPHI*": async
+      "ELPCAL*": async
+      "CDRSTEP*": async
+  GTHE4_COMMON:
+    reference: UG576, GTHE4_COMMON
+    ports:
+      DRPCLK: clock
+      GTGREFCLK0: clock
+      GTGREFCLK1: clock
+      GTNORTHREFCLK00: clock
+      GTNORTHREFCLK01: clock
+      GTNORTHREFCLK10: clock
+      GTNORTHREFCLK11: clock
+      GTREFCLK00: clock
+      GTREFCLK01: clock
+      GTREFCLK10: clock
+      GTREFCLK11: clock
+      GTSOUTHREFCLK00: clock
+      GTSOUTHREFCLK01: clock
+      GTSOUTHREFCLK10: clock
+      GTSOUTHREFCLK11: clock
+      QPLL0LOCKDETCLK: clock
+      QPLL1LOCKDETCLK: clock
+      QPLL0OUTCLK: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      QPLL0OUTREFCLK: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      QPLL1OUTCLK: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      QPLL1OUTREFCLK: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      REFCLKOUTMONITOR0: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      REFCLKOUTMONITOR1: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      BGBYPASSB: async
+      BGMONITORENB: async
+      BGPDB: async
+      BGRCALOVRD: async
+      BGRCALOVRDENB: async
+      RCALENB: async
+      "*RSVD*": unused
+      "DRP*": {sync: DRPCLK}
+      "*RESET": {reset_in: async}
+      "*LOCK": async
+      "*CLKLOST": async
+      "RX*": {sync: RXUSRCLK2}
+      "QPLL*": async
+      "SDM*": async
+      "TCON*": async
+  GTHE4_CHANNEL:
+    reference: UG576, GTHE4_CHANNEL
+    ports:
+      CPLLLOCKDETCLK: clock
+      DMONITORCLK: clock
+      DRPCLK: clock
+      GTGREFCLK: clock
+      GTNORTHREFCLK0: clock
+      GTNORTHREFCLK1: clock
+      GTREFCLK0: clock
+      GTREFCLK1: clock
+      GTSOUTHREFCLK0: clock
+      GTSOUTHREFCLK1: clock
+      QPLL0CLK: clock
+      QPLL0REFCLK: clock
+      QPLL1CLK: clock
+      QPLL1REFCLK: clock
+      RXLATCLK: clock
+      RXSLIPOUTCLK: clock
+      RXUSRCLK: clock
+      RXUSRCLK2: clock
+      SIGVALIDCLK: clock
+      TXLATCLK: clock
+      TXPHDLYTSTCLK: clock
+      TXUSRCLK: clock
+      TXUSRCLK2: clock
+      DMONITOROUTCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      GTREFCLKMONITOR: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXOUTCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXOUTCLKFABRIC: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXOUTCLKPCS: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXRECCLKOUT: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXOUTCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXOUTCLKFABRIC: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXOUTCLKPCS: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXPD: async
+      RXPD: async
+      TXSYSCLKSEL: async
+      RXSYSCLKSEL: async
+      TXOUTCLKSEL: async
+      RXOUTCLKSEL: async
+      TXPLLCLKSEL: async
+      RXPLLCLKSEL: async
+      TXUSERRDY: async
+      RXUSERRDY: async
+      TXDIFFCTRL: async
+      TXMAINCURSOR: async
+      TXPOSTCURSOR: async
+      TXPRECURSOR: async
+      TXSWING: async
+      TXDEEMPH: async
+      TXMARGIN: async
+      TXINHIBIT: async
+      TXPISOPD: async
+      TXPDELECIDLEMODE: async
+      RXLPMEN: async
+      RXELECIDLEMODE: async
+      RXMONITORSEL: async
+      RXELECIDLE: async
+      RXTERMINATION: async
+      LOOPBACK: async
+      GTRXRESETSEL: async
+      GTTXRESETSEL: async
+      RESETOVRD: async
+      RESETEXCEPTION: async
+      GTPOWERGOOD: async
+      EYESCANDATAERROR: async
+      EYESCANTRIGGER: async
+      RXSLIPOUTCLKRDY: async
+      POWERPRESENT: async
+      INCPCTRL: async
+      FREQOS: async
+      RXAFECFOKEN: async
+      PHYSTATUS: {sync: RXUSRCLK2}
+      "GT[HXYP]RX[NP]": unused
+      "GT[HXYP]TX[NP]": unused
+      "*RSVD*": unused
+      "*RSRVD*": unused
+      TSTIN: unused
+      "BUFGT*": async
+      "DRP*": {sync: DRPCLK}
+      "*RESETDONE": async
+      "*RESET": {reset_in: async}
+      "*LOCK": async
+      "*CLKLOST": async
+      "*MONITOROUT": async
+      "TXPH*": async
+      "TXDLY*": async
+      "TXSYNC*": async
+      "TXPIPPM*": async
+      "TXQPI*": async
+      "RXPH*": async
+      "RXDLY*": async
+      "RXSYNC*": async
+      "RXQPI*": async
+      "RXDFE*": async
+      "RXLPM*": async
+      "RXOS*": async
+      "RXCDR*": async
+      "RXCKCAL*": async
+      "RXCHBOND*": {sync: RXUSRCLK}
+      "TX*": {sync: TXUSRCLK2}
+      "RX*": {sync: RXUSRCLK2}
+      "CPLL*": async
+      "CDRSTEP*": async
+  GTYE4_COMMON:
+    reference: UG578, GTYE4_COMMON
+    ports:
+      DRPCLK: clock
+      GTGREFCLK0: clock
+      GTGREFCLK1: clock
+      GTNORTHREFCLK00: clock
+      GTNORTHREFCLK01: clock
+      GTNORTHREFCLK10: clock
+      GTNORTHREFCLK11: clock
+      GTREFCLK00: clock
+      GTREFCLK01: clock
+      GTREFCLK10: clock
+      GTREFCLK11: clock
+      GTSOUTHREFCLK00: clock
+      GTSOUTHREFCLK01: clock
+      GTSOUTHREFCLK10: clock
+      GTSOUTHREFCLK11: clock
+      QPLL0LOCKDETCLK: clock
+      QPLL1LOCKDETCLK: clock
+      QPLL0OUTCLK: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      QPLL0OUTREFCLK: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      QPLL1OUTCLK: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      QPLL1OUTREFCLK: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      REFCLKOUTMONITOR0: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      REFCLKOUTMONITOR1: {clock_out: {from: GTGREFCLK0, relation: independent}}
+      BGBYPASSB: async
+      BGMONITORENB: async
+      BGPDB: async
+      BGRCALOVRD: async
+      BGRCALOVRDENB: async
+      RCALENB: async
+      "*RSVD*": unused
+      "DRP*": {sync: DRPCLK}
+      "*RESET": {reset_in: async}
+      "*LOCK": async
+      "*CLKLOST": async
+      "RX*": {sync: RXUSRCLK2}
+      "QPLL*": async
+      "UB*": unused
+      "SDM*": async
+  GTYE4_CHANNEL:
+    reference: UG578, GTYE4_CHANNEL
+    ports:
+      CPLLLOCKDETCLK: clock
+      DMONITORCLK: clock
+      DRPCLK: clock
+      GTGREFCLK: clock
+      GTNORTHREFCLK0: clock
+      GTNORTHREFCLK1: clock
+      GTREFCLK0: clock
+      GTREFCLK1: clock
+      GTSOUTHREFCLK0: clock
+      GTSOUTHREFCLK1: clock
+      QPLL0CLK: clock
+      QPLL0REFCLK: clock
+      QPLL1CLK: clock
+      QPLL1REFCLK: clock
+      RXLATCLK: clock
+      RXSLIPOUTCLK: clock
+      RXUSRCLK: clock
+      RXUSRCLK2: clock
+      SIGVALIDCLK: clock
+      TXLATCLK: clock
+      TXPHDLYTSTCLK: clock
+      TXUSRCLK: clock
+      TXUSRCLK2: clock
+      DMONITOROUTCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      GTREFCLKMONITOR: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXOUTCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXOUTCLKFABRIC: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXOUTCLKPCS: {clock_out: {from: GTREFCLK0, relation: independent}}
+      RXRECCLKOUT: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXOUTCLK: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXOUTCLKFABRIC: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXOUTCLKPCS: {clock_out: {from: GTREFCLK0, relation: independent}}
+      TXPD: async
+      RXPD: async
+      TXSYSCLKSEL: async
+      RXSYSCLKSEL: async
+      TXOUTCLKSEL: async
+      RXOUTCLKSEL: async
+      TXPLLCLKSEL: async
+      RXPLLCLKSEL: async
+      TXUSERRDY: async
+      RXUSERRDY: async
+      TXDIFFCTRL: async
+      TXMAINCURSOR: async
+      TXPOSTCURSOR: async
+      TXPRECURSOR: async
+      TXSWING: async
+      TXDEEMPH: async
+      TXMARGIN: async
+      TXINHIBIT: async
+      TXPISOPD: async
+      TXPDELECIDLEMODE: async
+      RXLPMEN: async
+      RXELECIDLEMODE: async
+      RXMONITORSEL: async
+      RXELECIDLE: async
+      RXTERMINATION: async
+      LOOPBACK: async
+      GTRXRESETSEL: async
+      GTTXRESETSEL: async
+      RESETOVRD: async
+      RESETEXCEPTION: async
+      GTPOWERGOOD: async
+      EYESCANDATAERROR: async
+      EYESCANTRIGGER: async
+      RXSLIPOUTCLKRDY: async
+      POWERPRESENT: async
+      INCPCTRL: async
+      FREQOS: async
+      RXAFECFOKEN: async
+      PHYSTATUS: {sync: RXUSRCLK2}
+      "GT[HXYP]RX[NP]": unused
+      "GT[HXYP]TX[NP]": unused
+      "*RSVD*": unused
+      "*RSRVD*": unused
+      TSTIN: unused
+      "BUFGT*": async
+      "DRP*": {sync: DRPCLK}
+      "*RESETDONE": async
+      "*RESET": {reset_in: async}
+      "*LOCK": async
+      "*CLKLOST": async
+      "*MONITOROUT": async
+      "TXPH*": async
+      "TXDLY*": async
+      "TXSYNC*": async
+      "TXPIPPM*": async
+      "RXPH*": async
+      "RXDLY*": async
+      "RXSYNC*": async
+      "RXDFE*": async
+      "RXLPM*": async
+      "RXOS*": async
+      "RXCDR*": async
+      "RXCKCAL*": async
+      "RXCHBOND*": {sync: RXUSRCLK}
+      "TX*": {sync: TXUSRCLK2}
+      "RX*": {sync: RXUSRCLK2}
+      "CPLL*": async
+      "CDRSTEP*": async
+
+  # PCI Express integrated blocks. The ports of the PIPE, DRP and memory interfaces, the clocks and the resets are
+  # declared; the user side (TRN, AXI4-Stream, CFG) of the blocks with one user clock is timed by it. The UltraScale+
+  # blocks (PCIE40E4, PCIE4CE4) have two user clocks, which interface uses which depends on the core's configuration:
+  # declare their user side in the design section, such as "MAXIS*": {sync: USERCLK2}.
+
+  PCIE_2_1:
+    reference: UG477, PCIE_2_1
+    ports:
+      PIPECLK: clock
+      USERCLK: clock
+      USERCLK2: clock
+      DRPCLK: clock
+      CMRSTN: {reset_in: async}
+      CMSTICKYRSTN: {reset_in: async}
+      DLRSTN: {reset_in: async}
+      FUNCLVLRSTN: {reset_in: async}
+      PLRSTN: {reset_in: async}
+      SYSRSTN: {reset_in: async}
+      TLRSTN: {reset_in: async}
+      USERRSTN: {reset_out: {clock: USERCLK2, release: sync}}
+      RECEIVEDFUNCLVLRSTN: async
+      LNKCLKEN: async
+      "DRP*": {sync: DRPCLK}
+      "PIPE*": {sync: PIPECLK}
+      "MI*": {sync: USERCLK}
+      "TRN*": {sync: USERCLK2}
+      "CFG*": {sync: USERCLK2}
+      "PL*": {sync: USERCLK2}
+      "TL*": {sync: USERCLK2}
+      "LL2*": {sync: USERCLK2}
+      "DBG*": {sync: USERCLK2}
+  PCIE_3_0:
+    reference: UG023, PCIE_3_0
+    ports:
+      CORECLK: clock
+      "CORECLKMI*": clock
+      PIPECLK: clock
+      USERCLK: clock
+      DRPCLK: clock
+      RECCLK: clock
+      RESETN: {reset_in: async}
+      MGMTRESETN: {reset_in: async}
+      MGMTSTICKYRESETN: {reset_in: async}
+      "DRP*": {sync: DRPCLK}
+      "PIPE*": {sync: PIPECLK}
+      "MI*": {sync: CORECLK}
+      "MAXIS*": {sync: USERCLK}
+      "SAXIS*": {sync: USERCLK}
+      "CFG*": {sync: USERCLK}
+      "PCIE*": {sync: USERCLK}
+      "PL*": {sync: USERCLK}
+      "DBG*": {sync: USERCLK}
+  PCIE_3_1:
+    reference: PG156, PCIE_3_1
+    ports:
+      CORECLK: clock
+      "CORECLKMI*": clock
+      PIPECLK: clock
+      USERCLK: clock
+      DRPCLK: clock
+      MCAPCLK: clock
+      MCAPPERST0B: {reset_in: async}
+      MCAPPERST1B: {reset_in: async}
+      PCIEPERST0B: async
+      PCIEPERST1B: async
+      "MCAP*": {sync: MCAPCLK}
+      "SPARE*": unused
+      RESETN: {reset_in: async}
+      MGMTRESETN: {reset_in: async}
+      MGMTSTICKYRESETN: {reset_in: async}
+      "DRP*": {sync: DRPCLK}
+      "PIPE*": {sync: PIPECLK}
+      "MI*": {sync: CORECLK}
+      "MAXIS*": {sync: USERCLK}
+      "SAXIS*": {sync: USERCLK}
+      "CFG*": {sync: USERCLK}
+      "PCIE*": {sync: USERCLK}
+      "PL*": {sync: USERCLK}
+      "DBG*": {sync: USERCLK}
+      "LL2*": {sync: USERCLK}
+  PCIE40E4:
+    reference: PG213, PCIE40E4
+    ports:
+      CORECLK: clock
+      "CORECLKMI*": clock
+      PIPECLK: clock
+      USERCLK: clock
+      USERCLK2: clock
+      DRPCLK: clock
+      MCAPCLK: clock
+      RESETN: {reset_in: async}
+      MGMTRESETN: {reset_in: async}
+      MGMTSTICKYRESETN: {reset_in: async}
+      MCAPPERST0B: {reset_in: async}
+      MCAPPERST1B: {reset_in: async}
+      PCIEPERST0B: async
+      PCIEPERST1B: async
+      "DRP*": {sync: DRPCLK}
+      "PIPE*": {sync: PIPECLK}
+      "MI*": {sync: CORECLK}
+      "MCAP*": {sync: MCAPCLK}
+      "USERSPARE*": unused
+  PCIE4CE4:
+    reference: PG213, PCIE4CE4
+    ports:
+      CORECLK: clock
+      "CORECLKMI*": clock
+      PIPECLK: clock
+      USERCLK: clock
+      USERCLK2: clock
+      DRPCLK: clock
+      MCAPCLK: clock
+      RESETN: {reset_in: async}
+      MGMTRESETN: {reset_in: async}
+      MGMTSTICKYRESETN: {reset_in: async}
+      MCAPPERST0B: {reset_in: async}
+      MCAPPERST1B: {reset_in: async}
+      PCIEPERST0B: async
+      PCIEPERST1B: async
+      "DRP*": {sync: DRPCLK}
+      "PIPE*": {sync: PIPECLK}
+      "MI*": {sync: CORECLK}
+      "MCAP*": {sync: MCAPCLK}
+      "USERSPARE*": unused
+      CORECLKCCIX: clock
