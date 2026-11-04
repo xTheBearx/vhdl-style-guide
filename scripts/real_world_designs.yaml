@@ -1161,3 +1161,63 @@ designs:
       - protocols/clink/7Series/*.vhd
       - protocols/clink/rtl/*.vhd
   known: []
+# SystemVerilog designs: they need read_slang, the reader of the yosys-slang plugin, as in the OSS CAD Suite
+- name: ibex_core
+  project: ibex
+  requires: [read_slang]
+  design:
+    top: ibex_core
+    include_directories:
+    - vendor/lowrisc_ip/ip/prim/rtl
+    - vendor/lowrisc_ip/dv/sv/dv_utils
+    libraries:
+    - name: work
+      files:
+      - rtl/*.sv
+      exclude: ["*tracer*", "*top_tracing*"]
+  known:
+  # Real by the rule: the core takes a reset synchronized outside it
+  - 'rtl/ibex_load_store_unit.sv(264)design_015 -- Reset rst_ni is released asynchronously: it resets registers clocked by clk_i without a reset synchronizer (69 registers)'
+  # The capability registers of CHERIoT, which this configuration does not load
+  - 'rtl/ibex_load_store_unit.sv(686)design_005 -- Register cap_lsw_data_q in ibex_load_store_unit never changes: it is always 00000000000000000000000000000000'
+  - 'rtl/ibex_load_store_unit.sv(687)design_005 -- Register cap_lsw_tag_q in ibex_load_store_unit never changes: it is always 0'
+  - 'rtl/ibex_load_store_unit.sv(692)design_005 -- Register cap_lsw_err_q in ibex_load_store_unit never changes: it is always 0'
+  # The capability registers of CHERIoT, which this configuration does not use
+  - 'rtl/ibex_load_store_unit.sv(657)design_006 -- Register resp_lc_clrperm_q in ibex_load_store_unit is never used'
+  - 'rtl/ibex_load_store_unit.sv(661)design_006 -- Register cap_lsw_data_q in ibex_load_store_unit is never used'
+  - 'rtl/ibex_load_store_unit.sv(662)design_006 -- Register cap_lsw_tag_q in ibex_load_store_unit is never used'
+  # Real: decode and execute in few cycles, counted as operators before synthesis
+  - 'rtl/ibex_core.sv(521)design_007 -- Path of 59 logic levels to output core_busy_o of ibex_core, more than 48'
+  - 'rtl/ibex_core.sv(548)design_007 -- Path of 120 logic levels into instance if_stage_i in ibex_core, more than 48'
+  - 'rtl/ibex_core.sv(548)design_007 -- Path of 67 logic levels to output instr_addr_o of ibex_core, more than 48'
+  - 'rtl/ibex_core.sv(548)design_007 -- Path of 57 logic levels to output instr_req_o of ibex_core, more than 48'
+  - 'rtl/ibex_core.sv(674)design_007 -- Path of 55 logic levels into instance id_stage_i in ibex_core, more than 48'
+  - 'rtl/ibex_core.sv(1128)design_007 -- Path of 69 logic levels to output rf_wcap_ecc_wb_o of ibex_core, more than 48'
+  - 'rtl/ibex_core.sv(1128)design_007 -- Path of 69 logic levels to output rf_wdata_wb_ecc_o of ibex_core, more than 48'
+  - 'rtl/ibex_core.sv(1128)design_007 -- Path of 68 logic levels to output rf_we_wb_o of ibex_core, more than 48'
+  - 'rtl/ibex_core.sv(1461)design_007 -- Path of 77 logic levels into instance cs_registers_i in ibex_core, more than 48'
+  - 'rtl/ibex_id_stage.sv(616)design_007 -- Path of 59 logic levels into instance controller_i in ibex_id_stage, more than 48'
+  - 'rtl/ibex_id_stage.sv(798)design_007 -- Path of 59 logic levels to register branch_jump_set_done_q in ibex_id_stage, more than 48'
+- name: common_cells_cdc_fifo_gray
+  project: common_cells
+  requires: [read_slang]
+  design:
+    top: cc_cdc_fifo_gray
+    include_directories: [include]
+    # The synchronizer cell comes from the technology library, tech_cells_generic: a black box
+    black_boxes:
+      tc_sync:
+        archetype: synchronizer
+        destination_clock: clk_i
+        input: serial_i
+        output: serial_o
+        reset: rst_ni
+    libraries:
+    - name: work
+      files:
+      - src/*.sv
+      exclude: [src/assert_rpt_pkg.sv]
+  known:
+  # Real by the rule: each side of the FIFO takes a reset synchronized outside it
+  - 'src/cc_cdc_fifo_gray.sv(321)design_015 -- Reset src_rst_ni is released asynchronously: it resets registers clocked by src_clk_i without a reset synchronizer (9 registers)'
+  - 'src/cc_cdc_fifo_gray.sv(375)design_015 -- Reset dst_rst_ni is released asynchronously: it resets registers clocked by dst_clk_i without a reset synchronizer (5 registers)'

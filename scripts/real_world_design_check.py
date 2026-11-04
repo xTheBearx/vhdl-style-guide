@@ -3,7 +3,8 @@
 """
 Run design analysis (mhsg --design) on configurations of the open source projects of the real world check.
 
-The designs, and the findings they are known to have, are listed in scripts/real_world_designs.yaml. The projects
+The designs, and the findings they are known to have, are listed in scripts/real_world_designs.yaml. A design that
+requires read_slang, the SystemVerilog reader of the yosys-slang plugin, is skipped when Yosys does not have it. The projects
 are fetched like scripts/real_world_check.py does. The run fails when a design has a finding that is not listed
 as known, or when design analysis does not run. Known findings that are no longer found are reported, so the list
 can be updated.
@@ -17,6 +18,7 @@ Example:
 
 import argparse
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -65,6 +67,16 @@ def run_design(dDesign, sProjectDirectory, iTimeout):
     return oProcess.returncode, lFindings, lOther, fSeconds
 
 
+def available_tools():
+    """The optional tools designs can require: read_slang, when Yosys has the yosys-slang plugin."""
+    if real_world_check.REPO_ROOT not in sys.path:
+        sys.path.insert(0, real_world_check.REPO_ROOT)
+    from mhsg.design import tools  # noqa: E402  pylint: disable=import-outside-toplevel
+
+    sYosys = shutil.which("yosys")
+    return {"read_slang"} if sYosys and tools.has_slang(sYosys) else set()
+
+
 def main(lArguments=None):
     oParser = argparse.ArgumentParser(description="Run design analysis on real world designs and compare the findings with the known ones.")
     oParser.add_argument("--designs", default=DEFAULT_DESIGNS, help="design list (default: %(default)s)")
@@ -84,7 +96,12 @@ def main(lArguments=None):
     dProjects = {d["name"]: d for d in real_world_check.load_projects(oArguments.projects, [])}
 
     bFailed = False
+    setTools = available_tools()
     for dDesign in lDesigns:
+        lMissing = [s for s in dDesign.get("requires") or [] if s not in setTools]
+        if lMissing:
+            print(f"{dDesign['name']}: skipped, needs {', '.join(lMissing)}", flush=True)
+            continue
         dProject = dProjects[dDesign["project"]]
         sProjectDirectory = real_world_check.fetch_project(dProject, oArguments.cache)
         iStatus, lFindings, lOther, fSeconds = run_design(dDesign, sProjectDirectory, oArguments.timeout)

@@ -139,3 +139,67 @@ jobs:
             uv run --locked mhsg --qualify $sRuleSet > qualification_$sRuleSet.txt || { tail -40 qualification_$sRuleSet.txt; exit 1; }
             tail -3 qualification_$sRuleSet.txt
           done
+
+  # The same with the YosysHQ OSS CAD Suite, which has what the Ubuntu packages lack: GHDL 7, the yosys-slang plugin
+  # for SystemVerilog designs, and SymbiYosys for design_025. The suite is pinned to a dated release and cached, so a
+  # new release does not change the results on its own; update the date to move to a newer one.
+  design-oss:
+    runs-on: ubuntu-24.04
+    env:
+      OSS_CAD_SUITE_DATE: "2026-11-03"
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # The archive is cached, 750 MB, rather than the 2.5 GB it unpacks to
+      - name: tools.cache
+        id: tools-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/oss-cad-suite.tgz
+          key: oss-cad-suite-${{ env.OSS_CAD_SUITE_DATE }}
+      - name: tools.download
+        if: steps.tools-cache.outputs.cache-hit != 'true'
+        run: |
+          sCompact=$(echo "$OSS_CAD_SUITE_DATE" | tr -d -)
+          curl -fsSL --retry 3 -o "$HOME/oss-cad-suite.tgz" "https://github.com/YosysHQ/oss-cad-suite-build/releases/download/$OSS_CAD_SUITE_DATE/oss-cad-suite-linux-x64-$sCompact.tgz"
+      - name: tools.install
+        run: |
+          tar xzf "$HOME/oss-cad-suite.tgz" -C "$HOME"
+      # The lint rules that run Verilator record the messages of Ubuntu's Verilator, which words them otherwise than
+      # the newer one of the suite: the suite's is left out
+      - name: tools.verilator
+        run: |
+          rm -f "$HOME"/oss-cad-suite/bin/verilator*
+          sudo apt-get update
+          sudo apt-get install --yes verilator
+      - name: tools.path
+        run: |
+          echo "$HOME/oss-cad-suite/bin" >> "$GITHUB_PATH"
+      - name: uv.install
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: ${{ env.BUILD_PYTHON }}
+      - name: tools.versions
+        run: |
+          yosys -V
+          ghdl --version | head -1
+          sby --version
+          verilator --version
+      - name: test
+        env:
+          MHSG_REQUIRE_DESIGN_TOOLS: "1"
+        run: |
+          uv run --locked pytest tests/design
+      - name: qualification
+        run: |
+          for sRuleSet in cdc do254 do254_plus starc; do
+            uv run --locked mhsg --qualify $sRuleSet > qualification_$sRuleSet.txt || { tail -40 qualification_$sRuleSet.txt; exit 1; }
+            tail -3 qualification_$sRuleSet.txt
+          done
+      - name: real-world SystemVerilog designs
+        # The designs that need read_slang; the VHDL designs are checked with the Ubuntu packages
+        run: |
+          uv run --locked python scripts/real_world_design_check.py --design ibex_core --design common_cells_cdc_fifo_gray

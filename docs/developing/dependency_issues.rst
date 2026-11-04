@@ -173,6 +173,11 @@ assertions and covers of the design out of the formal netlist and keeps its assu
 Verilator
 ---------
 
+**Quirk: Verilator 5.055 (OSS CAD Suite of 2026-11) words its messages otherwise than 5.020.** It cites IEEE
+1800-2023 instead of 1800-2017 in MULTIDRIVEN, and no longer reports a signal driven by blocks of different clocks
+as MULTIDRIVEN. The qualification suites record the messages of 5.020, the Verilator of Ubuntu; the design-oss job of
+CI uses it in place of the suite's.
+
 **Quirk: an include file is not looked for in the directory of the file including it.** Verilator stops with
 :code:`Cannot find include file: prim_assert.sv` where slang finds it next to the including file; IEEE 1800 leaves the
 search to the tool. MHSG passes the directory of each file of the run as an include directory
