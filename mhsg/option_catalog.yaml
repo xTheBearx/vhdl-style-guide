@@ -20,6 +20,10 @@ options:
       record_type_definition_001:
         values: [new_line, same_line, move_left]
         description: new_line moves the record keyword to its own line; same_line (default) and move_left keep it on the line of the type declaration. Any value other than new_line moves it left.
+  active_low_pattern:
+    type: string
+    label: Active low name pattern
+    description: A regular expression, matched ignoring case, that the names of active low resets match, such as rst_n.
   after_generic_map_aspect:
     type: enum
     values: [add_new_line, remove_new_line]
@@ -277,6 +281,11 @@ options:
     values: [left, center, right]
     label: Header alignment
     description: Horizontal position of header_string within the header line.
+  header_fields:
+    type: list
+    item_type: string
+    label: Header fields
+    description: Regular expressions, matched ignoring case, that the header comment at the start of a file must each match, such as author.
   header_left:
     type: string
     nullable: true
@@ -404,11 +413,53 @@ options:
     minimum: 1
     label: Longest name
     description: The most characters in a name other than that of a module or instance.
+  maximum_ports:
+    type: integer
+    minimum: 1
+    label: Most ports
+    description: The most ports one module may have.
+  maximum_states:
+    type: integer
+    minimum: 1
+    label: Most states
+    description: The most states, items of its case statement, one state machine may have.
+  port_pattern:
+    type: string
+    label: Port name pattern
+    description: A regular expression that port names match and the names of the other signals of a module do not.
+  extensions:
+    type: list
+    item_type: string
+    label: Include file extensions
+    description: The extensions the files an include directive names may have, such as .vh.
+  maximum_outputs:
+    type: integer
+    minimum: 0
+    label: Most outputs of an always block
+    description: The most signals one always block may assign.
+  maximum_lines:
+    type: integer
+    minimum: 1
+    label: Most lines of an always block
+    description: The most lines one always block may have.
+    by_rule:
+      sv_statement_014:
+        label: Most lines of a fork join block
+        description: The most lines one fork join block may have.
+  maximum_items:
+    type: integer
+    minimum: 1
+    label: Most case items
+    description: The most items one case statement may have.
   maximum_depth:
     type: integer
     minimum: 1
     label: Maximum logic depth
     description: The most logic levels a combinational path may have, counting operators such as adders, comparisons and multiplexers.
+    by_rule:
+      sv_statement_008:
+        label: Most nested if statements
+        description: The deepest an if statement may be nested in others; an else if does not nest deeper.
   maximum_levels:
     type: integer
     label: Most look-up table levels
@@ -541,6 +592,15 @@ options:
     maximum: 7
     label: Phase
     description: Phase (1 to 7) in which the rule runs; rules run in increasing phase order. Changing it is rarely needed and can break the ordering between rules.
+  state_pattern:
+    type: string
+    label: State name pattern
+    description: A regular expression, matched ignoring case, that the selector of the case statement of a state machine matches.
+  testbench_patterns:
+    type: list
+    item_type: string
+    label: Testbench file names
+    description: File name patterns with * and ? that the names of files holding a testbench, a module without ports, match.
   verilator_warnings:
     type: list
     item_type: string

@@ -112,3 +112,96 @@ This rule checks for comparisons with x or z, which are never true in synthesis,
 .. code-block:: systemverilog
 
    if (data_valid) begin
+
+sv_literal_006
+##############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_literal_x_or_z`
+
+This rule checks for literals with x or z digits, as the STARC guide asks (2.10.1.6, and 2.1.6.5 for indexes).
+The don't-care of the default item of a case statement (2.8.3.1) and the wildcards of casez and casex items are
+allowed; comparisons with x or z are checked by sv_literal_005. It is disabled by default; the starc rule set
+enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   assign y = 8'bxxxx_0000;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign y = 8'b0000_0000;
+
+sv_literal_007
+##############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_literal_sized_conditions`
+
+This rule checks that the constants of the conditions of if statements and conditional operators have a width,
+such as 4'd3 rather than 3 or 'd3, as the STARC guide asks (2.10.3.6). Indexes and unbased fill literals such as
+'0 are not checked. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   if (count == 3) done <= 1'b1;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   if (count == 4'd3) done <= 1'b1;
+
+sv_literal_008
+##############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_literal_explicit_base`
+
+This rule checks that the numbers assigned to signals and compared with them are written with a base, such as 'd5
+or 8'h1F rather than 5, as the STARC guide recommends (2.10.3.5). Indexes, dimensions, loop headers, delays,
+replication counts and the conditions sv_literal_007 checks are not checked. It is disabled by default; the starc
+rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   count <= 5;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   count <= 'd5;
+
+sv_literal_009
+##############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_literal_no_negative_values`
+
+This rule checks for negative constants assigned to signals, such as count <= -1, as the STARC guide asks
+(2.10.4.5, 2.10.4.6). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   count <= -1;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   count <= '1;

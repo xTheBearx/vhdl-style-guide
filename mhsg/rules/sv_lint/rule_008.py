@@ -19,7 +19,8 @@ class rule_008(Rule):
 
     The signals a function or task of the file reads count as read by the blocks that call it. A hierarchical name,
     such as u_sub.valid, must be listed as written; a member of a signal, such as cfg.mode, needs the signal. A
-    variable the block writes in an unconditional statement before reading it, or declares, needs no entry.
+    variable the block declares, or writes on every path before reading it, needs no entry: a write in both branches
+    of an if and else, or in every item of a case with a default, is on every path.
 
     .. NOTE:: This is a lint rule. It runs in lint mode.
 
@@ -139,28 +140,61 @@ def name_of(oExpression):
 
 def read_names(oStatement, setSignals=frozenset(), dSubprograms=None):
     """
-    The names a statement reads. A read after an unconditional statement of the block that writes the variable, by
-    assignment or as the output argument of a task call, does not count: the block computes the value itself, as it
-    does for the variables declared in it. A call of a function or task of the file adds the signals it reads. A
-    hierarchical name, such as u_sub.valid, is read as a whole; a member of a signal, such as cfg.mode, reads the
-    signal; a package item, such as pkg::WIDTH, is not a signal.
+    The names a statement reads. A read after the block has written the variable on every path, by assignment or as
+    the output argument of a task call, does not count: the block computes the value itself, as it does for the
+    variables declared in it. A write in both branches of an if and else, or in every item of a case with a default,
+    is on every path. A call of a function or task of the file adds the signals it reads. A hierarchical name, such as
+    u_sub.valid, is read as a whole; a member of a signal, such as cfg.mode, reads the signal; a package item, such as
+    pkg::WIDTH, is not a signal.
     """
     if oStatement is None:
         return set()
     dSubprograms = dSubprograms or {}
-    if oStatement.kind.name == "SequentialBlockStatement":
-        lItems = elements(oStatement.items)
-    else:
-        lItems = [oStatement]
     setLocal = {text(o.name) for o in descendants(oStatement) if o.kind.name == "Declarator"}
-    setReturn = set()
-    setDefined = set()
-    for oItem in lItems:
-        setRead, setWritten = item_names(oItem, setSignals, dSubprograms)
-        setReturn |= setRead - setDefined
-        if oItem.kind.name == "ExpressionStatement":
-            setDefined |= setWritten
+    setReturn, _ = flow(oStatement, frozenset(), setSignals, dSubprograms)
     return setReturn - setLocal
+
+
+def flow(oStatement, setDefined, setSignals, dSubprograms):
+    """(names read before the statement writes them, names written on every path after it) of a statement."""
+    if oStatement is None:
+        return set(), setDefined
+    sKind = oStatement.kind.name
+    if sKind == "SequentialBlockStatement":
+        setReads = set()
+        for oItem in elements(oStatement.items):
+            setRead, setDefined = flow(oItem, setDefined, setSignals, dSubprograms)
+            setReads |= setRead
+        return setReads, setDefined
+    if sKind == "ConditionalStatement":
+        setReads = set()
+        for oCondition in elements(oStatement.predicate.conditions):
+            setReads |= item_names(oCondition, setSignals, dSubprograms)[0] - setDefined
+        setThen, setThenDefined = flow(oStatement.statement, setDefined, setSignals, dSubprograms)
+        if oStatement.elseClause is None:
+            return setReads | setThen, setDefined
+        setElse, setElseDefined = flow(oStatement.elseClause.clause, setDefined, setSignals, dSubprograms)
+        return setReads | setThen | setElse, setThenDefined & setElseDefined
+    if sKind == "CaseStatement":
+        setReads = item_names(oStatement.expr, setSignals, dSubprograms)[0] - setDefined
+        lDefined = []
+        bDefault = False
+        for oItem in elements(oStatement.items):
+            if oItem.kind.name == "StandardCaseItem":
+                for oExpression in elements(oItem.expressions):
+                    setReads |= item_names(oExpression, setSignals, dSubprograms)[0] - setDefined
+            bDefault = bDefault or oItem.kind.name == "DefaultCaseItem"
+            setRead, setItemDefined = flow(getattr(oItem, "clause", None), setDefined, setSignals, dSubprograms)
+            setReads |= setRead
+            lDefined.append(setItemDefined)
+        if bDefault and lDefined:
+            return setReads, frozenset.intersection(*[frozenset(s) for s in lDefined])
+        return setReads, setDefined
+    setRead, setWritten = item_names(oStatement, setSignals, dSubprograms)
+    if sKind == "ExpressionStatement":
+        return setRead - setDefined, frozenset(setDefined | setWritten)
+    # Loops and other statements may not run, so what they write is not written on every path
+    return setRead - setDefined, setDefined
 
 
 def item_names(oStatement, setSignals, dSubprograms):

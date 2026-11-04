@@ -187,7 +187,7 @@ def design_rules(oConfig, lLocalRules):
     oRules = rule_list.rule_list(vhdlFile.vhdlFile([""]), oConfig.severity_list, lLocalRules)
     lDesignRules = [o for o in oRules.rules if getattr(o, "design", False)]
     for oRule in lDesignRules:
-        oRule.disable = False
+        oRule.disable = oRule.disabled_in_design
     rule_set.apply(oRules, oConfig)
     oRules.configure(oConfig)
     return oRules, [o for o in lDesignRules if not o.disable]

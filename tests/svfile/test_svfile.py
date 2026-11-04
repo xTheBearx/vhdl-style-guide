@@ -555,6 +555,245 @@ class test_rules(unittest.TestCase):
             [s for s in lOutput if "sv_lint_008" in s],
         )
 
+    def test_starc_checks(self):
+        # One violation of each: the case default may assign x, and the asynchronous reset may use negedge
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "starc", "-ap"], "starc_more.sv")
+        lRules = ("sv_naming_014", "sv_naming_015", "sv_always_007", "sv_statement_007", "sv_statement_009", "sv_dimension_003")
+        lRules += ("sv_literal_006", "sv_module_003", "sv_declaration_002", "sv_comment_002")
+        self.assertEqual(
+            [
+                "WARNING: starc_more.sv(4)STARC-3.1.5.3 (sv_declaration_002) -- Give Depth a default value",
+                "WARNING: starc_more.sv(6)STARC-1.1.1.6 (sv_naming_014) -- Rename clk__i, which has two underscores in a row",
+                "WARNING: starc_more.sv(8)STARC-2.1.6.2 (sv_dimension_003) -- Number the bits from 0",
+                "WARNING: starc_more.sv(10)STARC-1.1.1.6 (sv_naming_014) -- Rename flag_, which ends with an underscore",
+                "WARNING: starc_more.sv(12)STARC-3.5.6.7 (sv_comment_002) -- Use // comments",
+                "WARNING: starc_more.sv(18)STARC-1.4.3.6 (sv_always_007) -- Clock the register on the rising edge",
+                "ERROR: starc_more.sv(26)STARC-2.1.6.5/STARC-2.10.1.5/STARC-2.10.1.6 (sv_literal_006) -- Do not use x or z in a literal",
+                "WARNING: starc_more.sv(26)STARC-2.1.5.1 (sv_statement_007) -- Do not nest the conditional operator",
+                "ERROR: starc_more.sv(30)STARC-2.9.1.2 (sv_statement_009) -- Do not change the loop variable i in the loop",
+                "ERROR: starc_more.sv(34)STARC-3.2.3.1 (sv_module_003) -- Connect the ports by name",
+                "WARNING: starc_more.sv(34)STARC-1.1.1.8 (sv_naming_015) -- Name the instance sub, or sub_<number>",
+            ],
+            [s for s in lOutput if any(f"({r})" in s for r in lRules)],
+        )
+        # The limits of the sizes, made small
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sConfiguration = os.path.join(sTemporary, "small.yaml")
+            with open(sConfiguration, "w", encoding="utf-8") as oFile:
+                oFile.write(
+                    "rule:\n  sv_always_008:\n    maximum_outputs: 0\n  sv_always_009:\n    maximum_lines: 6\n"
+                    "  sv_statement_008:\n    maximum_depth: 0\n  sv_case_004:\n    maximum_items: 1\n",
+                )
+            _, lOutput, _ = self.run_mhsg(["--rule_set", "starc", "-ap", "-c", sConfiguration], "starc_more.sv")
+        lRules = ("sv_always_008", "sv_always_009", "sv_statement_008", "sv_case_004")
+        self.assertEqual(
+            [
+                "WARNING: starc_more.sv(18)STARC-2.6.1.3 (sv_always_008) -- Split the always block: it assigns 1 signal, more than 0",
+                "WARNING: starc_more.sv(18)STARC-2.6.1.4 (sv_always_009) -- Split the always block: it has 7 lines, more than 6",
+                "WARNING: starc_more.sv(19)STARC-2.7.3.1 (sv_statement_008) -- Nest if statements at most 0 deep",
+                "WARNING: starc_more.sv(28)STARC-2.6.1.3 (sv_always_008) -- Split the always block: it assigns 1 signal, more than 0",
+                "WARNING: starc_more.sv(38)STARC-2.6.1.3 (sv_always_008) -- Split the always block: it assigns 1 signal, more than 0",
+                "WARNING: starc_more.sv(39)STARC-2.8.2.2 (sv_case_004) -- Split the case statement: it has 2 items, more than 1",
+            ],
+            [s for s in lOutput if any(f"({r})" in s for r in lRules)],
+        )
+
+    def test_starc_checks_2(self):
+        # One violation of each; the reset tested by the first if is not a clock, and the case default may be anything
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "starc", "-ap"], "starc_more2.sv")
+        lRules = ("sv_function_006", "sv_function_007", "sv_function_008", "sv_always_010", "sv_always_011", "sv_always_012")
+        lRules += ("sv_always_013", "sv_always_014", "sv_statement_010", "sv_statement_011", "sv_statement_012", "sv_statement_013")
+        lRules += ("sv_case_005", "sv_case_006", "sv_case_007", "sv_declaration_003")
+        self.assertEqual(
+            [
+                "WARNING: starc_more2.sv(13)STARC-3.1.3.4 (sv_declaration_003) -- Declare one signal per declaration",
+                "ERROR: starc_more2.sv(19)STARC-2.1.2.3 (sv_function_006) -- Pass b_i to add as arguments",
+                "ERROR: starc_more2.sv(20)STARC-2.1.3.5 (sv_function_007) -- Do not assign valid in a function: return the value",
+                "ERROR: starc_more2.sv(25)STARC-2.1.2.5 (sv_function_008) -- Do not wait for a clock edge in a task",
+                "WARNING: starc_more2.sv(28)STARC-2.2.2.2 (sv_always_010) -- Remove the constant from the sensitivity list",
+                "ERROR: starc_more2.sv(28)STARC-2.6.2.2 (sv_always_011) -- Remove r, which the block assigns, from its sensitivity list",
+                "WARNING: starc_more2.sv(32)STARC-2.3.6.2 (sv_always_013) -- Make the asynchronous reset active low, with negedge",
+                "ERROR: starc_more2.sv(32)STARC-1.3.1.7/STARC-2.3.1.7 (sv_always_014) -- Give the register at most one asynchronous reset or set",
+                "ERROR: starc_more2.sv(40)STARC-2.3.3.1/STARC-2.3.3.2 (sv_always_012) -- Clock the always block on one edge of one clock",
+                "WARNING: starc_more2.sv(45)STARC-2.10.1.2 (sv_statement_012) -- Parenthesize the mixed && and ||",
+                "WARNING: starc_more2.sv(47)STARC-2.7.1.3 (sv_statement_010) -- End the if chain with an else",
+                "WARNING: starc_more2.sv(47)STARC-2.10.7.1 (sv_statement_011) -- Compute the arithmetic outside the if condition",
+                "ERROR: starc_more2.sv(50)STARC-2.10.8.1 (sv_statement_013) -- Divide signals, not expressions",
+                "WARNING: starc_more2.sv(51)STARC-2.8.4.3 (sv_case_005) -- Use case instead of casez",
+                "WARNING: starc_more2.sv(51)STARC-2.8.5.4 (sv_case_007) -- Compute the case selector in a signal of its own",
+                "ERROR: starc_more2.sv(52)STARC-2.8.5.3 (sv_case_006) -- Use a constant as the case label, not ready",
+            ],
+            [s for s in lOutput if any(f"({r})" in s for r in lRules)],
+        )
+
+    def test_starc_checks_3(self):
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "starc", "-ap"], "starc_more3.sv")
+        lRules = ("sv_file_005", "sv_naming_016", "sv_module_004", "sv_module_005", "sv_module_006", "sv_dimension_004")
+        self.assertEqual(
+            [
+                "WARNING: starc_more3.sv(2)STARC-3.2.2.7 (sv_module_006) -- Use a parameter for the constant WIDTH",
+                "WARNING: starc_more3.sv(3)STARC-1.1.4.1/STARC-3.5.2.5 (sv_file_005) -- Name the include file with one of the extensions .h, .vh, .svh, .inc",
+                "WARNING: starc_more3.sv(5)STARC-1.1.2.5/STARC-1.1.3.1 (sv_naming_016) -- Name the port clk like a port, matching [a-z0-9_]+_n?(i|o|io)",
+                "WARNING: starc_more3.sv(6)STARC-1.1.4.7/STARC-3.1.5.1/STARC-3.1.5.2 (sv_dimension_004) -- Write the width of the port with a parameter",
+                "WARNING: starc_more3.sv(10)STARC-1.1.2.5/STARC-1.1.3.1 (sv_naming_016) -- Name the signal count_o unlike a port, not matching [a-z0-9_]+_n?(i|o|io)",
+                "ERROR: starc_more3.sv(12)STARC-1.2.1.2 (sv_module_005) -- Use an expression instead of the and primitive",
+                "WARNING: starc_more3.sv(13)STARC-1.1.4.6 (sv_module_004) -- Do not drive the output ready_o with a constant",
+            ],
+            [s for s in lOutput if any(f"({r})" in s for r in lRules)],
+        )
+
+    def test_starc_checks_4(self):
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "starc", "-ap"], "starc_more4.sv")
+        lRules = (
+            "sv_always_015",
+            "sv_always_016",
+            "sv_module_007",
+            "sv_module_008",
+            "sv_file_006",
+            "sv_literal_007",
+            "sv_literal_008",
+            "sv_function_009",
+            "sv_statement_014",
+            "sv_comment_003",
+        )
+        self.assertEqual(
+            [
+                "WARNING: starc_more4.sv(1)STARC-3.5.3.1/STARC-3.5.3.3 (sv_comment_003) -- Start the file with a header comment",
+                "WARNING: starc_more4.sv(2)STARC-3.2.2.5 (sv_module_008) -- Do not use the macro `WIDTH_M in the macro DEPTH_M",
+                "WARNING: starc_more4.sv(3)STARC-4.1.2.4 (sv_file_006) -- Declare the time unit with `timescale or timeunit",
+                "WARNING: starc_more4.sv(5)STARC-3.1.3.2 (sv_module_007) -- Move the clock port clk_i before the input ports",
+                "WARNING: starc_more4.sv(7)STARC-3.1.3.2 (sv_module_007) -- Move the reset port rst_ni before the output ports",
+                "WARNING: starc_more4.sv(8)STARC-3.1.3.2 (sv_module_007) -- Move the input port count_i before the output ports",
+                "ERROR: starc_more4.sv(11)STARC-2.3.1.6 (sv_always_015) -- The reset rst_ni is tested low: use negedge",
+                "WARNING: starc_more4.sv(18)STARC-2.3.6.1 (sv_always_016) -- Reset s too, or assign it in an always block without reset",
+                "ERROR: starc_more4.sv(20)STARC-2.10.3.6 (sv_literal_007) -- Give the constant 3 a width",
+                "WARNING: starc_more4.sv(21)STARC-2.10.3.5 (sv_literal_008) -- Write 5 with a base, such as 'd5",
+                "WARNING: starc_more4.sv(22)STARC-2.1.3.4 (sv_function_009) -- End the function parity by assigning its result",
+                "WARNING: starc_more4.sv(27)STARC-4.1.2.3 (sv_statement_014) -- Shorten the fork join block: it has 6 lines, more than 5",
+            ],
+            [s for s in lOutput if any(f"({r})" in s for r in lRules)],
+        )
+
+    def test_starc_checks_5(self):
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "starc", "-ap"], "starc_more5.sv")
+        lRules = (
+            "sv_naming_017",
+            "sv_always_017",
+            "sv_always_018",
+            "sv_always_019",
+            "sv_always_020",
+            "sv_statement_015",
+            "sv_statement_016",
+            "sv_statement_017",
+            "sv_statement_018",
+            "sv_statement_019",
+            "sv_statement_020",
+            "sv_statement_021",
+            "sv_statement_022",
+            "sv_statement_023",
+            "sv_statement_024",
+            "sv_statement_025",
+            "sv_function_010",
+            "sv_file_007",
+            "sv_comment_004",
+            "sv_comment_005",
+            "sv_case_008",
+            "sv_case_009",
+        )
+        self.assertEqual(
+            [
+                "WARNING: starc_more5.sv(1)STARC-3.5.6.4/STARC-3.5.6.5 (sv_comment_005) -- Write the comment with ASCII characters only",
+                "WARNING: starc_more5.sv(9)STARC-3.5.6.3 (sv_comment_004) -- Describe mem in a comment",
+                "WARNING: starc_more5.sv(11)STARC-2.3.1.4 (sv_statement_016) -- Give delays only in always blocks",
+                "WARNING: starc_more5.sv(11)STARC-2.5.1.2 (sv_statement_017) -- Use a plain signal as the enable of the tri-state buffer",
+                "WARNING: starc_more5.sv(12)STARC-1.1.1.7 (sv_naming_017) -- Mark the active low reset rst_i with a suffix such as _n",
+                "ERROR: starc_more5.sv(16)STARC-2.2.3.2/STARC-2.2.3.3 (sv_always_017) -- Assign q once: it is already assigned before in the block",
+                "WARNING: starc_more5.sv(21)STARC-2.3.5.1/STARC-3.3.3.2 (sv_always_019) -- The register ready is always assigned the same constant: use the constant",
+                "WARNING: starc_more5.sv(21)STARC-2.7.2.1 (sv_statement_019) -- Merge this branch with the one on line 20, which has the same statements",
+                "ERROR: starc_more5.sv(23)STARC-2.9.2.4 (sv_always_020) -- Use one for loop in the reset branch and another in the other branch",
+                "WARNING: starc_more5.sv(25)STARC-2.1.6.3 (sv_statement_023) -- Index with a signal, not the expression addr + 1",
+                "WARNING: starc_more5.sv(27)STARC-2.5.1.7/STARC-2.5.1.8/STARC-2.5.1.9 (sv_statement_018) -- Do not test the tri-state signal bus",
+                "WARNING: starc_more5.sv(28)STARC-2.7.2.1 (sv_statement_019) -- Merge this branch with the one on line 27, which has the same statements",
+                "WARNING: starc_more5.sv(29)STARC-2.5.1.7/STARC-2.5.1.8/STARC-2.5.1.9 (sv_statement_018) -- Do not test the tri-state signal bus",
+                "WARNING: starc_more5.sv(29)STARC-2.7.2.2 (sv_statement_020) -- Remove the branch: its condition repeats the one on line 27",
+                "WARNING: starc_more5.sv(30)STARC-2.7.2.1 (sv_statement_019) -- Merge this branch with the one on line 29, which has the same statements",
+                "WARNING: starc_more5.sv(31)STARC-2.10.1.3 (sv_statement_021) -- Add parentheses to s - r + q",
+                "WARNING: starc_more5.sv(31)STARC-2.10.5.5 (sv_statement_022) -- Compute r + s outside the conditional operator",
+                "WARNING: starc_more5.sv(31)STARC-2.10.5.5 (sv_statement_022) -- Compute s - r + q outside the conditional operator",
+                "WARNING: starc_more5.sv(34)STARC-2.11.1.3/STARC-2.11.4.2 (sv_case_008) -- Name the state encoding 2'b00 with a parameter",
+                "WARNING: starc_more5.sv(38)STARC-4.2.3.2 (sv_function_010) -- Do not give the task send the output done",
+                "ERROR: starc_more5.sv(39)STARC-2.3.1.5 (sv_statement_015) -- Use a non-negative integer delay",
+                "WARNING: starc_more5.sv(42)STARC-4.1.4.1/STARC-4.1.4.2 (sv_always_018) -- Assign r in one procedural block: another block assigns it too",
+                "WARNING: starc_more5.sv(42)STARC-4.1.2.2 (sv_statement_024) -- Use a blocking assignment (=) in the initial block",
+                "WARNING: starc_more5.sv(43)STARC-4.1.11.1 (sv_statement_025) -- Use $fstrobe instead of $fdisplay",
+            ],
+            [s for s in lOutput if any(f"({r})" in s for r in lRules)],
+        )
+
+    def test_starc_checks_6(self):
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "starc", "-ap"], "starc_more6.sv")
+        lRules = (
+            "sv_always_021",
+            "sv_always_022",
+            "sv_always_023",
+            "sv_always_024",
+            "sv_always_025",
+            "sv_module_009",
+            "sv_module_010",
+            "sv_module_011",
+            "sv_module_012",
+            "sv_function_011",
+            "sv_statement_026",
+            "sv_statement_027",
+            "sv_statement_028",
+            "sv_statement_029",
+            "sv_statement_030",
+            "sv_statement_031",
+            "sv_statement_032",
+            "sv_statement_033",
+            "sv_statement_034",
+            "sv_case_010",
+            "sv_literal_009",
+        )
+        self.assertEqual(
+            [
+                "WARNING: starc_more6.sv(10)STARC-1.3.2.1 (sv_always_023) -- Make the reset rst_n in a reset module, not with logic here",
+                "WARNING: starc_more6.sv(12)STARC-1.3.1.2 (sv_always_021) -- Reset with rst_ni asynchronously",
+                "WARNING: starc_more6.sv(12)STARC-2.1.4.2 (sv_statement_026) -- Use the bitwise operator instead of !",
+                "ERROR: starc_more6.sv(15)STARC-2.1.2.1 (sv_always_024) -- Do not call init in the reset of the register",
+                "WARNING: starc_more6.sv(15)STARC-2.1.4.2 (sv_statement_026) -- Use the bitwise operator instead of !",
+                "ERROR: starc_more6.sv(16)STARC-1.4.3.4/STARC-3.3.3.1 (sv_always_022) -- Do not use the clock clk_i as data",
+                "WARNING: starc_more6.sv(17)STARC-2.4.1.1/STARC-2.4.1.2 (sv_module_010) -- Put the latch in a module of its own",
+                "WARNING: starc_more6.sv(18)STARC-2.4.1.3 (sv_always_025) -- Do not reset the latch with rst_ni",
+                "WARNING: starc_more6.sv(18)STARC-2.1.4.2 (sv_statement_026) -- Use the bitwise operator instead of !",
+                "WARNING: starc_more6.sv(20)STARC-2.5.1.1 (sv_module_011) -- Put the tri-state buffer in a module of its own",
+                "WARNING: starc_more6.sv(21)STARC-3.1.2.2 (sv_module_012) -- Keep the vendor primitive BUFG out of the technology independent code",
+                "WARNING: starc_more6.sv(24)STARC-2.1.4.2 (sv_statement_026) -- Use the bitwise operator instead of &&",
+                "WARNING: starc_more6.sv(24)STARC-2.1.4.2 (sv_statement_026) -- Use the bitwise operator instead of !",
+                "WARNING: starc_more6.sv(25)STARC-2.8.3.4/STARC-2.8.3.6/STARC-2.8.3.7 (sv_statement_028) -- Do not test sel, which may be assigned x",
+                "WARNING: starc_more6.sv(28)STARC-2.7.3.4 (sv_statement_027) -- Merge the condition of this if with the one of the if around it",
+                "ERROR: starc_more6.sv(29)STARC-2.9.2.1/STARC-2.9.2.2 (sv_statement_029) -- Compute a_i + q outside the loop",
+                "ERROR: starc_more6.sv(30)STARC-2.10.4.5/STARC-2.10.4.6 (sv_literal_009) -- Do not assign the negative value -1",
+                "WARNING: starc_more6.sv(33)STARC-2.11.2.1 (sv_case_010) -- Put the state machine of mode_state in a module of its own",
+                "ERROR: starc_more6.sv(35)STARC-2.1.1.2 (sv_function_011) -- Add an else to the if of the function",
+                "WARNING: starc_more6.sv(37)STARC-4.3.11.3 (sv_statement_033) -- Put $display between translate_off and translate_on pragmas",
+                "WARNING: starc_more6.sv(42)STARC-4.1.6.1 (sv_statement_030) -- Compute the delay once, as a parameter",
+                "WARNING: starc_more6.sv(44)STARC-4.1.1.2 (sv_statement_034) -- Give the delay 5 with a parameter",
+                "WARNING: starc_more6.sv(45)STARC-4.1.7.1 (sv_statement_031) -- Generate the clock clk_b in a block of its own",
+                "WARNING: starc_more6.sv(45)STARC-4.1.1.2 (sv_statement_034) -- Give the delay 5 with a parameter",
+                "WARNING: starc_more6.sv(46)STARC-4.1.8.4 (sv_statement_032) -- Wait for done on a clock edge, not on its own edge",
+            ],
+            [s for s in lOutput if any(f"({r})" in s for r in lRules)],
+        )
+
+    def test_sensitivity_list_branches(self):
+        # t is written in both branches before it is read; u only in one, so its old value is read
+        _, lOutput, _ = self.run_mhsg(["--lint_only", "--rule_set", "none"], "sensitivity_branches.sv")
+        self.assertEqual(
+            ["ERROR: sensitivity_branches.sv(21)sv_lint_008 -- Add c_i, u to the sensitivity list, or use always_comb"],
+            [s for s in lOutput if "sv_lint_008" in s],
+        )
+
     def test_lint_do254(self):
         # The default rule set of lint mode labels the SystemVerilog rules with the DO-254 checks they implement
         _, lOutput, _ = self.run_mhsg(["--lint_only"], "lint.sv")

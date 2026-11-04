@@ -71,19 +71,15 @@ under way: the entries below.
   defines and include directories of the systemverilog section let fewer files fall in this case; the real-world
   check runs without them.
 * **STARC lint items needing data flow**: about 100 per-file items of the STARC guide, such as widths of function
-  arguments, loop bounds, reset polarity and resource sharing, need more than slang's warnings.
-* **STARC rule set**: 50 of the 613 items of the STARC guide have rules. The per-file items (216) are planned with
+  arguments, loop bounds and resource sharing, need more than slang's warnings.
+* **STARC rule set**: 173 of the 613 items of the STARC guide have rules. The per-file items (216) are planned with
   the SystemVerilog rules, the clock and reset items with design analysis of Verilog designs. The catalogue the set
   was made from records each item's limits and its Verible equivalent, kept in the notes of the set.
-* **Sensitivity lists** (sv_lint_008) follow the functions and tasks of the file, not those of packages or other
-  files; a variable written inside an if or case before it is read still counts as read.
 * **SystemVerilog designs without the yosys-slang plugin**: Yosys' own reader handles Verilog and part of
   SystemVerilog; ibex and common_cells need the plugin, which is not packaged for Ubuntu. Not yet tried with it.
-* **Generics of VHDL entities under a Verilog top** are passed on when they are literals and the instance is in a
-  module without parameters; expressions of parameters, and instances in modules that have parameters, would need the
-  elaboration of the Verilog first, as read_slang does.
+* **Generics of VHDL entities under a Verilog top** are passed on when every elaboration of the instance gives it the
+  same values; an instance in a generate loop, or in a module elaborated with several sets of parameters, that gets
+  other values each time would need one copy of its module per set, as Yosys makes for Verilog modules.
 * **Black boxes in Verilog designs with read_slang**: the modules made for black boxes are read with read_verilog
   -lib before the design; whether read_slang links instances to them is not known. Yosys has cell models for Xilinx
   only among the vendors with black box libraries.
-* **More SystemVerilog projects** in the real-world check, which runs ibex, common_cells, picorv32, SERV, CVA6 and the
-  sv-tests conformance suite: OpenTitan, whose size needs a subset to be chosen.

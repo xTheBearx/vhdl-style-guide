@@ -196,7 +196,8 @@ avoids the list altogether.
 
 The signals a function or task of the file reads count as read by the blocks that call it. A hierarchical name,
 such as u_sub.valid, must be listed as written; a member of a signal, such as cfg.mode, needs the signal. A
-variable the block writes in an unconditional statement before reading it, or declares, needs no entry.
+variable the block declares, or writes on every path before reading it, needs no entry: a write in both branches
+of an if and else, or in every item of a case with a default, is on every path.
 
 .. NOTE:: This is a lint rule. It runs in lint mode.
 

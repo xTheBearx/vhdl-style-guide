@@ -89,7 +89,45 @@ what a Verible lint rule checks, its alias is the Verible rule's name.
 * rules of the STARC guide, disabled by default: no initial blocks, fork-join or empty branches
   (:code:`sv_statement_004` to :code:`sv_statement_006`), no constant case selector (:code:`sv_case_003`), one event
   control and at most one top-level if or case per always block (:code:`sv_always_005`, :code:`sv_always_006`), no
-  synthesis directives in comments (:code:`sv_comment_001`)
+  synthesis directives in comments (:code:`sv_comment_001`); no falling clock edges, at most 15 outputs and 300 lines
+  per always block (:code:`sv_always_007` to :code:`sv_always_009`); no nested conditional operators, if nesting at
+  most 7 deep, no change of a loop variable in its loop (:code:`sv_statement_007` to :code:`sv_statement_009`); at
+  most 200 case items (:code:`sv_case_004`); packed dimensions numbered from 0 (:code:`sv_dimension_003`); no x or z
+  in literals (:code:`sv_literal_006`); ports connected by name (:code:`sv_module_003`); a default value on every
+  parameter (:code:`sv_declaration_002`); line comments (:code:`sv_comment_002`); no trailing or double underscores
+  in names, and instances named after their module (:code:`sv_naming_014`, :code:`sv_naming_015`); functions that
+  read only their arguments and assign no signals, no clock edges in tasks (:code:`sv_function_006` to
+  :code:`sv_function_008`); no constants or assigned signals in sensitivity lists, one clock on one edge, active low
+  asynchronous resets and at most one per register (:code:`sv_always_010` to :code:`sv_always_014`); if chains
+  ending with else, no arithmetic in if conditions, parentheses around mixed && and ||, plain operands of / and %
+  (:code:`sv_statement_010` to :code:`sv_statement_013`); no casex or casez, constant case labels and simple
+  selectors (:code:`sv_case_005` to :code:`sv_case_007`); one signal per declaration (:code:`sv_declaration_003`);
+  include files ending in .h, .vh, .svh or .inc (:code:`sv_file_005`); ports named apart from internal signals
+  (:code:`sv_naming_016`); no outputs driven by constants, no gate primitives, no text macros for constants
+  (:code:`sv_module_004` to :code:`sv_module_006`); port widths written with parameters (:code:`sv_dimension_004`);
+  reset edges matching the polarity tested and every register of a block with reset reset
+  (:code:`sv_always_015`, :code:`sv_always_016`); ports ordered clocks, resets, inputs, outputs, inout ports, and no
+  text macros inside text macros (:code:`sv_module_007`, :code:`sv_module_008`); a time unit in files with modules
+  (:code:`sv_file_006`); constants in conditions with a width, numbers written with a base (:code:`sv_literal_007`,
+  :code:`sv_literal_008`); functions ending by assigning their result (:code:`sv_function_009`); fork join blocks
+  of at most 5 lines (:code:`sv_statement_014`); a file header giving the module, its function, the author and the
+  date (:code:`sv_comment_003`); active low resets named so (:code:`sv_naming_017`); a signal assigned once in a
+  sequence of statements and in one procedural block, no registers always assigned one constant, no reset test inside
+  a for loop (:code:`sv_always_017` to :code:`sv_always_020`); non-negative integer delays, given only in always
+  blocks, plain tri-state enables, no tests of tri-state signals, no repeated branches or conditions in if chains,
+  parentheses around chained arithmetic, no arithmetic in the values of ?:, plain signals as indexes, blocking
+  assignments in initial blocks, $fstrobe instead of $fdisplay (:code:`sv_statement_015` to
+  :code:`sv_statement_025`); no output arguments of tasks (:code:`sv_function_010`); testbench file names
+  (:code:`sv_file_007`); a comment for each port and signal, comments in ASCII (:code:`sv_comment_004`,
+  :code:`sv_comment_005`); state encodings named and at most 60 states (:code:`sv_case_008`, :code:`sv_case_009`);
+  asynchronous resets, made outside the module and without function calls, clocks not read as data, latches without
+  reset (:code:`sv_always_021` to :code:`sv_always_025`); at most 500 ports, latches and tri-state buffers in
+  modules of their own, no vendor primitives (:code:`sv_module_009` to :code:`sv_module_012`); complete if and case
+  statements in functions (:code:`sv_function_011`); bitwise instead of logical operators, merged nested ifs, no
+  tests of signals that may be x, no computation on signals in for loops, clock periods as parameters, one clock per
+  block, waits on levels in testbenches, simulation tasks between translate_off and translate_on, testbench delays as
+  parameters (:code:`sv_statement_026` to :code:`sv_statement_034`); one state machine per module
+  (:code:`sv_case_010`); no negative values assigned (:code:`sv_literal_009`)
 * :code:`sv_syntax_001`: code slang cannot parse
 
 The **starc** rule set enables the rules of the STARC guide that are disabled by default.

@@ -98,3 +98,75 @@ is disabled by default; the starc rule set enables it.
 .. code-block:: systemverilog
 
    `include "defines.svh"
+
+sv_file_005
+###########
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_file_include_extension`
+
+This rule checks that the files an include directive names end in .h, .vh, .svh or .inc, as the STARC guide asks
+(1.1.4.1, 3.5.2.5). **extensions** lists the allowed extensions. It is disabled by default; the starc rule set
+enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   `include "definitions.v"
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   `include "definitions.vh"
+
+sv_file_006
+###########
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_file_timescale`
+
+This rule checks that a file holding modules declares their time unit, with a timescale directive or timeunit, as
+the STARC guide recommends (4.1.2.4). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   module fifo (input logic clk_i);
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   `timescale 1ns / 1ps
+   module fifo (input logic clk_i);
+
+sv_file_007
+###########
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_file_testbench_names`
+
+This rule checks that a file holding a testbench, a module without ports, has a name matching one of
+**testbench_patterns**, file name patterns with :code:`*` and :code:`?`, by default :code:`*_tb.v`,
+:code:`*_tb.sv`, :code:`*_test.v`, :code:`*_test.sv` and :code:`*.vt`, as the STARC guide recommends (3.5.2.3). It
+is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   // in fifo_check.sv
+   module fifo_check;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   // in fifo_tb.sv
+   module fifo_tb;

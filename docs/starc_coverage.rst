@@ -11,11 +11,11 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.1.1.5    | Names must not differ only by upper/lower case                                            | Error    | Implemented                  | :code:`sv_naming_012`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.1.1.6    | No trailing underscore on top-level ports or module names; no consecutive underscores     | Warning  | Planned, per-file lint       |                                                |
+| STARC-1.1.1.6    | No trailing underscore on top-level ports or module names; no consecutive underscores     | Warning  | Implemented                  | :code:`sv_naming_014`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.1.1.7    | Mark active-low signals with a suffix such as \_X or \_N                                  | Note     | Planned, per-file lint       |                                                |
+| STARC-1.1.1.7    | Mark active-low signals with a suffix such as \_X or \_N                                  | Note     | Implemented                  | :code:`sv_naming_017`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.1.1.8    | Instance name = module name; repeated instances become <module>\_<number>                 | Note     | Planned, per-file lint       |                                                |
+| STARC-1.1.1.8    | Instance name = module name; repeated instances become <module>\_<number>                 | Note     | Implemented                  | :code:`sv_naming_015`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.1.1.9    | Top-level module and port names: at most 16 characters, not case-distinguished            | Warning  | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -29,19 +29,19 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.1.2.4    | Output port names begin with the block's hierarchy ID followed by an underscore           | Note     | Planned, design analysis     |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.1.2.5    | Ports and internal signals should follow distinguishable naming conventions               | Note     | Planned, per-file lint       |                                                |
+| STARC-1.1.2.5    | Ports and internal signals should follow distinguishable naming conventions               | Note     | Implemented                  | :code:`sv_naming_016`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.1.2.6    | Nets driven by an output port keep that port's name in the parent                         | Note     | Planned, design analysis     |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.1.3.1    | Internal signal names should be distinguishable from port names by convention             | Note     | Planned, per-file lint       |                                                |
+| STARC-1.1.3.1    | Internal signal names should be distinguishable from port names by convention             | Note     | Implemented                  | :code:`sv_naming_016`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.1.3.2    | Give internal signals meaningful, descriptive names                                       | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.1.3.3    | Signal, port, parameter, macro and function names: 2 to 40 characters                     | Error    | Implemented                  | :code:`sv_naming_013`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.1.4.1    | Include files: .h/.vh/.inc for RTL; .h/.inc/.ht/.tsk for testbenches                      | Note     | Planned, per-file lint       |                                                |
+| STARC-1.1.4.1    | Include files: .h/.vh/.inc for RTL; .h/.inc/.ht/.tsk for testbenches                      | Note     | Implemented                  | :code:`sv_file_005`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.1.4.2    | Parameters use a naming convention distinct from signals                                  | Note     | Planned, per-file lint       |                                                |
+| STARC-1.1.4.2    | Parameters use a naming convention distinct from signals                                  | Note     | Implemented                  | :code:`sv_naming_001`, :code:`sv_naming_008`   |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.1.4.3    | Do not reuse a parameter name in different modules                                        | Note     | Planned, design analysis     |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -49,9 +49,9 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.1.4.5    | Prefix module-local parameters with the hierarchy ID characters                           | Note     | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.1.4.6    | Do not drive output ports directly with constant values                                   | Warning  | Planned, per-file lint       |                                                |
+| STARC-1.1.4.6    | Do not drive output ports directly with constant values                                   | Warning  | Implemented                  | :code:`sv_module_004`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.1.4.7    | Parameterize port widths of modules intended for reuse                                    | Note     | Planned, per-file lint       |                                                |
+| STARC-1.1.4.7    | Parameterize port widths of modules intended for reuse                                    | Note     | Implemented                  | :code:`sv_dimension_004`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.1.4.8    | Write parameter values with an explicit base ('b, 'h, 'd, 'o)                             | Warning  | Implemented                  | :code:`sv_literal_003`                         |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -67,25 +67,25 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.2.1.1    | Use one clock and one active edge wherever possible                                       | Warning  | Planned, design analysis     |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.2.1.2    | Never build RS latches or flip-flops out of gate primitives                               | Error    | Planned, per-file lint       |                                                |
+| STARC-1.2.1.2    | Never build RS latches or flip-flops out of gate primitives                               | Error    | Implemented                  | :code:`sv_module_005`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.2.1.3    | No combinational feedback loops                                                           | Error    | Planned, design analysis     |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.3.1.1    | Synchronous-reset coding may synthesize to logic that does not reset reliably             | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.3.1.2    | Prefer asynchronous reset for initializing registers                                      | Note     | Planned, per-file lint       |                                                |
+| STARC-1.3.1.2    | Prefer asynchronous reset for initializing registers                                      | Note     | Implemented                  | :code:`sv_always_021`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.3.1.3    | Use asynchronous set/reset pins only for the initial reset                                | Warning  | Planned, design analysis     |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.3.1.4    | Put synchronously-reset registers in their own hierarchy level                            | Note     | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.3.1.5    | Do not use tool-specific synchronous-reset synthesis directives                           | Note     | Planned, per-file lint       |                                                |
+| STARC-1.3.1.5    | Do not use tool-specific synchronous-reset synthesis directives                           | Note     | Implemented                  | :code:`sv_comment_001`                         |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.3.1.6    | One reset net must not feed both asynchronous and synchronous resets                      | Error    | Planned, design analysis     |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.3.1.7    | No flip-flop with both asynchronous set and asynchronous reset                            | Warning  | Planned, per-file lint       |                                                |
+| STARC-1.3.1.7    | No flip-flop with both asynchronous set and asynchronous reset                            | Warning  | Implemented                  | :code:`sv_always_014`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.3.2.1    | No logic on reset lines inside local modules; generate resets in a dedicated module       | Warning  | Planned, per-file lint       |                                                |
+| STARC-1.3.2.1    | No logic on reset lines inside local modules; generate resets in a dedicated module       | Warning  | Implemented                  | :code:`sv_always_023`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.3.2.2    | Only the initial reset may drive flip-flop asynchronous reset pins                        | Warning  | Implemented, design analysis | :code:`design_014`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -111,11 +111,11 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.4.3.3    | Clock gating is an effective way to reduce power                                          | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.4.3.4    | Clocks may drive only flip-flop clock pins, not data or logic                             | Warning  | Planned, per-file lint       |                                                |
+| STARC-1.4.3.4    | Clocks may drive only flip-flop clock pins, not data or logic                             | Warning  | Implemented                  | :code:`sv_always_022`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.4.3.5    | Never route clocks to black boxes, bidirectional pins or reset lines                      | Note     | Planned, design analysis     |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.4.3.6    | Avoid negative-edge-triggered flip-flops                                                  | Warning  | Planned, per-file lint       |                                                |
+| STARC-1.4.3.6    | Avoid negative-edge-triggered flip-flops                                                  | Warning  | Implemented                  | :code:`sv_always_007`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.4.4.1    | Where possible, give each clock domain its own hierarchical block                         | Note     | Planned, design analysis     |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -175,7 +175,7 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.6.4.2    | On critical paths, even sub-block parents should contain only connections                 | Note     | Planned, design analysis     |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.6.4.3    | A ~40,000-gate basic block should have at most 500 I/O ports                              | Note     | Planned, per-file lint       |                                                |
+| STARC-1.6.4.3    | A ~40,000-gate basic block should have at most 500 I/O ports                              | Note     | Implemented                  | :code:`sv_module_009`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.6.5.1    | Datapath and controller use different styles; keep them separate                          | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -195,19 +195,19 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.1.1.1    | Standardize on always blocks or function+assign for combinational logic                   | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.1.1.2    | Inside functions, cover every branch condition completely (full case/if)                  | Error    | Planned, per-file lint       |                                                |
+| STARC-2.1.1.2    | Inside functions, cover every branch condition completely (full case/if)                  | Error    | Implemented                  | :code:`sv_function_011`                        |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.1.1.3    | Use a syntax/lint checker to catch mistakes                                               | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.1.2.1    | Do not use function calls for async-reset logic in flip-flop always blocks                | Error    | Planned, per-file lint       |                                                |
+| STARC-2.1.2.1    | Do not use function calls for async-reset logic in flip-flop always blocks                | Error    | Implemented                  | :code:`sv_always_024`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.1.2.2    | No non-blocking assignments inside functions                                              | Error    | Implemented                  | :code:`sv_function_004`                        |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.1.2.3    | Every value a function uses must be a declared input argument                             | Error    | Planned, per-file lint       |                                                |
+| STARC-2.1.2.3    | Every value a function uses must be a declared input argument                             | Error    | Implemented                  | :code:`sv_function_006`                        |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.1.2.4    | Do not use tasks in RTL                                                                   | Warning  | Implemented                  | :code:`sv_function_005`                        |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.1.2.5    | No clock-edge event controls inside tasks                                                 | Error    | Planned, per-file lint       |                                                |
+| STARC-2.1.2.5    | No clock-edge event controls inside tasks                                                 | Error    | Implemented                  | :code:`sv_function_008`                        |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.1.3.1    | Function call argument widths must match the input declarations                           | Error    | Implemented                  | :code:`sv_lint_001`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -215,13 +215,13 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.1.3.3    | Return several values from a function via concatenation                                   | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.1.3.4    | A function should end by assigning its return value                                       | Warning  | Planned, per-file lint       |                                                |
+| STARC-2.1.3.4    | A function should end by assigning its return value                                       | Warning  | Implemented                  | :code:`sv_function_009`                        |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.1.3.5    | Functions must not assign module-level (global) signals                                   | Error    | Planned, per-file lint       |                                                |
+| STARC-2.1.3.5    | Functions must not assign module-level (global) signals                                   | Error    | Implemented                  | :code:`sv_function_007`                        |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.1.4.1    | Operators of equal precedence evaluate left to right                                      | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.1.4.2    | Prefer bitwise operators to logical ones, even for single-bit expressions                 | Note     | Planned, per-file lint       |                                                |
+| STARC-2.1.4.2    | Prefer bitwise operators to logical ones, even for single-bit expressions                 | Note     | Implemented                  | :code:`sv_statement_026`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.1.4.3    | Equation-level code can save area and improve speed                                       | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -231,7 +231,7 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.1.4.6    | Watch result widths when using reduction operators                                        | Note     | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.1.5.1    | Do not nest the conditional operator ?: (single level only)                               | Note     | Planned, per-file lint       |                                                |
+| STARC-2.1.5.1    | Do not nest the conditional operator ?: (single level only)                               | Note     | Implemented                  | :code:`sv_statement_007`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.1.5.2    | With an x select, ?: merges both branches bitwise, unlike if                              | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -239,13 +239,13 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.1.6.1    | Declare one-dimensional vectors as [MSB:LSB] (descending)                                 | Note     | Implemented                  | :code:`sv_dimension_001`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.1.6.2    | The LSB index of a vector should be 0                                                     | Note     | Planned, per-file lint       |                                                |
+| STARC-2.1.6.2    | The LSB index of a vector should be 0                                                     | Note     | Implemented                  | :code:`sv_dimension_003`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.1.6.3    | Index arrays with plain signal names, not expressions                                     | Note     | Planned, per-file lint       |                                                |
+| STARC-2.1.6.3    | Index arrays with plain signal names, not expressions                                     | Note     | Implemented                  | :code:`sv_statement_023`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.1.6.4    | Array index range should match the declared bounds                                        | Note     | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.1.6.5    | Never use x or z in an array index                                                        | Error    | Planned, per-file lint       |                                                |
+| STARC-2.1.6.5    | Never use x or z in an array index                                                        | Error    | Implemented                  | :code:`sv_literal_006`                         |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.2.1.1    | Assign every output on all paths of combinational blocks to avoid latches                 | Error    | Implemented                  | :code:`sv_lint_002`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -253,7 +253,7 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.2.2.1    | Combinational sensitivity lists must contain every signal read                            | Error    | Implemented                  | :code:`sv_lint_008`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.2.2.2    | Keep constants and unused signals out of sensitivity lists                                | Note     | Planned, per-file lint       |                                                |
+| STARC-2.2.2.2    | Keep constants and unused signals out of sensitivity lists                                | Note     | Implemented                  | :code:`sv_always_010`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.2.2.3    | An always block has exactly one event control                                             | Error    | Implemented                  | :code:`sv_always_005`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -261,9 +261,9 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.2.3.1    | Do not mix blocking and non-blocking assignments in combinational always blocks           | Error    | Implemented                  | :code:`sv_always_002`, :code:`sv_always_004`   |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.2.3.2    | No default-then-override non-blocking assignments to one signal in combinational blocks   | Error    | Planned, per-file lint       |                                                |
+| STARC-2.2.3.2    | No default-then-override non-blocking assignments to one signal in combinational blocks   | Error    | Implemented                  | :code:`sv_always_017`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.2.3.3    | Do not assign the same signal more than once in a sequential always block                 | Error    | Planned, per-file lint       |                                                |
+| STARC-2.2.3.3    | Do not assign the same signal more than once in a sequential always block                 | Error    | Implemented                  | :code:`sv_always_017`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.3.1.1    | Use non-blocking assignments to infer flip-flops                                          | Error    | Implemented                  | :code:`sv_always_003`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -271,45 +271,45 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.3.1.3    | Add a (unit) delay to flip-flop assignments                                               | Note     | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.3.1.4    | Use flip-flop delay values only inside always blocks                                      | Warning  | Planned, per-file lint       |                                                |
+| STARC-2.3.1.4    | Use flip-flop delay values only inside always blocks                                      | Warning  | Implemented                  | :code:`sv_statement_016`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.3.1.5    | Delay values must be non-negative integers                                                | Error    | Planned, per-file lint       |                                                |
+| STARC-2.3.1.5    | Delay values must be non-negative integers                                                | Error    | Implemented                  | :code:`sv_statement_015`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.3.1.6    | Reset edge (posedge/negedge) must match the reset polarity tested                         | Error    | Planned, per-file lint       |                                                |
+| STARC-2.3.1.6    | Reset edge (posedge/negedge) must match the reset polarity tested                         | Error    | Implemented                  | :code:`sv_always_015`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.3.1.7    | A flip-flop must not have both asynchronous set and reset                                 | Error    | Planned, per-file lint       |                                                |
+| STARC-2.3.1.7    | A flip-flop must not have both asynchronous set and reset                                 | Error    | Implemented                  | :code:`sv_always_014`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.3.2.1    | Blocking vs non-blocking assignment can change the inferred flip-flop circuit             | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.3.2.2    | Do not mix blocking and non-blocking assignments in sequential always blocks              | Error    | Implemented                  | :code:`sv_always_004`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.3.3.1    | One always block must not use different clock edges                                       | Error    | Planned, per-file lint       |                                                |
+| STARC-2.3.3.1    | One always block must not use different clock edges                                       | Error    | Implemented                  | :code:`sv_always_012`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.3.3.2    | One always block must not use two clocks with the same edge                               | Error    | Planned, per-file lint       |                                                |
+| STARC-2.3.3.2    | One always block must not use two clocks with the same edge                               | Error    | Implemented                  | :code:`sv_always_012`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.3.4.1    | Do not set flip-flop initial values in initial blocks                                     | Error    | Implemented                  | :code:`sv_statement_004`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.3.4.2    | No initial blocks in RTL; synthesis ignores them                                          | Error    | Implemented                  | :code:`sv_statement_004`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.3.5.1    | Avoid flip-flops whose data input is a constant                                           | Warning  | Planned, per-file lint       |                                                |
+| STARC-2.3.5.1    | Avoid flip-flops whose data input is a constant                                           | Warning  | Implemented                  | :code:`sv_always_019`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.3.6.1    | Do not mix reset and non-reset flip-flops in one always block                             | Warning  | Planned, per-file lint       |                                                |
+| STARC-2.3.6.1    | Do not mix reset and non-reset flip-flops in one always block                             | Warning  | Implemented                  | :code:`sv_always_016`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.3.6.2    | Asynchronous resets: single bit, active low, coded with negedge                           | Note     | Planned, per-file lint       |                                                |
+| STARC-2.3.6.2    | Asynchronous resets: single bit, active low, coded with negedge                           | Note     | Implemented                  | :code:`sv_always_013`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.4.1.1    | Keep latch inference clearly separate from combinational logic                            | Warning  | Planned, per-file lint       |                                                |
+| STARC-2.4.1.1    | Keep latch inference clearly separate from combinational logic                            | Warning  | Implemented                  | :code:`sv_module_010`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.4.1.2    | Infer latches only inside dedicated latch-only modules                                    | Note     | Planned, per-file lint       |                                                |
+| STARC-2.4.1.2    | Infer latches only inside dedicated latch-only modules                                    | Note     | Implemented                  | :code:`sv_module_010`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.4.1.3    | No latches with asynchronous set or reset                                                 | Warning  | Planned, per-file lint       |                                                |
+| STARC-2.4.1.3    | No latches with asynchronous set or reset                                                 | Warning  | Implemented                  | :code:`sv_always_025`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.4.1.4    | No combinational feedback loops through latches                                           | Error    | Planned, design analysis     |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.4.1.5    | At most two latch stages on the same clock phase                                          | Warning  | Planned, design analysis     |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.5.1.1    | Place tri-state buffers in dedicated modules                                              | Note     | Planned, per-file lint       |                                                |
+| STARC-2.5.1.1    | Place tri-state buffers in dedicated modules                                              | Note     | Implemented                  | :code:`sv_module_011`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.5.1.2    | Tri-state enable should be a plain signal, not a logic expression                         | Note     | Planned, per-file lint       |                                                |
+| STARC-2.5.1.2    | Tri-state enable should be a plain signal, not a logic expression                         | Note     | Implemented                  | :code:`sv_statement_017`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.5.1.3    | Infer tri-state buffers by assigning 'z'                                                  | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -319,11 +319,11 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.5.1.6    | Do not connect inout ports directly to input or output ports                              | Error    | Planned, design analysis     |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.5.1.7    | Do not use tri-state signals in if conditions                                             | Note     | Planned, per-file lint       |                                                |
+| STARC-2.5.1.7    | Do not use tri-state signals in if conditions                                             | Note     | Implemented                  | :code:`sv_statement_018`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.5.1.8    | Do not use tri-state signals as case selectors unless default assigns x                   | Note     | Planned, per-file lint       |                                                |
+| STARC-2.5.1.8    | Do not use tri-state signals as case selectors unless default assigns x                   | Note     | Implemented                  | :code:`sv_statement_018`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.5.1.9    | Do not use tri-state signals as casex/casez selectors                                     | Note     | Planned, per-file lint       |                                                |
+| STARC-2.5.1.9    | Do not use tri-state signals as casex/casez selectors                                     | Note     | Implemented                  | :code:`sv_statement_018`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.5.2.1    | Put the tri-state driver and the bidirectional-bus input cell in separate blocks          | Note     | Planned, design analysis     |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -335,37 +335,37 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.6.1.2    | Factor logic used in more than two places into an intermediate signal                     | Note     | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.6.1.3    | Aim for at most five outputs per always block; never more than 15                         | Note     | Planned, per-file lint       |                                                |
+| STARC-2.6.1.3    | Aim for at most five outputs per always block; never more than 15                         | Note     | Implemented                  | :code:`sv_always_008`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.6.1.4    | Keep always blocks to 300 lines or fewer                                                  | Note     | Planned, per-file lint       |                                                |
+| STARC-2.6.1.4    | Keep always blocks to 300 lines or fewer                                                  | Note     | Implemented                  | :code:`sv_always_009`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.6.2.1    | At most one top-level if or case statement per always block                               | Error    | Implemented                  | :code:`sv_always_006`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.6.2.2    | Signals assigned in an always block must not appear in its own sensitivity list           | Error    | Planned, per-file lint       |                                                |
+| STARC-2.6.2.2    | Signals assigned in an always block must not appear in its own sensitivity list           | Error    | Implemented                  | :code:`sv_always_011`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.7.1.1    | Test timing-critical or frequently toggling signals first in if chains                    | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.7.1.2    | Avoid unnecessary priority logic                                                          | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.7.1.3    | Combinational if chains must end in a plain else, not else-if                             | Warning  | Planned, per-file lint       |                                                |
+| STARC-2.7.1.3    | Combinational if chains must end in a plain else, not else-if                             | Warning  | Implemented                  | :code:`sv_statement_010`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.7.2.1    | Merge if branches whose bodies are identical                                              | Warning  | Planned, per-file lint       |                                                |
+| STARC-2.7.2.1    | Merge if branches whose bodies are identical                                              | Warning  | Implemented                  | :code:`sv_statement_019`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.7.2.2    | Do not write unreachable conditions                                                       | Warning  | Planned, per-file lint       |                                                |
+| STARC-2.7.2.2    | Do not write unreachable conditions                                                       | Warning  | Implemented                  | :code:`sv_statement_020`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.7.2.3    | Avoid empty branches (e.g. a case item with only ';')                                     | Warning  | Implemented                  | :code:`sv_statement_006`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.7.3.1    | if nesting depth 7 or less; never above 15                                                | Note     | Planned, per-file lint       |                                                |
+| STARC-2.7.3.1    | if nesting depth 7 or less; never above 15                                                | Note     | Implemented                  | :code:`sv_statement_008`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.7.3.2    | Deeply nested if/else pairing is hard to follow                                           | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.7.3.3    | Indent nested ifs consistently to avoid pairing mistakes                                  | Note     | Planned, per-file lint       |                                                |
+| STARC-2.7.3.3    | Indent nested ifs consistently to avoid pairing mistakes                                  | Note     | Implemented                  | :code:`sv_indent_001`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.7.3.4    | Merge if statements that can be combined                                                  | Note     | Planned, per-file lint       |                                                |
+| STARC-2.7.3.4    | Merge if statements that can be combined                                                  | Note     | Implemented                  | :code:`sv_statement_027`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.7.4.1    | A single statement need not be wrapped in begin/end                                       | Note     | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.7.4.2    | Wrap multiple statements in begin/end                                                     | Note     | Planned, per-file lint       |                                                |
+| STARC-2.7.4.2    | Wrap multiple statements in begin/end                                                     | Note     | Implemented                  | :code:`sv_statement_001`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.7.4.3    | No fork/join in RTL                                                                       | Error    | Implemented                  | :code:`sv_statement_005`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -383,7 +383,7 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.8.2.1    | Split case tables exceeding 32 I/Os (about 20 inputs, 12 outputs)                         | Note     | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.8.2.2    | At most 200 items per case statement                                                      | Note     | Planned, per-file lint       |                                                |
+| STARC-2.8.2.2    | At most 200 items per case statement                                                      | Note     | Implemented                  | :code:`sv_case_004`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.8.2.3    | Restructure truth tables for HDL before coding them as case                               | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -391,21 +391,21 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.8.3.2    | x in default branches propagates in simulation even if not truly don't-care               | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.8.3.3    | Prevent latches with a default branch, not a full\_case pragma                            | Note     | Planned, per-file lint       |                                                |
+| STARC-2.8.3.3    | Prevent latches with a default branch, not a full\_case pragma                            | Note     | Implemented                  | :code:`sv_case_001`, :code:`sv_comment_001`    |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.8.3.4    | Signals that may be assigned x (don't-care) must not feed if conditions                   | Warning  | Planned, per-file lint       |                                                |
+| STARC-2.8.3.4    | Signals that may be assigned x (don't-care) must not feed if conditions                   | Warning  | Implemented                  | :code:`sv_statement_028`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.8.3.5    | The default branch must be the last case item                                             | Error    | Implemented                  | :code:`sv_case_002`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.8.3.6    | Don't-care signals not used as case selectors unless default assigns x                    | Warning  | Planned, per-file lint       |                                                |
+| STARC-2.8.3.6    | Don't-care signals not used as case selectors unless default assigns x                    | Warning  | Implemented                  | :code:`sv_statement_028`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.8.3.7    | Don't-care signals not used as casex selectors                                            | Warning  | Planned, per-file lint       |                                                |
+| STARC-2.8.3.7    | Don't-care signals not used as casex selectors                                            | Warning  | Implemented                  | :code:`sv_statement_028`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.8.4.1    | Complex casex statements degrade circuit quality                                          | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.8.4.2    | Complex casex statements hurt readability                                                 | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.8.4.3    | Avoid casex and casez                                                                     | Note     | Planned, per-file lint       |                                                |
+| STARC-2.8.4.3    | Avoid casex and casez                                                                     | Note     | Implemented                  | :code:`sv_case_005`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.8.4.4    | Do not scatter per-bit x wildcards in casex items                                         | Warning  | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -413,35 +413,35 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.8.5.2    | Case selector must not be a constant (e.g. case (1'b1))                                   | Warning  | Implemented                  | :code:`sv_case_003`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.8.5.3    | Case item labels must be constants, not variables or expressions                          | Error    | Planned, per-file lint       |                                                |
+| STARC-2.8.5.3    | Case item labels must be constants, not variables or expressions                          | Error    | Implemented                  | :code:`sv_case_006`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.8.5.4    | Case selector must not contain logic or arithmetic operations                             | Note     | Planned, per-file lint       |                                                |
+| STARC-2.8.5.4    | Case selector must not contain logic or arithmetic operations                             | Note     | Implemented                  | :code:`sv_case_007`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.8.6.1    | In mixed nested if/case, prefer fewer conditions with more matches                        | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.9.1.1    | Use for loops only for simple repetition that creates no priority                         | Note     | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.9.1.2    | Loop bounds must be constant; never modify the loop variable in the body                  | Error    | Planned, per-file lint       |                                                |
+| STARC-2.9.1.2    | Loop bounds must be constant; never modify the loop variable in the body                  | Error    | Implemented                  | :code:`sv_statement_009`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.9.2.1    | Arithmetic inside loops only on the loop variable and constants                           | Error    | Planned, per-file lint       |                                                |
+| STARC-2.9.2.1    | Arithmetic inside loops only on the loop variable and constants                           | Error    | Implemented                  | :code:`sv_statement_029`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.9.2.2    | Logical/relational operations in loops only on loop variable and constants                | Note     | Planned, per-file lint       |                                                |
+| STARC-2.9.2.2    | Logical/relational operations in loops only on loop variable and constants                | Note     | Implemented                  | :code:`sv_statement_029`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.9.2.3    | Loops doing other logical/relational operations: at most 10 iterations                    | Warning  | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.9.2.4    | Use separate for loops for the reset branch and the functional logic                      | Error    | Planned, per-file lint       |                                                |
+| STARC-2.9.2.4    | Use separate for loops for the reset branch and the functional logic                      | Error    | Implemented                  | :code:`sv_always_020`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.10.1.1   | Keep operator precedence in mind                                                          | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.10.1.2   | Parenthesize mixed logical operations even when precedence is clear                       | Note     | Planned, per-file lint       |                                                |
+| STARC-2.10.1.2   | Parenthesize mixed logical operations even when precedence is clear                       | Note     | Implemented                  | :code:`sv_statement_012`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.10.1.3   | Parenthesize expressions with two or more arithmetic operators                            | Note     | Planned, per-file lint       |                                                |
+| STARC-2.10.1.3   | Parenthesize expressions with two or more arithmetic operators                            | Note     | Implemented                  | :code:`sv_statement_021`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.10.1.4   | Never compare against x or z                                                              | Error    | Implemented                  | :code:`sv_literal_005`                         |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.10.1.5   | Assign x only in case default branches                                                    | Error    | Planned, per-file lint       |                                                |
+| STARC-2.10.1.5   | Assign x only in case default branches                                                    | Error    | Implemented                  | :code:`sv_literal_006`                         |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.10.1.6   | Do not use literals containing x or z                                                     | Error    | Planned, per-file lint       |                                                |
+| STARC-2.10.1.6   | Do not use literals containing x or z                                                     | Error    | Implemented                  | :code:`sv_literal_006`                         |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.10.1.7   | Do not use RAM outputs directly in if conditions                                          | Warning  | Planned, design analysis     |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -459,9 +459,9 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.10.3.4   | The right-hand side of an assignment should not be narrower than the left                 | Note     | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.10.3.5   | Write constants with an explicit base ('d, 'b, 'h, 'o)                                    | Note     | Planned, per-file lint       |                                                |
+| STARC-2.10.3.5   | Write constants with an explicit base ('d, 'b, 'h, 'o)                                    | Note     | Implemented                  | :code:`sv_literal_008`                         |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.10.3.6   | Constants in conditional expressions must be sized                                        | Error    | Planned, per-file lint       |                                                |
+| STARC-2.10.3.6   | Constants in conditional expressions must be sized                                        | Error    | Implemented                  | :code:`sv_literal_007`                         |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.10.3.7   | A literal's width must match its digits (e.g. 2'b needs exactly 2 bits)                   | Note     | Implemented                  | :code:`sv_literal_001`, :code:`sv_literal_002` |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -473,9 +473,9 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.10.4.4   | Be careful comparing integers with reg/wire values                                        | Note     | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.10.4.5   | Never assign a negative value to an integer                                               | Error    | Planned, per-file lint       |                                                |
+| STARC-2.10.4.5   | Never assign a negative value to an integer                                               | Error    | Implemented                  | :code:`sv_literal_009`                         |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.10.4.6   | Never assign a negative value to reg or wire signals                                      | Note     | Planned, per-file lint       |                                                |
+| STARC-2.10.4.6   | Never assign a negative value to reg or wire signals                                      | Note     | Implemented                  | :code:`sv_literal_009`                         |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.10.5.1   | Wide arithmetic/relational operators (8+ bits) create large logic                         | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -485,7 +485,7 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.10.5.4   | Do not rely heavily on automatic resource sharing                                         | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.10.5.5   | No arithmetic inside ?: operands of an assignment (blocks sharing)                        | Note     | Planned, per-file lint       |                                                |
+| STARC-2.10.5.5   | No arithmetic inside ?: operands of an assignment (blocks sharing)                        | Note     | Implemented                  | :code:`sv_statement_022`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.10.5.6   | Inspect synthesized logic whenever resources are shared                                   | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -501,11 +501,11 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.10.6.6   | One arithmetic operation per line, except A+B+1-bit carry-in                              | Note     | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.10.7.1   | No arithmetic in if conditions                                                            | Warning  | Planned, per-file lint       |                                                |
+| STARC-2.10.7.1   | No arithmetic in if conditions                                                            | Warning  | Implemented                  | :code:`sv_statement_011`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.10.7.2   | Hoist common expressions out of conditional branches                                      | Note     | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.10.8.1   | Operands of / and % must be plain signals, not expressions                                | Error    | Planned, per-file lint       |                                                |
+| STARC-2.10.8.1   | Operands of / and % must be plain signals, not expressions                                | Error    | Implemented                  | :code:`sv_statement_013`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.10.8.2   | Dividend of / or % at most 12 bits                                                        | Error    | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -517,13 +517,13 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.11.1.2   | Encode states to minimize bit changes per transition (Gray code)                          | Note     | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.11.1.3   | Define state encodings with parameters                                                    | Note     | Planned, per-file lint       |                                                |
+| STARC-2.11.1.3   | Define state encodings with parameters                                                    | Note     | Implemented                  | :code:`sv_case_008`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.11.1.4   | At most 60 states per state machine                                                       | Note     | Planned, per-file lint       |                                                |
+| STARC-2.11.1.4   | At most 60 states per state machine                                                       | Note     | Implemented                  | :code:`sv_case_009`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.11.1.5   | Split state machines above 60 states into two                                             | Note     | Planned, per-file lint       |                                                |
+| STARC-2.11.1.5   | Split state machines above 60 states into two                                             | Note     | Implemented                  | :code:`sv_case_009`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.11.2.1   | Put each state machine in its own module                                                  | Note     | Planned, per-file lint       |                                                |
+| STARC-2.11.2.1   | Put each state machine in its own module                                                  | Note     | Implemented                  | :code:`sv_case_010`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.11.3.1   | Separating state register and next-state/output case eases verification                   | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -531,7 +531,7 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.11.4.1   | Choose encoding: Gray by default, one-hot for speed (+20-30% area, ~15 states)            | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.11.4.2   | Use parameters so state encoding can be changed easily                                    | Note     | Planned, per-file lint       |                                                |
+| STARC-2.11.4.2   | Use parameters so state encoding can be changed easily                                    | Note     | Implemented                  | :code:`sv_case_008`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.1.1.1    | Build shared, reusable subprograms                                                        | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -543,7 +543,7 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.1.2.1    | Follow the basic naming conventions (section 1.1)                                         | Error    | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.1.2.2    | Avoid technology-dependent code (e.g. instantiated library cells)                         | Warning  | Planned, per-file lint       |                                                |
+| STARC-3.1.2.2    | Avoid technology-dependent code (e.g. instantiated library cells)                         | Warning  | Implemented                  | :code:`sv_module_012`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.1.2.3    | Keep the clocking scheme simple                                                           | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -557,11 +557,11 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.1.3.1    | Use one consistent order for port declarations, port lists and instance connections       | Note     | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.1.3.2    | Port order: clock, reset, inputs, outputs, inout ports                                    | Note     | Planned, per-file lint       |                                                |
+| STARC-3.1.3.2    | Port order: clock, reset, inputs, outputs, inout ports                                    | Note     | Implemented                  | :code:`sv_module_007`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.1.3.3    | Declare sequential and combinational regs in separate groups                              | Note     | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.1.3.4    | One signal per port/reg/wire declaration line, each commented                             | Note     | Planned, per-file lint       |                                                |
+| STARC-3.1.3.4    | One signal per port/reg/wire declaration line, each commented                             | Note     | Implemented                  | :code:`sv_declaration_003`                     |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.1.4.1    | Good signal names are key to RTL readability                                              | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -573,11 +573,11 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.1.4.5    | Lines at most about 110 characters                                                        | Note     | Implemented                  | :code:`length_001`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.1.5.1    | Parameterize module port widths where possible                                            | Note     | Planned, per-file lint       |                                                |
+| STARC-3.1.5.1    | Parameterize module port widths where possible                                            | Note     | Implemented                  | :code:`sv_dimension_004`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.1.5.2    | Set widths via parameters or text macros                                                  | Note     | Planned, per-file lint       |                                                |
+| STARC-3.1.5.2    | Set widths via parameters or text macros                                                  | Note     | Implemented                  | :code:`sv_dimension_004`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.1.5.3    | Give parameters default values                                                            | Note     | Planned, per-file lint       |                                                |
+| STARC-3.1.5.3    | Give parameters default values                                                            | Note     | Implemented                  | :code:`sv_declaration_002`                     |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.1.6.1    | Parameter values may be selected with \`ifdef                                             | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -597,17 +597,17 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.2.2.4    | \`include paths must be relative (e.g. ../include/common.h)                               | Warning  | Implemented                  | :code:`sv_file_004`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.2.2.5    | Do not nest text macros                                                                   | Note     | Planned, per-file lint       |                                                |
+| STARC-3.2.2.5    | Do not nest text macros                                                                   | Note     | Implemented                  | :code:`sv_module_008`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.2.2.6    | Separate project-wide include files from personal ones                                    | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.2.2.7    | Use parameter, not \`define, for project-wide constants                                   | Note     | Planned, per-file lint       |                                                |
+| STARC-3.2.2.7    | Use parameter, not \`define, for project-wide constants                                   | Note     | Implemented                  | :code:`sv_module_006`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.2.3.1    | Connect instance ports by name, never by position                                         | Error    | Planned, per-file lint       |                                                |
+| STARC-3.2.3.1    | Connect instance ports by name, never by position                                         | Error    | Implemented                  | :code:`sv_module_003`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.2.3.2    | Net width must match the width of the instance port it connects to                        | Error    | Planned, design analysis     |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.2.4.1    | Override lower-level parameters with #(...) at instantiation                              | Note     | Planned, per-file lint       |                                                |
+| STARC-3.2.4.1    | Override lower-level parameters with #(...) at instantiation                              | Note     | Implemented                  | :code:`sv_module_002`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.2.4.2    | When overriding, specify all of the lower module's parameters                             | Note     | Planned, design analysis     |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -635,9 +635,9 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.3.2.3    | Black-box outputs must not drive clock, reset or tri-state enable pins                    | Error    | Planned, design analysis     |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.3.3.1    | A clock must never feed a flip-flop D input                                               | Error    | Planned, per-file lint       |                                                |
+| STARC-3.3.3.1    | A clock must never feed a flip-flop D input                                               | Error    | Implemented                  | :code:`sv_always_022`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.3.3.2    | Do not tie flip-flop inputs to constant 0/1                                               | Note     | Planned, per-file lint       |                                                |
+| STARC-3.3.3.2    | Do not tie flip-flop inputs to constant 0/1                                               | Note     | Implemented                  | :code:`sv_always_019`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.3.4.1    | No feedback loops through latches                                                         | Error    | Planned, design analysis     |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -713,17 +713,17 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.5.1.3    | Archive compact copies of design directories for versioning                               | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.5.1.4    | Reference files by relative paths                                                         | Warning  | Planned, per-file lint       |                                                |
+| STARC-3.5.1.4    | Reference files by relative paths                                                         | Warning  | Implemented                  | :code:`sv_file_004`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.5.2.1    | File references use relative paths via the master directory                               | Warning  | Planned, per-file lint       |                                                |
+| STARC-3.5.2.1    | File references use relative paths via the master directory                               | Warning  | Implemented                  | :code:`sv_file_004`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.5.2.2    | RTL file name is the module name plus .v                                                  | Warning  | Implemented                  | :code:`sv_file_001`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.5.2.3    | Testbench files named \*\_tb.v, \*\_test.v or \*.vt                                       | Note     | Planned, per-file lint       |                                                |
+| STARC-3.5.2.3    | Testbench files named \*\_tb.v, \*\_test.v or \*.vt                                       | Note     | Implemented                  | :code:`sv_file_007`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.5.2.4    | Gate-level netlists named <module>.v or <module>.vnet                                     | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.5.2.5    | Include file extensions: .h/.vh/.inc (RTL), .h/.inc/.ht/.tsk (testbench)                  | Note     | Planned, per-file lint       |                                                |
+| STARC-3.5.2.5    | Include file extensions: .h/.vh/.inc (RTL), .h/.inc/.ht/.tsk (testbench)                  | Note     | Implemented                  | :code:`sv_file_005`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.5.2.6    | UNIX run scripts end in .run                                                              | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -745,11 +745,11 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.5.2.15   | Synthesis database files end in .db                                                       | Warning  | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.5.3.1    | File header gives circuit name, function, author and creation date                        | Warning  | Planned, per-file lint       |                                                |
+| STARC-3.5.3.1    | File header gives circuit name, function, author and creation date                        | Warning  | Implemented                  | :code:`sv_comment_003`                         |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.5.3.2    | On reuse, header records who changed what                                                 | Warning  | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.5.3.3    | Use a standard file header template                                                       | Warning  | Planned, per-file lint       |                                                |
+| STARC-3.5.3.3    | Use a standard file header template                                                       | Warning  | Implemented                  | :code:`sv_comment_003`                         |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.5.3.4    | Consider CVS when needed                                                                  | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -765,15 +765,15 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.5.6.2    | Comment the purpose and content of operations                                             | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.5.6.3    | Declare each port/signal on its own line with a comment                                   | Note     | Planned, per-file lint       |                                                |
+| STARC-3.5.6.3    | Declare each port/signal on its own line with a comment                                   | Note     | Implemented                  | :code:`sv_comment_004`                         |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.5.6.4    | Write comments in English where possible                                                  | Note     | Planned, per-file lint       |                                                |
+| STARC-3.5.6.4    | Write comments in English where possible                                                  | Note     | Implemented                  | :code:`sv_comment_005`                         |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.5.6.5    | Some tools cannot read non-English comments                                               | Note     | Planned, per-file lint       |                                                |
+| STARC-3.5.6.5    | Some tools cannot read non-English comments                                               | Note     | Implemented                  | :code:`sv_comment_005`                         |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.5.6.6    | If Japanese text is needed, EUC encoding causes fewest problems                           | Warning  | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.5.6.7    | Use // line comments                                                                      | Note     | Planned, per-file lint       |                                                |
+| STARC-3.5.6.7    | Use // line comments                                                                      | Note     | Implemented                  | :code:`sv_comment_002`                         |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.5.7.1    | RTL can be version-managed with CVS                                                       | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -807,31 +807,31 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-4.1.1.1    | Structure testbenches hierarchically or with tasks/functions                              | Warning  | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-4.1.1.2    | Define testbench timing with parameters or text macros                                    | Note     | Planned, per-file lint       |                                                |
+| STARC-4.1.1.2    | Define testbench timing with parameters or text macros                                    | Note     | Implemented                  | :code:`sv_statement_034`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-4.1.2.1    | Use parameters instead of hard-coded numbers in test code                                 | Warning  | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-4.1.2.2    | Drive testbench stimulus with blocking assignments                                        | Note     | Planned, per-file lint       |                                                |
+| STARC-4.1.2.2    | Drive testbench stimulus with blocking assignments                                        | Note     | Implemented                  | :code:`sv_statement_024`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-4.1.2.3    | fork/join blocks at most 5 lines                                                          | Note     | Planned, per-file lint       |                                                |
+| STARC-4.1.2.3    | fork/join blocks at most 5 lines                                                          | Note     | Implemented                  | :code:`sv_statement_014`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-4.1.2.4    | Declare time units with \`timescale                                                       | Note     | Planned, per-file lint       |                                                |
+| STARC-4.1.2.4    | Declare time units with \`timescale                                                       | Note     | Implemented                  | :code:`sv_file_006`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-4.1.3.1    | Apply stimulus offset from the rising clock edge                                          | Error    | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-4.1.3.2    | When falling edges are used, offset stimulus from them as well                            | Warning  | Planned, per-file lint       |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-4.1.4.1    | Never drive one signal from several initial blocks                                        | Warning  | Planned, per-file lint       |                                                |
+| STARC-4.1.4.1    | Never drive one signal from several initial blocks                                        | Warning  | Implemented                  | :code:`sv_always_018`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-4.1.4.2    | Drive each signal from a single procedural block                                          | Warning  | Planned, per-file lint       |                                                |
+| STARC-4.1.4.2    | Drive each signal from a single procedural block                                          | Warning  | Implemented                  | :code:`sv_always_018`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-4.1.5.1    | Apply test vectors synchronized to the clock                                              | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-4.1.5.2    | Synchronize to clocks with event controls                                                 | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-4.1.6.1    | Do not compute clock periods inside always blocks                                         | Warning  | Planned, per-file lint       |                                                |
+| STARC-4.1.6.1    | Do not compute clock periods inside always blocks                                         | Warning  | Implemented                  | :code:`sv_statement_030`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-4.1.7.1    | Generate each clock in its own block                                                      | Note     | Planned, per-file lint       |                                                |
+| STARC-4.1.7.1    | Generate each clock in its own block                                                      | Note     | Implemented                  | :code:`sv_statement_031`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-4.1.8.1    | Sample signals at a different time from when they are driven                              | Warning  | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -839,7 +839,7 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-4.1.8.3    | Watch for time-zero event races in edge-based testbenches                                 | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-4.1.8.4    | Avoid edge events on non-clock signals in testbenches                                     | Warning  | Planned, per-file lint       |                                                |
+| STARC-4.1.8.4    | Avoid edge events on non-clock signals in testbenches                                     | Warning  | Implemented                  | :code:`sv_statement_032`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-4.1.8.5    | Take care with asynchronous reset timing in testbenches                                   | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -851,7 +851,7 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-4.1.10.1   | Use handshakes when cycle counts are unknown                                              | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-4.1.11.1   | Write result files with $fstrobe rather than $fdisplay                                    | Note     | Planned, per-file lint       |                                                |
+| STARC-4.1.11.1   | Write result files with $fstrobe rather than $fdisplay                                    | Note     | Implemented                  | :code:`sv_statement_025`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-4.1.11.2   | Report errors with $display or $fdisplay                                                  | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -867,7 +867,7 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-4.2.3.1    | Task arguments are optional                                                               | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-4.2.3.2    | Stimulus-generating tasks should not declare output arguments                             | Warning  | Planned, per-file lint       |                                                |
+| STARC-4.2.3.2    | Stimulus-generating tasks should not declare output arguments                             | Warning  | Implemented                  | :code:`sv_function_010`                        |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-4.2.3.3    | Tasks can have multiple inputs and outputs                                                | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -939,7 +939,7 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-4.3.11.2   | Switch testbench variants with \`ifdef                                                    | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-4.3.11.3   | Fence non-synthesizable debug code in RTL with translate\_off/on                          | Note     | Planned, per-file lint       |                                                |
+| STARC-4.3.11.3   | Fence non-synthesizable debug code in RTL with translate\_off/on                          | Note     | Implemented                  | :code:`sv_statement_033`                       |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-4.4.1.1    | Both RTL and gate-level verification are required                                         | Error    | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -965,7 +965,7 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-4.4.3.3    | Use static timing analysis                                                                | Warning  | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-4.4.4.1    | Ensure sensitivity lists are complete                                                     | Note     | Planned, per-file lint       |                                                |
+| STARC-4.4.4.1    | Ensure sensitivity lists are complete                                                     | Note     | Implemented                  | :code:`sv_lint_008`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-4.4.4.2    | Incomplete sensitivity lists cause RTL/gate mismatches                                    | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -1197,7 +1197,7 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-5.6.1      | Compile without a clock period to get ripple adders/subtractors                           | Warning  | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-5.6.2      | Do not select arithmetic implementations (e.g. ripple/CLA) via RTL directives             | Error    | Planned, per-file lint       |                                                |
+| STARC-5.6.2      | Do not select arithmetic implementations (e.g. ripple/CLA) via RTL directives             | Error    | Implemented                  | :code:`sv_comment_001`                         |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-5.6.3      | Ungroup or remove unconnected ports before compile -inc on operator logic                 | Warning  | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
