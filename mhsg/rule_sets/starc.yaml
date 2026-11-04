@@ -70,7 +70,8 @@ checks:
     title: Mark active-low signals with a suffix such as _X or _N
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_naming_017
     note: 'Limits: active low suffixes _X, _N.'
   1.1.1.8:
     title: Instance name = module name; repeated instances become <module>_<number>
@@ -716,7 +717,8 @@ checks:
     title: Index arrays with plain signal names, not expressions
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_023
   2.1.6.4:
     title: Array index range should match the declared bounds
     level: Recommendation 2
@@ -774,13 +776,15 @@ checks:
     title: No default-then-override non-blocking assignments to one signal in combinational blocks
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_always_017
     note: Verilog only.
   2.2.3.3:
     title: Do not assign the same signal more than once in a sequential always block
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_always_017
     note: Verilog only.
   2.3.1.1:
     title: Use non-blocking assignments to infer flip-flops
@@ -803,12 +807,14 @@ checks:
     title: Use flip-flop delay values only inside always blocks
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_statement_016
   2.3.1.5:
     title: Delay values must be non-negative integers
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_statement_015
   2.3.1.6:
     title: Reset edge (posedge/negedge) must match the reset polarity tested
     level: Rule
@@ -863,7 +869,8 @@ checks:
     title: Avoid flip-flops whose data input is a constant
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_always_019
   2.3.6.1:
     title: Do not mix reset and non-reset flip-flops in one always block
     level: Recommendation 1
@@ -912,7 +919,8 @@ checks:
     title: Tri-state enable should be a plain signal, not a logic expression
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_017
   2.5.1.3:
     title: Infer tri-state buffers by assigning 'z'
     level: Suggestion
@@ -938,17 +946,20 @@ checks:
     title: Do not use tri-state signals in if conditions
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_018
   2.5.1.8:
     title: Do not use tri-state signals as case selectors unless default assigns x
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_018
   2.5.1.9:
     title: Do not use tri-state signals as casex/casez selectors
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_018
   2.5.2.1:
     title: Put the tri-state driver and the bidirectional-bus input cell in separate blocks
     level: Recommendation 2
@@ -1021,12 +1032,14 @@ checks:
     title: Merge if branches whose bodies are identical
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_statement_019
   2.7.2.2:
     title: Do not write unreachable conditions
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_statement_020
   2.7.2.3:
     title: Avoid empty branches (e.g. a case item with only ';')
     level: Recommendation 1
@@ -1261,7 +1274,8 @@ checks:
     title: Use separate for loops for the reset branch and the functional logic
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_always_020
   2.10.1.1:
     title: Keep operator precedence in mind
     level: Recommendation 3
@@ -1277,7 +1291,8 @@ checks:
     title: Parenthesize expressions with two or more arithmetic operators
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_021
   2.10.1.4:
     title: Never compare against x or z
     level: Rule
@@ -1428,7 +1443,8 @@ checks:
     title: 'No arithmetic inside ?: operands of an assignment (blocks sharing)'
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_022
   2.10.5.6:
     title: Inspect synthesized logic whenever resources are shared
     level: Recommendation 3
@@ -1514,18 +1530,21 @@ checks:
     title: Define state encodings with parameters
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_case_008
   2.11.1.4:
     title: At most 60 states per state machine
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_case_009
     note: 'Limits: max states 60.'
   2.11.1.5:
     title: Split state machines above 60 states into two
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_case_009
     note: 'Limits: max states 60.'
   2.11.2.1:
     title: Put each state machine in its own module
@@ -1552,7 +1571,8 @@ checks:
     title: Use parameters so state encoding can be changed easily
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_case_008
   3.1.1.1:
     title: Build shared, reusable subprograms
     level: Recommendation 3
@@ -1853,7 +1873,8 @@ checks:
     title: Do not tie flip-flop inputs to constant 0/1
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_always_019
   3.3.4.1:
     title: No feedback loops through latches
     level: Rule
@@ -2060,7 +2081,8 @@ checks:
     title: Testbench files named *_tb.v, *_test.v or *.vt
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_file_007
     note: 'Limits: testbench file patterns *_tb.v, *_test.v, *.vt.'
   3.5.2.4:
     title: Gate-level netlists named <module>.v or <module>.vnet
@@ -2193,17 +2215,20 @@ checks:
     title: Declare each port/signal on its own line with a comment
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_comment_004
   3.5.6.4:
     title: Write comments in English where possible
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_comment_005
   3.5.6.5:
     title: Some tools cannot read non-English comments
     level: Suggestion
     severity: Note
-    status: planned
+    rules:
+    - sv_comment_005
   3.5.6.6:
     title: If Japanese text is needed, EUC encoding causes fewest problems
     level: Recommendation 1
@@ -2310,7 +2335,8 @@ checks:
     title: Drive testbench stimulus with blocking assignments
     level: Suggestion
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_024
   4.1.2.3:
     title: fork/join blocks at most 5 lines
     level: Recommendation 2
@@ -2339,13 +2365,15 @@ checks:
     title: Never drive one signal from several initial blocks
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_always_018
     note: Verilog only.
   4.1.4.2:
     title: Drive each signal from a single procedural block
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_always_018
     note: Verilog only.
   4.1.5.1:
     title: Apply test vectors synchronized to the clock
@@ -2416,7 +2444,8 @@ checks:
     title: Write result files with $fstrobe rather than $fdisplay
     level: Suggestion
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_025
     note: Verilog only.
   4.1.11.2:
     title: Report errors with $display or $fdisplay
@@ -2459,7 +2488,8 @@ checks:
     title: Stimulus-generating tasks should not declare output arguments
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_function_010
   4.2.3.3:
     title: Tasks can have multiple inputs and outputs
     level: Suggestion

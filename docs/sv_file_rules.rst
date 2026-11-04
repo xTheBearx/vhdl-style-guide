@@ -144,3 +144,28 @@ guide recommends (4.1.2.4). It is disabled by default; the starc rule set enable
 
    `timescale 1ns / 1ps
    module fifo (input logic clk_i);
+
+sv_file_007
+###########
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_file_testbench_names`
+
+This rule checks that a file holding a testbench, a module without ports, has a name matching one of
+**testbench_patterns**, file name patterns with * and ?, by default *_tb.v, *_tb.sv, *_test.v, *_test.sv and
+*.vt, as the STARC guide recommends (3.5.2.3). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   // in fifo_check.sv
+   module fifo_check;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   // in fifo_tb.sv
+   module fifo_tb;

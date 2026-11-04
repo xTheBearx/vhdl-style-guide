@@ -108,7 +108,15 @@ what a Verible lint rule checks, its alias is the Verible rule's name.
   (:code:`sv_file_006`); constants in conditions with a width, numbers written with a base (:code:`sv_literal_007`,
   :code:`sv_literal_008`); functions ending by assigning their result (:code:`sv_function_009`); fork join blocks
   of at most 5 lines (:code:`sv_statement_014`); a file header giving the module, its function, the author and the
-  date (:code:`sv_comment_003`)
+  date (:code:`sv_comment_003`); active low resets named so (:code:`sv_naming_017`); a signal assigned once in a
+  sequence of statements and in one procedural block, no registers always assigned one constant, no reset test inside
+  a for loop (:code:`sv_always_017` to :code:`sv_always_020`); non-negative integer delays, given only in always
+  blocks, plain tri-state enables, no tests of tri-state signals, no repeated branches or conditions in if chains,
+  parentheses around chained arithmetic, no arithmetic in the values of ?:, plain signals as indexes, blocking
+  assignments in initial blocks, $fstrobe instead of $fdisplay (:code:`sv_statement_015` to
+  :code:`sv_statement_025`); no output arguments of tasks (:code:`sv_function_010`); testbench file names
+  (:code:`sv_file_007`); a comment for each port and signal, comments in ASCII (:code:`sv_comment_004`,
+  :code:`sv_comment_005`); state encodings named and at most 60 states (:code:`sv_case_008`, :code:`sv_case_009`)
 * :code:`sv_syntax_001`: code slang cannot parse
 
 The **starc** rule set enables the rules of the STARC guide that are disabled by default.

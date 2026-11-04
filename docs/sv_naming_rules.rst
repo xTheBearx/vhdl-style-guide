@@ -367,3 +367,29 @@ starc rule set enables it.
 
    module fifo (input logic clk_i, output logic full_o);
        logic count;
+
+sv_naming_017
+#############
+
+|phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`sv_naming_active_low_resets`
+
+This rule checks that asynchronous resets that are active low, tested on negedge or with !, have names marking
+them so, matching **active_low_pattern**, a regular expression matched ignoring case, by default names ending in
+_n, _x, _b or _l, with i or o after it for ports, or such as rstn, as the STARC guide recommends (1.1.1.7). It is
+disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i or negedge rst_i)
+       if (!rst_i) q <= 1'b0;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i or negedge rst_ni)
+       if (!rst_ni) q <= 1'b0;

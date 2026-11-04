@@ -408,3 +408,111 @@ default; the starc rule set enables it.
        else count <= count + 1;
 
    always_ff @(posedge clk_i) data <= data_i;
+
+sv_always_017
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_assign_once`
+
+This rule checks that a sequential always block assigns a signal once in a sequence of statements, not first a
+default and then again in a later statement, as the STARC guide asks (2.2.3.3); in a combinational block it
+checks nonblocking assignments the same way (2.2.3.2). The signals are compared by their whole target, so q[0]
+and q[1] are different. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i) begin
+       q <= 1'b0;
+       if (load) q <= d;
+   end
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i)
+       if (load) q <= d;
+       else q <= 1'b0;
+
+sv_always_018
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_one_driver_block`
+
+This rule checks that a signal is assigned in one procedural block only, one always or initial block, as the
+STARC guide asks (4.1.4.1, 4.1.4.2). Variables declared inside a block are not checked, nor blocks in different
+branches of generate constructs. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   initial reset_n = 1'b0;
+   initial #100 reset_n = 1'b1;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   initial begin
+       reset_n = 1'b0;
+       #100 reset_n = 1'b1;
+   end
+
+sv_always_019
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_no_constant_registers`
+
+This rule checks for registers that an edge triggered always block only ever assigns one constant, so their data
+input is constant, as the STARC guide recommends (2.3.5.1, 3.3.3.2). A part of a signal, such as q[0], is not
+reported if the block also assigns other values to the signal, nor are the registers of blocks that call tasks,
+which may assign them too. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i or negedge rst_ni)
+       if (!rst_ni) ready <= 1'b1;
+       else ready <= 1'b1;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign ready = 1'b1;
+
+sv_always_020
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_reset_loops`
+
+This rule checks that a for loop of an always block with an asynchronous reset does not hold the reset test, an
+if on one of the signals of its event control, as the STARC guide recommends (2.9.2.4): use one loop in the reset
+branch and another in the other branch. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   for (int i = 0; i < 4; i++)
+       if (!rst_ni) q[i] <= 1'b0;
+       else q[i] <= d[i];
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   if (!rst_ni) for (int i = 0; i < 4; i++) q[i] <= 1'b0;
+   else for (int i = 0; i < 4; i++) q[i] <= d[i];
