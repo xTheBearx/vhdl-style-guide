@@ -413,6 +413,21 @@ options:
     minimum: 1
     label: Longest name
     description: The most characters in a name other than that of a module or instance.
+  maximum_dividend_bits:
+    type: integer
+    minimum: 1
+    label: Widest dividend
+    description: The most bits the dividend of a division or remainder may have.
+  maximum_divisor_bits:
+    type: integer
+    minimum: 1
+    label: Widest divisor
+    description: The most bits the divisor of a division or remainder may have, unless it is a constant power of two.
+  maximum_multiplier_bits:
+    type: integer
+    minimum: 1
+    label: Widest multiplier operand
+    description: The most bits the operands of a multiplication of two signals may have.
   maximum_ports:
     type: integer
     minimum: 1

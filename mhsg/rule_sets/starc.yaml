@@ -679,13 +679,15 @@ checks:
     title: Do not apply logical NOT, AND or OR operators to multi-bit vectors
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_statement_035
     note: Verilog only.
   2.1.4.6:
     title: Watch result widths when using reduction operators
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_042
     note: Verilog only.
   2.1.5.1:
     title: 'Do not nest the conditional operator ?: (single level only)'
@@ -704,7 +706,8 @@ checks:
     title: 'Conditions of if and ?: should be 1-bit, not vectors'
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_036
     note: Verilog only.
   2.1.6.1:
     title: Declare one-dimensional vectors as [MSB:LSB] (descending)
@@ -1356,7 +1359,8 @@ checks:
     title: Operands of relational operators must have equal widths
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_037
     note: Verilog only.
   2.10.3.2:
     title: Bitwise-operator operands should match the assignment target width
@@ -1376,7 +1380,8 @@ checks:
     title: The right-hand side of an assignment should not be narrower than the left
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_038
     note: Verilog only.
   2.10.3.5:
     title: Write constants with an explicit base ('d, 'b, 'h, 'o)
@@ -1423,7 +1428,8 @@ checks:
     title: Be careful comparing integers with reg/wire values
     level: Suggestion
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_043
     note: Verilog only.
   2.10.4.5:
     title: Never assign a negative value to an integer
@@ -1475,7 +1481,8 @@ checks:
     title: Size arithmetic result signals to hold the carry-out
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_039
   2.10.6.2:
     title: Handle sign extension and operand widths in signed arithmetic
     level: Recommendation 1
@@ -1496,7 +1503,8 @@ checks:
     title: Do not infer large multipliers with '*'; build them explicitly
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_statement_041
     note: 'Limits: max multiplier width configurable.'
   2.10.6.6:
     title: One arithmetic operation per line, except A+B+1-bit carry-in
@@ -1524,13 +1532,15 @@ checks:
     title: Dividend of / or % at most 12 bits
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_statement_040
     note: 'Limits: max dividend bits 12.'
   2.10.8.3:
     title: Divisor of / or % at most 8 bits, except powers of two
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_statement_040
     note: 'Limits: max divisor bits 8.'
   2.10.8.4:
     title: Minimize operand widths of division and modulus

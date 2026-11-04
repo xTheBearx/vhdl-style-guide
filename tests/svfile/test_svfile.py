@@ -824,6 +824,39 @@ class test_rules(unittest.TestCase):
             [s for s in lOutput if "sv_lint_008" in s],
         )
 
+    def test_starc_checks_7(self):
+        # The widths come from slang's elaboration of the file
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "starc", "-ap"], "starc_more7.sv")
+        lRules = (
+            "sv_statement_035",
+            "sv_statement_036",
+            "sv_statement_037",
+            "sv_statement_038",
+            "sv_statement_039",
+            "sv_statement_040",
+            "sv_statement_041",
+            "sv_statement_042",
+            "sv_statement_043",
+        )
+        self.assertEqual(
+            [
+                "WARNING: starc_more7.sv(16)STARC-2.1.4.5 (sv_statement_035) -- Compare a_i, 8 bits wide, with a value instead of using it as a truth value",
+                "WARNING: starc_more7.sv(17)STARC-2.1.5.3 (sv_statement_036) -- Make the condition c_i 1 bit wide: it has 6 bits",
+                "WARNING: starc_more7.sv(18)STARC-2.10.3.1 (sv_statement_037) -- Compare operands of the same width: a_i has 8 bits, c_i 6",
+                "WARNING: starc_more7.sv(19)STARC-2.10.4.4 (sv_statement_043) -- Compare values of one type: i == a_i compares integer with logic[7:0]",
+                "WARNING: starc_more7.sv(20)STARC-2.10.3.4 (sv_statement_038) -- Extend c_i, 6 bits wide, to the 8 bits of y_o",
+                "WARNING: starc_more7.sv(21)STARC-2.10.6.1 (sv_statement_039) -- Make sum 9 bits wide to hold the result of a_i + b_i",
+                "WARNING: starc_more7.sv(23)STARC-2.1.4.6 (sv_statement_042) -- The reduction &a_i gives 1 bit, here extended to 4",
+                "WARNING: starc_more7.sv(23)STARC-2.1.4.6 (sv_statement_042) -- The reduction &b_i gives 1 bit, here extended to 4",
+                "ERROR: starc_more7.sv(24)STARC-2.10.8.2/STARC-2.10.8.3 (sv_statement_040) -- Divide at most 12 bits: d_i has 16",
+                "ERROR: starc_more7.sv(24)STARC-2.10.8.2/STARC-2.10.8.3 (sv_statement_040) -- Divide by at most 8 bits: e_i[9:0] has 10",
+                "ERROR: starc_more7.sv(25)STARC-2.10.8.2/STARC-2.10.8.3 (sv_statement_040) -- Divide at most 12 bits: d_i has 16",
+                "WARNING: starc_more7.sv(26)STARC-2.10.6.1 (sv_statement_039) -- Make p_o 64 bits wide to hold the result of e_i * e_i",
+                "WARNING: starc_more7.sv(26)STARC-2.10.6.5 (sv_statement_041) -- Build the multiplier of e_i * e_i explicitly: its operands have up to 32 bits",
+            ],
+            [s for s in lOutput if any(f"({r})" in s for r in lRules)],
+        )
+
     def test_lint_do254(self):
         # The default rule set of lint mode labels the SystemVerilog rules with the DO-254 checks they implement
         _, lOutput, _ = self.run_mhsg(["--lint_only"], "lint.sv")

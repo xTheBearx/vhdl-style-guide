@@ -299,6 +299,15 @@ Rules Disabled by Default
 * `sv_statement_032 <sv_statement_rules.html#sv-statement-032>`_
 * `sv_statement_033 <sv_statement_rules.html#sv-statement-033>`_
 * `sv_statement_034 <sv_statement_rules.html#sv-statement-034>`_
+* `sv_statement_035 <sv_statement_rules.html#sv-statement-035>`_
+* `sv_statement_036 <sv_statement_rules.html#sv-statement-036>`_
+* `sv_statement_037 <sv_statement_rules.html#sv-statement-037>`_
+* `sv_statement_038 <sv_statement_rules.html#sv-statement-038>`_
+* `sv_statement_039 <sv_statement_rules.html#sv-statement-039>`_
+* `sv_statement_040 <sv_statement_rules.html#sv-statement-040>`_
+* `sv_statement_041 <sv_statement_rules.html#sv-statement-041>`_
+* `sv_statement_042 <sv_statement_rules.html#sv-statement-042>`_
+* `sv_statement_043 <sv_statement_rules.html#sv-statement-043>`_
 * `type_015 <type_rules.html#type-015>`_
 * `type_100 <type_rules.html#type-100>`_
 * `type_200 <type_rules.html#type-200>`_

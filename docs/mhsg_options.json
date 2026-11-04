@@ -2532,6 +2532,15 @@
         "sv_statement_032",
         "sv_statement_033",
         "sv_statement_034",
+        "sv_statement_035",
+        "sv_statement_036",
+        "sv_statement_037",
+        "sv_statement_038",
+        "sv_statement_039",
+        "sv_statement_040",
+        "sv_statement_041",
+        "sv_statement_042",
+        "sv_statement_043",
         "sv_syntax_001",
         "sv_typedef_001",
         "sv_typedef_002",
@@ -3593,6 +3602,18 @@
       "description": "The deepest an if statement may be nested in others; an else if does not nest deeper.",
       "minimum": 1
     },
+    "maximum_dividend_bits": {
+      "type": "integer",
+      "label": "Widest dividend",
+      "description": "The most bits the dividend of a division or remainder may have.",
+      "minimum": 1
+    },
+    "maximum_divisor_bits": {
+      "type": "integer",
+      "label": "Widest divisor",
+      "description": "The most bits the divisor of a division or remainder may have, unless it is a constant power of two.",
+      "minimum": 1
+    },
     "maximum_items": {
       "type": "integer",
       "label": "Most case items",
@@ -3614,6 +3635,12 @@
       "type": "integer",
       "label": "Most lines of a fork join block",
       "description": "The most lines one fork join block may have.",
+      "minimum": 1
+    },
+    "maximum_multiplier_bits": {
+      "type": "integer",
+      "label": "Widest multiplier operand",
+      "description": "The most bits the operands of a multiplication of two signals may have.",
       "minimum": 1
     },
     "maximum_outputs": {
@@ -68894,6 +68921,444 @@
         "structure"
       ],
       "summary": "This rule checks for delays given as numbers in testbenches, modules without ports, as the STARC guide recommends (4.1.1.2): give testbench timing with parameters. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_035",
+      "alias": "sv_statement_logical_operand_width",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that the operands of the logical operators &&, || and ! are 1 bit wide, as the STARC guide asks (2.1.4.5): compare a vector with a value instead. The widths come from slang's elaboration of the file. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_036",
+      "alias": "sv_statement_condition_width",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that the conditions of if statements and conditional operators are 1 bit wide, as the STARC guide asks (2.1.5.3). Calls of functions, such as $test$plusargs, are not checked. The widths come from slang's elaboration of the file. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_037",
+      "alias": "sv_statement_comparison_widths",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that the operands of comparisons have the same width, as the STARC guide asks (2.10.3.1). Constants, such as numbers, parameters and Width - 1, expressions with a number without a width, strings and integers, which sv_statement_043 checks, are not checked here. The widths come from slang's elaboration of the file. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_038",
+      "alias": "sv_statement_assignment_widths",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that the value of an assignment, a signal, a part of one or a concatenation, is not narrower than its target, as the STARC guide recommends (2.10.3.4): extend it explicitly; sv_statement_039 checks the results of additions and multiplications. Constants, such as numbers, parameters and strings, and fills such as '0, are not checked; values wider than their target are slang's WidthTruncate warning, sv_lint_001. The widths come from slang's elaboration of the file. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_039",
+      "alias": "sv_statement_result_widths",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that the target of an addition or a multiplication is wide enough for its result: one bit more than the widest operand of an addition, the sum of the widths for a multiplication, as the STARC guide asks (2.10.6.1). An operation with a constant, such as count + 1, is not checked. The widths come from slang's elaboration of the file. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_040",
+      "alias": "sv_statement_divider_widths",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks the operands of divisions and remainders: the dividend at most maximum_dividend_bits wide, 12 by default, and the divisor at most maximum_divisor_bits, 8 by default, unless it is a constant power of two, as the STARC guide asks (2.10.8.2, 2.10.8.3). The widths come from slang's elaboration of the file. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "maximum_dividend_bits",
+          "default": 12,
+          "definition": "maximum_dividend_bits"
+        },
+        {
+          "name": "maximum_divisor_bits",
+          "default": 8,
+          "definition": "maximum_divisor_bits"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_041",
+      "alias": "sv_statement_multiplier_widths",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that the operands of multiplications of two signals are at most maximum_multiplier_bits wide, 16 by default, as the STARC guide recommends (2.10.6.5): build larger multipliers explicitly. The widths come from slang's elaboration of the file. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "maximum_multiplier_bits",
+          "default": 16,
+          "definition": "maximum_multiplier_bits"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_042",
+      "alias": "sv_statement_reduction_widths",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for reduction operators, such as &data, whose 1-bit result is extended to a wider context, such as an addition or a wider target, as the STARC guide recommends (2.1.4.6). The widths come from slang's elaboration of the file. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_043",
+      "alias": "sv_statement_integer_comparisons",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for comparisons of an integer, such as an int or integer variable, with a vector of another type, as the STARC guide recommends (2.10.4.4): their widths and signs differ. The widths come from slang's elaboration of the file. It is disabled by default; the starc rule set enables it.",
       "documentation": "sv_statement_rules.rst",
       "options": [
         {
