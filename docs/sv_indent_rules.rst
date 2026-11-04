@@ -20,7 +20,8 @@ end, else, endmodule and the brackets closing a list are at the level of the con
 A comment is indented like the next line of code, or one level more above a line closing a construct. A comment
 line continuing the comment at the end of the line above, aligned with it, stays aligned with it.
 
-Continuation lines, such as the second line of a long expression, and preprocessor directives are not checked,
+Continuation lines, such as the second line of a long expression, are checked by sv_indent_002; preprocessor
+directives are not checked,
 nor is a file with syntax errors, whose levels may be wrong near the errors, see sv_syntax_001.
 
 Two options follow other styles. **list_indent**, 1 by default, is the number of levels the ports and parameters
@@ -51,3 +52,34 @@ statement at the level of the statement; indented puts it one level in, with its
            count_q <= count_d;
        end
    endmodule
+
+sv_indent_002
+#############
+
+|phase_4| |error| |indent|
+
+Alias: :code:`sv_indent_continuation`
+
+This rule checks that a continuation line, such as the second line of a long expression or of the arguments of a
+call, is indented more than the line that starts its statement. A line that starts with a closing bracket, with the
+opening bracket of a port list, with the next expression of a case item, or after an attribute on a line of its
+own, may be at the level of that line.
+
+The fix indents a continuation line like the continuation line before it in the statement, or else by
+**continuation_indent** levels, 2 by default, more than the line that starts its statement, as Verible's formatter
+does with its wrap width; a closing bracket goes to the level of that line.
+Continuation lines indented more, such as arguments aligned after their opening bracket, are left as they are.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   assign valid_o = req_i &
+   ready_i;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign valid_o = req_i &
+           ready_i;

@@ -6,6 +6,7 @@ A rule says, for two tokens next to each other on a line, how many spaces they n
 a comma, or at least, as around a binary operator, where code aligned in columns has more. The spacing follows
 Verible's formatter.
 
+An escaped identifier, such as \\bus+index, ends at whitespace, so it keeps one space where a rule wants none.
 Tokens in inactive `ifdef branches and in the arguments of macros are not parsed, and macro uses expand to code mhsg
 does not see, so pairs with them are left alone; only a comment may follow a macro use. A file with syntax errors is
 left alone, as its tokens may be classified wrongly near the errors, see sv_syntax_001.
@@ -59,6 +60,9 @@ class Rule(whitespace.Rule):
                     and not isinstance(oToken, tokens.preprocessor)
                 ):
                     tSpacing = self.spacing(lTokens[iPrevious], oToken)
+                    if tSpacing is not None and tSpacing[0] == 0 and lTokens[iPrevious].get_value().startswith("\\"):
+                        # An escaped identifier ends at whitespace, so it keeps one space, as Verible's formatter does
+                        tSpacing = (1, True)
                     if tSpacing is not None:
                         iLine = oFile.oTokenMap.get_line_number_of_index(iToken)
                         oToi = extract_tokens.New(iPrevious, iLine, lTokens[iPrevious : iToken + 1])

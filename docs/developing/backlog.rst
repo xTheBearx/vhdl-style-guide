@@ -56,11 +56,12 @@ The plan, with the tools evaluated, is in the "Verilog and SystemVerilog" tab of
 (reading files, style rules, lint and design analysis) are done; see :doc:`../systemverilog`. Step 5, breadth, is
 under way: the entries below.
 
-* **Alignment of several columns**: the sv_alignment rules align one column each, such as the names of port
-  declarations; Verible also aligns the columns before it, such as the types and packed dimensions.
-* **Indentation not checked yet**: continuation lines, lists aligned after their bracket, the contents of
-  expressions (multi-line assignment patterns, randomize with blocks), preprocessor directives and inactive
-  :code:`\`ifdef` branches. Verible's formatter has rules for each; they need studying before mhsg checks them.
+* **Alignment inside packed dimensions**: sv_alignment_010 aligns the opening brackets of packed dimensions; Verible
+  may also pad inside the brackets, as in :code:`[ 4:0]` under :code:`[31:0]`, which is not checked.
+* **Indentation not checked yet**: the exact indent of continuation lines (sv_indent_002 checks only that they are
+  indented more than their statement), the contents of expressions (multi-line assignment patterns, randomize with
+  blocks), preprocessor directives and inactive :code:`\`ifdef` branches. Verible's formatter has rules for each;
+  they need studying before mhsg checks them.
 * **Inactive** :code:`\`ifdef` **branches and macro arguments** are kept as unclassified tokens (about 11% of the
   tokens of ibex, common_cells and picorv32, most in the arguments of macros such as :code:`\`ASSERT` and
   :code:`\`uvm_info`), so rules do not check them. Parsing each branch with its defines set, and macro arguments
@@ -83,5 +84,5 @@ under way: the entries below.
 * **Black boxes in Verilog designs with read_slang**: the modules made for black boxes are read with read_verilog
   -lib before the design; whether read_slang links instances to them is not known. Yosys has cell models for Xilinx
   only among the vendors with black box libraries.
-* **More SystemVerilog projects** in the real-world check, which runs ibex, common_cells and picorv32: OpenTitan
-  (a subset), CVA6, SERV and the sv-tests conformance suite.
+* **More SystemVerilog projects** in the real-world check, which runs ibex, common_cells, picorv32, SERV, CVA6 and the
+  sv-tests conformance suite: OpenTitan, whose size needs a subset to be chosen.
