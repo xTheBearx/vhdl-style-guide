@@ -194,6 +194,10 @@ This rule checks that the sensitivity list of a combinational always block names
 file that the block reads. A missing signal makes simulation differ from synthesis; always_comb or always @*
 avoids the list altogether.
 
+The signals a function or task of the file reads count as read by the blocks that call it. A hierarchical name,
+such as u_sub.valid, must be listed as written; a member of a signal, such as cfg.mode, needs the signal. A
+variable the block writes in an unconditional statement before reading it, or declares, needs no entry.
+
 .. NOTE:: This is a lint rule. It runs in lint mode.
 
 **Violation**
