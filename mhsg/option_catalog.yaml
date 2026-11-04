@@ -404,6 +404,15 @@ options:
     minimum: 1
     label: Longest name
     description: The most characters in a name other than that of a module or instance.
+  port_pattern:
+    type: string
+    label: Port name pattern
+    description: A regular expression that port names match and the names of the other signals of a module do not.
+  extensions:
+    type: list
+    item_type: string
+    label: Include file extensions
+    description: The extensions the files an include directive names may have, such as .vh.
   maximum_outputs:
     type: integer
     minimum: 0

@@ -98,3 +98,26 @@ is disabled by default; the starc rule set enables it.
 .. code-block:: systemverilog
 
    `include "defines.svh"
+
+sv_file_005
+###########
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_file_include_extension`
+
+This rule checks that the files an include directive names end in .h, .vh, .svh or .inc, as the STARC guide asks
+(1.1.4.1, 3.5.2.5). **extensions** lists the allowed extensions. It is disabled by default; the starc rule set
+enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   `include "definitions.v"
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   `include "definitions.vh"

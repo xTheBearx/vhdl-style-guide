@@ -224,3 +224,128 @@ An always block of 301 lines.
 **Fix**
 
 Split it into always blocks of related signals.
+
+sv_always_010
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_no_constant_in_sensitivity`
+
+This rule checks for constants, such as 1'b1 or a parameter, in the sensitivity list of an always block, as the
+STARC guide asks (2.2.2.2). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always @(a or 1'b1) begin
+       y = a;
+   end
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always @(a) begin
+       y = a;
+   end
+
+sv_always_011
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_no_output_in_sensitivity`
+
+This rule checks that a combinational always block does not list in its sensitivity list a signal it assigns, as
+the STARC guide asks (2.6.2.2). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always @(a or y) begin
+       y = a;
+   end
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always @(a) begin
+       y = a;
+   end
+
+sv_always_012
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_one_clock`
+
+This rule checks that an edge triggered always block has one clock, on one edge, as the STARC guide asks
+(2.3.3.1, 2.3.3.2). The events its first if tests are asynchronous resets, not clocks. It is disabled by default;
+the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_a or posedge clk_b) begin
+       q <= d;
+   end
+
+**Fix**
+
+Split the always block into one for each clock.
+
+sv_always_013
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_reset_active_low`
+
+This rule checks that an asynchronous reset is active low, tested on its falling edge with negedge, as the STARC
+guide recommends (2.3.6.2). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i or posedge rst_i) begin
+       if (rst_i) q <= 1'b0;
+       else q <= d;
+   end
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i or negedge rst_ni) begin
+       if (!rst_ni) q <= 1'b0;
+       else q <= d;
+   end
+
+sv_always_014
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_one_asynchronous_reset`
+
+This rule checks that a register has at most one asynchronous reset or set, as the STARC guide asks (1.3.1.7,
+2.3.1.7): an always block with more than one event besides its clock. It is disabled by default; the starc rule
+set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i or negedge rst_ni or negedge set_ni) begin
+   end
+
+**Fix**
+
+Keep one asynchronous reset, and set the register synchronously.

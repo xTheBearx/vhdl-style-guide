@@ -94,7 +94,16 @@ what a Verible lint rule checks, its alias is the Verible rule's name.
   most 200 case items (:code:`sv_case_004`); packed dimensions numbered from 0 (:code:`sv_dimension_003`); no x or z
   in literals (:code:`sv_literal_006`); ports connected by name (:code:`sv_module_003`); a default value on every
   parameter (:code:`sv_declaration_002`); line comments (:code:`sv_comment_002`); no trailing or double underscores
-  in names, and instances named after their module (:code:`sv_naming_014`, :code:`sv_naming_015`)
+  in names, and instances named after their module (:code:`sv_naming_014`, :code:`sv_naming_015`); functions that
+  read only their arguments and assign no signals, no clock edges in tasks (:code:`sv_function_006` to
+  :code:`sv_function_008`); no constants or assigned signals in sensitivity lists, one clock on one edge, active low
+  asynchronous resets and at most one per register (:code:`sv_always_010` to :code:`sv_always_014`); if chains
+  ending with else, no arithmetic in if conditions, parentheses around mixed && and ||, plain operands of / and %
+  (:code:`sv_statement_010` to :code:`sv_statement_013`); no casex or casez, constant case labels and simple
+  selectors (:code:`sv_case_005` to :code:`sv_case_007`); one signal per declaration (:code:`sv_declaration_003`);
+  include files ending in .h, .vh, .svh or .inc (:code:`sv_file_005`); ports named apart from internal signals
+  (:code:`sv_naming_016`); no outputs driven by constants, no gate primitives, no text macros for constants
+  (:code:`sv_module_004` to :code:`sv_module_006`); port widths written with parameters (:code:`sv_dimension_004`)
 * :code:`sv_syntax_001`: code slang cannot parse
 
 The **starc** rule set enables the rules of the STARC guide that are disabled by default.

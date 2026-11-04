@@ -552,7 +552,7 @@ class test_rules(unittest.TestCase):
                 "WARNING: starc_more.sv(10)STARC-1.1.1.6 (sv_naming_014) -- Rename flag_, which ends with an underscore",
                 "WARNING: starc_more.sv(12)STARC-3.5.6.7 (sv_comment_002) -- Use // comments",
                 "WARNING: starc_more.sv(18)STARC-1.4.3.6 (sv_always_007) -- Clock the register on the rising edge",
-                "ERROR: starc_more.sv(26)STARC-2.1.6.5/STARC-2.10.1.6 (sv_literal_006) -- Do not use x or z in a literal",
+                "ERROR: starc_more.sv(26)STARC-2.1.6.5/STARC-2.10.1.5/STARC-2.10.1.6 (sv_literal_006) -- Do not use x or z in a literal",
                 "WARNING: starc_more.sv(26)STARC-2.1.5.1 (sv_statement_007) -- Do not nest the conditional operator",
                 "ERROR: starc_more.sv(30)STARC-2.9.1.2 (sv_statement_009) -- Do not change the loop variable i in the loop",
                 "ERROR: starc_more.sv(34)STARC-3.2.3.1 (sv_module_003) -- Connect the ports by name",
@@ -578,6 +578,50 @@ class test_rules(unittest.TestCase):
                 "WARNING: starc_more.sv(28)STARC-2.6.1.3 (sv_always_008) -- Split the always block: it assigns 1 signal, more than 0",
                 "WARNING: starc_more.sv(38)STARC-2.6.1.3 (sv_always_008) -- Split the always block: it assigns 1 signal, more than 0",
                 "WARNING: starc_more.sv(39)STARC-2.8.2.2 (sv_case_004) -- Split the case statement: it has 2 items, more than 1",
+            ],
+            [s for s in lOutput if any(f"({r})" in s for r in lRules)],
+        )
+
+    def test_starc_checks_2(self):
+        # One violation of each; the reset tested by the first if is not a clock, and the case default may be anything
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "starc", "-ap"], "starc_more2.sv")
+        lRules = ("sv_function_006", "sv_function_007", "sv_function_008", "sv_always_010", "sv_always_011", "sv_always_012")
+        lRules += ("sv_always_013", "sv_always_014", "sv_statement_010", "sv_statement_011", "sv_statement_012", "sv_statement_013")
+        lRules += ("sv_case_005", "sv_case_006", "sv_case_007", "sv_declaration_003")
+        self.assertEqual(
+            [
+                "WARNING: starc_more2.sv(13)STARC-3.1.3.4 (sv_declaration_003) -- Declare one signal per declaration",
+                "ERROR: starc_more2.sv(19)STARC-2.1.2.3 (sv_function_006) -- Pass b_i to add as arguments",
+                "ERROR: starc_more2.sv(20)STARC-2.1.3.5 (sv_function_007) -- Do not assign valid in a function: return the value",
+                "ERROR: starc_more2.sv(25)STARC-2.1.2.5 (sv_function_008) -- Do not wait for a clock edge in a task",
+                "WARNING: starc_more2.sv(28)STARC-2.2.2.2 (sv_always_010) -- Remove the constant from the sensitivity list",
+                "ERROR: starc_more2.sv(28)STARC-2.6.2.2 (sv_always_011) -- Remove r, which the block assigns, from its sensitivity list",
+                "WARNING: starc_more2.sv(32)STARC-2.3.6.2 (sv_always_013) -- Make the asynchronous reset active low, with negedge",
+                "ERROR: starc_more2.sv(32)STARC-1.3.1.7/STARC-2.3.1.7 (sv_always_014) -- Give the register at most one asynchronous reset or set",
+                "ERROR: starc_more2.sv(40)STARC-2.3.3.1/STARC-2.3.3.2 (sv_always_012) -- Clock the always block on one edge of one clock",
+                "WARNING: starc_more2.sv(45)STARC-2.10.1.2 (sv_statement_012) -- Parenthesize the mixed && and ||",
+                "WARNING: starc_more2.sv(47)STARC-2.7.1.3 (sv_statement_010) -- End the if chain with an else",
+                "WARNING: starc_more2.sv(47)STARC-2.10.7.1 (sv_statement_011) -- Compute the arithmetic outside the if condition",
+                "ERROR: starc_more2.sv(50)STARC-2.10.8.1 (sv_statement_013) -- Divide signals, not expressions",
+                "WARNING: starc_more2.sv(51)STARC-2.8.4.3 (sv_case_005) -- Use case instead of casez",
+                "WARNING: starc_more2.sv(51)STARC-2.8.5.4 (sv_case_007) -- Compute the case selector in a signal of its own",
+                "ERROR: starc_more2.sv(52)STARC-2.8.5.3 (sv_case_006) -- Use a constant as the case label, not ready",
+            ],
+            [s for s in lOutput if any(f"({r})" in s for r in lRules)],
+        )
+
+    def test_starc_checks_3(self):
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "starc", "-ap"], "starc_more3.sv")
+        lRules = ("sv_file_005", "sv_naming_016", "sv_module_004", "sv_module_005", "sv_module_006", "sv_dimension_004")
+        self.assertEqual(
+            [
+                "WARNING: starc_more3.sv(2)STARC-3.2.2.7 (sv_module_006) -- Use a parameter for the constant WIDTH",
+                "WARNING: starc_more3.sv(3)STARC-1.1.4.1/STARC-3.5.2.5 (sv_file_005) -- Name the include file with one of the extensions .h, .vh, .svh, .inc",
+                "WARNING: starc_more3.sv(5)STARC-1.1.2.5/STARC-1.1.3.1 (sv_naming_016) -- Name the port clk like a port, matching [a-z0-9_]+_n?(i|o|io)",
+                "WARNING: starc_more3.sv(6)STARC-1.1.4.7/STARC-3.1.5.1/STARC-3.1.5.2 (sv_dimension_004) -- Write the width of the port with a parameter",
+                "WARNING: starc_more3.sv(10)STARC-1.1.2.5/STARC-1.1.3.1 (sv_naming_016) -- Name the signal count_o unlike a port, not matching [a-z0-9_]+_n?(i|o|io)",
+                "ERROR: starc_more3.sv(12)STARC-1.2.1.2 (sv_module_005) -- Use an expression instead of the and primitive",
+                "WARNING: starc_more3.sv(13)STARC-1.1.4.6 (sv_module_004) -- Do not drive the output ready_o with a constant",
             ],
             [s for s in lOutput if any(f"({r})" in s for r in lRules)],
         )
