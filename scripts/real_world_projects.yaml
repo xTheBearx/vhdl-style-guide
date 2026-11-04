@@ -9,7 +9,8 @@
 # tracks it.
 #
 # exclude lists files that are not checked, for example files that are not
-# complete VHDL on their own.
+# complete VHDL on their own.  include lists the directories that are checked,
+# for a project too large to check whole.
 
 projects:
   - name: osvvm
@@ -90,4 +91,16 @@ projects:
   - name: sv_tests
     url: https://github.com/chipsalliance/sv-tests.git
     commit: b8cbf49962ccac836dcb54ecb00feb2ae1fa4f9f
+    known_issues: {}
+
+  - name: opentitan
+    url: https://github.com/lowRISC/opentitan.git
+    commit: 0ea5236fe749e70ba18f56ba19c4be982ef46da7
+    include:
+    - hw/ip/uart/rtl
+    - hw/ip/gpio/rtl
+    - hw/ip/spi_device/rtl
+    - hw/ip/aes/rtl
+    - hw/ip/tlul/rtl
+    - hw/ip/prim/rtl
     known_issues: {}

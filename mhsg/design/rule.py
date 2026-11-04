@@ -26,6 +26,9 @@ class Rule(LintRule):
     def __init__(self):
         super().__init__()
         self.design = True
+        # Design analysis enables the design rules, except those that are disabled there too unless configured, such
+        # as the rules that take long, see analysis.design_rules
+        self.disabled_in_design = False
         # Design rules are not lint rules of the lint group: they need the whole design, see the design group
         self.groups.remove("lint")
         self.groups.append("design")

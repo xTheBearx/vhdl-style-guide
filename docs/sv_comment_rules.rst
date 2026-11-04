@@ -34,8 +34,8 @@ sv_comment_002
 
 Alias: :code:`sv_comment_line_comments`
 
-This rule checks that comments are line comments, starting with //, not block comments between /* and */, as the
-STARC guide asks (3.5.6.7). It is disabled by default; the starc rule set enables it.
+This rule checks that comments are line comments, starting with :code:`//`, not block comments between :code:`/*`
+and :code:`*/`, as the STARC guide asks (3.5.6.7). It is disabled by default; the starc rule set enables it.
 
 **Violation**
 
