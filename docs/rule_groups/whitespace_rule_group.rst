@@ -221,6 +221,9 @@ Rules Enforcing Whitespace Rule Group
 * `sv_whitespace_013 <../sv_whitespace_rules.html#sv-whitespace-013>`_
 * `sv_whitespace_014 <../sv_whitespace_rules.html#sv-whitespace-014>`_
 * `sv_whitespace_015 <../sv_whitespace_rules.html#sv-whitespace-015>`_
+* `sv_whitespace_016 <../sv_whitespace_rules.html#sv-whitespace-016>`_
+* `sv_whitespace_017 <../sv_whitespace_rules.html#sv-whitespace-017>`_
+* `sv_whitespace_018 <../sv_whitespace_rules.html#sv-whitespace-018>`_
 * `type_006 <../type_rules.html#type-006>`_
 * `type_007 <../type_rules.html#type-007>`_
 * `type_100 <../type_rules.html#type-100>`_
