@@ -2056,6 +2056,7 @@
         "subtype_001",
         "sv_indent_001",
         "sv_indent_002",
+        "sv_indent_003",
         "type_001",
         "type_005",
         "type_012",
@@ -3238,6 +3239,15 @@
       "values": [
         "yes",
         "no"
+      ]
+    },
+    "conditional_indent": {
+      "type": "enum",
+      "label": "Indent of conditional directives",
+      "description": "zero puts `ifdef, `ifndef, `elsif, `else and `endif at column 0, as Verible does; code indents them like the code around them.",
+      "values": [
+        "zero",
+        "code"
       ]
     },
     "consecutive:number_of_signals_in_signal_declaration": {
@@ -65347,6 +65357,58 @@
           "name": "continuation_indent",
           "default": 2,
           "definition": "continuation_indent"
+        }
+      ]
+    },
+    {
+      "id": "sv_indent_003",
+      "alias": "sv_indent_directive",
+      "category": "sv_indent",
+      "groups": [
+        "indent"
+      ],
+      "summary": "This rule checks the indent of preprocessor directives and of macro uses that start a line.",
+      "documentation": "sv_indent_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 4,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "conditional_indent",
+          "default": "zero",
+          "definition": "conditional_indent"
         }
       ]
     },
