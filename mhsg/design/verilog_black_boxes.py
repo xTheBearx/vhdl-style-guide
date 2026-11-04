@@ -18,7 +18,7 @@ The ports are those the instances connect by name, and those the declaration nam
 import os
 import re
 
-from pyslang.syntax import SyntaxTree  # pylint: disable=import-error
+from pyslang.syntax import SyntaxKind, SyntaxTree  # pylint: disable=import-error
 
 from mhsg.svFile import preprocessor, verilator
 
@@ -38,14 +38,19 @@ OUTPUT_ROLES = ("path", "clock_out", "reset_out", "synchronized")
 
 def trees(oDesign):
     """The pyslang syntax trees of the Verilog and SystemVerilog files of a design, with its defines."""
+    return [oTree for _, oTree in file_trees(oDesign)]
+
+
+def file_trees(oDesign):
+    """(file name, pyslang syntax tree) of each Verilog and SystemVerilog file of a design, with its defines."""
     oOptions = preprocessor.options({"systemverilog": {"defines": oDesign.defines, "include_directories": oDesign.include_directories}})
-    lTrees = []
+    lReturn = []
     for sFile in oDesign.verilog_files():
         try:
-            lTrees.append(SyntaxTree.fromFile(sFile, oOptions) if oOptions is not None else SyntaxTree.fromFile(sFile))
+            lReturn.append((sFile, SyntaxTree.fromFile(sFile, oOptions) if oOptions is not None else SyntaxTree.fromFile(sFile)))
         except (OSError, RuntimeError, ValueError):
             continue
-    return lTrees
+    return lReturn
 
 
 def undefined_modules(oDesign, setExclude=()):
@@ -57,6 +62,73 @@ def undefined_modules(oDesign, setExclude=()):
         return {}
     dReturn = verilator.undefined_modules(trees(oDesign))
     return {k: v for k, v in dReturn.items() if k not in setExclude}
+
+
+class Instance:
+    """An instance of a VHDL entity in the Verilog of a design, with the parameters it sets."""
+
+    def __init__(self, sModule, sName, sType, sFile, iLine):
+        self.module = sModule
+        self.name = sName
+        self.type = sType
+        self.file = sFile
+        self.line = iLine
+        # (parameter name, or None for a parameter given by position, value as written)
+        self.parameters = []
+        # Why the instance cannot have its own generics, or ""
+        self.problem = ""
+        # The Yosys selection of its cell in its module: its name, or *.name in a generate block, such as g.u_sub
+        self.cell = sName
+
+
+def parameterized_instances(oDesign, setTypes):
+    """The instances of the modules of setTypes, such as VHDL entities, that set parameters."""
+    lReturn = []
+    for sFile, oTree in file_trees(oDesign):
+        for oModule in verilator.nodes(oTree):
+            if oModule.kind not in verilator.DEFINITIONS:
+                continue
+            sModule = verilator.name_of(oModule.header.name)
+            bParametric = getattr(oModule.header, "parameters", None) is not None
+            for oNode in verilator.descendants(oModule):
+                if oNode.kind != SyntaxKind.HierarchyInstantiation or verilator.name_of(oNode.type) not in setTypes or oNode.parameters is None:
+                    continue
+                bDirect = oNode.parent is not None and oNode.parent.kind in verilator.DEFINITIONS
+                for oInstance in verilator.elements(oNode.instances):
+                    if oInstance.decl is None:
+                        continue
+                    oLocation = oInstance.decl.name.location
+                    sName = verilator.name_of(oInstance.decl.name)
+                    oItem = Instance(sModule, sName, verilator.name_of(oNode.type), sFile, oTree.sourceManager.getLineNumber(oLocation))
+                    for oParameter in verilator.elements(oNode.parameters.parameters):
+                        sValue = str(oParameter.expr).strip() if oParameter.expr is not None else ""
+                        if oParameter.kind == SyntaxKind.NamedParamAssignment:
+                            oItem.parameters.append((verilator.name_of(oParameter.name), sValue))
+                        else:
+                            oItem.parameters.append((None, sValue))
+                    if not bDirect:
+                        oItem.cell = "*." + sName
+                    if bParametric:
+                        oItem.problem = f"module {sModule} has parameters of its own"
+                    elif any(literal(s) is None for _, s in oItem.parameters):
+                        oItem.problem = "a parameter is not a literal"
+                    lReturn.append(oItem)
+    return lReturn
+
+
+def literal(sValue):
+    """The value of a Verilog literal parameter: an integer, a real or a string as text; None for an expression."""
+    sValue = sValue.strip().replace("_", "")
+    if re.fullmatch(r"\d+", sValue):
+        return int(sValue)
+    oMatch = re.fullmatch(r"\d*'[sS]?([dDhHbBoO])([0-9a-fA-F]+)", sValue)
+    if oMatch:
+        return int(oMatch.group(2), {"d": 10, "h": 16, "b": 2, "o": 8}[oMatch.group(1).lower()])
+    if re.fullmatch(r"\d+\.\d+(?:[eE][+-]?\d+)?", sValue):
+        return sValue
+    if len(sValue) >= 2 and sValue[0] == '"' and sValue[-1] == '"':
+        return sValue[1:-1]
+    return None
 
 
 def defined_modules(oDesign):

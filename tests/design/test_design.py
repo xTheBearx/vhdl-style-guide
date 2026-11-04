@@ -893,6 +893,36 @@ class test_design_analysis(unittest.TestCase):
             )
             self.assertEqual((1, [f"ERROR: {sFile}(21)design_008 -- raw (clk_b) captures flag_a (clk_a) without a synchronizer"]), (iStatus, lOutput), sOrder)
 
+    def test_verilog_top_generics(self):
+        # Each set of generic values is elaborated on its own; an instance whose values are an expression is analyzed
+        # with the defaults, which design_001 reports
+        with tempfile.TemporaryDirectory() as sDirectory:
+            iStatus, lOutput = self.run_design(
+                "vtop_generics",
+                ["vtop_generics.vhd", "vtop_generics.v"],
+                dDesignKeys={"work_directory": sDirectory},
+            )
+            with open(os.path.join(sDirectory, "design.json"), encoding="utf-8") as oFile:
+                dModules = json.load(oFile)["modules"]
+        sFile = os.path.join(sTestDir, "vtop_generics.v")
+        self.assertEqual(
+            (
+                1,
+                [
+                    f"ERROR: {sFile}(23)design_001 -- Design configuration error: Instance u_expression of vtop_reg is analyzed with the "
+                    "defaults of its generics, as its own values cannot be set: a parameter is not a literal",
+                ],
+            ),
+            (iStatus, [s for s in lOutput if "design_001" in s]),
+        )
+        dTypes = {c: d["type"] for c, d in dModules["vtop_generics"]["cells"].items() if not d["type"].startswith("$")}
+        dWidths = {c: len(dModules[t]["ports"]["d"]["bits"]) for c, t in dTypes.items()}
+        self.assertEqual({"u_named": 8, "u_position": 16, "g_reg.u_generate": 4, "u_expression": 4}, dWidths)
+        # The instances with values of their own each have a module, elaborated from the entity with those values
+        self.assertEqual("vtop_reg", dTypes["u_expression"])
+        self.assertEqual(3, len({dTypes["u_named"], dTypes["u_position"], dTypes["g_reg.u_generate"]}))
+        self.assertTrue(all(dTypes[s].startswith("vtop_reg__mhsg") for s in ("u_named", "u_position", "g_reg.u_generate")))
+
     def test_combinational_loops(self):
         self.assertEqual(
             [
