@@ -237,3 +237,30 @@ that drive test stimulus. It is disabled by default; the starc rule set enables 
 .. code-block:: systemverilog
 
    task automatic send(input logic [7:0] data);
+
+sv_function_011
+###############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_function_complete_branches`
+
+This rule checks that the if and case statements of a function cover every condition, with an else or a default,
+as the STARC guide asks (2.1.1.2). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   function automatic logic f(input logic a);
+       if (a) f = 1'b1;
+   endfunction
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   function automatic logic f(input logic a);
+       if (a) f = 1'b1;
+       else f = 1'b0;
+   endfunction

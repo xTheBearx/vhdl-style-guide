@@ -118,7 +118,15 @@ what a Verible lint rule checks, its alias is the Verible rule's name.
   assignments in initial blocks, $fstrobe instead of $fdisplay (:code:`sv_statement_015` to
   :code:`sv_statement_025`); no output arguments of tasks (:code:`sv_function_010`); testbench file names
   (:code:`sv_file_007`); a comment for each port and signal, comments in ASCII (:code:`sv_comment_004`,
-  :code:`sv_comment_005`); state encodings named and at most 60 states (:code:`sv_case_008`, :code:`sv_case_009`)
+  :code:`sv_comment_005`); state encodings named and at most 60 states (:code:`sv_case_008`, :code:`sv_case_009`);
+  asynchronous resets, made outside the module and without function calls, clocks not read as data, latches without
+  reset (:code:`sv_always_021` to :code:`sv_always_025`); at most 500 ports, latches and tri-state buffers in
+  modules of their own, no vendor primitives (:code:`sv_module_009` to :code:`sv_module_012`); complete if and case
+  statements in functions (:code:`sv_function_011`); bitwise instead of logical operators, merged nested ifs, no
+  tests of signals that may be x, no computation on signals in for loops, clock periods as parameters, one clock per
+  block, waits on levels in testbenches, simulation tasks between translate_off and translate_on, testbench delays as
+  parameters (:code:`sv_statement_026` to :code:`sv_statement_034`); one state machine per module
+  (:code:`sv_case_010`); no negative values assigned (:code:`sv_literal_009`)
 * :code:`sv_syntax_001`: code slang cannot parse
 
 The **starc** rule set enables the rules of the STARC guide that are disabled by default.

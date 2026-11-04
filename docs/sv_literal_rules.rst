@@ -183,3 +183,25 @@ rule set enables it.
 .. code-block:: systemverilog
 
    count <= 'd5;
+
+sv_literal_009
+##############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_literal_no_negative_values`
+
+This rule checks for negative constants assigned to signals, such as count <= -1, as the STARC guide asks
+(2.10.4.5, 2.10.4.6). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   count <= -1;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   count <= '1;

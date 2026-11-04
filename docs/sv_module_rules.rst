@@ -183,3 +183,88 @@ This rule checks for text macros used in the definition of other text macros, as
 .. code-block:: systemverilog
 
    localparam int Depth = Width * 2;
+
+sv_module_009
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_module_port_count`
+
+This rule checks that a module has at most **maximum_ports** ports, 500 by default, as the STARC guide recommends
+(1.6.4.3). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   module core (/* 640 ports */);
+
+**Fix**
+
+Split the module into blocks with fewer ports.
+
+sv_module_010
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_module_latch_modules`
+
+This rule checks that a module with latches, always_latch blocks, holds no other logic, as the STARC guide
+recommends (2.4.1.1, 2.4.1.2): put latches in modules of their own. It is disabled by default; the starc rule set
+enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_latch if (en) q <= d;
+   assign y = q & a;
+
+**Fix**
+
+Move the latch to a module that holds only latches.
+
+sv_module_011
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_module_tristate_modules`
+
+This rule checks that a module with tri-state buffers, assignments of values with z digits, holds no other logic,
+as the STARC guide recommends (2.5.1.1): put tri-state buffers in modules of their own. It is disabled by
+default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   assign bus = oe ? data : 'z;
+   always_ff @(posedge clk_i) data <= d;
+
+**Fix**
+
+Move the tri-state buffer to a module that holds only tri-state buffers.
+
+sv_module_012
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_module_no_vendor_primitives`
+
+This rule checks for instances of vendor primitives, the types of the black box libraries that come with mhsg,
+such as BUFG or RAMB36E1, as the STARC guide recommends (3.1.2.2): keep technology dependent code apart. It is
+disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   BUFG u_bufg (.I(clk_in), .O(clk));
+
+**Fix**
+
+Instantiate the primitive in a technology dependent module, or let synthesis infer it.

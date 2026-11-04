@@ -1,6 +1,6 @@
 module ws #(parameter int W = 8) (
-    input logic clk_i,  // clock
-    input logic [W-1:0] a_i, b_i,
+    input  logic clk_i,  // clock
+    input  logic [W-1:0] a_i, b_i,
     output logic [W-1:0] y_o
 );
     data_t [1:0]  mem;

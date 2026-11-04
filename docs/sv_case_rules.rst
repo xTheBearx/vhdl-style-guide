@@ -233,3 +233,25 @@ disabled by default; the starc rule set enables it.
 **Fix**
 
 Split the state machine into two that hand over to each other.
+
+sv_case_010
+###########
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_case_one_state_machine`
+
+This rule checks that a module has at most one state machine, a case statement whose selector matches
+**state_pattern**, as the STARC guide recommends (2.11.2.1): put each state machine in a module of its own. It is
+disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   case (tx_state) ...
+   case (rx_state) ...
+
+**Fix**
+
+Put each state machine in a module of its own.

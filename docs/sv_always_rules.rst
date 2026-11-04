@@ -516,3 +516,127 @@ branch and another in the other branch. It is disabled by default; the starc rul
 
    if (!rst_ni) for (int i = 0; i < 4; i++) q[i] <= 1'b0;
    else for (int i = 0; i < 4; i++) q[i] <= d[i];
+
+sv_always_021
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_asynchronous_resets`
+
+This rule checks for registers reset synchronously, an edge triggered always block with one clock whose first if
+tests a reset, as the STARC guide recommends (1.3.1.2): reset them asynchronously. Resets are told by the words
+of their names, as for port_028. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i)
+       if (!rst_ni) q <= 1'b0;
+       else q <= d;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i or negedge rst_ni)
+       if (!rst_ni) q <= 1'b0;
+       else q <= d;
+
+sv_always_022
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_no_clock_as_data`
+
+This rule checks that clocks, the signals of the edge events of always blocks other than their asynchronous
+resets, are not read as data, in assignments or conditions, as the STARC guide asks (1.4.3.4, 3.3.3.1): a clock
+drives only the clock inputs of registers. Signals named as resets, as for port_028, are not taken for clocks. It
+is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i) q <= d;
+   assign y = clk_i & en;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i) q <= d;
+   assign y = en;
+
+sv_always_023
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_no_reset_logic`
+
+This rule checks that the asynchronous resets of the always blocks of a module are not made by logic in the
+module, a continuous assignment of an expression or an assignment in a combinational always block, as the STARC
+guide recommends (1.3.2.1): generate resets in a module of their own. It is disabled by default; the starc rule
+set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   assign rst_n = rst_a_n & rst_b_n;
+   always_ff @(posedge clk_i or negedge rst_n) ...
+
+**Fix**
+
+Generate the reset in a reset module and bring it in through a port.
+
+sv_always_024
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_no_calls_in_reset`
+
+This rule checks for function calls in the reset test and reset branch of an always block with an asynchronous
+reset, as the STARC guide asks (2.1.2.1). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   if (!rst_ni) q <= init(1'b0);
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   if (!rst_ni) q <= 1'b0;
+
+sv_always_025
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_no_latch_reset`
+
+This rule checks for latches with an asynchronous reset or set, an always_latch block whose first if tests a
+reset, as the STARC guide asks (2.4.1.3). Resets are told by the words of their names, as for port_028. It is
+disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_latch
+       if (!rst_ni) q <= 1'b0;
+       else if (en) q <= d;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_latch
+       if (en) q <= d;

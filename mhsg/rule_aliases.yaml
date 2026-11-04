@@ -1169,6 +1169,10 @@ sv_module_005: sv_module_no_gate_primitives
 sv_module_006: sv_module_no_constant_macros
 sv_module_007: sv_module_port_order
 sv_module_008: sv_module_no_nested_macros
+sv_module_009: sv_module_port_count
+sv_module_010: sv_module_latch_modules
+sv_module_011: sv_module_tristate_modules
+sv_module_012: sv_module_no_vendor_primitives
 sv_always_004: sv_always_mixed_assignments
 sv_case_002: sv_case_default_last
 sv_file_001: sv_file_module_filename
@@ -1203,6 +1207,7 @@ sv_literal_005: sv_literal_x_z_comparison
 sv_literal_006: sv_literal_x_or_z
 sv_literal_007: sv_literal_sized_conditions
 sv_literal_008: sv_literal_explicit_base
+sv_literal_009: sv_literal_no_negative_values
 sv_declaration_001: sv_declaration_explicit_parameter_storage_type
 sv_declaration_002: sv_declaration_parameter_default
 sv_declaration_003: sv_declaration_one_per_line
@@ -1216,6 +1221,7 @@ sv_function_007: sv_function_assigns_no_signals
 sv_function_008: sv_function_no_clock_in_task
 sv_function_009: sv_function_ends_with_result
 sv_function_010: sv_function_task_outputs
+sv_function_011: sv_function_complete_branches
 sv_typedef_001: sv_typedef_enums
 sv_typedef_002: sv_typedef_structs_unions
 sv_dimension_001: sv_dimension_packed_range_ordering
@@ -1244,6 +1250,15 @@ sv_statement_022: sv_statement_conditional_arithmetic
 sv_statement_023: sv_statement_plain_indexes
 sv_statement_024: sv_statement_blocking_stimulus
 sv_statement_025: sv_statement_fstrobe
+sv_statement_026: sv_statement_bitwise_operators
+sv_statement_027: sv_statement_merge_ifs
+sv_statement_028: sv_statement_dont_care_conditions
+sv_statement_029: sv_statement_loop_computation
+sv_statement_030: sv_statement_delay_parameters
+sv_statement_031: sv_statement_one_clock_per_block
+sv_statement_032: sv_statement_level_waits
+sv_statement_033: sv_statement_translate_off
+sv_statement_034: sv_statement_testbench_delays
 sv_case_003: sv_case_constant_selector
 sv_case_004: sv_case_items
 sv_case_005: sv_case_no_casex_casez
@@ -1251,6 +1266,7 @@ sv_case_006: sv_case_constant_labels
 sv_case_007: sv_case_simple_selector
 sv_case_008: sv_case_state_encodings
 sv_case_009: sv_case_state_count
+sv_case_010: sv_case_one_state_machine
 sv_always_005: sv_always_single_event_control
 sv_always_006: sv_always_one_top_level_statement
 sv_always_007: sv_always_falling_edge_clock
@@ -1267,6 +1283,11 @@ sv_always_017: sv_always_assign_once
 sv_always_018: sv_always_one_driver_block
 sv_always_019: sv_always_no_constant_registers
 sv_always_020: sv_always_reset_loops
+sv_always_021: sv_always_asynchronous_resets
+sv_always_022: sv_always_no_clock_as_data
+sv_always_023: sv_always_no_reset_logic
+sv_always_024: sv_always_no_calls_in_reset
+sv_always_025: sv_always_no_latch_reset
 sv_comment_001: sv_comment_tool_directives
 sv_comment_002: sv_comment_line_comments
 sv_comment_003: sv_comment_file_header
