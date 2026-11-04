@@ -136,3 +136,50 @@ enables it.
 .. code-block:: systemverilog
 
    assign y = 8'b0000_0000;
+
+sv_literal_007
+##############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_literal_sized_conditions`
+
+This rule checks that the constants of the conditions of if statements and conditional operators have a width,
+such as 4'd3 rather than 3 or 'd3, as the STARC guide asks (2.10.3.6). Indexes and unbased fill literals such as
+'0 are not checked. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   if (count == 3) done <= 1'b1;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   if (count == 4'd3) done <= 1'b1;
+
+sv_literal_008
+##############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_literal_explicit_base`
+
+This rule checks that the numbers assigned to signals and compared with them are written with a base, such as 'd5
+or 8'h1F rather than 5, as the STARC guide recommends (2.10.3.5). Indexes, dimensions, loop headers, delays,
+replication counts and the conditions sv_literal_007 checks are not checked. It is disabled by default; the starc
+rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   count <= 5;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   count <= 'd5;

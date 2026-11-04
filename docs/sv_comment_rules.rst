@@ -50,3 +50,30 @@ and :code:`*/`, as the STARC guide asks (3.5.6.7). It is disabled by default; th
 
    // The width of the data
    localparam int Width = 8;
+
+sv_comment_003
+##############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_comment_file_header`
+
+This rule checks that a file starts with a header comment giving each of **header_fields**, regular expressions
+matched ignoring case, by default the module or circuit name, its function, the author and the date, as the STARC
+guide recommends (3.5.3.1). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   module fifo (input logic clk_i);
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   // Module:   fifo
+   // Function: first in, first out buffer
+   // Author:   A. Designer
+   // Date:     2026-11-04
+   module fifo (input logic clk_i);

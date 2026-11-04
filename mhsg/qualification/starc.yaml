@@ -139,6 +139,11 @@ cases:
   - - 32
     - Make the asynchronous reset active low, with negedge
 - rule: sv_always_013
+  file: examples/svfile/starc_more4.sv
+  expected:
+  - - 11
+    - Make the asynchronous reset active low, with negedge
+- rule: sv_always_013
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_always_014
@@ -147,6 +152,22 @@ cases:
   - - 32
     - Give the register at most one asynchronous reset or set
 - rule: sv_always_014
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_always_015
+  file: examples/svfile/starc_more4.sv
+  expected:
+  - - 11
+    - 'The reset rst_ni is tested low: use negedge'
+- rule: sv_always_015
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_always_016
+  file: examples/svfile/starc_more4.sv
+  expected:
+  - - 18
+    - Reset s too, or assign it in an always block without reset
+- rule: sv_always_016
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_case_001
@@ -249,6 +270,21 @@ cases:
 - rule: sv_comment_002
   file: examples/svfile/alignment.fixed.sv
   expected: []
+- rule: sv_comment_003
+  file: examples/svfile/alignment.fixed.sv
+  expected:
+  - - 1
+    - Start the file with a header comment
+- rule: sv_comment_003
+  file: examples/svfile/alignment.sv
+  expected:
+  - - 1
+    - Start the file with a header comment
+- rule: sv_comment_003
+  file: examples/svfile/brackets.fixed.sv
+  expected:
+  - - 1
+    - Start the file with a header comment
 - rule: sv_declaration_002
   file: examples/svfile/starc_more.sv
   expected:
@@ -351,6 +387,24 @@ cases:
 - rule: sv_file_005
   file: examples/svfile/alignment.fixed.sv
   expected: []
+- rule: sv_file_006
+  file: examples/svfile/alignment.fixed.sv
+  expected:
+  - - 1
+    - Declare the time unit with `timescale or timeunit
+- rule: sv_file_006
+  file: examples/svfile/alignment.sv
+  expected:
+  - - 1
+    - Declare the time unit with `timescale or timeunit
+- rule: sv_file_006
+  file: examples/svfile/brackets.fixed.sv
+  expected:
+  - - 1
+    - Declare the time unit with `timescale or timeunit
+- rule: sv_file_006
+  file: examples/svfile/verilator/vl_pkg.sv
+  expected: []
 - rule: sv_function_004
   file: examples/svfile/declarations.sv
   expected:
@@ -416,6 +470,19 @@ cases:
   - - 25
     - Do not wait for a clock edge in a task
 - rule: sv_function_008
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_function_009
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 32
+    - End the function parity by assigning its result
+- rule: sv_function_009
+  file: examples/svfile/starc_more4.sv
+  expected:
+  - - 22
+    - End the function parity by assigning its result
+- rule: sv_function_009
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_indent_001
@@ -668,6 +735,56 @@ cases:
 - rule: sv_literal_006
   file: examples/svfile/alignment.fixed.sv
   expected: []
+- rule: sv_literal_007
+  file: examples/svfile/lint.sv
+  expected:
+  - - 30
+    - Give the constant 1 a width
+- rule: sv_literal_007
+  file: examples/svfile/starc_more2.sv
+  expected:
+  - - 47
+    - Give the constant 1 a width
+- rule: sv_literal_007
+  file: examples/svfile/starc_more4.sv
+  expected:
+  - - 20
+    - Give the constant 3 a width
+- rule: sv_literal_007
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_literal_008
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 40
+    - Write 0 with a base, such as 'd0
+  - - 42
+    - Write 0 with a base, such as 'd0
+  - - 43
+    - Write 1 with a base, such as 'd1
+  - - 46
+    - Write 0 with a base, such as 'd0
+  - - 50
+    - Write 1 with a base, such as 'd1
+  - - 53
+    - Write 0 with a base, such as 'd0
+  - - 62
+    - Write 2 with a base, such as 'd2
+- rule: sv_literal_008
+  file: examples/svfile/indent.sv
+  expected:
+  - - 77
+    - Write 8 with a base, such as 'd8
+  - - 112
+    - Write 1 with a base, such as 'd1
+- rule: sv_literal_008
+  file: examples/svfile/starc_more.sv
+  expected:
+  - - 30
+    - Write 1 with a base, such as 'd1
+- rule: sv_literal_008
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
 - rule: sv_module_002
   file: examples/svfile/structure.fixed.sv
   expected:
@@ -733,6 +850,26 @@ cases:
   - - 2
     - Use a parameter for the constant WIDTH
 - rule: sv_module_006
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_module_007
+  file: examples/svfile/starc_more4.sv
+  expected:
+  - - 5
+    - Move the clock port clk_i before the input ports
+  - - 7
+    - Move the reset port rst_ni before the output ports
+  - - 8
+    - Move the input port count_i before the output ports
+- rule: sv_module_007
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_module_008
+  file: examples/svfile/starc_more4.sv
+  expected:
+  - - 2
+    - Do not use the macro `WIDTH_M in the macro DEPTH_M
+- rule: sv_module_008
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_naming_001
@@ -902,18 +1039,23 @@ cases:
   - - 40
     - Remove the initial block from design code
 - rule: sv_statement_004
-  file: examples/svfile/structure.fixed.sv
+  file: examples/svfile/starc_more4.sv
   expected:
-  - - 12
+  - - 26
     - Remove the initial block from design code
 - rule: sv_statement_004
-  file: examples/svfile/structure.sv
+  file: examples/svfile/structure.fixed.sv
   expected:
   - - 12
     - Remove the initial block from design code
 - rule: sv_statement_004
   file: examples/svfile/alignment.fixed.sv
   expected: []
+- rule: sv_statement_005
+  file: examples/svfile/starc_more4.sv
+  expected:
+  - - 27
+    - Use begin-end instead of fork-join
 - rule: sv_statement_005
   file: examples/svfile/alignment.fixed.sv
   expected: []
@@ -989,6 +1131,14 @@ cases:
   - - 50
     - Divide signals, not expressions
 - rule: sv_statement_013
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_014
+  file: examples/svfile/starc_more4.sv
+  expected:
+  - - 27
+    - 'Shorten the fork join block: it has 6 lines, more than 5'
+- rule: sv_statement_014
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: whitespace_002

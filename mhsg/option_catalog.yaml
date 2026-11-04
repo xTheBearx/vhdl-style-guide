@@ -277,6 +277,11 @@ options:
     values: [left, center, right]
     label: Header alignment
     description: Horizontal position of header_string within the header line.
+  header_fields:
+    type: list
+    item_type: string
+    label: Header fields
+    description: Regular expressions, matched ignoring case, that the header comment at the start of a file must each match, such as author.
   header_left:
     type: string
     nullable: true
@@ -423,6 +428,10 @@ options:
     minimum: 1
     label: Most lines of an always block
     description: The most lines one always block may have.
+    by_rule:
+      sv_statement_014:
+        label: Most lines of a fork join block
+        description: The most lines one fork join block may have.
   maximum_items:
     type: integer
     minimum: 1

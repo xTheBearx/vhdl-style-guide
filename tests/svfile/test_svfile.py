@@ -626,6 +626,38 @@ class test_rules(unittest.TestCase):
             [s for s in lOutput if any(f"({r})" in s for r in lRules)],
         )
 
+    def test_starc_checks_4(self):
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "starc", "-ap"], "starc_more4.sv")
+        lRules = (
+            "sv_always_015",
+            "sv_always_016",
+            "sv_module_007",
+            "sv_module_008",
+            "sv_file_006",
+            "sv_literal_007",
+            "sv_literal_008",
+            "sv_function_009",
+            "sv_statement_014",
+            "sv_comment_003",
+        )
+        self.assertEqual(
+            [
+                "WARNING: starc_more4.sv(1)STARC-3.5.3.1 (sv_comment_003) -- Start the file with a header comment",
+                "WARNING: starc_more4.sv(2)STARC-3.2.2.5 (sv_module_008) -- Do not use the macro `WIDTH_M in the macro DEPTH_M",
+                "WARNING: starc_more4.sv(3)STARC-4.1.2.4 (sv_file_006) -- Declare the time unit with `timescale or timeunit",
+                "WARNING: starc_more4.sv(5)STARC-3.1.3.2 (sv_module_007) -- Move the clock port clk_i before the input ports",
+                "WARNING: starc_more4.sv(7)STARC-3.1.3.2 (sv_module_007) -- Move the reset port rst_ni before the output ports",
+                "WARNING: starc_more4.sv(8)STARC-3.1.3.2 (sv_module_007) -- Move the input port count_i before the output ports",
+                "ERROR: starc_more4.sv(11)STARC-2.3.1.6 (sv_always_015) -- The reset rst_ni is tested low: use negedge",
+                "WARNING: starc_more4.sv(18)STARC-2.3.6.1 (sv_always_016) -- Reset s too, or assign it in an always block without reset",
+                "ERROR: starc_more4.sv(20)STARC-2.10.3.6 (sv_literal_007) -- Give the constant 3 a width",
+                "WARNING: starc_more4.sv(21)STARC-2.10.3.5 (sv_literal_008) -- Write 5 with a base, such as 'd5",
+                "WARNING: starc_more4.sv(22)STARC-2.1.3.4 (sv_function_009) -- End the function parity by assigning its result",
+                "WARNING: starc_more4.sv(27)STARC-4.1.2.3 (sv_statement_014) -- Shorten the fork join block: it has 6 lines, more than 5",
+            ],
+            [s for s in lOutput if any(f"({r})" in s for r in lRules)],
+        )
+
     def test_sensitivity_list_branches(self):
         # t is written in both branches before it is read; u only in one, so its old value is read
         _, lOutput, _ = self.run_mhsg(["--lint_only", "--rule_set", "none"], "sensitivity_branches.sv")

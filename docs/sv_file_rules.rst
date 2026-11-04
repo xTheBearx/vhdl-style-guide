@@ -121,3 +121,26 @@ enables it.
 .. code-block:: systemverilog
 
    `include "definitions.vh"
+
+sv_file_006
+###########
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_file_timescale`
+
+This rule checks that a file holding modules declares their time unit, with a timescale directive or timeunit, as
+the STARC guide recommends (4.1.2.4). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   module fifo (input logic clk_i);
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   `timescale 1ns / 1ps
+   module fifo (input logic clk_i);

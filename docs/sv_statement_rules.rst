@@ -323,3 +323,33 @@ asks (2.10.8.1). It is disabled by default; the starc rule set enables it.
 
    assign sum = a + b;
    assign y = sum / c;
+
+sv_statement_014
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_fork_join_length`
+
+This rule checks that a fork join block is at most **maximum_lines** lines long, 5 by default, as the STARC guide
+recommends (4.1.2.3). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   fork
+       send(a);
+       send(b);
+       send(c);
+       receive(d);
+   join
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   fork
+       send_all();
+       receive(d);
+   join

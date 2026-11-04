@@ -186,3 +186,32 @@ is disabled by default; the starc rule set enables it.
 **Fix**
 
 Move the timing to the always block that calls the task, or use a function.
+
+sv_function_009
+###############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_function_ends_with_result`
+
+This rule checks that a function ends by assigning its result, with a return statement or an assignment to its
+name, as the STARC guide recommends (2.1.3.4). Functions returning void and methods of classes are not checked.
+It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   function automatic logic parity(input logic [7:0] data);
+       parity = ^data;
+       $display("parity");
+   endfunction
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   function automatic logic parity(input logic [7:0] data);
+       $display("parity");
+       parity = ^data;
+   endfunction
