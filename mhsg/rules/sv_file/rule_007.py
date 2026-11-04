@@ -11,8 +11,9 @@ from mhsg.rules.sv_tree import Problem, TreeRule, elements
 class rule_007(TreeRule, structure.Rule):
     """
     This rule checks that a file holding a testbench, a module without ports, has a name matching one of
-    **testbench_patterns**, file name patterns with * and ?, by default *_tb.v, *_tb.sv, *_test.v, *_test.sv and
-    *.vt, as the STARC guide recommends (3.5.2.3). It is disabled by default; the starc rule set enables it.
+    **testbench_patterns**, file name patterns with :code:`*` and :code:`?`, by default :code:`*_tb.v`,
+    :code:`*_tb.sv`, :code:`*_test.v`, :code:`*_test.sv` and :code:`*.vt`, as the STARC guide recommends (3.5.2.3). It
+    is disabled by default; the starc rule set enables it.
 
     **Violation**
 
