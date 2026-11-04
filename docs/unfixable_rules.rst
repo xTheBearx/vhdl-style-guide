@@ -246,10 +246,12 @@ Rules on the design of SystemVerilog and Verilog code that only the designer can
 * `sv_dimension_001 <sv_dimension_rules.html#sv-dimension-001>`_
 * `sv_dimension_002 <sv_dimension_rules.html#sv-dimension-002>`_
 * `sv_dimension_003 <sv_dimension_rules.html#sv-dimension-003>`_
+* `sv_dimension_004 <sv_dimension_rules.html#sv-dimension-004>`_
 * `sv_file_001 <sv_file_rules.html#sv-file-001>`_
 * `sv_file_002 <sv_file_rules.html#sv-file-002>`_
 * `sv_file_003 <sv_file_rules.html#sv-file-003>`_
 * `sv_file_004 <sv_file_rules.html#sv-file-004>`_
+* `sv_file_005 <sv_file_rules.html#sv-file-005>`_
 * `sv_function_003 <sv_function_rules.html#sv-function-003>`_
 * `sv_function_004 <sv_function_rules.html#sv-function-004>`_
 * `sv_function_005 <sv_function_rules.html#sv-function-005>`_
@@ -281,6 +283,9 @@ Rules on the design of SystemVerilog and Verilog code that only the designer can
 * `sv_module_001 <sv_module_rules.html#sv-module-001>`_
 * `sv_module_002 <sv_module_rules.html#sv-module-002>`_
 * `sv_module_003 <sv_module_rules.html#sv-module-003>`_
+* `sv_module_004 <sv_module_rules.html#sv-module-004>`_
+* `sv_module_005 <sv_module_rules.html#sv-module-005>`_
+* `sv_module_006 <sv_module_rules.html#sv-module-006>`_
 * `sv_naming_001 <sv_naming_rules.html#sv-naming-001>`_
 * `sv_naming_002 <sv_naming_rules.html#sv-naming-002>`_
 * `sv_naming_003 <sv_naming_rules.html#sv-naming-003>`_
@@ -296,6 +301,7 @@ Rules on the design of SystemVerilog and Verilog code that only the designer can
 * `sv_naming_013 <sv_naming_rules.html#sv-naming-013>`_
 * `sv_naming_014 <sv_naming_rules.html#sv-naming-014>`_
 * `sv_naming_015 <sv_naming_rules.html#sv-naming-015>`_
+* `sv_naming_016 <sv_naming_rules.html#sv-naming-016>`_
 * `sv_statement_001 <sv_statement_rules.html#sv-statement-001>`_
 * `sv_statement_004 <sv_statement_rules.html#sv-statement-004>`_
 * `sv_statement_005 <sv_statement_rules.html#sv-statement-005>`_

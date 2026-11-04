@@ -118,7 +118,8 @@ checks:
     title: Ports and internal signals should follow distinguishable naming conventions
     level: Suggestion
     severity: Note
-    status: planned
+    rules:
+    - sv_naming_016
   1.1.2.6:
     title: Nets driven by an output port keep that port's name in the parent
     level: Recommendation 2
@@ -128,7 +129,8 @@ checks:
     title: Internal signal names should be distinguishable from port names by convention
     level: Suggestion
     severity: Note
-    status: planned
+    rules:
+    - sv_naming_016
   1.1.3.2:
     title: Give internal signals meaningful, descriptive names
     level: Suggestion
@@ -145,13 +147,16 @@ checks:
     title: 'Include files: .h/.vh/.inc for RTL; .h/.inc/.ht/.tsk for testbenches'
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_file_005
     note: 'Verilog only. Limits: rtl include extensions .h, .vh, .inc; tb include extensions .h, .inc, .ht, .tsk.'
   1.1.4.2:
     title: Parameters use a naming convention distinct from signals
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_naming_001
+    - sv_naming_008
     note: 'Verible: parameter-name-style.'
   1.1.4.3:
     title: Do not reuse a parameter name in different modules
@@ -173,12 +178,14 @@ checks:
     title: Do not drive output ports directly with constant values
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_module_004
   1.1.4.7:
     title: Parameterize port widths of modules intended for reuse
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_dimension_004
   1.1.4.8:
     title: Write parameter values with an explicit base ('b, 'h, 'd, 'o)
     level: Recommendation 1
@@ -223,7 +230,8 @@ checks:
     title: Never build RS latches or flip-flops out of gate primitives
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_module_005
   1.2.1.3:
     title: No combinational feedback loops
     level: Rule
@@ -253,7 +261,8 @@ checks:
     title: Do not use tool-specific synchronous-reset synthesis directives
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_comment_001
     note: 'Limits: forbidden pragmas sync_set_reset.'
   1.3.1.6:
     title: One reset net must not feed both asynchronous and synchronous resets
@@ -1134,7 +1143,9 @@ checks:
     title: Prevent latches with a default branch, not a full_case pragma
     level: Suggestion
     severity: Note
-    status: planned
+    rules:
+    - sv_case_001
+    - sv_comment_001
     note: Verilog only.
   2.8.3.4:
     title: Signals that may be assigned x (don't-care) must not feed if conditions
@@ -1274,7 +1285,8 @@ checks:
     title: Assign x only in case default branches
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_literal_006
   2.10.1.6:
     title: Do not use literals containing x or z
     level: Rule
@@ -1658,12 +1670,14 @@ checks:
     title: Parameterize module port widths where possible
     level: Suggestion
     severity: Note
-    status: planned
+    rules:
+    - sv_dimension_004
   3.1.5.2:
     title: Set widths via parameters or text macros
     level: Suggestion
     severity: Note
-    status: planned
+    rules:
+    - sv_dimension_004
   3.1.5.3:
     title: Give parameters default values
     level: Suggestion
@@ -1735,7 +1749,8 @@ checks:
     title: Use parameter, not `define, for project-wide constants
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_module_006
   3.2.3.1:
     title: Connect instance ports by name, never by position
     level: Rule
@@ -1751,7 +1766,8 @@ checks:
     title: 'Override lower-level parameters with #(...) at instantiation'
     level: Suggestion
     severity: Note
-    status: planned
+    rules:
+    - sv_module_002
     note: Verilog only.
   3.2.4.2:
     title: When overriding, specify all of the lower module's parameters
@@ -2049,7 +2065,8 @@ checks:
     title: 'Include file extensions: .h/.vh/.inc (RTL), .h/.inc/.ht/.tsk (testbench)'
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_file_005
     note: 'Verilog only. Limits: rtl include extensions .h, .vh, .inc; tb include extensions .h, .inc, .ht, .tsk.'
   3.5.2.6:
     title: UNIX run scripts end in .run
@@ -2681,7 +2698,8 @@ checks:
     title: Ensure sensitivity lists are complete
     level: Suggestion
     severity: Note
-    status: planned
+    rules:
+    - sv_lint_008
   4.4.4.2:
     title: Incomplete sensitivity lists cause RTL/gate mismatches
     level: Suggestion
@@ -3273,7 +3291,8 @@ checks:
     title: Do not select arithmetic implementations (e.g. ripple/CLA) via RTL directives
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_comment_001
   5.6.3:
     title: Ungroup or remove unconnected ports before compile -inc on operator logic
     level: Recommendation 1

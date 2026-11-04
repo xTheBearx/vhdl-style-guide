@@ -341,3 +341,29 @@ starc rule set enables it.
 .. code-block:: systemverilog
 
    fifo fifo (.clk_i(clk_i));
+
+sv_naming_016
+#############
+
+|phase_7| |disabled| |error| |unfixable| |naming|
+
+Alias: :code:`sv_naming_ports_and_signals`
+
+This rule checks that port names match **port_pattern**, a regular expression, by default names ending in _i, _o
+or _io, with an n before it for active low ports, and that the other signals of the module do not, so ports and
+internal signals can be told apart, as the STARC guide asks (1.1.2.5, 1.1.3.1). It is disabled by default; the
+starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   module fifo (input logic clk, output logic full);
+       logic count_o;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   module fifo (input logic clk_i, output logic full_o);
+       logic count;

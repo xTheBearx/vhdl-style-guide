@@ -23,7 +23,6 @@ class rule_012(TreeRule, structure.Rule):
     **Fix**
 
     Split the always block into one for each clock.
-
     """
 
     def __init__(self):

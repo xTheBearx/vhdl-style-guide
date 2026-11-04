@@ -11,7 +11,8 @@ sv_comment_001
 Alias: :code:`sv_comment_tool_directives`
 
 This rule checks for synthesis directives and scripts in comments, such as synopsys full_case, parallel_case
-or dc_script_begin, as the STARC guide asks (2.8.1.5, 2.8.5.1, 3.1.2.7). **pattern** is the regular
+or dc_script_begin, the set and reset directives such as sync_set_reset, and implementation directives, as the
+STARC guide asks (2.8.1.5, 2.8.5.1, 3.1.2.7, 1.3.1.5, 5.6.2). **pattern** is the regular
 expression searched for in comments. It is disabled by default; the starc rule set enables it.
 
 **Violation**

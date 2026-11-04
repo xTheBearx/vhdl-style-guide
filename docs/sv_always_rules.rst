@@ -300,7 +300,6 @@ the starc rule set enables it.
 
 Split the always block into one for each clock.
 
-
 sv_always_013
 #############
 

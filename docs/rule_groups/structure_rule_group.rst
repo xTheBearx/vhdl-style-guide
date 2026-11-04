@@ -224,10 +224,12 @@ Rules Enforcing Structure Rule Group
 * `sv_dimension_001 <../sv_dimension_rules.html#sv-dimension-001>`_
 * `sv_dimension_002 <../sv_dimension_rules.html#sv-dimension-002>`_
 * `sv_dimension_003 <../sv_dimension_rules.html#sv-dimension-003>`_
+* `sv_dimension_004 <../sv_dimension_rules.html#sv-dimension-004>`_
 * `sv_file_001 <../sv_file_rules.html#sv-file-001>`_
 * `sv_file_002 <../sv_file_rules.html#sv-file-002>`_
 * `sv_file_003 <../sv_file_rules.html#sv-file-003>`_
 * `sv_file_004 <../sv_file_rules.html#sv-file-004>`_
+* `sv_file_005 <../sv_file_rules.html#sv-file-005>`_
 * `sv_function_001 <../sv_function_rules.html#sv-function-001>`_
 * `sv_function_002 <../sv_function_rules.html#sv-function-002>`_
 * `sv_function_003 <../sv_function_rules.html#sv-function-003>`_
@@ -251,6 +253,9 @@ Rules Enforcing Structure Rule Group
 * `sv_module_001 <../sv_module_rules.html#sv-module-001>`_
 * `sv_module_002 <../sv_module_rules.html#sv-module-002>`_
 * `sv_module_003 <../sv_module_rules.html#sv-module-003>`_
+* `sv_module_004 <../sv_module_rules.html#sv-module-004>`_
+* `sv_module_005 <../sv_module_rules.html#sv-module-005>`_
+* `sv_module_006 <../sv_module_rules.html#sv-module-006>`_
 * `sv_statement_001 <../sv_statement_rules.html#sv-statement-001>`_
 * `sv_statement_002 <../sv_statement_rules.html#sv-statement-002>`_
 * `sv_statement_003 <../sv_statement_rules.html#sv-statement-003>`_

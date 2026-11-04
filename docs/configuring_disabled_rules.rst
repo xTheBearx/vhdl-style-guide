@@ -196,8 +196,10 @@ Rules Disabled by Default
 * `sv_declaration_002 <sv_declaration_rules.html#sv-declaration-002>`_
 * `sv_declaration_003 <sv_declaration_rules.html#sv-declaration-003>`_
 * `sv_dimension_003 <sv_dimension_rules.html#sv-dimension-003>`_
+* `sv_dimension_004 <sv_dimension_rules.html#sv-dimension-004>`_
 * `sv_file_003 <sv_file_rules.html#sv-file-003>`_
 * `sv_file_004 <sv_file_rules.html#sv-file-004>`_
+* `sv_file_005 <sv_file_rules.html#sv-file-005>`_
 * `sv_function_005 <sv_function_rules.html#sv-function-005>`_
 * `sv_function_006 <sv_function_rules.html#sv-function-006>`_
 * `sv_function_007 <sv_function_rules.html#sv-function-007>`_
@@ -220,6 +222,9 @@ Rules Disabled by Default
 * `sv_literal_005 <sv_literal_rules.html#sv-literal-005>`_
 * `sv_literal_006 <sv_literal_rules.html#sv-literal-006>`_
 * `sv_module_003 <sv_module_rules.html#sv-module-003>`_
+* `sv_module_004 <sv_module_rules.html#sv-module-004>`_
+* `sv_module_005 <sv_module_rules.html#sv-module-005>`_
+* `sv_module_006 <sv_module_rules.html#sv-module-006>`_
 * `sv_naming_008 <sv_naming_rules.html#sv-naming-008>`_
 * `sv_naming_009 <sv_naming_rules.html#sv-naming-009>`_
 * `sv_naming_010 <sv_naming_rules.html#sv-naming-010>`_
@@ -228,6 +233,7 @@ Rules Disabled by Default
 * `sv_naming_013 <sv_naming_rules.html#sv-naming-013>`_
 * `sv_naming_014 <sv_naming_rules.html#sv-naming-014>`_
 * `sv_naming_015 <sv_naming_rules.html#sv-naming-015>`_
+* `sv_naming_016 <sv_naming_rules.html#sv-naming-016>`_
 * `sv_statement_003 <sv_statement_rules.html#sv-statement-003>`_
 * `sv_statement_004 <sv_statement_rules.html#sv-statement-004>`_
 * `sv_statement_005 <sv_statement_rules.html#sv-statement-005>`_

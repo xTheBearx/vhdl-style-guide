@@ -25,7 +25,6 @@ class rule_007(TreeRule, structure.Rule):
     **Fix**
 
     Return the value and assign it where the function is called.
-
     """
 
     def __init__(self):

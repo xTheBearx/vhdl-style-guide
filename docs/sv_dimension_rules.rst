@@ -68,3 +68,26 @@ for dimensions whose bounds are numbers. It is disabled by default; the starc ru
 .. code-block:: systemverilog
 
    logic [7:0] data;
+
+sv_dimension_004
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_dimension_parameterized_ports`
+
+This rule checks that the packed dimensions of ports are written with parameters, not numbers, as the STARC guide
+recommends (1.1.4.7, 3.1.5.1, 3.1.5.2), so the module can be reused with other widths. It is disabled by default;
+the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   module fifo (input logic [7:0] data_i);
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   module fifo #(parameter int Width = 8) (input logic [Width-1:0] data_i);

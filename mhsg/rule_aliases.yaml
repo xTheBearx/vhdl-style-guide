@@ -1162,12 +1162,16 @@ sv_label_001: sv_label_mismatched
 sv_module_001: sv_module_begin_block
 sv_module_002: sv_module_defparam
 sv_module_003: sv_module_ports_by_name
+sv_module_004: sv_module_no_constant_output
+sv_module_005: sv_module_no_gate_primitives
+sv_module_006: sv_module_no_constant_macros
 sv_always_004: sv_always_mixed_assignments
 sv_case_002: sv_case_default_last
 sv_file_001: sv_file_module_filename
 sv_file_002: sv_file_package_filename
 sv_file_003: sv_file_one_module_per_file
 sv_file_004: sv_file_include_relative_path
+sv_file_005: sv_file_include_extension
 sv_naming_001: sv_naming_parameter_name_style
 sv_naming_002: sv_naming_enum_name_style
 sv_naming_003: sv_naming_struct_union_name_style
@@ -1183,6 +1187,7 @@ sv_naming_012: sv_naming_case_only_difference
 sv_naming_013: sv_naming_name_length
 sv_naming_014: sv_naming_underscores
 sv_naming_015: sv_naming_instance_after_module
+sv_naming_016: sv_naming_ports_and_signals
 sv_literal_001: sv_literal_undersized_binary
 sv_literal_002: sv_literal_truncated_numeric
 sv_literal_003: sv_literal_parameter_base
@@ -1205,6 +1210,7 @@ sv_typedef_002: sv_typedef_structs_unions
 sv_dimension_001: sv_dimension_packed_range_ordering
 sv_dimension_002: sv_dimension_unpacked_range_ordering
 sv_dimension_003: sv_dimension_lsb_zero
+sv_dimension_004: sv_dimension_parameterized_ports
 sv_statement_004: sv_statement_no_initial
 sv_statement_005: sv_statement_no_fork
 sv_statement_006: sv_statement_empty_branch

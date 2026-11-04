@@ -21,7 +21,6 @@ class rule_014(TreeRule, structure.Rule):
     **Fix**
 
     Keep one asynchronous reset, and set the register synchronously.
-
     """
 
     def __init__(self):

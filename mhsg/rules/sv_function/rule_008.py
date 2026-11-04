@@ -22,7 +22,6 @@ class rule_008(TreeRule, structure.Rule):
     **Fix**
 
     Move the timing to the always block that calls the task, or use a function.
-
     """
 
     def __init__(self):

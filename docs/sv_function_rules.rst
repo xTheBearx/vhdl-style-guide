@@ -164,7 +164,6 @@ the STARC guide asks (2.1.3.5). It is disabled by default; the starc rule set en
 
 Return the value and assign it where the function is called.
 
-
 sv_function_008
 ###############
 
