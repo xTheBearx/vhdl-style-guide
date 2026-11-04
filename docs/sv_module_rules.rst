@@ -137,3 +137,49 @@ This rule checks for text macros that define a constant, such as `define WIDTH 8
 .. code-block:: systemverilog
 
    localparam int Width = 8;
+
+sv_module_007
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_module_port_order`
+
+This rule checks the order of the ports of a module: clocks, resets, other inputs, outputs, then inout ports, as
+the STARC guide recommends (3.1.3.2). Clocks and resets are told by the words of their names, as for port_028:
+**clock_words**, **reset_words** and **qualifier_words**. It is disabled by default; the starc rule set enables
+it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   module fifo (input logic data_i, input logic clk_i, output logic full_o, input logic rst_ni);
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   module fifo (input logic clk_i, input logic rst_ni, input logic data_i, output logic full_o);
+
+sv_module_008
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_module_no_nested_macros`
+
+This rule checks for text macros used in the definition of other text macros, as the STARC guide recommends
+(3.2.2.5). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   `define DEPTH (`WIDTH * 2)
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   localparam int Depth = Width * 2;

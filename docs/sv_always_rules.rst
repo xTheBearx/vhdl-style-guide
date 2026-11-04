@@ -349,3 +349,62 @@ set enables it.
 **Fix**
 
 Keep one asynchronous reset, and set the register synchronously.
+
+sv_always_015
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_reset_edge_polarity`
+
+This rule checks that the edge of an asynchronous reset matches the polarity its if tests: negedge for a reset
+tested low, such as if (!rst_ni), and posedge for one tested high, as the STARC guide asks (2.3.1.6). It is
+disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i or posedge rst_ni)
+       if (!rst_ni) q <= 1'b0;
+       else q <= d;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i or negedge rst_ni)
+       if (!rst_ni) q <= 1'b0;
+       else q <= d;
+
+sv_always_016
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_reset_all_registers`
+
+This rule checks that an always block with an asynchronous reset resets every register it assigns, as the STARC
+guide recommends (2.3.6.1): put registers without reset in an always block of their own. It is disabled by
+default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i or negedge rst_ni)
+       if (!rst_ni) count <= '0;
+       else begin
+           count <= count + 1;
+           data <= data_i;
+       end
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i or negedge rst_ni)
+       if (!rst_ni) count <= '0;
+       else count <= count + 1;
+
+   always_ff @(posedge clk_i) data <= data_i;

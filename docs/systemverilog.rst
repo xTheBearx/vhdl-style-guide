@@ -101,7 +101,14 @@ what a Verible lint rule checks, its alias is the Verible rule's name.
   selectors (:code:`sv_case_005` to :code:`sv_case_007`); one signal per declaration (:code:`sv_declaration_003`);
   include files ending in .h, .vh, .svh or .inc (:code:`sv_file_005`); ports named apart from internal signals
   (:code:`sv_naming_016`); no outputs driven by constants, no gate primitives, no text macros for constants
-  (:code:`sv_module_004` to :code:`sv_module_006`); port widths written with parameters (:code:`sv_dimension_004`)
+  (:code:`sv_module_004` to :code:`sv_module_006`); port widths written with parameters (:code:`sv_dimension_004`);
+  reset edges matching the polarity tested and every register of a block with reset reset
+  (:code:`sv_always_015`, :code:`sv_always_016`); ports ordered clocks, resets, inputs, outputs, inout ports, and no
+  text macros inside text macros (:code:`sv_module_007`, :code:`sv_module_008`); a time unit in files with modules
+  (:code:`sv_file_006`); constants in conditions with a width, numbers written with a base (:code:`sv_literal_007`,
+  :code:`sv_literal_008`); functions ending by assigning their result (:code:`sv_function_009`); fork join blocks
+  of at most 5 lines (:code:`sv_statement_014`); a file header giving the module, its function, the author and the
+  date (:code:`sv_comment_003`)
 * :code:`sv_syntax_001`: code slang cannot parse
 
 The **starc** rule set enables the rules of the STARC guide that are disabled by default.

@@ -186,6 +186,8 @@ Rules Disabled by Default
 * `sv_always_012 <sv_always_rules.html#sv-always-012>`_
 * `sv_always_013 <sv_always_rules.html#sv-always-013>`_
 * `sv_always_014 <sv_always_rules.html#sv-always-014>`_
+* `sv_always_015 <sv_always_rules.html#sv-always-015>`_
+* `sv_always_016 <sv_always_rules.html#sv-always-016>`_
 * `sv_case_003 <sv_case_rules.html#sv-case-003>`_
 * `sv_case_004 <sv_case_rules.html#sv-case-004>`_
 * `sv_case_005 <sv_case_rules.html#sv-case-005>`_
@@ -193,6 +195,7 @@ Rules Disabled by Default
 * `sv_case_007 <sv_case_rules.html#sv-case-007>`_
 * `sv_comment_001 <sv_comment_rules.html#sv-comment-001>`_
 * `sv_comment_002 <sv_comment_rules.html#sv-comment-002>`_
+* `sv_comment_003 <sv_comment_rules.html#sv-comment-003>`_
 * `sv_declaration_002 <sv_declaration_rules.html#sv-declaration-002>`_
 * `sv_declaration_003 <sv_declaration_rules.html#sv-declaration-003>`_
 * `sv_dimension_003 <sv_dimension_rules.html#sv-dimension-003>`_
@@ -200,10 +203,12 @@ Rules Disabled by Default
 * `sv_file_003 <sv_file_rules.html#sv-file-003>`_
 * `sv_file_004 <sv_file_rules.html#sv-file-004>`_
 * `sv_file_005 <sv_file_rules.html#sv-file-005>`_
+* `sv_file_006 <sv_file_rules.html#sv-file-006>`_
 * `sv_function_005 <sv_function_rules.html#sv-function-005>`_
 * `sv_function_006 <sv_function_rules.html#sv-function-006>`_
 * `sv_function_007 <sv_function_rules.html#sv-function-007>`_
 * `sv_function_008 <sv_function_rules.html#sv-function-008>`_
+* `sv_function_009 <sv_function_rules.html#sv-function-009>`_
 * `sv_lint_001 <sv_lint_rules.html#sv-lint-001>`_
 * `sv_lint_002 <sv_lint_rules.html#sv-lint-002>`_
 * `sv_lint_003 <sv_lint_rules.html#sv-lint-003>`_
@@ -221,10 +226,14 @@ Rules Disabled by Default
 * `sv_literal_004 <sv_literal_rules.html#sv-literal-004>`_
 * `sv_literal_005 <sv_literal_rules.html#sv-literal-005>`_
 * `sv_literal_006 <sv_literal_rules.html#sv-literal-006>`_
+* `sv_literal_007 <sv_literal_rules.html#sv-literal-007>`_
+* `sv_literal_008 <sv_literal_rules.html#sv-literal-008>`_
 * `sv_module_003 <sv_module_rules.html#sv-module-003>`_
 * `sv_module_004 <sv_module_rules.html#sv-module-004>`_
 * `sv_module_005 <sv_module_rules.html#sv-module-005>`_
 * `sv_module_006 <sv_module_rules.html#sv-module-006>`_
+* `sv_module_007 <sv_module_rules.html#sv-module-007>`_
+* `sv_module_008 <sv_module_rules.html#sv-module-008>`_
 * `sv_naming_008 <sv_naming_rules.html#sv-naming-008>`_
 * `sv_naming_009 <sv_naming_rules.html#sv-naming-009>`_
 * `sv_naming_010 <sv_naming_rules.html#sv-naming-010>`_
@@ -245,6 +254,7 @@ Rules Disabled by Default
 * `sv_statement_011 <sv_statement_rules.html#sv-statement-011>`_
 * `sv_statement_012 <sv_statement_rules.html#sv-statement-012>`_
 * `sv_statement_013 <sv_statement_rules.html#sv-statement-013>`_
+* `sv_statement_014 <sv_statement_rules.html#sv-statement-014>`_
 * `type_015 <type_rules.html#type-015>`_
 * `type_100 <type_rules.html#type-100>`_
 * `type_200 <type_rules.html#type-200>`_
