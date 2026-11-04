@@ -141,6 +141,13 @@ class ModuleGraph:
         """Returns the summary of the module an instance cell instantiates, or None for a black box."""
         return self.design.summary(self.cells[sCell].get("type"))
 
+    def box_path(self, sCell, sPort):
+        """
+        Returns the path role declared for an output port of a black box, see black_box.py, or None. The declarations
+        of the type apply; those of single instances name flat paths, which a module does not know.
+        """
+        return self.design.box_role(self.cells[sCell], sPort, "path")
+
     def input_bits(self, sCell):
         dCell = self.cells[sCell]
         return [
@@ -166,8 +173,9 @@ class ModuleGraph:
         if self.is_instance(sCell):
             oChild = self.child(sCell)
             if oChild is None:
-                # A black box: assume its outputs are registered
-                return []
+                # A black box: its outputs are registered unless a declared path leads through it
+                oRole = self.box_path(sCell, sPort)
+                return box_path_bits(dCell.get("connections", {}), oRole, iIndex) if oRole is not None else []
             dConnections = dCell.get("connections", {})
             lReturn = []
             for sInput, iInput in oChild.through.get((sPort, iIndex), ()):
@@ -217,11 +225,17 @@ class ModuleGraph:
             bState = self.is_state(sCell) or dCell.get("type") in SINK_TYPES
             oChild = self.child(sCell) if self.is_instance(sCell) else None
             for sPort, iIndex, iBit in self.output_bits(sCell):
-                if bState or (self.is_instance(sCell) and oChild is None):
+                bBox = self.is_instance(sCell) and oChild is None
+                if bState or (bBox and self.box_path(sCell, sPort) is None):
                     self._dStart[iBit] = max(self._dStart.get(iBit, NO_DEPTH), 0)
                     continue
                 lInputs = self.comb_inputs(sCell, sPort, iIndex)
-                if oChild is not None:
+                if bBox:
+                    # A declared path through a black box, such as a buffer, adds no logic level that can be seen
+                    if not lInputs:
+                        self._dStart[iBit] = max(self._dStart.get(iBit, NO_DEPTH), 0)
+                    lEdges = [(iInput, 0) for iInput in lInputs]
+                elif oChild is not None:
                     self._dStart[iBit] = max(self._dStart.get(iBit, NO_DEPTH), oChild.launch.get((sPort, iIndex), NO_DEPTH))
                     lEdges = [(iInput, max(oChild.pass_depth.get((sPort, iIndex), 0), 0)) for iInput in lInputs]
                 else:
@@ -523,8 +537,11 @@ class ModuleGraph:
 class DesignGraph:
     """The graphs and summaries of all modules of a netlist."""
 
-    def __init__(self, oNetlist):
+    def __init__(self, oNetlist, oBlackBoxes=None):
         self.netlist = oNetlist
+        # The black box declarations, see black_box.py
+        self.black_boxes = oBlackBoxes
+        self._dBoxes = {}
         self.latch_cells = {}
         for sModule, sCell, _ in oNetlist.latches():
             self.latch_cells.setdefault(sModule, set()).add(sCell)
@@ -566,12 +583,45 @@ class DesignGraph:
                 self._lInProgress.remove(sModule)
         return self._dSummaries[sModule]
 
+    def box_role(self, dCell, sPort, sKind):
+        """The role of a kind declared for a port of a black box cell by the declarations of its type, or None."""
+        if self.black_boxes is None:
+            return None
+        # Imported here: black_box imports this module
+        from mhsg.design import black_box  # pylint: disable=import-outside-toplevel
+
+        sType = str(dCell.get("type"))
+        tKey = (sType, tuple(sorted((str(k), str(v)) for k, v in (dCell.get("parameters") or {}).items())))
+        if tKey not in self._dBoxes:
+            lDeclarations = self.black_boxes.find_type(sType)
+            self._dBoxes[tKey] = black_box.Instance(CellView(dCell), lDeclarations) if lDeclarations else None
+        oInstance = self._dBoxes[tKey]
+        oRole = oInstance.role(sPort) if oInstance is not None else None
+        return oRole if oRole is not None and oRole.kind == sKind else None
+
     def module_ports(self, sModule):
         """Returns {port: direction} of a module in the netlist, or None."""
         dModule = self.netlist.modules.get(sModule)
         if dModule is None:
             return None
         return {sPort: dPort.get("direction") for sPort, dPort in dModule.get("ports", {}).items()}
+
+
+class CellView:
+    """A cell of a module as black_box.Instance sees a cell of the flat netlist."""
+
+    def __init__(self, dCell):
+        self.cell = dCell
+        self.type = dCell.get("type")
+        self.connections = dCell.get("connections", {})
+
+
+def box_path_bits(dConnections, oRole, iIndex):
+    """The input bits an output bit of a black box follows through a path role."""
+    # Imported here: black_box imports this module
+    from mhsg.design import black_box  # pylint: disable=import-outside-toplevel
+
+    return black_box.path_bits(dConnections, oRole, iIndex)
 
 
 def strongly_connected(lNodes, fPredecessors):
