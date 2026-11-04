@@ -34,8 +34,9 @@ Design analysis
 * **Netlist checks and declarations of single instances.** design_003 and design_007 follow the path roles of black
   box types; the declarations of single instances name flat paths, which the module graphs do not know. design_006
   counts every black box input as used, since the roles describe clock domains, not which inputs matter.
-* **Reconvergence through clocked resets only.** Synchronous resets that feed two or more registers are not followed
-  unless :code:`follow_resets` is set; a finer rule could tell resets from clears.
+* **Clears found without a declaration.** A synchronous clear is followed by design_016 when the cdc section lists it
+  under clears. Telling clears from resets by structure was tried and dropped: the reset crossing circuits of
+  open-logic compute their resets with logic, and were taken for clears.
 * **Reset domain crossings into registers without a reset** are not reported by design_018, as their data during a
   reset is not used; a design that relies on such a register right after a reset would need them.
 * **Logic depth** counts operators before technology mapping, which is crude; a mapped count would be more realistic

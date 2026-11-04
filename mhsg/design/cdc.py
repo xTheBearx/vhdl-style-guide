@@ -863,12 +863,25 @@ class Analysis:
             lData.append(oNet)
         return lData, lReset
 
+    def is_clear(self, tNode):
+        """
+        True for a register the cdc section lists under clears: a synchronous clear that logic computes, such as a
+        state machine, and that is followed like data, unlike a reset. Structure cannot tell them apart: reset
+        crossing circuits compute their resets with logic too.
+        """
+        lPatterns = [str(s) for s in self.constraints.get("clears") or []]
+        oCell = self._node_cell.get(tNode)
+        if not lPatterns or oCell is None or tNode[0] != "r":
+            return False
+        sName = self.flat.cell_name(oCell)
+        return any(sName == s or fnmatch.fnmatchcase(sName, s) for s in lPatterns)
+
     def _tag_graph(self, bFollowResets=False):
         """
         Returns ({node: nodes it depends on}, {"cells": {node: cell}}) for register bits ("r"), memory read ports ("d")
         and memories ("m"). A node only depends on nodes of its own clock domain: the rest are crossings.
         Unless bFollowResets, a synchronous reset is not followed: a node that loads a constant into two or more
-        registers through the multiplexers in front of them.
+        registers through the multiplexers in front of them, unless the cdc section lists it under clears.
         """
         dDependencies = {}
         dCells = {}
@@ -914,7 +927,7 @@ class Analysis:
                     for oNet in lReset:
                         for tSource in self.point_nodes(self.sources(oNet)):
                             dResetFanout.setdefault(tSource, set()).add(id(oCell))
-        setResets = set() if bFollowResets else {t for t, s in dResetFanout.items() if len(s) >= 2}
+        setResets = set() if bFollowResets else {t for t, s in dResetFanout.items() if len(s) >= 2 and not self.is_clear(t)}
         for tNode, (oCell, lData, lReset) in dInputs.items():
             dCells[tNode] = oCell
             dDomain[tNode] = group(oCell)

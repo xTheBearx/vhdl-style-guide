@@ -903,6 +903,20 @@ class test_design_analysis(unittest.TestCase):
             [t for t in self.findings("rdc_top", "rdc.vhd") if t[2] == "design_018"],
         )
 
+    def test_clears(self):
+        # A clear listed under clears is followed like data: x_a meets y_a in the registers it clears. Without the
+        # list it is taken for a reset, as the synchronized reset of r3_b and r4_b is
+        dCdc = {"clocks": {"clk_a": "a", "clk_b": "b"}}
+        self.assertEqual([], self.findings("clear_top", "clear.vhd", dCdc=dCdc))
+        sMessage = "Separately synchronized x_a (by x_meta) and y_a (by y_meta) from clk_a meet again in"
+        self.assertEqual(
+            [
+                ("clear.vhd", 56, "design_016", f"{sMessage} r1_b (clk_b)"),
+                ("clear.vhd", 57, "design_016", f"{sMessage} r2_b (clk_b)"),
+            ],
+            self.findings("clear_top", "clear.vhd", dCdc={**dCdc, "clears": ["clr_*"]}),
+        )
+
     def test_reconvergence_in_black_boxes(self):
         # u_same samples both synchronized signals on its clock pin: they meet inside it. u_apart samples them on two
         # pins, so nothing is known about their meeting

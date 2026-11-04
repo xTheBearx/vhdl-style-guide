@@ -271,8 +271,15 @@ clock is too (design_015), and a reset made by logic or by another register is i
        waivers:
          - signal: u_status.flags_meta
            justification: Quasi-static status bits, read only after the run has stopped
+       clears:
+         # Synchronous clears computed by logic, followed like data by design_016
+         - u_ctrl.clear_r
 
 A waiver names the destination register of a crossing, as the report names it, or a pattern such as ``u_status.*``.
+**clears** names registers, or patterns, that load a constant into other registers as a clear rather than a reset.
+design_016 does not follow a synchronous reset of two or more registers, unless :code:`follow_resets` is set; a clear
+it lists is followed like data. Structure cannot tell the two apart: reset crossing circuits compute their resets
+with logic too.
 A waiver without a justification is reported by design_008. Other findings of design analysis are waived with the
 waivers of the configuration, see :ref:`waivers`.
 
