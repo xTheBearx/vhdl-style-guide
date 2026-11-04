@@ -123,7 +123,7 @@ sv_module_006
 
 Alias: :code:`sv_module_no_constant_macros`
 
-This rule checks for text macros that define a constant, such as `define WIDTH 8, as the STARC guide asks
+This rule checks for text macros that define a constant, such as a define of WIDTH as 8, as the STARC guide asks
 (3.2.2.7): use a parameter. It is disabled by default; the starc rule set enables it.
 
 **Violation**

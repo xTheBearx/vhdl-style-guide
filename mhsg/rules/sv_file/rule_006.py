@@ -6,8 +6,8 @@ from mhsg.rules.sv_tree import Problem, TreeRule
 
 class rule_006(TreeRule, structure.Rule):
     """
-    This rule checks that a file holding modules declares their time unit, with `timescale or timeunit, as the STARC
-    guide recommends (4.1.2.4). It is disabled by default; the starc rule set enables it.
+    This rule checks that a file holding modules declares their time unit, with a timescale directive or timeunit, as
+    the STARC guide recommends (4.1.2.4). It is disabled by default; the starc rule set enables it.
 
     **Violation**
 
