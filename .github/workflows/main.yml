@@ -168,6 +168,13 @@ jobs:
       - name: tools.install
         run: |
           tar xzf "$HOME/oss-cad-suite.tgz" -C "$HOME"
+      # The lint rules that run Verilator record the messages of Ubuntu's Verilator, which words them otherwise than
+      # the newer one of the suite: the suite's is left out
+      - name: tools.verilator
+        run: |
+          rm -f "$HOME"/oss-cad-suite/bin/verilator*
+          sudo apt-get update
+          sudo apt-get install --yes verilator
       - name: tools.path
         run: |
           echo "$HOME/oss-cad-suite/bin" >> "$GITHUB_PATH"
@@ -180,6 +187,7 @@ jobs:
           yosys -V
           ghdl --version | head -1
           sby --version
+          verilator --version
       - name: test
         env:
           MHSG_REQUIRE_DESIGN_TOOLS: "1"
