@@ -18,6 +18,8 @@ The ports are those the instances connect by name, and those the declaration nam
 import os
 import re
 
+import pyslang  # pylint: disable=import-error
+from pyslang import ast  # pylint: disable=import-error
 from pyslang.syntax import SyntaxKind, SyntaxTree  # pylint: disable=import-error
 
 from mhsg.svFile import preprocessor, verilator
@@ -73,12 +75,13 @@ class Instance:
         self.type = sType
         self.file = sFile
         self.line = iLine
+        # The offset of its name in the file, and the span of its module name and parameters, such as wrap #(.N(4))
+        self.offset = None
+        self.span = None
         # (parameter name, or None for a parameter given by position, value as written)
         self.parameters = []
         # Why the instance cannot have its own generics, or ""
         self.problem = ""
-        # The Yosys selection of its cell in its module: its name, or *.name in a generate block, such as g.u_sub
-        self.cell = sName
 
 
 def parameterized_instances(oDesign, setTypes):
@@ -89,31 +92,93 @@ def parameterized_instances(oDesign, setTypes):
             if oModule.kind not in verilator.DEFINITIONS:
                 continue
             sModule = verilator.name_of(oModule.header.name)
-            bParametric = getattr(oModule.header, "parameters", None) is not None
             for oNode in verilator.descendants(oModule):
                 if oNode.kind != SyntaxKind.HierarchyInstantiation or verilator.name_of(oNode.type) not in setTypes or oNode.parameters is None:
                     continue
-                bDirect = oNode.parent is not None and oNode.parent.kind in verilator.DEFINITIONS
+                oLast = oNode.parameters.getLastToken()
+                tSpan = (oNode.type.location.offset, oLast.location.offset + len(oLast.rawText))
                 for oInstance in verilator.elements(oNode.instances):
                     if oInstance.decl is None:
                         continue
                     oLocation = oInstance.decl.name.location
                     sName = verilator.name_of(oInstance.decl.name)
                     oItem = Instance(sModule, sName, verilator.name_of(oNode.type), sFile, oTree.sourceManager.getLineNumber(oLocation))
+                    oItem.offset = oLocation.offset
+                    oItem.span = tSpan
                     for oParameter in verilator.elements(oNode.parameters.parameters):
                         sValue = str(oParameter.expr).strip() if oParameter.expr is not None else ""
                         if oParameter.kind == SyntaxKind.NamedParamAssignment:
                             oItem.parameters.append((verilator.name_of(oParameter.name), sValue))
                         else:
                             oItem.parameters.append((None, sValue))
-                    if not bDirect:
-                        oItem.cell = "*." + sName
-                    if bParametric:
-                        oItem.problem = f"module {sModule} has parameters of its own"
-                    elif any(literal(s) is None for _, s in oItem.parameters):
-                        oItem.problem = "a parameter is not a literal"
                     lReturn.append(oItem)
     return lReturn
+
+
+def elaborated_parameters(oDesign, dStandIns):
+    """
+    Elaborates the Verilog of a design from its top with pyslang, each VHDL entity of dStandIns ({module as the Verilog
+    names it: [its generics, in order, as the Verilog names them]}) standing in as a module with those parameters, and
+    returns {(file, offset of the name of an instance of an entity): [{parameter: value}, ...]}, a dictionary for each
+    time the elaboration meets the instance, as a module with parameters can be elaborated several times. A value is
+    an integer, a real as text, or None if it has x or z bits; a string comes as the integer of its characters.
+    """
+    oOptions = preprocessor.options({"systemverilog": {"defines": oDesign.defines, "include_directories": oDesign.include_directories}})
+    oCompilationOptions = ast.CompilationOptions()
+    oCompilationOptions.topModules = {oDesign.top}
+    oCompilationOptions.paramOverrides = [f"{k}={verilog_text(v)}" for k, v in oDesign.generics.items()]
+    oSourceManager = pyslang.SourceManager()
+    oCompilation = ast.Compilation(pyslang.Bag([oCompilationOptions]))
+    dFiles = {}
+    for sFile in oDesign.verilog_files():
+        try:
+            with open(sFile, encoding="utf-8", errors="replace") as oFile:
+                oBuffer = oSourceManager.assignText(sFile, oFile.read())
+        except OSError:
+            continue
+        dFiles[oBuffer.id.id] = sFile
+        oCompilation.addSyntaxTree(
+            SyntaxTree.fromBuffer(oBuffer, oSourceManager, oOptions) if oOptions is not None else SyntaxTree.fromBuffer(oBuffer, oSourceManager),
+        )
+    lStubs = []
+    for sModule, lParameters in dStandIns.items():
+        lStubs.append(f"module {sModule} #(" + ", ".join(f"parameter {s} = 0" for s in lParameters) + ") (); endmodule")
+    oCompilation.addSyntaxTree(SyntaxTree.fromText("\n".join(lStubs), oSourceManager, "mhsg_entities.sv"))
+    dReturn = {}
+
+    def visit(oSymbol):
+        if oSymbol.kind.name != "Instance" or oSymbol.definition.name not in dStandIns:
+            return
+        sFile = dFiles.get(oSymbol.location.buffer.id)
+        if sFile is None:
+            return
+        dValues = {o.name: constant(o.value) for o in oSymbol.body.parameters}
+        dReturn.setdefault((sFile, oSymbol.location.offset), []).append(dValues)
+
+    oCompilation.getRoot().visit(visit)
+    return dReturn
+
+
+def constant(oValue):
+    """The Python value of a pyslang constant: an integer, a real as text, or None for one with x or z bits."""
+    oPython = getattr(oValue, "value", None)
+    if isinstance(oPython, float):
+        return repr(oPython)
+    sText = str(oValue).strip()
+    bNegative = sText.startswith("-")
+    oInteger = literal(sText.lstrip("-"))
+    if not isinstance(oInteger, int):
+        return None
+    return -oInteger if bNegative else oInteger
+
+
+def verilog_text(oValue):
+    """A value as Verilog writes it: 1 and 0 for booleans, a quoted string for text that is not a number."""
+    if isinstance(oValue, bool):
+        return "1" if oValue else "0"
+    if isinstance(oValue, str) and literal(oValue) is None:
+        return '"' + oValue + '"'
+    return str(oValue)
 
 
 def literal(sValue):

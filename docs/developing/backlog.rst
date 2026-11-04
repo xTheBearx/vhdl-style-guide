@@ -59,8 +59,8 @@ The plan, with the tools evaluated, is in the "Verilog and SystemVerilog" tab of
 (reading files, style rules, lint and design analysis) are done; see :doc:`../systemverilog`. Step 5, breadth, is
 under way: the entries below.
 
-* **Alignment inside packed dimensions**: sv_alignment_010 aligns the opening brackets of packed dimensions; Verible
-  may also pad inside the brackets, as in :code:`[ 4:0]` under :code:`[31:0]`, which is not checked.
+* **Alignment inside packed dimensions**: sv_alignment_011 aligns the colons of the first packed dimension of each
+  declaration, by spaces after the bracket; the least significant bounds, and further dimensions, are not aligned.
 * **Indentation not checked yet**: the exact indent of continuation lines (sv_indent_002 checks only that they are
   indented more than their statement), the contents of expressions (multi-line assignment patterns, randomize with
   blocks), preprocessor directives and inactive :code:`\`ifdef` branches. Verible's formatter has rules for each;
@@ -73,15 +73,15 @@ under way: the entries below.
   defines and include directories of the systemverilog section let fewer files fall in this case; the real-world
   check runs without them.
 * **STARC lint items needing data flow**: about 100 per-file items of the STARC guide, such as widths of function
-  arguments, loop bounds, reset polarity and resource sharing, need more than slang's warnings.
-* **STARC rule set**: 50 of the 613 items of the STARC guide have rules. The per-file items (216) are planned with
+  arguments, loop bounds and resource sharing, need more than slang's warnings.
+* **STARC rule set**: 173 of the 613 items of the STARC guide have rules. The per-file items (216) are planned with
   the SystemVerilog rules, the clock and reset items with design analysis of Verilog designs. The catalogue the set
   was made from records each item's limits and its Verible equivalent, kept in the notes of the set.
 * **SystemVerilog designs without the yosys-slang plugin**: Yosys' own reader handles Verilog and part of
   SystemVerilog; ibex and common_cells need the plugin, which is not packaged for Ubuntu. Not yet tried with it.
-* **Generics of VHDL entities under a Verilog top** are passed on when they are literals and the instance is in a
-  module without parameters; expressions of parameters, and instances in modules that have parameters, would need the
-  elaboration of the Verilog first, as read_slang does.
+* **Generics of VHDL entities under a Verilog top** are passed on when every elaboration of the instance gives it the
+  same values; an instance in a generate loop, or in a module elaborated with several sets of parameters, that gets
+  other values each time would need one copy of its module per set, as Yosys makes for Verilog modules.
 * **Black boxes in Verilog designs with read_slang**: the modules made for black boxes are read with read_verilog
   -lib before the design; whether read_slang links instances to them is not known. Yosys has cell models for Xilinx
   only among the vendors with black box libraries.

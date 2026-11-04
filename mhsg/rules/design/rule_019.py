@@ -35,6 +35,7 @@ class rule_019(Rule):
     def __init__(self):
         super().__init__()
         self.disable = True
+        self.disabled_in_design = True
         self.solution = "Split the path with a register"
         self.maximum_levels = 8
         self.lut_size = 6
