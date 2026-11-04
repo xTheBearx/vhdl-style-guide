@@ -87,6 +87,17 @@ class Context:
             self._oGraph = graph.DesignGraph(self.netlist, oBlackBoxes, self.box_paths)
         return self._oGraph
 
+    def instance_graph(self):
+        """
+        Returns the DesignGraph in which the modules whose black boxes have declarations of single instances that differ
+        between their instances have a copy for each instance, see graph.instance_copies; the DesignGraph when none do.
+        """
+        if getattr(self, "_oInstanceGraph", None) is None and self.netlist is not None:
+            oBlackBoxes = self.design.black_boxes if self.design is not None else None
+            tCopies = graph.instance_copies(self.netlist, oBlackBoxes, self.box_paths)
+            self._oInstanceGraph = graph.DesignGraph(tCopies[0], oBlackBoxes, tCopies[1]) if tCopies is not None else self.graph()
+        return getattr(self, "_oInstanceGraph", None)
+
     def vhdl_summary(self, sFileName):
         """
         Returns the processes of a VHDL file by architecture, see source_summary.py, or None if it cannot be read or
