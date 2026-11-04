@@ -26,7 +26,7 @@ class rule_001(Rule):
     line continuing the comment at the end of the line above, aligned with it, stays aligned with it.
 
     Continuation lines, such as the second line of a long expression, are checked by sv_indent_002; preprocessor
-    directives are not checked,
+    directives by sv_indent_003. Code in inactive branches of conditional directives is not checked,
     nor is a file with syntax errors, whose levels may be wrong near the errors, see sv_syntax_001.
 
     Two options follow other styles. **list_indent**, 1 by default, is the number of levels the ports and parameters

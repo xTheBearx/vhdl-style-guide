@@ -714,6 +714,11 @@ options:
     type: integer
     label: Levels of lists
     description: The number of levels the ports and parameters of a declaration and the connections of an instance are indented.
+  conditional_indent:
+    type: enum
+    values: [zero, code]
+    label: Indent of conditional directives
+    description: "zero puts `ifdef, `ifndef, `elsif, `else and `endif at column 0, as Verible does; code indents them like the code around them."
   continuation_indent:
     type: integer
     label: Levels of continuation lines
