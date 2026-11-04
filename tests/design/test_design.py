@@ -802,6 +802,18 @@ class test_design_analysis(unittest.TestCase):
             )
         return oResult.returncode, oResult.stdout.splitlines()
 
+    def test_transceiver_library(self):
+        # The data a transceiver sends is timed by TXUSRCLK2 and the data it receives by RXUSRCLK2: only the data
+        # from the domain of clk_a crosses
+        iStatus, lOutput = self.run_design(
+            "gt_top",
+            "gt_top.sv",
+            dCdc={"clocks": {"clk_a": "a", "refclk": "r"}},
+            dDesignKeys={"black_box_libraries": ["xilinx"]},
+        )
+        sFile = os.path.join(sTestDir, "gt_top.sv")
+        self.assertEqual((1, [f"ERROR: {sFile}(20)design_008 -- u_gt.TXDATA (u_gt.TXOUTCLK) captures d_r (clk_a) without a synchronizer"]), (iStatus, lOutput))
+
     def test_systemverilog_cdc(self):
         # Yosys reads the SystemVerilog; findings are at the assignment, refined from the always block Yosys points at
         iStatus, lOutput = self.run_design("cdc_sv", "cdc_sv.sv", dCdc={"clocks": {"clk_a": "a", "clk_b": "b"}})

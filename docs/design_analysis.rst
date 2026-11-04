@@ -576,8 +576,11 @@ tool versions. The port names of the primitives Yosys has cell models for were c
 
 * **xilinx**: clock buffers, input and output buffers, MMCM and PLL, registers, shift registers, DSP, IDDR and ODDR,
   IDELAY and ODELAY, ISERDES and OSERDES, block RAM with its ECC and cascade ports, configuration primitives, and the
-  XPM CDC macros, FIFOs and memories. The output of a clock multiplexer is a clock of its own; MMCM and PLL outputs
-  are derived from CLKIN1.
+  XPM CDC macros, FIFOs and memories, the transceivers of the 7 series, UltraScale and UltraScale+ families and the
+  PCI Express blocks. The output of a clock multiplexer is a clock of its own; MMCM and PLL outputs are derived from
+  CLKIN1; the clock outputs of a transceiver are clocks of their own, and its TX and RX ports are timed by TXUSRCLK2
+  and RXUSRCLK2. The user side of the UltraScale+ PCI Express blocks, which have two user clocks, and the PCI Express
+  ports of the UltraScale transceivers are left for the design to declare.
 * **microchip**: global and regional clock buffers, input and output buffers, SLE, the large SRAM blocks, micro SRAM,
   the math block, and the PF_CCC, PF_OSC, PF_INIT_MONITOR and CoreReset_PF cores, matched by the names Libero gives
   them, such as PF_CCC_C0.
