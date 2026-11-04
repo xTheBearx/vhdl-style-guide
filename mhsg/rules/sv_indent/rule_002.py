@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import language, parser, violation
+from mhsg.rules.sv_tree import before_errors
 from mhsg.rules.token_indent import token_indent as Rule
 from mhsg.svFile import tokens
 
@@ -44,8 +45,6 @@ class rule_002(Rule):
         self.configuration.append("continuation_indent")
 
     def _get_tokens_of_interest(self, oFile):
-        if getattr(oFile, "syntax_errors", None):
-            return []
         lReturn = []
         iBase = None
         iStatement = 0
@@ -85,7 +84,7 @@ class rule_002(Rule):
                 or (getattr(oToken, "kind", None) in ("OpenParenthesis", "Hash") and tuple(getattr(oToken, "syntax", ()))[-1:] in PORT_LISTS)
             )
             lReturn.append(oToi)
-        return lReturn
+        return before_errors(oFile, lReturn)
 
     def _analyze(self, lToi):
         # The indent of the last continuation line of each statement, after the fix

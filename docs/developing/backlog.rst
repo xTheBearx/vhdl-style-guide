@@ -64,12 +64,15 @@ under way: the entries below.
 * **Indentation not checked yet**: the exact indent of continuation lines (sv_indent_002 checks only that they are
   indented more than their statement), the contents of expressions (multi-line assignment patterns, randomize with
   blocks), preprocessor directives and inactive :code:`\`ifdef` branches. Verible's formatter has rules for each;
-  they need studying before mhsg checks them.
+  they need studying before mhsg checks them. Its macro tests (formatter_macro_test.cc) put directives at the top
+  level of a file flush left, and the code of an :code:`\`ifdef` branch there too; none shows a directive inside a
+  module or a begin-end block, which is the case that matters.
 * **Inactive** :code:`\`ifdef` **branches and macro arguments** are kept as unclassified tokens (about 11% of the
   tokens of ibex, common_cells and picorv32, most in the arguments of macros such as :code:`\`ASSERT` and
   :code:`\`uvm_info`), so rules do not check them. Parsing each branch with its defines set, and macro arguments
   that are expressions, would let rules check them.
-* **Files with syntax errors** are skipped by the SystemVerilog rules, as a VHDL file that does not parse is. The
+* **Files with syntax errors** are checked by the SystemVerilog rules up to the first error only, and not fixed.
+  Checking the code after it would need slang's recovery to be trusted, or each module parsed on its own. The
   defines and include directories of the systemverilog section let fewer files fall in this case; the real-world
   check runs without them.
 * **STARC lint items needing data flow**: the per-file items of the STARC guide on loop bounds, resource sharing and

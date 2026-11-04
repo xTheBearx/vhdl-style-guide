@@ -69405,7 +69405,7 @@
       "groups": [
         "structure"
       ],
-      "summary": "This rule reports code slang cannot parse. The rules on constructs, such as always blocks and labels, skip a file with syntax errors, as its syntax tree has constructs missing or misplaced.",
+      "summary": "This rule reports code slang cannot parse. The other style rules check only the code before the first error, as the syntax tree after it may have constructs missing or misplaced, and fix nothing in the file; the lint rules skip the file.",
       "documentation": "sv_syntax_rules.rst",
       "options": [
         {
