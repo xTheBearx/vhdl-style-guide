@@ -239,6 +239,20 @@ class test_rules(unittest.TestCase):
     def test_indent_clean(self):
         self.assertEqual([], only(self.run_mhsg(["-ap"], "indent.sv")[1], "sv_indent", "sv_whitespace"))
 
+    def test_continuation_lines(self):
+        # Only the continuation lines at or left of their statement are reported: the aligned arguments, the closing
+        # bracket, the line after the attribute and the next expression of the case item are not
+        _, lOutput, sAfter = self.run_mhsg(["--fix"], "continuation.sv")
+        self.assertEqual(read("continuation.fixed.sv"), sAfter)
+        _, lOutput, _ = self.run_mhsg(["-ap"], "continuation.sv")
+        self.assertEqual(
+            [
+                "ERROR: continuation.sv(9)sv_indent_002 -- Indent the continuation line by 12 spaces",
+                "ERROR: continuation.sv(17)sv_indent_002 -- Indent the continuation line by 12 spaces",
+            ],
+            only(lOutput, "sv_indent"),
+        )
+
     def test_indent_fix(self):
         # Every line whose indent is checked is indented by one space; the fix restores the file
         sText = read("indent.sv")
@@ -309,6 +323,33 @@ class test_rules(unittest.TestCase):
         _, lOutput, sAfter = self.run_mhsg(["--fix"], "brackets.sv")
         self.assertEqual(read("brackets.fixed.sv"), sAfter)
         self.assertEqual([], only(lOutput, "sv_whitespace"))
+
+    def test_alignment_columns(self):
+        # The types after the directions, then the packed dimensions, are aligned before the names; a port without a
+        # type and a declaration without a dimension stay in their groups. The dimension of b_o is in its column until
+        # the fix moves the types
+        _, lOutput, sAfter = self.run_mhsg(["--fix"], "columns.sv")
+        self.assertEqual(read("columns.fixed.sv"), sAfter)
+        _, lOutput, _ = self.run_mhsg(["-ap"], "columns.sv")
+        self.assertEqual(
+            [
+                "ERROR: columns.sv(2)sv_alignment_009 -- Align logic in column 12",
+                "ERROR: columns.sv(3)sv_alignment_009 -- Align logic in column 12",
+                "ERROR: columns.sv(9)sv_alignment_010 -- Align [ in column 11",
+                "ERROR: columns.sv(11)sv_alignment_010 -- Align [ in column 11",
+            ],
+            only(lOutput, "sv_alignment"),
+        )
+
+    def test_escaped_identifier_keeps_its_space(self):
+        # An escaped identifier ends at whitespace: removing the space before the semicolon would change the code
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sCopy = os.path.join(sTemporary, "escaped.sv")
+            with open(sCopy, "w", encoding="utf-8") as oFile:
+                oFile.write("module escaped;\n    reg \\busa+index ;\n    reg \\-clock  ;\nendmodule\n")
+            subprocess.run([sys.executable, "bin/mhsg", "-f", sCopy, "--fix"], cwd=sRoot, capture_output=True, check=False)
+            with open(sCopy, encoding="utf-8") as oFile:
+                self.assertEqual("module escaped;\n    reg \\busa+index ;\n    reg \\-clock ;\nendmodule\n", oFile.read())
 
     def test_whitespace_fix(self):
         # The fix keeps the space before the packed dimension of a type, the empty case item, the empty argument,
