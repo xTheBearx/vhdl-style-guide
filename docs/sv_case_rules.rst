@@ -82,3 +82,21 @@ asks (2.8.5.2). It is disabled by default; the starc rule set enables it.
 
    if (a) begin
        y = 0;
+
+sv_case_004
+###########
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_case_items`
+
+This rule checks that a case statement has at most **maximum_items** items, 200 by default, as the STARC guide
+asks (2.8.2.2). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+A case statement of 201 items.
+
+**Fix**
+
+Split the case statement, or use a memory or a function.

@@ -112,3 +112,27 @@ This rule checks for comparisons with x or z, which are never true in synthesis,
 .. code-block:: systemverilog
 
    if (data_valid) begin
+
+sv_literal_006
+##############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_literal_x_or_z`
+
+This rule checks for literals with x or z digits, as the STARC guide asks (2.10.1.6, and 2.1.6.5 for indexes).
+The don't-care of the default item of a case statement (2.8.3.1) and the wildcards of casez and casex items are
+allowed; comparisons with x or z are checked by sv_literal_005. It is disabled by default; the starc rule set
+enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   assign y = 8'bxxxx_0000;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign y = 8'b0000_0000;

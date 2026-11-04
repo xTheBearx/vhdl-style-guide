@@ -72,6 +72,8 @@ Rules Enforcing Naming Rule Group
 * `sv_naming_011 <../sv_naming_rules.html#sv-naming-011>`_
 * `sv_naming_012 <../sv_naming_rules.html#sv-naming-012>`_
 * `sv_naming_013 <../sv_naming_rules.html#sv-naming-013>`_
+* `sv_naming_014 <../sv_naming_rules.html#sv-naming-014>`_
+* `sv_naming_015 <../sv_naming_rules.html#sv-naming-015>`_
 * `type_015 <../type_rules.html#type-015>`_
 * `type_600 <../type_rules.html#type-600>`_
 * `type_601 <../type_rules.html#type-601>`_

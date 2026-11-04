@@ -51,3 +51,25 @@ This rule checks for defparam statements; set parameters in the instantiation in
 .. code-block:: systemverilog
 
    fifo #(.Depth(8)) u_fifo (.clk_i);
+
+sv_module_003
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_module_ports_by_name`
+
+This rule checks that the ports of an instance are connected by name, never by position, as the STARC guide asks
+(3.2.3.1). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   fifo fifo (clk_i, data_i, data_o);
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   fifo fifo (.clk_i(clk_i), .data_i(data_i), .data_o(data_o));
