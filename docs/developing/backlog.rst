@@ -32,18 +32,19 @@ Design analysis
   checked against cell models, as Yosys has none for them.
 * **Stand-in models and pragmas for black boxes** (options 4 and 5 of the black box plan): an analysis-only VHDL
   architecture for complex IP, and comment pragmas in component declarations. Not planned unless asked for.
-* **Netlist checks and declarations of single instances.** design_003 and design_007 follow the path roles of black
-  box types; the declarations of single instances name flat paths, which the module graphs do not know. design_006
+* **Netlist checks and declarations of single instances.** design_003 and design_007 check each module once, so a
+  declaration of single instances applies only when it applies to every instance of the cell in the design. design_006
   counts every black box input as used, since the roles describe clock domains, not which inputs matter.
 * **Clears found without a declaration.** A synchronous clear is followed by design_016 when the cdc section lists it
   under clears. Telling clears from resets by structure was tried and dropped: the reset crossing circuits of
   open-logic compute their resets with logic, and were taken for clears.
 * **Reset domain crossings into registers without a reset** are not reported by design_018, as their data during a
   reset is not used; a design that relies on such a register right after a reset would need them.
-* **Logic depth** counts operators before technology mapping, which is crude; a mapped count would be more realistic
-  but slower and loses names.
-* **More real-world designs** in :code:`scripts/real_world_designs.yaml`: surf (needs the vendor libraries), the
-  hdl-modules designs that use them (hard_fifo), and a multi-clock design with vendor clocking.
+* **Logic depth after mapping** (design_019) reports only the longest path of the design, at its top, as mapping
+  renames the signals in between; each path, with names, would need a mapping that keeps them, such as abc's with
+  the -dff and -keepff options, and a report of the path from the timing of the device.
+* **More real-world designs** in :code:`scripts/real_world_designs.yaml`: more of surf, which now analyzes with stub
+  vendor packages as its clock manager does, and a design whose clocks come from several vendor clocking primitives.
 
 Lint and rule sets
 ------------------
@@ -56,11 +57,12 @@ The plan, with the tools evaluated, is in the "Verilog and SystemVerilog" tab of
 (reading files, style rules, lint and design analysis) are done; see :doc:`../systemverilog`. Step 5, breadth, is
 under way: the entries below.
 
-* **Alignment of several columns**: the sv_alignment rules align one column each, such as the names of port
-  declarations; Verible also aligns the columns before it, such as the types and packed dimensions.
-* **Indentation not checked yet**: continuation lines, lists aligned after their bracket, the contents of
-  expressions (multi-line assignment patterns, randomize with blocks), preprocessor directives and inactive
-  :code:`\`ifdef` branches. Verible's formatter has rules for each; they need studying before mhsg checks them.
+* **Alignment inside packed dimensions**: sv_alignment_010 aligns the opening brackets of packed dimensions; Verible
+  may also pad inside the brackets, as in :code:`[ 4:0]` under :code:`[31:0]`, which is not checked.
+* **Indentation not checked yet**: the exact indent of continuation lines (sv_indent_002 checks only that they are
+  indented more than their statement), the contents of expressions (multi-line assignment patterns, randomize with
+  blocks), preprocessor directives and inactive :code:`\`ifdef` branches. Verible's formatter has rules for each;
+  they need studying before mhsg checks them.
 * **Inactive** :code:`\`ifdef` **branches and macro arguments** are kept as unclassified tokens (about 11% of the
   tokens of ibex, common_cells and picorv32, most in the arguments of macros such as :code:`\`ASSERT` and
   :code:`\`uvm_info`), so rules do not check them. Parsing each branch with its defines set, and macro arguments
@@ -75,11 +77,9 @@ under way: the entries below.
   was made from records each item's limits and its Verible equivalent, kept in the notes of the set.
 * **SystemVerilog designs without the yosys-slang plugin**: Yosys' own reader handles Verilog and part of
   SystemVerilog; ibex and common_cells need the plugin, which is not packaged for Ubuntu. Not yet tried with it.
-* **Generics of VHDL entities under a Verilog top**: each entity is elaborated once with the defaults of its generics;
-  the parameters a Verilog instance sets would need an elaboration of the entity per set of values, under a name of
-  its own.
+* **Generics of VHDL entities under a Verilog top** are passed on when they are literals and the instance is in a
+  module without parameters; expressions of parameters, and instances in modules that have parameters, would need the
+  elaboration of the Verilog first, as read_slang does.
 * **Black boxes in Verilog designs with read_slang**: the modules made for black boxes are read with read_verilog
   -lib before the design; whether read_slang links instances to them is not known. Yosys has cell models for Xilinx
   only among the vendors with black box libraries.
-* **More SystemVerilog projects** in the real-world check, which runs ibex, common_cells, picorv32, SERV, CVA6 and the
-  sv-tests conformance suite: OpenTitan, whose size needs a subset to be chosen.

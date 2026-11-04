@@ -24,8 +24,13 @@ GENERIC_IDENTIFIERS = (interface_unknown_declaration.identifier, interface_const
 
 def find_top(oDesign):
     """Returns (file name, parsed file) of the top entity, looked up in the top library, the last declaration first, or (None, None)."""
-    reEntity = re.compile(r"\bentity\s+" + re.escape(oDesign.top) + r"\s+is\b", re.IGNORECASE)
-    lFiles = [s for o in oDesign.libraries if o.name.lower() == oDesign.top_library.lower() for s in o.files]
+    return find_entity(oDesign, oDesign.top, oDesign.top_library)
+
+
+def find_entity(oDesign, sEntity, sLibrary):
+    """Returns (file name, parsed file) of an entity, looked up in a library, the last declaration first, or (None, None)."""
+    reEntity = re.compile(r"\bentity\s+" + re.escape(sEntity) + r"\s+is\b", re.IGNORECASE)
+    lFiles = [s for o in oDesign.libraries if o.name.lower() == sLibrary.lower() for s in o.files]
     for sFile in reversed(lFiles):
         try:
             with open(sFile, encoding="utf-8", errors="replace") as oFile:
@@ -136,12 +141,13 @@ PATCHED_TYPES = {"real": real_literal, "time": time_literal, "delay_length": tim
 CHARACTER_TYPES = ("std_logic", "std_ulogic", "bit", "character")
 
 
-def generic_types(oDesign):
-    """Returns {lower case name: lower case type mark} of the generics of the top entity, or {}."""
-    _, oFile = find_top(oDesign)
+def generic_types(oDesign, sEntity=None, sLibrary=None):
+    """Returns {lower case name: lower case type mark} of the generics of the top entity, or of another, or {}."""
+    sEntity = sEntity or oDesign.top
+    _, oFile = find_entity(oDesign, sEntity, sLibrary or oDesign.top_library)
     if oFile is None:
         return {}
-    return {s.lower(): d["type"] for d in generic_declarations(oFile, oDesign.top) for s, _ in d["names"] if d["type"]}
+    return {s.lower(): d["type"] for d in generic_declarations(oFile, sEntity) for s, _ in d["names"] if d["type"]}
 
 
 def patch_real_generics(oDesign, sDirectory):

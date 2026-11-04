@@ -173,8 +173,13 @@ def relative_path(sFileName, sDirectory):
     return os.path.relpath(sFileName, sDirectory).replace(os.sep, "/")
 
 
-def find_vhdl_files(sDirectory, lExclude=()):
-    """Returns the VHDL, SystemVerilog and Verilog files below a directory, except the excluded paths."""
+def find_vhdl_files(sDirectory, lExclude=(), lInclude=()):
+    """
+    Returns the VHDL, SystemVerilog and Verilog files below a directory, or below the included directories of it,
+    except the excluded paths.
+    """
+    if lInclude:
+        return [s for sSub in lInclude for s in find_vhdl_files(os.path.join(sDirectory, sSub), lExclude=()) if relative_path(s, sDirectory) not in lExclude]
     lFiles = []
     for sRoot, lDirectories, lFileNames in os.walk(sDirectory):
         lDirectories[:] = sorted(s for s in lDirectories if s != ".git")
@@ -223,7 +228,7 @@ def load_projects(sFileName, lNames):
 
 def run_project(dProject, sCache, iJobs, iTimeout, bVerbose):
     sDirectory = fetch_project(dProject, sCache)
-    lFiles = find_vhdl_files(sDirectory, dProject.get("exclude") or [])
+    lFiles = find_vhdl_files(sDirectory, dProject.get("exclude") or [], dProject.get("include") or [])
     print(f"{dProject['name']}: checking {len(lFiles)} files", flush=True)
     lResults = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=iJobs) as oPool:

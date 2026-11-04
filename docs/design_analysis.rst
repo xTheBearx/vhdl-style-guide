@@ -114,8 +114,10 @@ In a mixed design with a Verilog top, GHDL analyzes the VHDL files and Yosys ela
 instantiates with the ghdl command, before it reads the Verilog and elaborates the top module with its parameters set
 under **generics**. With :code:`order: auto`, the VHDL files are those these entities need. Limits:
 
-* each VHDL entity is elaborated once, with the defaults of its generics: parameters an instance sets in Verilog do not
-  reach it;
+* an instance that sets parameters gets the entity elaborated with those values, once for each set of values, by
+  name or by position, also in a generate block. The values must be literals, such as :code:`8`, :code:`16'd16` or
+  :code:`"FAST"`, and the module that holds the instance must have no parameters of its own; otherwise design_001
+  reports the instance, which is analyzed with the defaults of the generics;
 * GHDL names the module after the entity in lower case; the Verilog may write the name in any case, as long as all its
   instances write it the same way;
 * with read_slang, this has not been tried yet.
@@ -183,6 +185,8 @@ Design rules
 * :code:`design_005` reports registers that never change (DO-254 SS18).
 * :code:`design_006` reports registers that are never used and signals that are read but never assigned (DO-254 SS17).
 * :code:`design_007` reports combinational paths deeper than :code:`maximum_depth` logic levels, 48 by default (DO-254 SS19).
+* :code:`design_019`, disabled by default as it takes longer, maps the design to look-up tables of :code:`lut_size`
+  inputs and reports the longest path when it has more than :code:`maximum_levels` levels, 8 by default.
 
 * :code:`design_008` to :code:`design_016` check clock domain crossings, clocks and resets, see below.
 * :code:`design_017` reports black boxes whose clock domain behaviour is not declared, see below.
@@ -395,22 +399,29 @@ each vendor component the design instantiates:
 
 A stub declares only the ports and generics the instances name, so the instances must associate by name:
 
-* the type of a port is that of its actual: the declared type of the signal or port, its element type for an indexed
-  name, std_logic for a character literal, std_logic_vector for a string, bit string or aggregate. An array port takes
-  the width its instances agree on, from the declared range, a slice or a literal; ranges may use constants and
-  generics with integer values;
-* the mode of a port comes from the black box declaration where a role says it, such as :code:`clock` or
-  :code:`path`. Otherwise a port whose actual is an input of the entity, a signal the design assigns, a literal or an
-  expression is an input; any other port is an output, unless another output already drives its signal;
-* the type of a generic is that of its actual: integer, real, boolean, string, time, bit_vector for a bit string, or
-  the declared type of a constant or generic. A generic that some instances leave out gets the first literal value.
+* the type of a port is that of its actual: the declared type of the signal, port or record element, its element
+  type for an indexed name, std_logic for a character literal, std_logic_vector for a string, bit string or
+  aggregate. Subtypes of the design, such as :code:`subtype sl is std_logic`, resolve to their base types. An array
+  port takes the width its instances agree on, from the declared range, a slice or a literal; ranges may use
+  constants and generics with integer values. An aggregate or an open port whose width no instance gives gets one
+  element, which is enough for analysis;
+* the mode of a port comes from Yosys' cell model of the primitive, when the design names a black box library Yosys
+  has models for, such as :code:`black_box_libraries: [xilinx]`; then from the black box declaration where a role
+  says it, such as :code:`clock` or :code:`path`. Otherwise a port whose actual is an input of the entity, a signal the
+  design assigns, a literal or an expression is an input; any other port is an output, unless another output already
+  drives its signal;
+* the type of a generic is that of its actual: integer, real, boolean, string, time, bit_vector for a bit string,
+  the return type of a function, or the declared type of a constant or generic. A generic that some instances leave
+  out gets the first literal value.
 
-The types a stub can declare are those of the packages std.standard, ieee.std_logic_1164 and ieee.numeric_std; an
-actual of another type, such as a record, stops the run with a message. A file that uses two stub libraries, such as
+The types a stub can declare are those of the packages std.standard, ieee.std_logic_1164 and ieee.numeric_std. An
+actual of another type, such as an enumeration of the design, is declared as std_logic, with a comment naming the
+type in the stub; GHDL reports the mismatch if the instance is analyzed. A file that uses two stub libraries, such as
 unisim and xpm, takes the components whose names start with :code:`xpm_` from xpm. A stub says nothing about the
 primitive beyond what the design shows, which is all design analysis needs of a black box: the vendor's own files
 remain the reference, and a mistake in an instance that the vendor's declarations would catch, such as a misspelled
-port, goes unnoticed with stubs.
+port, goes unnoticed with stubs. The real-world check analyzes the hard FIFO of hdl-modules and the clock manager of
+surf this way.
 
 Each vendor primitive is then a black box, to be declared as below.
 
@@ -603,8 +614,9 @@ Limitations
 * Vendor primitives must be given as VHDL sources or component declarations which GHDL can elaborate as black boxes.
   The netlist checks, design_002 to design_007, take a black box output to be registered unless the declaration of
   the black box type gives it a :code:`path` role: design_003 then finds loops through it and design_007 follows paths
-  through it, without counting a logic level for the box. Declarations of single instances name flat paths, so only
-  the clock domain checks use them. Every input of a black box counts as used, whatever its role.
+  through it, without counting a logic level for the box. A declaration of single instances applies when the same
+  one applies to every instance of the cell in the design, as each module is checked once for all its instances.
+  Every input of a black box counts as used, whatever its role.
 * GHDL simplifies the logic while it builds the netlist: it removes registers nothing reads, which design_006 finds by
   comparing the netlist with the clocked processes, and it removes inverter and buffer chains and unused combinational
   signals, which a netlist cannot show. Checks for those are planned for the per-file lint.
