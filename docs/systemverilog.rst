@@ -199,10 +199,11 @@ Syntax errors
 #############
 
 Each file is parsed on its own, so macros defined in other files and include files that are not found are not
-errors. Other syntax errors are reported by :code:`sv_syntax_001`, and the SystemVerilog rules skip the file: its
-syntax tree has constructs missing or misplaced, and its tokens may be classified wrongly near the errors, so checking
-or fixing it would be unsafe. Only the rules for every language, on trailing spaces, tabs and lengths, and
-:code:`sv_blank_line_001` still check it.
+errors. Other syntax errors are reported by :code:`sv_syntax_001`. slang parses the code before the first error as
+written, so the SystemVerilog style rules check it; after the error the syntax tree may have constructs missing or
+misplaced, and tokens classified wrongly, so the rules leave the rest of the file alone, and nothing in the file is
+fixed. The lint rules skip the file. The rules for every language, on trailing spaces, tabs and lengths, and
+:code:`sv_blank_line_001` check the whole file.
 
 After a fix that changes the structure of the code, such as replacing always @* with always_comb or removing a
 generate region, the file is parsed again, so the rules that follow, such as the indentation, see the fixed code.

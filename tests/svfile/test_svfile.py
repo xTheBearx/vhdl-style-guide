@@ -516,14 +516,44 @@ class test_rules(unittest.TestCase):
         self.assertIn("    assign v = 4'b0;", lAfter)
 
     def test_syntax_errors(self):
-        # The rules on constructs skip a file slang cannot parse; sv_syntax_001 reports the error. A macro
-        # defined in another file is not an error.
+        # sv_syntax_001 reports code slang cannot parse; the rules on constructs check only the code before it. A
+        # macro defined in another file is not an error.
         with tempfile.TemporaryDirectory() as sTemporary:
             sCopy = os.path.join(sTemporary, "e.sv")
             with open(sCopy, "w", encoding="utf-8") as oFile:
                 oFile.write("module e;\n    always @* y = a +;\n    `UNDEFINED(x)\nendmodule\n")
             oResult = subprocess.run([sys.executable, "bin/mhsg", "-f", sCopy, "-of", "syntastic"], cwd=sRoot, capture_output=True, text=True, check=False)
         self.assertEqual([f"ERROR: {sCopy}(2)sv_syntax_001 -- Syntax error: expected expression"], oResult.stdout.splitlines())
+
+    def test_code_before_a_syntax_error(self):
+        # The code before the first syntax error is checked, the code after it is not, and nothing is fixed
+        sText = "module e;\nlogic  x ;\n    always_comb begin\n    x=a;\n    end\n    assign y = a +;\n  logic   z ;\nendmodule\n"
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sCopy = os.path.join(sTemporary, "e.sv")
+            with open(sCopy, "w", encoding="utf-8") as oFile:
+                oFile.write(sText)
+            oResult = subprocess.run(
+                [sys.executable, "bin/mhsg", "-f", sCopy, "-ap", "-of", "syntastic"],
+                cwd=sRoot,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            subprocess.run([sys.executable, "bin/mhsg", "-f", sCopy, "--fix"], cwd=sRoot, capture_output=True, check=False)
+            with open(sCopy, encoding="utf-8") as oFile:
+                sAfter = oFile.read()
+        self.assertEqual(
+            [
+                f"ERROR: {sCopy}(2)sv_indent_001 -- Use 4 spaces for indent",
+                f"ERROR: {sCopy}(2)sv_whitespace_003 -- Remove space before semicolon",
+                f"ERROR: {sCopy}(4)sv_indent_001 -- Use 8 spaces for indent",
+                f"ERROR: {sCopy}(4)sv_whitespace_008 -- Add a space around the operator",
+                f"ERROR: {sCopy}(4)sv_whitespace_008 -- Add a space around the operator",
+                f"ERROR: {sCopy}(6)sv_syntax_001 -- Syntax error: expected expression",
+            ],
+            oResult.stdout.splitlines(),
+        )
+        self.assertEqual(sText, sAfter)
 
     def test_lint(self):
         _, lOutput, _ = self.run_mhsg(["--lint_only", "--rule_set", "none"], "lint.sv")

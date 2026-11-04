@@ -10,8 +10,9 @@ sv_syntax_001
 
 Alias: :code:`sv_syntax_error`
 
-This rule reports code slang cannot parse. The rules on constructs, such as always blocks and labels, skip a file
-with syntax errors, as its syntax tree has constructs missing or misplaced.
+This rule reports code slang cannot parse. The other style rules check only the code before the first error,
+as the syntax tree after it may have constructs missing or misplaced, and fix nothing in the file; the lint rules
+skip the file.
 
 A file is parsed on its own, so macros defined in other files and missing include files are not errors.
 
