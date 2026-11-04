@@ -23,6 +23,7 @@ from mhsg.design import (
     netlist,
     project,
     runner,
+    stubs,
     tools,
     top,
     vendors,
@@ -878,6 +879,19 @@ class test_design_analysis(unittest.TestCase):
             lReturn.append((sFile, int(sLineNumber), sRule, sMessage))
         return lReturn
 
+    def test_verilog_top(self):
+        # The Verilog top uses a VHDL synchronizer: Yosys elaborates the entity with the ghdl command before reading
+        # the Verilog. The crossing through it is synchronized; the one in the Verilog is not
+        sFile = os.path.join(sTestDir, "vtop.v")
+        for sOrder in ("listed", "auto"):
+            iStatus, lOutput = self.run_design(
+                "vtop",
+                ["vtop_sync.vhd", "vtop.v"],
+                dCdc={"clocks": {"clk_a": "a", "clk_b": "b"}},
+                dDesignKeys={"order": sOrder},
+            )
+            self.assertEqual((1, [f"ERROR: {sFile}(21)design_008 -- raw (clk_b) captures flag_a (clk_a) without a synchronizer"]), (iStatus, lOutput), sOrder)
+
     def test_combinational_loops(self):
         self.assertEqual(
             [
@@ -885,6 +899,26 @@ class test_design_analysis(unittest.TestCase):
                 ("loop.vhd", 45, "design_003", "Combinational loop through e, f in loop_top and instance u_pass"),
             ],
             self.findings("loop_top", "loop.vhd"),
+        )
+
+    def test_reconvergence_in_black_boxes(self):
+        # u_same samples both synchronized signals on its clock pin: they meet inside it. u_apart samples them on two
+        # pins, so nothing is known about their meeting
+        dDeclared = {
+            "black_boxes": {"SAMPLER": {"ports": {"CLK": "clock", "CLK2": "clock", "A": {"sync": "CLK"}, "B": {"sync": "CLK"}, "Y": {"sync": "CLK"}}}},
+            "black_box_instances": {"u_apart": {"ports": {"B": {"sync": "CLK2"}}}},
+        }
+        lFindings = self.findings("box_reconvergence_top", "box_reconvergence.vhd", dDesignKeys=dDeclared, dCdc={"clocks": {"clk_a": "a", "clk_b": "b"}})
+        self.assertEqual(
+            [
+                (
+                    "box_reconvergence.vhd",
+                    55,
+                    "design_016",
+                    "Separately synchronized mode_a (by mode_meta) and start_a (by start_meta) from clk_a meet again in u_same",
+                ),
+            ],
+            lFindings,
         )
 
     def test_paths_through_black_boxes(self):
@@ -1203,6 +1237,134 @@ class test_design_analysis(unittest.TestCase):
         self.assertEqual((0, ""), (oResult.returncode, oResult.stdout))
         self.assertEqual([("clk_pad", "port", 1)], [(d["name"], d["kind"], d["registers"]) for d in dReport["clocks"]])
         self.assertEqual([("u_sync", "clk_pad", "clk_b", 3)], [(d["instance"], d["from"], d["clock"], d["stages"]) for d in dReport["box_synchronizers"]])
+
+    def test_vendor_stubs(self):
+        # Without an installation, stub packages of unisim and xpm written from the instances give the same analysis
+        dDesign = {
+            "top": "vendor_top",
+            "vendor_libraries": [{"vendor": "xilinx", "stubs": True}],
+            "libraries": [{"name": "work", "files": [os.path.join(sTestDir, "vendor_top.vhd")]}],
+            "black_boxes": {
+                "IBUF": {"archetype": "buffer", "input": "I", "output": "O"},
+                "BUFG": {"archetype": "clock_buffer", "input": "I", "output": "O"},
+                "xpm_cdc_single": {
+                    "archetype": "synchronizer",
+                    "source_clock": "src_clk",
+                    "destination_clock": "dest_clk",
+                    "input": "src_in",
+                    "output": "dest_out",
+                    "stages": "DEST_SYNC_FF",
+                },
+            },
+        }
+        with tempfile.TemporaryDirectory() as sDirectory:
+            dDesign["work_directory"] = os.path.join(sDirectory, "work")
+            sConfiguration = os.path.join(sDirectory, "design.yaml")
+            sReport = os.path.join(sDirectory, "cdc.json")
+            with open(sConfiguration, "w", encoding="utf-8") as oFile:
+                json.dump({"design": dDesign}, oFile)
+            dEnvironment = {k: v for k, v in os.environ.items() if k not in ("XILINX_VIVADO", "XILINX_VIVADO_HOME")}
+            oResult = subprocess.run(
+                [*utils.mhsg_exec(), "--design", "-c", sConfiguration, "-of", "syntastic", "--cdc_report", sReport],
+                cwd=sRoot,
+                capture_output=True,
+                text=True,
+                check=False,
+                env=dEnvironment,
+            )
+            with open(sReport, encoding="utf-8") as oFile:
+                dReport = json.load(oFile)
+            self.assertEqual(
+                ["unisim.vcomponents.vhd", "xpm.vcomponents.vhd"],
+                sorted(os.listdir(os.path.join(sDirectory, "work", "stubs"))),
+            )
+        self.assertEqual((0, ""), (oResult.returncode, oResult.stdout))
+        self.assertEqual([("clk_pad", "port", 1)], [(d["name"], d["kind"], d["registers"]) for d in dReport["clocks"]])
+        self.assertEqual([("u_sync", "clk_pad", "clk_b", 3)], [(d["instance"], d["from"], d["clock"], d["stages"]) for d in dReport["box_synchronizers"]])
+
+    def test_stub_package(self):
+        # Types, widths and modes come from the actuals; generics an instance leaves out get the first literal
+        oDesign = project.from_configuration(
+            {
+                "design": {
+                    "top": "stub_top",
+                    "vendor_libraries": [{"library": "vendorlib", "stubs": True}],
+                    "libraries": [{"name": "work", "files": [os.path.join(sTestDir, "stub_top.vhd")]}],
+                },
+            },
+        )
+        with tempfile.TemporaryDirectory() as sDirectory:
+            dFiles = stubs.write(oDesign, sDirectory)
+            with open(dFiles["vendorlib"][0], encoding="utf-8") as oFile:
+                lLines = oFile.read().splitlines()
+        self.assertEqual(dFiles["vendorlib"], oDesign.libraries[0].files)
+        self.assertEqual(
+            [
+                "package components is",
+                "  component SHIFTER is",
+                "    generic (",
+                '      INIT : bit_vector := x"00";',
+                "      DEPTH : natural := 2;",
+                "      SCALE : real := 1.5;",
+                "      ENABLED : boolean := true;",
+                '      MODE : string := "fast";',
+                "      DELAY : time := 1 ns",
+                "    );",
+                "    port (",
+                "      CLK : in std_logic;",
+                "      DIN : in std_logic_vector(3 downto 0);",
+                "      SEL : in std_logic;",
+                "      LOAD : in std_logic;",
+                "      PRESET : in std_logic_vector(3 downto 0);",
+                "      COUNT : in std_logic_vector(3 downto 0);",
+                "      DOUT : out std_logic_vector(3 downto 0);",
+                "      LAST : out std_logic;",
+                "      SPARE : out std_logic",
+                "    );",
+                "  end component;",
+                "end package components;",
+            ],
+            lLines[5:],
+        )
+        # The design analyzes with the stub: only the missing declaration of the black box is reported
+        self.assertEqual(
+            [("stub_top.vhd", 42, "design_017", "Black box SHIFTER has no declaration of its clock domain behaviour (2 instances)")],
+            self.findings("stub_top", "stub_top.vhd", dDesignKeys={"vendor_libraries": [{"library": "vendorlib", "stubs": True}]}),
+        )
+
+    def test_stub_configuration_errors(self):
+        for dEntry, sMessage in (
+            ({"library": "unisim", "stubs": True, "files": ["x.vhd"]}, "stubs and files exclude each other"),
+            ({"vendor": "lattice", "stubs": True}, "needs family"),
+            ({"vendor": "nobody", "stubs": True}, "unknown vendor nobody"),
+        ):
+            with self.assertRaises(exceptions.ConfigurationError) as oContext:
+                vendors.resolve([dEntry], {})
+            self.assertIn(sMessage, str(oContext.exception))
+        self.assertEqual(["unisim", "xpm"], [o.name for o in vendors.resolve([{"vendor": "xilinx", "stubs": True}], {})])
+
+    def test_stub_positional_association(self):
+        with tempfile.TemporaryDirectory() as sDirectory:
+            sFile = os.path.join(sDirectory, "positional.vhd")
+            with open(sFile, "w", encoding="utf-8") as oFile:
+                oFile.write(
+                    "library ieee;\nuse ieee.std_logic_1164.all;\nlibrary unisim;\nuse unisim.vcomponents.all;\n"
+                    "entity positional is\n  port (a : in std_logic; y : out std_logic);\nend entity positional;\n"
+                    "architecture rtl of positional is\nbegin\n  u_buf : BUFG port map (y, a);\nend architecture rtl;\n",
+                )
+            oDesign = project.from_configuration(
+                {
+                    "design": {
+                        "top": "positional",
+                        "vendor_libraries": [{"library": "unisim", "stubs": True}],
+                        "libraries": [{"name": "work", "files": [sFile]}],
+                    },
+                },
+            )
+            with self.assertRaises(exceptions.ConfigurationError) as oContext:
+                stubs.write(oDesign, sDirectory)
+        self.assertIn("instance u_buf of bufg", str(oContext.exception))
+        self.assertIn("associates by position", str(oContext.exception))
 
     def run_library_design(self, sTop, sFile, dVendor, sLibrary):
         dDesign = {
