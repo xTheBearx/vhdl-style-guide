@@ -1,7 +1,7 @@
 {
   "format": "mhsg-options",
   "format_version": 1,
-  "mhsg_version": "3.35.0.post432+git.b8aa9c03",
+  "mhsg_version": "3.35.0.post634+git.e6945a69",
   "documentation_url": "https://github.com/xTheBearx/vhdl-style-guide/blob/master/docs/",
   "settings": [
     {
@@ -65468,7 +65468,7 @@
         },
         {
           "name": "continuation_indent",
-          "default": 2,
+          "default": 1,
           "definition": "continuation_indent"
         }
       ]

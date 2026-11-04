@@ -15,6 +15,7 @@ languages they apply to, see rule.Rule.languages.
 import bisect
 import importlib
 import os
+import re
 
 import pyslang
 
@@ -22,6 +23,7 @@ import pyslang
 from pyslang.parsing import (  # pylint: disable=import-error
     Lexer,
     LexerOptions,
+    PreprocessorOptions,
     Token,
     TokenKind,
 )
@@ -190,6 +192,9 @@ def build_tokens(sText, sFileName, bTree=False, oOptions=None, sPath=""):
     oTree = SyntaxTree.fromBuffer(oFileBuffer, oSourceManager, oOptions) if oOptions is not None else SyntaxTree.fromBuffer(oFileBuffer, oSourceManager)
     dNodes = {}
     dClasses = classify(oTree, oFileBuffer.id.id, line_starts(sText), dNodes)
+    # The code of inactive `ifdef branches is not in the tree: the parses with each macro its conditions test switched
+    # give its indent levels
+    dInactive = inactive_levels(sText, sPath or sFileName, oOptions, dClasses)
     oBuffer = oSourceManager.assignText(sFileName + " (as written)", sText)
     oLexer = Lexer(oBuffer, pyslang.BumpAllocator(), pyslang.Diagnostics(), oSourceManager, LexerOptions())
     lReturn = []
@@ -204,6 +209,12 @@ def build_tokens(sText, sFileName, bTree=False, oOptions=None, sPath=""):
         if oInfo is None or oInfo.kind != sKind:
             oClass = tokens.preprocessor if tokens.base_class(sKind) is tokens.preprocessor else tokens.unclassified
             oNew = oClass(oToken.rawText, sKind)
+            oAlternate = dInactive.get(oToken.location.offset)
+            if oClass is tokens.unclassified and oAlternate is not None and oAlternate.kind == sKind:
+                # Code of an inactive branch keeps its class, as no rule but indentation looks at it, and gets the
+                # level it has where the branch is active
+                oNew.set_indent(oAlternate.indent)
+                oNew.closing = oAlternate.closing
         else:
             oNew = tokens.for_token(sKind, oInfo.syntax, oInfo.field)(oToken.rawText, sKind, oInfo.syntax, oInfo.field)
             oNew.set_indent(oInfo.indent)
@@ -219,6 +230,43 @@ def build_tokens(sText, sFileName, bTree=False, oOptions=None, sPath=""):
     if bTree:
         return lReturn, (oTree, oSourceManager, oFileBuffer.id.id), dNodes
     return lReturn
+
+
+# The conditions of `ifdef branches, and the most parses made to find the levels of the code of inactive branches
+reCondition = re.compile(r"`(?:ifdef|ifndef|elsif)\s+([A-Za-z_][A-Za-z0-9_$]*)")
+MAX_ALTERNATE_PARSES = 8
+
+
+def inactive_levels(sText, sPath, oOptions, dClasses):
+    """
+    Returns {offset: token_info} for the tokens that only parses with a macro of the `ifdef conditions of a text
+    switched have: defined when it is not, undefined when it is. One parse for each macro, at most
+    MAX_ALTERNATE_PARSES; the first parse that has a token gives its level.
+    """
+    lMacros = list(dict.fromkeys(reCondition.findall(sText)))[:MAX_ALTERNATE_PARSES]
+    if not lMacros:
+        return {}
+    oBase = getattr(oOptions, "preprocessorOptions", None) if oOptions is not None else None
+    lDefines = list(oBase.predefines) if oBase is not None else []
+    lIncludes = list(oBase.additionalIncludePaths) if oBase is not None else []
+    dReturn = {}
+    sStarts = line_starts(sText)
+    for sMacro in lMacros:
+        bDefined = any(s.split("=")[0] == sMacro for s in lDefines)
+        oSwitched = PreprocessorOptions()
+        oSwitched.predefines = [s for s in lDefines if s.split("=")[0] != sMacro] + ([] if bDefined else [sMacro])
+        oSwitched.undefines = [sMacro] if bDefined else []
+        oSwitched.additionalIncludePaths = lIncludes
+        oManager = pyslang.SourceManager()
+        oBuffer = oManager.assignText(sPath, sText)
+        try:
+            oTree = SyntaxTree.fromBuffer(oBuffer, oManager, pyslang.Bag([oSwitched]))
+        except (RuntimeError, ValueError):
+            continue
+        for iOffset, oInfo in classify(oTree, oBuffer.id.id, sStarts).items():
+            if iOffset not in dClasses and iOffset not in dReturn and oInfo.indent is not None:
+                dReturn[iOffset] = oInfo
+    return dReturn
 
 
 def add_trivia(lTokens, sKind, sText):

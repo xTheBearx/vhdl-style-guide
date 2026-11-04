@@ -6,7 +6,7 @@ module continuation (
     output logic w_o
 );
     assign y_o = a_i &
-            b_i;
+        b_i;
     assign z_o = select(a_i,
                         b_i);
     (* keep = "true" *)

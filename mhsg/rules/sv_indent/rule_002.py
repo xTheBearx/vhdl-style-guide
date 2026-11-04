@@ -19,8 +19,8 @@ class rule_002(Rule):
     own, may be at the level of that line.
 
     The fix indents a continuation line like the continuation line before it in the statement, or else by
-    **continuation_indent** levels, 2 by default, more than the line that starts its statement, as Verible's formatter
-    does with its wrap width; a closing bracket goes to the level of that line.
+    **continuation_indent** levels, 1 by default, more than the line that starts its statement: 4 spaces, Verible's
+    wrap width; a closing bracket goes to the level of that line.
     Continuation lines indented more, such as arguments aligned after their opening bracket, are left as they are.
 
     **Violation**
@@ -35,13 +35,13 @@ class rule_002(Rule):
     .. code-block:: systemverilog
 
        assign valid_o = req_i &
-               ready_i;
+           ready_i;
     """
 
     def __init__(self):
         super().__init__(lTokens)
         self.languages = (language.SYSTEMVERILOG,)
-        self.continuation_indent = 2
+        self.continuation_indent = 1
         self.configuration.append("continuation_indent")
 
     def _get_tokens_of_interest(self, oFile):
