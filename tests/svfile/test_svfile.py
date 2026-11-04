@@ -253,6 +253,41 @@ class test_rules(unittest.TestCase):
             only(lOutput, "sv_indent"),
         )
 
+    def test_directives(self):
+        # Conditional directives at column 0, as Verible puts them; the others and macro calls at the level of the code
+        # around them, one in before end and endmodule; the line a `define continues is left alone
+        _, lOutput, _ = self.run_mhsg(["-ap"], "directives.sv")
+        self.assertEqual(
+            [
+                "ERROR: directives.sv(2)sv_indent_003 -- Start the directive at column 0",
+                "ERROR: directives.sv(13)sv_indent_003 -- Start the directive at column 0",
+                "ERROR: directives.sv(15)sv_indent_003 -- Start the directive at column 0",
+                "ERROR: directives.sv(17)sv_indent_003 -- Start the directive at column 0",
+                "ERROR: directives.sv(18)sv_indent_003 -- Indent the directive by 8 spaces",
+                "ERROR: directives.sv(20)sv_indent_003 -- Indent the directive by 4 spaces",
+                "ERROR: directives.sv(22)sv_indent_003 -- Indent the directive by 4 spaces",
+            ],
+            only(lOutput, "sv_indent"),
+        )
+        _, _, sAfter = self.run_mhsg(["--fix"], "directives.sv")
+        self.assertEqual(read("directives.fixed.sv"), sAfter)
+        self.assertEqual([], only(self.run_mhsg(["-ap"], "directives.fixed.sv")[1], "sv_indent"))
+
+    def test_conditional_directives_indented_like_code(self):
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sConfiguration = os.path.join(sTemporary, "config.yaml")
+            with open(sConfiguration, "w", encoding="utf-8") as oFile:
+                oFile.write("rule:\n  sv_indent_003:\n    conditional_indent: code\n")
+            _, lOutput, _ = self.run_mhsg(["-ap", "-c", sConfiguration], "directives.fixed.sv")
+        self.assertEqual(
+            [
+                "ERROR: directives.fixed.sv(13)sv_indent_003 -- Indent the directive by 8 spaces",
+                "ERROR: directives.fixed.sv(15)sv_indent_003 -- Indent the directive by 8 spaces",
+                "ERROR: directives.fixed.sv(17)sv_indent_003 -- Indent the directive by 8 spaces",
+            ],
+            only(lOutput, "sv_indent"),
+        )
+
     def test_indent_fix(self):
         # Every line whose indent is checked is indented by one space; the fix restores the file
         sText = read("indent.sv")

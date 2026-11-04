@@ -52,6 +52,7 @@ what a Verible lint rule checks, its alias is the Verible rule's name.
 
 * :code:`sv_indent_001`: indentation, 4 spaces per level
 * :code:`sv_indent_002`: continuation lines indented more than the line that starts their statement
+* :code:`sv_indent_003`: preprocessor directives: conditional directives at column 0, others at the level of the code
 * :code:`sv_whitespace_001` to :code:`sv_whitespace_018`: the spaces between tokens, as Verible's formatter sets
   them: none before a comma or semicolon, after @ or #, around ++ or after a unary operator, before the parenthesis
   of a call or the bracket of a select; at least one after a comma and around binary and assignment operators; one
@@ -239,9 +240,27 @@ than the line that starts the statement, so lists aligned after their opening br
 call continued under the first) are kept. A line starting with a closing bracket, with the opening bracket of a port
 list, with the next expression of a case item, or after an attribute on a line of its own may be at the level of
 the statement. Its fix follows the continuation line before it, or indents by :code:`continuation_indent` levels, 2
-by default, as Verible's formatter does with its wrap width. Not checked: preprocessor directives, code in inactive
-:code:`\`ifdef` branches and lines after a macro call, whose arguments are not parsed. A comment line continuing the
-comment at the end of the line above, aligned with it, keeps that alignment.
+by default, as Verible's formatter does with its wrap width. Not checked: code in inactive :code:`\`ifdef` branches
+and lines after a macro call, whose arguments are not parsed. A comment line continuing the comment at the end of the
+line above, aligned with it, keeps that alignment.
+
+:code:`sv_indent_003` puts :code:`\`ifdef`, :code:`\`ifndef`, :code:`\`elsif`, :code:`\`else` and :code:`\`endif`
+at column 0, as Verible's formatter does, and the other directives and the macro calls that start a line at the level
+of the code around them; the code between conditional directives keeps its own level.
+
+Verible's formatter as reference
+--------------------------------
+
+The indentation rules follow what Verible's formatter does, as studied on CVA6, whose code it formats unchanged, and
+on other projects, with these differences:
+
+* Verible joins a statement that fits in the line length onto one line and re-wraps some long ones; MHSG keeps the
+  lines as written and checks only their indent.
+* Verible indents continuation lines by its wrap width, 4 spaces; MHSG accepts any indent past the start of the
+  statement and its fix uses :code:`continuation_indent` levels.
+* Verible's placement of the line after a comment inside a statement varies; MHSG treats it as any continuation line.
+* Verible leaves a file with a syntax error unchanged; MHSG checks the lines before the first error, see
+  :code:`sv_syntax_001`.
 
 Code tags
 ---------

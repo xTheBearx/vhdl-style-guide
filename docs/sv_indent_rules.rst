@@ -21,7 +21,7 @@ A comment is indented like the next line of code, or one level more above a line
 line continuing the comment at the end of the line above, aligned with it, stays aligned with it.
 
 Continuation lines, such as the second line of a long expression, are checked by sv_indent_002; preprocessor
-directives are not checked,
+directives by sv_indent_003. Code in inactive branches of conditional directives is not checked,
 nor is a file with syntax errors, whose levels may be wrong near the errors, see sv_syntax_001.
 
 Two options follow other styles. **list_indent**, 1 by default, is the number of levels the ports and parameters
@@ -83,3 +83,42 @@ Continuation lines indented more, such as arguments aligned after their opening 
 
    assign valid_o = req_i &
            ready_i;
+
+sv_indent_003
+#############
+
+|phase_4| |error| |indent|
+
+Alias: :code:`sv_indent_directive`
+
+This rule checks the indent of preprocessor directives and of macro uses that start a line.
+
+As Verible's formatter does, the conditional directives, :code:`\`ifdef`, :code:`\`ifndef`, :code:`\`elsif`,
+:code:`\`else` and :code:`\`endif`, are at column 0, wherever they are; with **conditional_indent** set to
+code, they are indented like the other directives. The other directives, such as :code:`\`define`,
+:code:`\`include` and :code:`\`undef`, and macro uses that start a line are at the level of the code around
+them: that of the next line of code, or one level in when that line closes a block, such as end or endmodule.
+The code between conditional directives is indented as if they were not there, see sv_indent_001.
+The lines a :code:`\`define` continues with a backslash are not checked.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i) begin
+       `ifdef RESET_ALL
+       a_q <= '0;
+       `endif
+         `ASSERT(a_q_known, !$isunknown(a_q))
+   end
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i) begin
+   `ifdef RESET_ALL
+       a_q <= '0;
+   `endif
+       `ASSERT(a_q_known, !$isunknown(a_q))
+   end
