@@ -4,7 +4,14 @@ from mhsg import parser
 from mhsg.rules.sv_spacing import Rule, kind, node
 
 # The expressions in braces whose braces hold their contents without spaces
-BRACED = ("ConcatenationExpression", "MultipleConcatenationExpression", "StreamingConcatenationExpression", "SimpleAssignmentPattern", "StructuredAssignmentPattern", "ReplicatedAssignmentPattern")
+BRACED = (
+    "ConcatenationExpression",
+    "MultipleConcatenationExpression",
+    "StreamingConcatenationExpression",
+    "SimpleAssignmentPattern",
+    "StructuredAssignmentPattern",
+    "ReplicatedAssignmentPattern",
+)
 
 
 class rule_017(Rule):
