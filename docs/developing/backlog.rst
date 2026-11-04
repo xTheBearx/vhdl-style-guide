@@ -57,8 +57,8 @@ The plan, with the tools evaluated, is in the "Verilog and SystemVerilog" tab of
 (reading files, style rules, lint and design analysis) are done; see :doc:`../systemverilog`. Step 5, breadth, is
 under way: the entries below.
 
-* **Alignment inside packed dimensions**: sv_alignment_010 aligns the opening brackets of packed dimensions; Verible
-  may also pad inside the brackets, as in :code:`[ 4:0]` under :code:`[31:0]`, which is not checked.
+* **Alignment inside packed dimensions**: sv_alignment_011 aligns the colons of the first packed dimension of each
+  declaration, by spaces after the bracket; the least significant bounds, and further dimensions, are not aligned.
 * **Indentation not checked yet**: the exact indent of continuation lines (sv_indent_002 checks only that they are
   indented more than their statement), the contents of expressions (multi-line assignment patterns, randomize with
   blocks), preprocessor directives and inactive :code:`\`ifdef` branches. Verible's formatter has rules for each;
