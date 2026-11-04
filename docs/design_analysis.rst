@@ -114,8 +114,10 @@ In a mixed design with a Verilog top, GHDL analyzes the VHDL files and Yosys ela
 instantiates with the ghdl command, before it reads the Verilog and elaborates the top module with its parameters set
 under **generics**. With :code:`order: auto`, the VHDL files are those these entities need. Limits:
 
-* each VHDL entity is elaborated once, with the defaults of its generics: parameters an instance sets in Verilog do not
-  reach it;
+* an instance that sets parameters gets the entity elaborated with those values, once for each set of values, by
+  name or by position, also in a generate block. The values must be literals, such as :code:`8`, :code:`16'd16` or
+  :code:`"FAST"`, and the module that holds the instance must have no parameters of its own; otherwise design_001
+  reports the instance, which is analyzed with the defaults of the generics;
 * GHDL names the module after the entity in lower case; the Verilog may write the name in any case, as long as all its
   instances write it the same way;
 * with read_slang, this has not been tried yet.

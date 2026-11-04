@@ -75,9 +75,9 @@ under way: the entries below.
   files; a variable written inside an if or case before it is read still counts as read.
 * **SystemVerilog designs without the yosys-slang plugin**: Yosys' own reader handles Verilog and part of
   SystemVerilog; ibex and common_cells need the plugin, which is not packaged for Ubuntu. Not yet tried with it.
-* **Generics of VHDL entities under a Verilog top**: each entity is elaborated once with the defaults of its generics;
-  the parameters a Verilog instance sets would need an elaboration of the entity per set of values, under a name of
-  its own.
+* **Generics of VHDL entities under a Verilog top** are passed on when they are literals and the instance is in a
+  module without parameters; expressions of parameters, and instances in modules that have parameters, would need the
+  elaboration of the Verilog first, as read_slang does.
 * **Black boxes in Verilog designs with read_slang**: the modules made for black boxes are read with read_verilog
   -lib before the design; whether read_slang links instances to them is not known. Yosys has cell models for Xilinx
   only among the vendors with black box libraries.

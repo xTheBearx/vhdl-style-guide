@@ -269,6 +269,16 @@ def run_verilog_top(oDesign, oTools, sWorkDirectory):
         if not run_ghdl(oResult, oTools, lCommand, "analysis"):
             return oResult
     lCommands = []
+    lRetarget = []
+    bSlang = tools.slang_options(oTools.yosys) is not None if getattr(oTools, "slang", False) else False
+    if not bSlang:
+        lVariants = entity_variants(oDesign, oTools, sWorkDirectory, oResult, dUsed)
+        if lVariants is None:
+            return oResult
+        for sJson, lInstances in lVariants:
+            if sJson is not None:
+                lCommands.append(f"read_json {quote(sJson)}")
+            lRetarget += lInstances
     for sModule, sLibrary in dUsed.items():
         lCommands.append("ghdl " + " ".join(ghdl_options(oDesign, sWorkDirectory) + [f"--work={sLibrary}", "--latches", sModule.lower()]))
         if sModule != sModule.lower():
@@ -283,8 +293,24 @@ def run_verilog_top(oDesign, oTools, sWorkDirectory):
         oDesign.black_box_libraries,
         set(dUsed),
     )
-    sRead, lOptions = verilog_read_files(oDesign, oTools, oDesign.top)
-    sScript = "; ".join([*lCommands, *([sBlackBoxes] if sBlackBoxes else []), sRead, "proc", "check", f"write_json {quote(sNetlist)}"])
+    if lRetarget:
+        # Each instance with generics of its own is retargeted to the module elaborated with them, before the hierarchy
+        sRead, lOptions = verilog_read_files(oDesign, oTools, None)
+        lCommands += [sRead]
+        for sModule, sCell, sVariant, lParameters in lRetarget:
+            if sVariant is not None:
+                lCommands.append(f"chtype -set {sVariant} {sModule}/{sCell}")
+            # A parameter given by position is named $1, $2 and so on until the hierarchy is elaborated
+            lCommands += [f"setparam -unset {sParameter} {sModule}/{sCell}" for sParameter in lParameters]
+        lCommands.append(" ".join(["hierarchy -check -top", oDesign.top, *[f"-chparam {k} {verilog_value(v)}" for k, v in oDesign.generics.items()]]))
+        sRead = ""
+    else:
+        sRead, lOptions = verilog_read_files(oDesign, oTools, oDesign.top)
+    lFirst = [s for s in lCommands if s.startswith(("read_json", "ghdl", "rename"))]
+    lAfter = [s for s in lCommands if s not in lFirst]
+    sScript = "; ".join(
+        [*lFirst, *([sBlackBoxes] if sBlackBoxes else []), *lAfter, *([sRead] if sRead else []), "proc", "check", f"write_json {quote(sNetlist)}"],
+    )
     lCommand = [oTools.yosys, *yosys_module_options(oTools), *lOptions, "-q", "-l", sLog, "-p", sScript]
     oResult.commands.append(lCommand)
     oProcess = subprocess.run(lCommand, capture_output=True, text=True, env=oTools.environment, check=False)
@@ -302,6 +328,81 @@ def run_verilog_top(oDesign, oTools, sWorkDirectory):
     with open(sNetlist, encoding="utf-8") as oFile:
         oResult.netlist = json.load(oFile)
     return oResult
+
+
+def entity_variants(oDesign, oTools, sWorkDirectory, oResult, dUsed):
+    """
+    Elaborates the VHDL entities that Verilog instances give generics of their own, once for each set of values, each
+    in a Yosys run of its own, as the ghdl command elaborates one design per run, and writes the modules to JSON files
+    named after the variant, such as wrap__mhsg1. Returns [(JSON file, [(module, instance, variant, parameters)])], or
+    None if a run failed. An instance whose generics cannot be set this way is elaborated with the defaults, with a
+    warning that says why.
+    """
+    dVariants = {}
+    dCells = {}
+    lDefaults = []
+    for oInstance in verilog_black_boxes.parameterized_instances(oDesign, set(dUsed)):
+        dTypes = top.generic_types(oDesign, oInstance.type.lower(), dUsed[oInstance.type])
+        lNames = list(dTypes)
+        lGenerics = []
+        for iParameter, (sParameter, sValue) in enumerate(oInstance.parameters):
+            # A parameter given by position is the generic declared at that position
+            sGeneric = sParameter or (lNames[iParameter] if iParameter < len(lNames) else None)
+            oValue = verilog_black_boxes.literal(sValue)
+            if sGeneric is None:
+                oInstance.problem = oInstance.problem or f"{oInstance.type} has no generic at position {iParameter + 1}"
+                continue
+            if dTypes.get(sGeneric.lower()) == "boolean" and oValue in (0, 1):
+                oValue = bool(oValue)
+            lGenerics.append((sGeneric.lower(), value_text(oValue, dTypes.get(sGeneric.lower()))))
+        tCell = (oInstance.module, oInstance.cell)
+        if not oInstance.problem and dCells.get(tCell, lGenerics) != lGenerics:
+            oInstance.problem = f"another instance named {oInstance.name} in a generate block of {oInstance.module} sets other values"
+        dCells.setdefault(tCell, lGenerics)
+        if oInstance.problem:
+            sText = f"Instance {oInstance.name} of {oInstance.type} is analyzed with the defaults of its generics, as its own values cannot be set: {oInstance.problem}"
+            oResult.messages.append(Message(oInstance.file, oInstance.line, 0, "error", sText, "configuration"))
+            # Its parameters are dropped, so the hierarchy finds the module elaborated with the defaults
+            lParameters = [s or f"${i + 1}" for i, (s, _) in enumerate(oInstance.parameters)]
+            lDefaults.append((oInstance.module, oInstance.cell, None, lParameters))
+            continue
+        tKey = (oInstance.type, tuple(sorted(lGenerics)))
+        dVariants.setdefault(tKey, []).append((oInstance, [s or f"${i + 1}" for i, (s, _) in enumerate(oInstance.parameters)]))
+    lReturn = [(None, lDefaults)] if lDefaults else []
+    for iVariant, ((sType, tGenerics), lInstances) in enumerate(sorted(dVariants.items()), start=1):
+        sSuffix = f"__mhsg{iVariant}"
+        sJson = os.path.join(sWorkDirectory, f"{sType.lower()}{sSuffix}.json")
+        lOptions = ghdl_options(oDesign, sWorkDirectory) + [f"--work={dUsed[sType]}", "--latches", *[f"-g{k}={v}" for k, v in tGenerics]]
+        sScript = "ghdl " + " ".join(lOptions + [sType.lower()]) + f"; write_json {quote(sJson)}"
+        lCommand = [oTools.yosys, *yosys_module_options(oTools), "-q", "-p", sScript]
+        oResult.commands.append(lCommand)
+        oProcess = subprocess.run(lCommand, capture_output=True, text=True, env=oTools.environment, check=False)
+        oResult.messages.extend(parse_messages(oProcess.stderr, "elaboration"))
+        if oProcess.returncode != 0 or not os.path.isfile(sJson):
+            oResult.failed_stage = "elaboration"
+            if not any(o.severity in (None, "error") for o in oResult.messages):
+                sText = (oProcess.stderr.strip() or "Yosys failed").splitlines()[-1]
+                oResult.messages.append(Message(None, 0, 0, "error", sText, "elaboration"))
+            return None
+        rename_modules(sJson, sSuffix)
+        lReturn.append((sJson, [(o.module, o.cell, sType.lower() + sSuffix, lParameters) for o, lParameters in lInstances]))
+    return lReturn
+
+
+def rename_modules(sJson, sSuffix):
+    """Adds a suffix to the names of the modules of a Yosys JSON netlist, and to the cells that instantiate them."""
+    with open(sJson, encoding="utf-8") as oFile:
+        dNetlist = json.load(oFile)
+    setNames = set(dNetlist.get("modules", {}))
+    dModules = {}
+    for sName, dModule in dNetlist.get("modules", {}).items():
+        for dCell in dModule.get("cells", {}).values():
+            if dCell.get("type") in setNames:
+                dCell["type"] += sSuffix
+        dModules[sName + sSuffix] = dModule
+    dNetlist["modules"] = dModules
+    with open(sJson, "w", encoding="utf-8") as oFile:
+        json.dump(dNetlist, oFile)
 
 
 def verilog_read(oDesign, oTools, sTop, sWorkDirectory=None):
