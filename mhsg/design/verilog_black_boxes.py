@@ -62,6 +62,34 @@ def defined_modules(oDesign):
     return {verilator.name_of(o.header.name) for oTree in trees(oDesign) for o in verilator.nodes(oTree) if o.kind in verilator.DEFINITIONS}
 
 
+reDirection = re.compile(r"\b(input|output|inout)\b\s*(?:wire\b|reg\b|signed\b|\[[^\]]*\]|\s)*([A-Za-z_][\w$]*(?:\s*,\s*[A-Za-z_][\w$]*)*)")
+
+
+def model_directions(sDataDirectory, lFiles, setModules):
+    """
+    Returns {module: {port: input | output | inout}} for the modules of setModules that Yosys' cell model files define,
+    with the directions the models declare, in the header or the body.
+    """
+    dReturn = {}
+    setWanted = {s.lower() for s in setModules}
+    for sFile in lFiles:
+        try:
+            with open(os.path.join(sDataDirectory, sFile), encoding="utf-8", errors="replace") as oFile:
+                sText = re.sub(r"//[^\n]*|/\*.*?\*/", "", oFile.read(), flags=re.DOTALL)
+        except OSError:
+            continue
+        for oMatch in re.finditer(r"^\s*module\s+([A-Za-z_][\w$]*)(.*?)^\s*endmodule", sText, re.MULTILINE | re.DOTALL):
+            sModule = oMatch.group(1)
+            if sModule.lower() not in setWanted or sModule.lower() in {s.lower() for s in dReturn}:
+                continue
+            dPorts = {}
+            for oPort in reDirection.finditer(oMatch.group(2)):
+                for sPort in oPort.group(2).split(","):
+                    dPorts.setdefault(sPort.strip(), oPort.group(1))
+            dReturn[sModule] = dPorts
+    return dReturn
+
+
 def model_modules(sDataDirectory, lFiles):
     """Returns {module: model file} for the modules of Yosys' cell model files."""
     dReturn = {}

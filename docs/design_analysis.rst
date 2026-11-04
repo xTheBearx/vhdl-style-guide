@@ -384,22 +384,29 @@ each vendor component the design instantiates:
 
 A stub declares only the ports and generics the instances name, so the instances must associate by name:
 
-* the type of a port is that of its actual: the declared type of the signal or port, its element type for an indexed
-  name, std_logic for a character literal, std_logic_vector for a string, bit string or aggregate. An array port takes
-  the width its instances agree on, from the declared range, a slice or a literal; ranges may use constants and
-  generics with integer values;
-* the mode of a port comes from the black box declaration where a role says it, such as :code:`clock` or
-  :code:`path`. Otherwise a port whose actual is an input of the entity, a signal the design assigns, a literal or an
-  expression is an input; any other port is an output, unless another output already drives its signal;
-* the type of a generic is that of its actual: integer, real, boolean, string, time, bit_vector for a bit string, or
-  the declared type of a constant or generic. A generic that some instances leave out gets the first literal value.
+* the type of a port is that of its actual: the declared type of the signal, port or record element, its element
+  type for an indexed name, std_logic for a character literal, std_logic_vector for a string, bit string or
+  aggregate. Subtypes of the design, such as :code:`subtype sl is std_logic`, resolve to their base types. An array
+  port takes the width its instances agree on, from the declared range, a slice or a literal; ranges may use
+  constants and generics with integer values. An aggregate or an open port whose width no instance gives gets one
+  element, which is enough for analysis;
+* the mode of a port comes from Yosys' cell model of the primitive, when the design names a black box library Yosys
+  has models for, such as :code:`black_box_libraries: [xilinx]`; then from the black box declaration where a role
+  says it, such as :code:`clock` or :code:`path`. Otherwise a port whose actual is an input of the entity, a signal the
+  design assigns, a literal or an expression is an input; any other port is an output, unless another output already
+  drives its signal;
+* the type of a generic is that of its actual: integer, real, boolean, string, time, bit_vector for a bit string,
+  the return type of a function, or the declared type of a constant or generic. A generic that some instances leave
+  out gets the first literal value.
 
-The types a stub can declare are those of the packages std.standard, ieee.std_logic_1164 and ieee.numeric_std; an
-actual of another type, such as a record, stops the run with a message. A file that uses two stub libraries, such as
+The types a stub can declare are those of the packages std.standard, ieee.std_logic_1164 and ieee.numeric_std. An
+actual of another type, such as an enumeration of the design, is declared as std_logic, with a comment naming the
+type in the stub; GHDL reports the mismatch if the instance is analyzed. A file that uses two stub libraries, such as
 unisim and xpm, takes the components whose names start with :code:`xpm_` from xpm. A stub says nothing about the
 primitive beyond what the design shows, which is all design analysis needs of a black box: the vendor's own files
 remain the reference, and a mistake in an instance that the vendor's declarations would catch, such as a misspelled
-port, goes unnoticed with stubs.
+port, goes unnoticed with stubs. The real-world check analyzes the hard FIFO of hdl-modules and the clock manager of
+surf this way.
 
 Each vendor primitive is then a black box, to be declared as below.
 

@@ -9,9 +9,10 @@ instances name:
 
 * the type of a port comes from the actual: the declared type of the signal or port, its element type for an
   indexed name, std_logic for a character literal, std_logic_vector for a string, bit string or aggregate;
-* the mode of a port comes from the black box declarations, see black_box.py, where a role says it; otherwise a port
-  whose actual is an input of the entity, a signal the design assigns, an expression or a literal is an input, and
-  any other port is an output, unless another output already drives its signal;
+* the mode of a port comes from Yosys' cell model of the primitive, for a black box library of the design that has
+  models, such as xilinx; then from the black box declarations, see black_box.py, where a role says it; otherwise a
+  port whose actual is an input of the entity, a signal the design assigns, an expression or a literal is an input,
+  and any other port is an output, unless another output already drives its signal;
 * the type of a generic comes from the actual: integer, real, boolean, string, time, bit_vector for a bit string,
   or the declared type of a constant or generic.
 
@@ -25,7 +26,7 @@ import ast
 import os
 import re
 
-from mhsg import exceptions, vhdlFile
+from mhsg import exceptions, parser, vhdlFile
 from mhsg.design import verilog_black_boxes
 from mhsg.lint import model
 
@@ -87,6 +88,12 @@ class SourceFile:
         self.ports = {}
         self.targets = set()
         self.instances = []
+        # Function name -> return type mark
+        self.functions = {}
+        # Subtype name -> (type mark, constraint)
+        self.subtypes = {}
+        # Record type -> {element: Object}
+        self.records = {}
         # The integer values of constants and generics, see values
         self._dValues = None
 
@@ -110,10 +117,15 @@ class SourceFile:
         # The rest of a declaration after its type mark: the constraint and the default value
         lTail = None
         tDeclaration = None
+        sFunction = None
+        bReturn = False
+        sSubtype = None
+        sTypeName = None
+        sRecord = None
         for iToken, oToken in enumerate(oFile.lAllObjects):
             tKind = model.kind(oToken)
             sValue = oToken.get_value()
-            if tKind is None or not sValue.strip():
+            if tKind is None or not sValue.strip() or isinstance(oToken, parser.comment):
                 continue
             if lTail is not None:
                 if sValue == "(":
@@ -127,7 +139,31 @@ class SourceFile:
                 else:
                     lTail.append(sValue)
                     continue
-            if tKind == ("use_clause", "library_name"):
+            if tKind == ("full_type_declaration", "identifier"):
+                sTypeName = sValue.lower()
+            elif tKind == ("record_type_definition", "record_keyword"):
+                sRecord = sTypeName
+                self.records.setdefault(sRecord, {})
+            elif tKind == ("record_type_definition", "end_keyword"):
+                sRecord = None
+            elif sRecord and tKind == ("identifier_list", "identifier"):
+                lNames.append(sValue.lower())
+            elif tKind == ("subtype_declaration", "identifier"):
+                sSubtype = sValue.lower()
+            elif sSubtype and tKind == ("type_mark", "name") and sSubtype not in self.subtypes:
+                self.subtypes[sSubtype] = [sValue.lower(), ""]
+            elif sSubtype and tKind == ("subtype_declaration", "semicolon"):
+                sSubtype = None
+            elif sSubtype and sSubtype in self.subtypes:
+                self.subtypes[sSubtype][1] += " " + sValue.lower()
+            elif tKind == ("function_specification", "designator"):
+                sFunction = sValue.lower()
+            elif tKind == ("function_specification", "return_keyword"):
+                bReturn = True
+            elif bReturn and tKind == ("type_mark", "name"):
+                self.functions[sFunction] = sValue.lower()
+                bReturn = False
+            elif tKind == ("use_clause", "library_name"):
                 sLibrary = sValue.lower()
             elif tKind == ("use_clause", "package_name") and sLibrary:
                 self.uses.append((sLibrary, sValue.lower()))
@@ -150,7 +186,7 @@ class SourceFile:
             elif tKind[0] == "mode" and lNames:
                 sMode = sValue.lower()
             elif tKind == ("type_mark", "name") and lNames:
-                tDeclaration = (lNames, sValue.lower(), sMode)
+                tDeclaration = (lNames, sValue.lower(), sMode, sRecord)
                 lTail = []
                 iDepth = 0
                 lNames = []
@@ -190,10 +226,13 @@ class SourceFile:
                 oInstance = None
 
     def declare(self, tDeclaration, lTail):
-        lNames, sType, sMode = tDeclaration
+        lNames, sType, sMode, sRecord = tDeclaration
         sTail = " ".join(lTail).lower()
         sConstraint, _, sDefault = sTail.partition(":=")
         for sName in lNames:
+            if sRecord:
+                self.records[sRecord][sName] = Object(sType, None, sConstraint.strip(), "")
+                continue
             self.objects[sName] = Object(sType, sMode, sConstraint.strip(), sDefault.strip())
             if sMode is not None:
                 self.ports[sName] = sMode
@@ -346,6 +385,39 @@ def collect(oDesign, lSources):
     return dReturn
 
 
+# The subtypes of the design, {name: [type mark, constraint]}, and its record types, {name: {element: Object}}, for
+# the stubs being written
+SUBTYPES = {}
+RECORDS = {}
+
+reSelected = re.compile(r"([a-z]\w*)((?:\s*\.\s*[a-z]\w*)*)\s*(.*)", re.DOTALL)
+
+
+def selected(sActual, oSource):
+    """(Object, rest) of the signal, port or record element an actual names, such as r.read(3), or (None, None)."""
+    oMatch = reSelected.fullmatch(sActual.strip())
+    if oMatch is None or oMatch.group(1) not in oSource.objects:
+        return None, None
+    oObject = oSource.objects[oMatch.group(1)]
+    for sElement in [s.strip() for s in oMatch.group(2).split(".") if s.strip()]:
+        dElements = RECORDS.get(resolve(oObject.type)[0])
+        if dElements is None or sElement not in dElements:
+            return None, None
+        oObject = dElements[sElement]
+    return oObject, oMatch.group(3).strip()
+
+
+def resolve(sType):
+    """(base type, constraint) of a type mark, following the subtypes of the design to a type a stub can declare."""
+    sConstraint = ""
+    for _ in range(16):
+        if sType in KNOWN_TYPES or sType not in SUBTYPES:
+            break
+        sType, sOwn = SUBTYPES[sType]
+        sConstraint = sConstraint or sOwn.strip()
+    return sType, sConstraint
+
+
 def literal_type(sActual, lActual, bGeneric):
     """The type of a literal or aggregate actual, or None if the actual is not one."""
     if lActual and model.kind(lActual[0]) == ("bit_string_literal", "base_specifier"):
@@ -373,9 +445,12 @@ def name_type(sActual, oSource):
     sRest = sActual.strip()[len(sBase) :].strip()
     if sBase in KNOWN_TYPES and sRest.startswith("("):
         return sBase
-    if sBase not in oSource.objects:
+    if sBase in oSource.functions:
+        return resolve(oSource.functions[sBase])[0]
+    oObject, sRest = selected(sActual, oSource)
+    if oObject is None:
         return None
-    sType = oSource.objects[sBase].type
+    sType = resolve(oObject.type)[0]
     if not sRest:
         return sType
     if sRest.startswith("(") and not re.search(r"\b(downto|to)\b", sRest):
@@ -398,12 +473,13 @@ def actual_width(sActual, lActual, oSource, dGenerics):
     sRest = sActual.strip()[len(sBase) :].strip()
     if sBase in KNOWN_TYPES and sRest.startswith("(") and sRest.endswith(")"):
         return actual_width(sRest[1:-1].strip(), lActual[2:-1], oSource, dGenerics)
-    oObject = oSource.objects.get(sBase)
+    oObject, sRest = selected(sActual, oSource)
     if oObject is None:
         return None
     dValues = oSource.values(dGenerics)
     if not sRest:
-        return range_width(oObject.constraint, dValues) if oObject.constraint else None
+        sConstraint = oObject.constraint or resolve(oObject.type)[1]
+        return range_width(sConstraint, dValues) if sConstraint else None
     if re.search(r"\b(downto|to)\b", sRest):
         return range_width(sRest, dValues)
     return None
@@ -425,6 +501,9 @@ def port_type(oComponent, sPort, dGenerics=None):
     setWidths.discard(None)
     if len(setWidths) == 1:
         return f"{sReturn}({setWidths.pop() - 1} downto 0)"
+    if not setWidths and any(sActual == "open" or sActual.startswith("(") for _, sActual, _ in oComponent.ports[sPort]):
+        # An aggregate or an open port needs a width, which no instance gives: one element is enough for analysis
+        return f"{sReturn}(0 downto 0)"
     return sReturn
 
 
@@ -464,8 +543,16 @@ def generic_type(oComponent, sGeneric):
     return "integer"
 
 
-def port_modes(oDesign, dComponents, lSources):
-    """Returns {(component, port): in | out}."""
+def port_modes(oDesign, dComponents, lSources, sDataDirectory=None):
+    """
+    Returns {(component, port): in | out | inout}: from Yosys' cell model of the primitive, for the black box libraries
+    of the design that have models, then from the roles of its declaration, then from the design.
+    """
+    dModels = {}
+    if sDataDirectory:
+        lFiles = [s for sLibrary in oDesign.black_box_libraries for s in verilog_black_boxes.YOSYS_MODELS.get(sLibrary, [])]
+        dFound = verilog_black_boxes.model_directions(sDataDirectory, lFiles, {o.name for o in dComponents.values()})
+        dModels = {k.lower(): {p.lower(): d for p, d in v.items()} for k, v in dFound.items()}
     dReturn = {}
     setDriven = set()
     for oSource in lSources:
@@ -474,10 +561,11 @@ def port_modes(oDesign, dComponents, lSources):
     lUnknown = []
     for oComponent in dComponents.values():
         dDeclared = verilog_black_boxes.directions(oDesign, oComponent.name, list(oComponent.ports))
+        dModel = dModels.get(oComponent.name, {})
         for sPort, lActuals in oComponent.ports.items():
-            sDirection = dDeclared.get(sPort)
-            if sDirection in ("input", "output"):
-                dReturn[(oComponent.name, sPort)] = "in" if sDirection == "input" else "out"
+            sDirection = dModel.get(sPort) or dDeclared.get(sPort)
+            if sDirection in ("input", "output") or (sDirection == "inout" and sPort in dModel):
+                dReturn[(oComponent.name, sPort)] = {"input": "in", "output": "out", "inout": "inout"}[sDirection]
             else:
                 lUnknown.append((oComponent, sPort, lActuals))
     # Signals the declared outputs drive
@@ -506,11 +594,17 @@ def port_modes(oDesign, dComponents, lSources):
     return dReturn
 
 
-def unknown_type(sType, sWhat):
-    if sType not in KNOWN_TYPES:
-        raise exceptions.ConfigurationError(
-            f"ERROR: stub libraries: {sWhat} has type {sType}, which a stub package cannot declare; give the vendor library files, or declare the component in the design",
-        )
+def declarable(sType, sFallback):
+    """(type, comment): a type a stub can declare, or the fallback with a comment naming the type it stands for."""
+    sBase = sType.split("(")[0].strip()
+    if sBase in KNOWN_TYPES:
+        return sType, ""
+    return sFallback, f"  -- {sBase} cannot be declared here"
+
+
+def lines(lItems):
+    """The lines of an interface list of (declaration, comment): a semicolon after each declaration but the last."""
+    return [f"      {s}{';' if i < len(lItems) - 1 else ''}{sNote}" for i, (s, sNote) in enumerate(lItems)]
 
 
 def package_text(sLibrary, sPackage, dComponents, dModes, dGenerics=None):
@@ -527,48 +621,54 @@ def package_text(sLibrary, sPackage, dComponents, dModes, dGenerics=None):
         lLines.append(f"  component {oComponent.spelling.get(sName, sName)} is")
         lGenerics = []
         for sGeneric in oComponent.generics:
-            sType = generic_type(oComponent, sGeneric)
-            unknown_type(sType, f"generic {sGeneric} of {sName}")
+            sType, sNote = declarable(generic_type(oComponent, sGeneric), "integer")
             sDefault = ""
             if len(oComponent.generics[sGeneric]) < oComponent.instances:
                 sDefault = " := " + generic_default(oComponent, sGeneric, sType, dGenerics or {})
-            lGenerics.append(f"{oComponent.spelling.get(sGeneric, sGeneric)} : {sType}{sDefault}")
+            lGenerics.append((f"{oComponent.spelling.get(sGeneric, sGeneric)} : {sType}{sDefault}", sNote))
         if lGenerics:
             lLines.append("    generic (")
-            lLines.append(";\n".join(f"      {s}" for s in lGenerics))
+            lLines += lines(lGenerics)
             lLines.append("    );")
         lPorts = []
         for sPort, lActuals in oComponent.ports.items():
-            sType = port_type(oComponent, sPort, dGenerics)
-            unknown_type(sType.split("(")[0], f"port {sPort} of {sName}")
+            sType, sNote = declarable(port_type(oComponent, sPort, dGenerics), "std_logic")
             sMode = dModes[(sName, sPort)]
             sDefault = ""
             if sMode == "in" and any(s == "open" for _, s, _ in lActuals):
                 sDefault = " := '0'" if sType in ("std_logic", "std_ulogic") else " := (others => '0')" if "(" in sType else ""
-            lPorts.append(f"{oComponent.spelling.get(sPort, sPort)} : {sMode} {sType}{sDefault}")
+            lPorts.append((f"{oComponent.spelling.get(sPort, sPort)} : {sMode} {sType}{sDefault}", sNote))
         if lPorts:
             lLines.append("    port (")
-            lLines.append(";\n".join(f"      {s}" for s in lPorts))
+            lLines += lines(lPorts)
             lLines.append("    );")
         lLines.append("  end component;")
     lLines.append(f"end package {sPackage};")
     return "\n".join(lLines) + "\n"
 
 
-def write(oDesign, sWorkDirectory):
+def write(oDesign, sWorkDirectory, sDataDirectory=None):
     """
     Writes the stub packages of the design's stub libraries into the work directory and makes them the files of those
-    libraries. Returns {library: [files]}.
+    libraries. sDataDirectory is Yosys' data directory, whose cell models give the directions of the ports. Returns
+    {library: [files]}.
     """
     dLibraries = libraries(oDesign)
     if not dLibraries:
         return {}
     lSources = [SourceFile(s).read() for s in oDesign.vhdl_files()]
+    SUBTYPES.clear()
+    RECORDS.clear()
+    for oSource in lSources:
+        for sName, lSubtype in oSource.subtypes.items():
+            SUBTYPES.setdefault(sName, lSubtype)
+        for sName, dElements in oSource.records.items():
+            RECORDS.setdefault(sName, dElements)
     dPackages = collect(oDesign, lSources)
     dComponents = {}
     for dPackage in dPackages.values():
         dComponents.update(dPackage)
-    dModes = port_modes(oDesign, dComponents, lSources)
+    dModes = port_modes(oDesign, dComponents, lSources, sDataDirectory)
     sDirectory = os.path.join(sWorkDirectory, "stubs")
     os.makedirs(sDirectory, exist_ok=True)
     dReturn = {}
