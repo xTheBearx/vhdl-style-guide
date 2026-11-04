@@ -123,5 +123,9 @@ are expected, and a comment that explains each one:
    - src/base/vhdl/olo_base_cc_status.vhd(83)design_006 -- Register rstouti_sync in olo_base_cc_status is never used
 
 The check exits with status 1 when a design has a finding that is not known, or when design analysis does not run.
+
+A design marked :code:`requires: [read_slang]`, such as ibex_core and the gray-code CDC FIFO of common_cells, needs
+the yosys-slang plugin of the YosysHQ OSS CAD Suite and is skipped without it. The design-oss job of CI runs those
+designs, the design tests and the qualification suites with the OSS CAD Suite, pinned to a dated release.
 Known findings that are no longer found are reported, so the list can be updated.
 Run it when a change touches the design rules or the netlist analysis.
