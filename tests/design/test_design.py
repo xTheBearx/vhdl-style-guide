@@ -224,6 +224,62 @@ endmodule
 """
 
 
+class test_slang_netlists(unittest.TestCase):
+    """The netlists of read_slang are made to look like those of read_verilog and GHDL."""
+
+    def test_buffers_join_nets(self):
+        dModule = {
+            "ports": {"a": {"direction": "input", "bits": [2]}, "y": {"direction": "output", "bits": [4]}},
+            "netnames": {"a": {"bits": [2]}, "mid": {"bits": [3]}, "y": {"bits": [4]}},
+            "cells": {
+                "$1": {"type": "$buf", "connections": {"A": [2], "Y": [3]}},
+                "$2": {"type": "$buf", "connections": {"A": [3], "Y": [4]}},
+                "$3": {"type": "$not", "connections": {"A": [4], "Y": [5]}},
+            },
+        }
+        netlist.normalise_module(dModule)
+        self.assertEqual(["$3"], list(dModule["cells"]))
+        self.assertEqual([2], dModule["ports"]["y"]["bits"])
+        self.assertEqual({"a": [2], "mid": [2], "y": [2]}, {k: v["bits"] for k, v in dModule["netnames"].items()})
+        self.assertEqual({"A": [2], "Y": [5]}, dModule["cells"]["$3"]["connections"])
+
+    def test_asynchronous_load_of_a_constant_is_a_reset(self):
+        dCell = {
+            "type": "$aldff",
+            "parameters": {"ALOAD_POLARITY": "0", "CLK_POLARITY": "1", "WIDTH": "10"},
+            "connections": {"AD": ["1", "0"], "ALOAD": [7], "CLK": [8], "D": [9, 10], "Q": [11, 12]},
+        }
+        dData = {"type": "$aldff", "parameters": {}, "connections": {"AD": [3, 4], "ALOAD": [7], "CLK": [8], "D": [9, 10], "Q": [13, 14]}}
+        dModule = {"cells": {"r": dCell, "d": dData}}
+        netlist.normalise_module(dModule)
+        self.assertEqual("$adff", dCell["type"])
+        self.assertEqual({"ARST": [7], "CLK": [8], "D": [9, 10], "Q": [11, 12]}, dCell["connections"])
+        self.assertEqual({"ARST_POLARITY": "0", "ARST_VALUE": "01", "CLK_POLARITY": "1", "WIDTH": "10"}, dCell["parameters"])
+        # A load of data is not a reset
+        self.assertEqual("$aldff", dData["type"])
+
+    def test_module_names_of_instances(self):
+        self.assertEqual("ibex_alu", netlist.module_name("ibex_alu$ibex_core.ex_block_i.alu_i"))
+        self.assertEqual("box", netlist.module_name("box$mhsg$u_a"))
+        self.assertEqual("$paramod$abc\\reg", netlist.module_name("$paramod$abc\\reg"))
+
+    def test_register_located_at_its_signal(self):
+        dNetlist = {
+            "modules": {
+                "top": {
+                    "netnames": {"count_q": {"bits": [5], "attributes": {"src": "top.sv:12.9"}}, "$n": {"bits": [6], "hide_name": 1}},
+                    "cells": {
+                        "$driver$count_q": {"type": "$dff", "connections": {"CLK": [2], "D": [6], "Q": [5]}},
+                        "$7": {"type": "$not", "connections": {"A": [5], "Y": [5]}},
+                    },
+                },
+            },
+        }
+        oNetlist = netlist.Netlist(dNetlist, {}, ["top.sv"])
+        self.assertEqual("top.sv:12:9", repr(oNetlist.location("top", "$driver$count_q")))
+        self.assertEqual("top.sv:12:9", repr(oNetlist.location("top", "$7")))
+
+
 class test_netlist_locations(unittest.TestCase):
     """The locations of GHDL's Verilog in its different forms: comments, src attributes, or both."""
 
@@ -269,7 +325,11 @@ class test_netlist_locations(unittest.TestCase):
         sSource = "/lib/ieee/numeric_std-body.vhdl:120.5-121.9|src/fifo.vhd:42.5|src/top.vhd:7.1"
         self.assertEqual("/lib/ieee/numeric_std-body.vhdl:120:5", repr(netlist.source_location(sSource)))
         self.assertEqual("src/fifo.vhd:42:5", repr(netlist.source_location(sSource, netlist.source_file_set(["src/fifo.vhd", "src/top.vhd"]))))
-        self.assertEqual("src/top.vhd:7:1", repr(netlist.source_location(sSource, netlist.source_file_set([os.path.abspath("src/top.vhd")]))))
+        # Named as the design names the file
+        self.assertEqual(
+            os.path.abspath("src/top.vhd") + ":7:1",
+            repr(netlist.source_location(sSource, netlist.source_file_set([os.path.abspath("src/top.vhd")]))),
+        )
         # Locations outside VHDL files, such as Yosys sources, are not locations of the design
         self.assertIsNone(netlist.source_location("ghdl.cc:832"))
         self.assertIsNone(netlist.source_location(None))
@@ -814,6 +874,17 @@ class test_design_analysis(unittest.TestCase):
         sFile = os.path.join(sTestDir, "gt_top.sv")
         self.assertEqual((1, [f"ERROR: {sFile}(20)design_008 -- u_gt.TXDATA (u_gt.TXOUTCLK) captures d_r (clk_a) without a synchronizer"]), (iStatus, lOutput))
 
+    def test_gray_bus_through_synchronizer_black_boxes(self):
+        # Each bit of a gray coded pointer crosses through a synchronizer black box of its own: one bus, not a
+        # reconvergence. The data captured when the synchronized pointer allows it is qualified, not unsynchronized
+        dBoxes = {
+            "black_boxes": {
+                "sync_cell": {"archetype": "synchronizer", "destination_clock": "clk_i", "input": "serial_i", "output": "serial_o", "reset": "rst_ni"},
+            },
+        }
+        lFindings = self.findings("box_gray_top", "box_gray.vhd", dCdc={"clocks": {"clk_a": "a", "clk_b": "b"}}, dDesignKeys=dBoxes)
+        self.assertEqual([], [t for t in lFindings if t[2] not in ("design_015",)])
+
     def test_systemverilog_cdc(self):
         # Yosys reads the SystemVerilog; findings are at the assignment, refined from the always block Yosys points at
         iStatus, lOutput = self.run_design("cdc_sv", "cdc_sv.sv", dCdc={"clocks": {"clk_a": "a", "clk_b": "b"}})
@@ -858,7 +929,10 @@ class test_design_analysis(unittest.TestCase):
                 text=True,
                 check=False,
             )
-        self.assertEqual([f"ERROR: {sFile}(2)design_001 -- Yosys error: syntax error, unexpected ';'"], oResult.stdout.splitlines())
+        # The text of the error depends on the reader: read_verilog or read_slang
+        lLines = oResult.stdout.splitlines()
+        self.assertEqual(1, len(lLines), lLines)
+        self.assertTrue(lLines[0].startswith(f"ERROR: {sFile}(2)design_001 -- Yosys error: "), lLines)
 
     def test_latch(self):
         iStatus, lOutput = self.run_design("latch_top", "latch.vhd")
@@ -929,7 +1003,8 @@ class test_design_analysis(unittest.TestCase):
             ),
             (iStatus, [s for s in lOutput if "design_001" in s]),
         )
-        dTypes = {c: d["type"] for c, d in dModules["vtop_generics"]["cells"].items() if not d["type"].startswith("$")}
+        # The VHDL registers; read_slang keeps vtop_mid as a module of its own instance
+        dTypes = {c: d["type"] for c, d in dModules["vtop_generics"]["cells"].items() if not d["type"].startswith(("$", "vtop_mid"))}
         dWidths = {c: len(dModules[t]["ports"]["d"]["bits"]) for c, t in dTypes.items()}
         self.assertEqual(
             {"u_named": 8, "u_position": 16, "g_reg.u_generate": 4, "u_expression": 8, "g_loop[1].u_loop": 4, "g_loop[2].u_loop": 4},

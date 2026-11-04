@@ -104,6 +104,35 @@ plugin, and :code:`read_verilog -sv` otherwise (:code:`mhsg/design/tools.py`).
 
 **Limitation: yosys-slang is not packaged for Ubuntu.** It needs the YosysHQ OSS CAD Suite or a build from source.
 
+The behaviours of yosys-slang below were found with the OSS CAD Suite of 2026-11 (Yosys 0.70+309):
+
+**Limitation: read_slang imports a module Yosys already holds without its parameters.** An instance that sets a
+parameter of a module read by another command, such as the stub of a black box read with :code:`read_verilog -lib`,
+is an error (:code:`parameter 'Stages' does not exist in 'tc_sync' [-Wundefined-param-override]`). MHSG gives the stubs
+to :code:`read_slang` with the design and names them with :code:`--blackboxed-module`, and elaborates the VHDL entities
+the Verilog sets generics of once for each set of values, as with :code:`read_verilog`
+(:code:`mhsg/design/runner.py`).
+
+**Limitation: read_slang connects only nets to inout ports.** A variable connected to an inout port of a stub is an
+error (:code:`'rptr' cannot be connected to 'inout' port (only nets are allowed)`), so the ports of a black box need a
+direction before elaboration. MHSG takes it from the declarations, then from what the instances connect, then from
+suffixes such as :code:`_i` and :code:`_o` (:code:`mhsg/design/verilog_black_boxes.py`).
+
+**Limitation: read_slang flattens the design unless** :code:`--keep-hierarchy` **is given, an option it calls
+experimental.** With it, each instance gets a module of its own, named after the module and the instance, such as
+:code:`ibex_alu$ibex_core.ex_block_i.alu_i`. MHSG passes the option and runs again without it when the run fails
+without an error in the Verilog (:code:`mhsg/design/runner.py`); messages name the module without the instance
+(:code:`mhsg/design/netlist.py`).
+
+**Quirk: read_slang writes netlists unlike read_verilog's.** A continuous assignment is a :code:`$buf` cell, an
+asynchronous reset is an asynchronous load of a constant (:code:`$aldff`), registers, named :code:`$driver$` and the
+signal, have no :code:`src` attribute, and file names are relative to the directory Yosys runs in. MHSG merges the nets
+of :code:`$buf` cells, turns :code:`$aldff` with constant data into :code:`$adff`, locates a register at the
+declaration of the signal it drives, and names files as the design does (:code:`mhsg/design/netlist.py`).
+
+**Quirk: read_slang adds** :code:`Design elaboration failed; see full log for details` **to its errors.** MHSG leaves it
+out when there are errors with a location.
+
 **Quirk: opt removes logic and turns registers that are never enabled into latches.** MHSG writes the netlist before
 :code:`opt` runs.
 

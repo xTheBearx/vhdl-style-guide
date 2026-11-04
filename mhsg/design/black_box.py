@@ -187,6 +187,8 @@ def expand_archetype(dDeclaration, sWhere):
         else:
             dPorts[str(dDeclaration["input"])] = "async"
         dPorts[str(dDeclaration["destination_clock"])] = "clock"
+        for sReset in as_list(dDeclaration.get("reset")):
+            dPorts[sReset] = {"reset_in": "async"}
         dPorts[str(dDeclaration["output"])] = {
             "synchronized": {"clock": str(dDeclaration["destination_clock"]), "from": str(dDeclaration["input"]), "stages": dDeclaration.get("stages")},
         }
@@ -209,7 +211,7 @@ ARCHETYPES = {
     "dual_clock": "sides: {clock pin: [ports]}",
     "memory": "sides: {clock pin: [ports]}",
     "dual_clock_fifo": "sides: {clock pin: [ports]}",
-    "synchronizer": "source_clock, destination_clock, input, output, stages",
+    "synchronizer": "source_clock, destination_clock, input, output, stages, reset",
     "async_input": "outputs (all)",
     "static": "justification, reviewed_by",
 }

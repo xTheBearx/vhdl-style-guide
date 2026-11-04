@@ -146,6 +146,9 @@ def source_location(sSource, setFiles=None):
         sFile = oMatch.group(1)
         oLocation = Location(sFile, int(oMatch.group(2)), int(oMatch.group(3) or 0))
         if setFiles and normalise(sFile) in setFiles:
+            # Named as the design names it: read_slang writes the paths it was given relative to its own directory
+            if isinstance(setFiles, dict):
+                oLocation.file = setFiles[normalise(sFile)]
             return oLocation
         if oFirst is None and sFile.lower().endswith(VHDL_EXTENSIONS):
             oFirst = oLocation
@@ -153,7 +156,8 @@ def source_location(sSource, setFiles=None):
 
 
 def source_file_set(lSourceFiles):
-    return {normalise(s) for s in lSourceFiles} if lSourceFiles else set()
+    """{normalised path: the path as given} of the files of a design."""
+    return {normalise(s): s for s in lSourceFiles} if lSourceFiles else {}
 
 
 def normalise(sFile):
@@ -203,6 +207,8 @@ class Netlist:
         self._setFiles = source_file_set(lSourceFiles)
         # GHDL writes an empty module, marked blackbox, for each component without an entity, such as a vendor
         # primitive: those are black boxes, not modules with no logic
+        for dModule in dModules.values():
+            normalise_module(dModule)
         self.black_boxes = {s: d for s, d in dModules.items() if is_black_box(d)}
         self.modules = {s: d for s, d in dModules.items() if s not in self.black_boxes}
         self.locations = dLocations
@@ -244,7 +250,31 @@ class Netlist:
         if oReturn is None:
             dCell = self.modules.get(sModule, {}).get("cells", {}).get(sCell, {})
             oReturn = source_location(dCell.get("attributes", {}).get("src"), self._setFiles)
+            if oReturn is None and dCell:
+                oReturn = self.output_location(sModule, sCell, dCell)
         return oReturn
+
+    def output_location(self, sModule, sCell, dCell):
+        """
+        Returns the Location of the declaration of the signal a cell without a location drives, or None: read_slang
+        writes no location on registers, which it names $driver$ and the signal.
+        """
+        dNetnames = self.modules.get(sModule, {}).get("netnames", {})
+        sName = sCell.lstrip("\\")
+        if sName.startswith("$driver$"):
+            dNet = dNetnames.get(sName[len("$driver$") :]) or dNetnames.get("\\" + sName[len("$driver$") :])
+            if dNet is not None:
+                return source_location(dNet.get("attributes", {}).get("src"), self._setFiles)
+        setBits = {b for sPort in ("Q", "Y") for b in dCell.get("connections", {}).get(sPort, []) if isinstance(b, int)}
+        if not setBits:
+            return None
+        for sNet, dNet in dNetnames.items():
+            if dNet.get("hide_name") or sNet.startswith("$") or not setBits & set(dNet.get("bits", [])):
+                continue
+            oLocation = source_location(dNet.get("attributes", {}).get("src"), self._setFiles)
+            if oLocation is not None:
+                return oLocation
+        return None
 
     def bit_name(self, sModule, iBit):
         """
@@ -269,6 +299,59 @@ class Netlist:
         return lReturn
 
 
+def normalise_module(dModule):
+    """
+    Makes the netlist of read_slang look like that of read_verilog and GHDL, in place: the nets a $buf cell joins,
+    which read_slang writes for continuous assignments, become one net, and a register loaded asynchronously with a
+    constant, $aldff, which read_slang writes for an asynchronous reset, becomes a register with an asynchronous reset.
+    """
+    dCells = dModule.get("cells", {})
+    dAlias = {}
+    for sCell, dCell in list(dCells.items()):
+        if dCell.get("type") != "$buf":
+            continue
+        dConnections = dCell.get("connections", {})
+        lA, lY = dConnections.get("A", []), dConnections.get("Y", [])
+        if len(lA) != len(lY) or any(isinstance(b, int) and b in dAlias for b in lY):
+            continue
+        for oA, oY in zip(lA, lY):
+            if isinstance(oY, int):
+                dAlias[oY] = oA
+        del dCells[sCell]
+    if dAlias:
+
+        def resolve(oBit):
+            setSeen = set()
+            while isinstance(oBit, int) and oBit in dAlias and oBit not in setSeen:
+                setSeen.add(oBit)
+                oBit = dAlias[oBit]
+            return oBit
+
+        for dPort in dModule.get("ports", {}).values():
+            dPort["bits"] = [resolve(b) for b in dPort.get("bits", [])]
+        for dNet in dModule.get("netnames", {}).values():
+            dNet["bits"] = [resolve(b) for b in dNet.get("bits", [])]
+        for dCell in dCells.values():
+            dCell["connections"] = {k: [resolve(b) for b in v] for k, v in dCell.get("connections", {}).items()}
+    for dCell in dCells.values():
+        if dCell.get("type") not in ("$aldff", "$aldffe"):
+            continue
+        dConnections = dCell.get("connections", {})
+        lData = dConnections.get("AD", [])
+        if not lData or "ALOAD" not in dConnections or not all(b in ("0", "1") for b in lData):
+            continue
+        dParameters = dCell.setdefault("parameters", {})
+        dCell["type"] = "$adff" if dCell["type"] == "$aldff" else "$adffe"
+        dConnections["ARST"] = dConnections.pop("ALOAD")
+        del dConnections["AD"]
+        dParameters["ARST_POLARITY"] = dParameters.pop("ALOAD_POLARITY", "1")
+        dParameters["ARST_VALUE"] = "".join(reversed(lData))
+        if "port_directions" in dCell:
+            dDirections = dCell["port_directions"]
+            dDirections.pop("AD", None)
+            dDirections["ARST"] = dDirections.pop("ALOAD", "input")
+
+
 def is_black_box(dModule):
     """Returns whether a module of the netlist is a black box: it has the blackbox attribute."""
     oValue = dModule.get("attributes", {}).get("blackbox")
@@ -291,5 +374,11 @@ def instance_number(sName):
 
 
 def module_name(sModule):
-    """Returns a module name as GHDL writes it in Verilog: without the backslash Yosys adds."""
-    return sModule.lstrip("\\")
+    """
+    Returns a module name as GHDL writes it in Verilog: without the backslash Yosys adds, and without what follows a
+    $ in the name of a copy of the module for one instance, such as ibex_alu$ibex_core.alu_i of read_slang.
+    """
+    sName = sModule.lstrip("\\")
+    if not sName.startswith("$") and "$" in sName:
+        sName = sName.split("$")[0]
+    return sName
