@@ -27,6 +27,7 @@ from mhsg.design import (
     tools,
     top,
     vendors,
+    verilog_black_boxes,
 )
 from tests import utils
 
@@ -931,6 +932,35 @@ class test_design_analysis(unittest.TestCase):
             self.findings("loop_top", "loop.vhd"),
         )
 
+    def test_reset_domain_crossings(self):
+        # Only the register on the other reset is reported: the same reset, a reset that combines both and no reset
+        # are safe
+        self.assertEqual(
+            [
+                (
+                    "rdc.vhd",
+                    69,
+                    "design_018",
+                    "other_r, reset by rst_b, captures a_r, reset by rst_a: asserting rst_a alone can make it metastable",
+                ),
+            ],
+            [t for t in self.findings("rdc_top", "rdc.vhd") if t[2] == "design_018"],
+        )
+
+    def test_clears(self):
+        # A clear listed under clears is followed like data: x_a meets y_a in the registers it clears. Without the
+        # list it is taken for a reset, as the synchronized reset of r3_b and r4_b is
+        dCdc = {"clocks": {"clk_a": "a", "clk_b": "b"}}
+        self.assertEqual([], self.findings("clear_top", "clear.vhd", dCdc=dCdc))
+        sMessage = "Separately synchronized x_a (by x_meta) and y_a (by y_meta) from clk_a meet again in"
+        self.assertEqual(
+            [
+                ("clear.vhd", 56, "design_016", f"{sMessage} r1_b (clk_b)"),
+                ("clear.vhd", 57, "design_016", f"{sMessage} r2_b (clk_b)"),
+            ],
+            self.findings("clear_top", "clear.vhd", dCdc={**dCdc, "clears": ["clr_*"]}),
+        )
+
     def test_reconvergence_in_black_boxes(self):
         # u_same samples both synchronized signals on its clock pin: they meet inside it. u_apart samples them on two
         # pins, so nothing is known about their meeting
@@ -1361,6 +1391,56 @@ class test_design_analysis(unittest.TestCase):
             [("stub_top.vhd", 42, "design_017", "Black box SHIFTER has no declaration of its clock domain behaviour (2 instances)")],
             self.findings("stub_top", "stub_top.vhd", dDesignKeys={"vendor_libraries": [{"library": "vendorlib", "stubs": True}]}),
         )
+
+    def test_stub_types(self):
+        # Comments in the maps are skipped; a function call takes its return type; subtypes and record elements of the
+        # design resolve to the types of std_logic_1164; an aggregate that no instance gives a width gets one element;
+        # a type the stub cannot declare stands for itself with a comment, and GHDL reports it if it is used
+        oDesign = project.from_configuration(
+            {
+                "design": {
+                    "top": "stub_types_top",
+                    "vendor_libraries": [{"library": "vendorlib", "stubs": True}],
+                    "libraries": [{"name": "work", "files": [os.path.join(sTestDir, "stub_types.vhd")]}],
+                },
+            },
+        )
+        with tempfile.TemporaryDirectory() as sDirectory:
+            dFiles = stubs.write(oDesign, sDirectory)
+            with open(dFiles["vendorlib"][0], encoding="utf-8") as oFile:
+                lLines = oFile.read().splitlines()
+        self.assertEqual(
+            [
+                "  component PRIMITIVE is",
+                "    generic (",
+                "      MODE : string",
+                "    );",
+                "    port (",
+                "      CLK : in std_logic;",
+                "      DIN : in std_logic_vector(15 downto 0);",
+                "      VALID : in std_logic;",
+                "      CASIN : in std_logic_vector(0 downto 0);",
+                "      STATE : out std_logic;  -- mode_t cannot be declared here",
+                "      DOUT : out std_logic_vector(15 downto 0);",
+                "      READY : out std_logic",
+                "    );",
+                "  end component;",
+            ],
+            lLines[6:-1],
+        )
+
+    def test_stub_directions_from_models(self):
+        # Yosys' cell models give the directions of the ports of the primitives they define
+        with tempfile.TemporaryDirectory() as sDirectory:
+            os.makedirs(os.path.join(sDirectory, "xilinx"))
+            with open(os.path.join(sDirectory, "xilinx", "cells.v"), "w", encoding="utf-8") as oFile:
+                oFile.write(
+                    "module PRIM (...);\n  output [3:0] DO, DRDY;\n  // input FAKE;\n  input wire CLK;\nendmodule\nmodule OTHER (input A);\nendmodule\n",
+                )
+            self.assertEqual(
+                {"PRIM": {"DO": "output", "DRDY": "output", "CLK": "input"}},
+                verilog_black_boxes.model_directions(sDirectory, ["xilinx/cells.v"], {"prim"}),
+            )
 
     def test_stub_configuration_errors(self):
         for dEntry, sMessage in (

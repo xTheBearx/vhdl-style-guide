@@ -188,6 +188,8 @@ Design rules
 
 * :code:`design_008` to :code:`design_016` check clock domain crossings, clocks and resets, see below.
 * :code:`design_017` reports black boxes whose clock domain behaviour is not declared, see below.
+* :code:`design_018` reports reset domain crossings: data from a register with one asynchronous reset into a register
+  of the same clock that another asynchronous reset clears, unless that reset also comes from the first.
 
 See :doc:`design_rules`. Design rules are configured like other rules, for example with a different severity:
 
@@ -283,8 +285,15 @@ clock is too (design_015), and a reset made by logic or by another register is i
        waivers:
          - signal: u_status.flags_meta
            justification: Quasi-static status bits, read only after the run has stopped
+       clears:
+         # Synchronous clears computed by logic, followed like data by design_016
+         - u_ctrl.clear_r
 
 A waiver names the destination register of a crossing, as the report names it, or a pattern such as ``u_status.*``.
+**clears** names registers, or patterns, that load a constant into other registers as a clear rather than a reset.
+design_016 does not follow a synchronous reset of two or more registers, unless :code:`follow_resets` is set; a clear
+it lists is followed like data. Structure cannot tell the two apart: reset crossing circuits compute their resets
+with logic too.
 A waiver without a justification is reported by design_008. Other findings of design analysis are waived with the
 waivers of the configuration, see :ref:`waivers`.
 
@@ -388,22 +397,29 @@ each vendor component the design instantiates:
 
 A stub declares only the ports and generics the instances name, so the instances must associate by name:
 
-* the type of a port is that of its actual: the declared type of the signal or port, its element type for an indexed
-  name, std_logic for a character literal, std_logic_vector for a string, bit string or aggregate. An array port takes
-  the width its instances agree on, from the declared range, a slice or a literal; ranges may use constants and
-  generics with integer values;
-* the mode of a port comes from the black box declaration where a role says it, such as :code:`clock` or
-  :code:`path`. Otherwise a port whose actual is an input of the entity, a signal the design assigns, a literal or an
-  expression is an input; any other port is an output, unless another output already drives its signal;
-* the type of a generic is that of its actual: integer, real, boolean, string, time, bit_vector for a bit string, or
-  the declared type of a constant or generic. A generic that some instances leave out gets the first literal value.
+* the type of a port is that of its actual: the declared type of the signal, port or record element, its element
+  type for an indexed name, std_logic for a character literal, std_logic_vector for a string, bit string or
+  aggregate. Subtypes of the design, such as :code:`subtype sl is std_logic`, resolve to their base types. An array
+  port takes the width its instances agree on, from the declared range, a slice or a literal; ranges may use
+  constants and generics with integer values. An aggregate or an open port whose width no instance gives gets one
+  element, which is enough for analysis;
+* the mode of a port comes from Yosys' cell model of the primitive, when the design names a black box library Yosys
+  has models for, such as :code:`black_box_libraries: [xilinx]`; then from the black box declaration where a role
+  says it, such as :code:`clock` or :code:`path`. Otherwise a port whose actual is an input of the entity, a signal the
+  design assigns, a literal or an expression is an input; any other port is an output, unless another output already
+  drives its signal;
+* the type of a generic is that of its actual: integer, real, boolean, string, time, bit_vector for a bit string,
+  the return type of a function, or the declared type of a constant or generic. A generic that some instances leave
+  out gets the first literal value.
 
-The types a stub can declare are those of the packages std.standard, ieee.std_logic_1164 and ieee.numeric_std; an
-actual of another type, such as a record, stops the run with a message. A file that uses two stub libraries, such as
+The types a stub can declare are those of the packages std.standard, ieee.std_logic_1164 and ieee.numeric_std. An
+actual of another type, such as an enumeration of the design, is declared as std_logic, with a comment naming the
+type in the stub; GHDL reports the mismatch if the instance is analyzed. A file that uses two stub libraries, such as
 unisim and xpm, takes the components whose names start with :code:`xpm_` from xpm. A stub says nothing about the
 primitive beyond what the design shows, which is all design analysis needs of a black box: the vendor's own files
 remain the reference, and a mistake in an instance that the vendor's declarations would catch, such as a misspelled
-port, goes unnoticed with stubs.
+port, goes unnoticed with stubs. The real-world check analyzes the hard FIFO of hdl-modules and the clock manager of
+surf this way.
 
 Each vendor primitive is then a black box, to be declared as below.
 
@@ -605,5 +621,4 @@ Limitations
   entity with its generics, as GHDL names it, such as :code:`neorv32_cpu_regfile_5_3`.
 * What a black box does with its inputs is known only from its declaration: reconvergence follows its paths and
   takes the inputs timed by one clock pin together; other inputs count one bit at a time.
-  Reset domain crossings through logic are not checked yet.
 * Formal reachability is planned.

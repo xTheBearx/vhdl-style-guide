@@ -158,7 +158,7 @@ def run(oDesign, oTools, sWorkDirectory):
         return run_verilog_top(oDesign, oTools, sWorkDirectory)
     oResult = Result()
     os.makedirs(sWorkDirectory, exist_ok=True)
-    stubs.write(oDesign, sWorkDirectory)
+    stubs.write(oDesign, sWorkDirectory, tools.data_directory(oTools.yosys))
     oPatch = top.patch_real_generics(oDesign, sWorkDirectory)
     lPatched = []
     if oPatch is not None:
@@ -256,7 +256,7 @@ def run_verilog_top(oDesign, oTools, sWorkDirectory):
     """
     oResult = Result()
     os.makedirs(sWorkDirectory, exist_ok=True)
-    stubs.write(oDesign, sWorkDirectory)
+    stubs.write(oDesign, sWorkDirectory, tools.data_directory(oTools.yosys))
     dVhdlEntities = vhdl_entities(oDesign)
     # The VHDL entities the Verilog instantiates, as the Verilog names them
     dUsed = {s: dVhdlEntities[s.lower()] for s in verilog_black_boxes.undefined_modules(oDesign) if s.lower() in dVhdlEntities}
