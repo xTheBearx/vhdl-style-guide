@@ -878,6 +878,19 @@ class test_design_analysis(unittest.TestCase):
             lReturn.append((sFile, int(sLineNumber), sRule, sMessage))
         return lReturn
 
+    def test_verilog_top(self):
+        # The Verilog top uses a VHDL synchronizer: Yosys elaborates the entity with the ghdl command before reading
+        # the Verilog. The crossing through it is synchronized; the one in the Verilog is not
+        sFile = os.path.join(sTestDir, "vtop.v")
+        for sOrder in ("listed", "auto"):
+            iStatus, lOutput = self.run_design(
+                "vtop",
+                ["vtop_sync.vhd", "vtop.v"],
+                dCdc={"clocks": {"clk_a": "a", "clk_b": "b"}},
+                dDesignKeys={"order": sOrder},
+            )
+            self.assertEqual((1, [f"ERROR: {sFile}(21)design_008 -- raw (clk_b) captures flag_a (clk_a) without a synchronizer"]), (iStatus, lOutput), sOrder)
+
     def test_combinational_loops(self):
         self.assertEqual(
             [
