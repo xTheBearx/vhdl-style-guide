@@ -446,6 +446,14 @@ options:
       sv_statement_008:
         label: Most nested if statements
         description: The deepest an if statement may be nested in others; an else if does not nest deeper.
+  maximum_levels:
+    type: integer
+    label: Most look-up table levels
+    description: The most levels of look-up tables a path may have after the design is mapped to them.
+  lut_size:
+    type: integer
+    label: Inputs of a look-up table
+    description: The number of inputs of the look-up tables the design is mapped to, such as 6.
   method:
     type: enum
     values: [component, entity]
@@ -584,6 +592,10 @@ options:
     type: integer
     label: Levels of lists
     description: The number of levels the ports and parameters of a declaration and the connections of an instance are indented.
+  continuation_indent:
+    type: integer
+    label: Levels of continuation lines
+    description: The number of levels the fix indents a continuation line more than the line that starts its statement, when no continuation line before it shows the indent.
   allowed_numbers:
     type: list
     item_type: string

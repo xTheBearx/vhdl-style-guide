@@ -86,6 +86,14 @@ Files that are not complete VHDL on their own, such as templates, are listed und
    exclude:
      - scripts/ada/strings_maps_constants.head.vhdl
 
+A project too large to check whole lists the directories that are checked under :code:`include`, as OpenTitan does:
+
+.. code-block:: yaml
+
+   include:
+     - hw/ip/uart/rtl
+     - hw/ip/prim/rtl
+
 When to run it
 ==============
 

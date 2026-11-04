@@ -7,8 +7,8 @@ from mhsg.rules.sv_tree import Problem, TreeRule
 
 class rule_002(TreeRule, structure.Rule):
     """
-    This rule checks that comments are line comments, starting with //, not block comments between /* and */, as the
-    STARC guide asks (3.5.6.7). It is disabled by default; the starc rule set enables it.
+    This rule checks that comments are line comments, starting with :code:`//`, not block comments between :code:`/*`
+    and :code:`*/`, as the STARC guide asks (3.5.6.7). It is disabled by default; the starc rule set enables it.
 
     **Violation**
 
