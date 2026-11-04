@@ -29,16 +29,11 @@ Design analysis
   and three-way results. SymbiYosys is not packaged for Ubuntu; it needs the YosysHQ OSS CAD Suite.
 * **Black box libraries for more primitives.** Transceivers, SERDES (ISERDES, OSERDES), math blocks, Microchip micro
   SRAM, block RAM ECC and cascade ports, and the Intel and Lattice primitives have no declarations yet.
-* **Stub declarations without a vendor installation.** Users without vendor tools cannot analyze designs that use
-  vendor libraries. A generated stub package, from the black box declarations or from the instantiations, would let
-  them.
 * **Stand-in models and pragmas for black boxes** (options 4 and 5 of the black box plan): an analysis-only VHDL
   architecture for complex IP, and comment pragmas in component declarations. Not planned unless asked for.
 * **Netlist checks and declarations of single instances.** design_003 and design_007 follow the path roles of black
   box types; the declarations of single instances name flat paths, which the module graphs do not know. design_006
   counts every black box input as used, since the roles describe clock domains, not which inputs matter.
-* **Reconvergence inside black boxes.** What a black box does with its inputs is not known, so only logic before it
-  counts. A declaration could say which inputs combine.
 * **Reconvergence through clocked resets only.** Synchronous resets that feed two or more registers are not followed
   unless :code:`follow_resets` is set; a finer rule could tell resets from clears.
 * **Reset domain crossings through logic** are not checked.

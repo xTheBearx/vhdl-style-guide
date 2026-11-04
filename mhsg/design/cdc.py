@@ -727,12 +727,14 @@ class Analysis:
             for tNode in lPlaces:
                 if tNode[0] in ("r", "m", "d"):
                     dFound.setdefault(iNew, []).append(("node", tNode))
-        # Each bit of a black box input and of an output of the design, where tags leave the analysis; what a black
-        # box does with its inputs is not known, so only logic before it counts
+        # Each bit of a black box input and of an output of the design, where tags leave the analysis. What a black
+        # box does with its inputs is known only from its declaration: a path is followed to the logic after it, and
+        # the inputs it samples on one clock pin, {sync: <clock pin>}, are taken together, as a block RAM takes its
+        # address and data
         for oCell in self.flat.cells:
             if oCell.is_black_box():
-                for oNet in self.input_nets(oCell):
-                    check(("box", oCell), [dTags.get(t, 0) for t in self.point_nodes(self.sources(oNet))])
+                for lNets in self.box_input_groups(oCell):
+                    check(("box", oCell), [dTags.get(t, 0) for oNet in lNets for t in self.point_nodes(self.sources(oNet))])
         for sPort, (sDirection, lNets) in self.flat.top_ports.items():
             if sDirection in ("output", "inout"):
                 for iIndex, oNet in enumerate(lNets):
@@ -781,6 +783,21 @@ class Analysis:
         if oEndpoint.is_black_box() or oEndpoint.type in ("$memwr", "$memwr_v2"):
             return repr(oEndpoint) if oEndpoint.is_black_box() else self.flat.cell_name(oEndpoint, "DATA")
         return self.flat.cell_name(oEndpoint)
+
+    def box_input_groups(self, oCell):
+        """The input nets of a black box in the groups it combines: those synchronous to one clock pin, else each bit."""
+        dGroups = {}
+        lReturn = []
+        for sPort, lNets in oCell.connections.items():
+            if self.flat.direction(oCell, sPort) != "input":
+                continue
+            oRole = self.box_role(oCell, sPort)
+            lVariable = [b for b in lNets if graph.is_variable(b)]
+            if oRole is not None and oRole.kind == "sync":
+                dGroups.setdefault(oRole.clock.lower(), []).extend(lVariable)
+            else:
+                lReturn.extend([b] for b in lVariable)
+        return list(dGroups.values()) + lReturn
 
     def input_nets(self, oCell):
         return [b for s, l in oCell.connections.items() if self.flat.direction(oCell, s) == "input" for b in l if graph.is_variable(b)]

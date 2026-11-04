@@ -12,6 +12,8 @@ The design section lists them under vendor_libraries, before the libraries of th
         path: /opt/microchip/Libero_SoC_v2024.1
       - library: unisim                         # explicit files, for any vendor
         files: [/tools/Xilinx/Vivado/2024.1/data/vhdl/src/unisims/unisim_VCOMP.vhd]
+      - vendor: xilinx                          # without an installation: stub packages written from the
+        stubs: true                             # instances of the design, see stubs.py
 
 A component of a vendor library has no entity, so GHDL keeps each instance as a black box, whose clock domain
 behaviour is then declared, see black_box.py. Only declaration files are read: a library of simulation models
@@ -74,10 +76,12 @@ FAMILY_VENDORS = ("microchip", "lattice")
 
 
 class VendorLibrary:
-    def __init__(self, sName, lFiles, sVendor):
+    def __init__(self, sName, lFiles, sVendor, bStubs=False):
         self.name = sName
         self.files = lFiles
         self.vendor = sVendor
+        # The files are stub packages written from the design, see stubs.py
+        self.stubs = bStubs
 
 
 def resolve(lEntries, dEnvironment=None):
@@ -89,6 +93,10 @@ def resolve(lEntries, dEnvironment=None):
             oEntry = {"vendor": oEntry}
         if not isinstance(oEntry, dict):
             raise exceptions.ConfigurationError("ERROR: each vendor library is a vendor name, a map with vendor, or a map with library and files")
+        if oEntry.get("stubs"):
+            for sName in stub_libraries(oEntry):
+                add(lReturn, VendorLibrary(sName, [], str(oEntry.get("vendor", "")).lower(), True))
+            continue
         if "library" in oEntry:
             lFiles = [os.path.expandvars(str(s)) for s in oEntry.get("files") or []]
             for sFile in lFiles:
@@ -100,6 +108,28 @@ def resolve(lEntries, dEnvironment=None):
             continue
         for oLibrary in vendor_libraries(oEntry, dEnvironment):
             add(lReturn, oLibrary)
+    return lReturn
+
+
+def stub_libraries(dEntry):
+    """The names of the libraries of a vendor library entry with stubs: true."""
+    if "library" in dEntry:
+        if dEntry.get("files"):
+            raise exceptions.ConfigurationError(f"ERROR: vendor library {dEntry['library']}: stubs and files exclude each other")
+        return [str(dEntry["library"]).lower()]
+    sVendor = str(dEntry.get("vendor", "")).lower()
+    if sVendor not in VENDORS:
+        raise exceptions.ConfigurationError(f"ERROR: unknown vendor {sVendor or '(none)'}; expected one of {', '.join(VENDORS)}, or library and stubs")
+    sFamily = str(dEntry.get("family", "")).lower()
+    if sVendor in FAMILY_VENDORS and not sFamily:
+        raise exceptions.ConfigurationError(f"ERROR: vendor {sVendor} needs family, the device family, such as polarfire or ecp5u")
+    lReturn = []
+    for sLibrary, _, _ in VENDORS[sVendor][1]:
+        if "{family}" in sLibrary and not sFamily:
+            continue
+        sName = sLibrary.format(family=sFamily)
+        if sName not in lReturn:
+            lReturn.append(sName)
     return lReturn
 
 

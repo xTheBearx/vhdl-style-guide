@@ -18,7 +18,7 @@ import re
 import subprocess
 
 from mhsg import language
-from mhsg.design import tools, top, verilog_black_boxes
+from mhsg.design import stubs, tools, top, verilog_black_boxes
 
 # GHDL writes file:line:column:severity: text, or file:line:column:(assert severity): text for assertion reports
 reMessage = re.compile(
@@ -158,6 +158,7 @@ def run(oDesign, oTools, sWorkDirectory):
         return run_verilog_top(oDesign, oTools, sWorkDirectory)
     oResult = Result()
     os.makedirs(sWorkDirectory, exist_ok=True)
+    stubs.write(oDesign, sWorkDirectory)
     oPatch = top.patch_real_generics(oDesign, sWorkDirectory)
     lPatched = []
     if oPatch is not None:
