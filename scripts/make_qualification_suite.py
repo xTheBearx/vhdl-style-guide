@@ -48,6 +48,7 @@ DESIGNS = [
     ("reconvergence", {"top": "reconvergence_top", "libraries": [{"name": "work", "files": ["reconvergence.vhd"]}]}),
     ("black box", {"top": "bb_top", "libraries": [{"name": "work", "files": ["black_box.vhd"]}]}),
     ("deep logic", {"top": "deep_top", "libraries": [{"name": "work", "files": ["extra:design_007/deep.vhd"]}]}),
+    ("reset domain crossing", {"top": "rdc_top", "libraries": [{"name": "work", "files": ["rdc.vhd"]}]}),
 ]
 
 

@@ -1943,7 +1943,8 @@
         "design_014",
         "design_015",
         "design_016",
-        "design_017"
+        "design_017",
+        "design_018"
       ]
     },
     {
@@ -19721,6 +19722,53 @@
         "design"
       ],
       "summary": "This rule reports black boxes whose effect on clock domains is not declared.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_018",
+      "alias": "design_reset_domain_crossing",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports reset domain crossings: data from a register with one asynchronous reset, directly or through logic, into a register of the same clock that another asynchronous reset clears.",
       "documentation": "design_rules.rst",
       "options": [
         {

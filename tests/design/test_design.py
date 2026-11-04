@@ -888,6 +888,21 @@ class test_design_analysis(unittest.TestCase):
             self.findings("loop_top", "loop.vhd"),
         )
 
+    def test_reset_domain_crossings(self):
+        # Only the register on the other reset is reported: the same reset, a reset that combines both and no reset
+        # are safe
+        self.assertEqual(
+            [
+                (
+                    "rdc.vhd",
+                    69,
+                    "design_018",
+                    "other_r, reset by rst_b, captures a_r, reset by rst_a: asserting rst_a alone can make it metastable",
+                ),
+            ],
+            [t for t in self.findings("rdc_top", "rdc.vhd") if t[2] == "design_018"],
+        )
+
     def test_reconvergence_in_black_boxes(self):
         # u_same samples both synchronized signals on its clock pin: they meet inside it. u_apart samples them on two
         # pins, so nothing is known about their meeting

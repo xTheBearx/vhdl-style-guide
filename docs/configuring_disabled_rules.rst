@@ -69,6 +69,7 @@ Rules Disabled by Default
 * `design_015 <design_rules.html#design-015>`_
 * `design_016 <design_rules.html#design-016>`_
 * `design_017 <design_rules.html#design-017>`_
+* `design_018 <design_rules.html#design-018>`_
 * `expression_001 <expression_rules.html#expression-001>`_
 * `file_100 <file_rules.html#file-100>`_
 * `function_600 <function_rules.html#function-600>`_

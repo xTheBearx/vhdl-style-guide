@@ -26,6 +26,8 @@ MEMORY_READ_TYPES = {"$memrd", "$memrd_v2"}
 # Ports of registers that are not data: the clock and the asynchronous set and reset
 CONTROL_PORTS = {"CLK", "ARST", "SET", "CLR", "AL", "AD"}
 RESET_PORTS = ("ARST", "SET", "CLR", "AL")
+# Logic that combines resets, such as an or of two resets; its resets assert its output
+RESET_LOGIC_TYPES = ("$not", "$logic_not", "$and", "$or", "$logic_and", "$logic_or", "$reduce_and", "$reduce_or", "$reduce_bool")
 
 SYNCHRONIZED = "synchronized"
 GRAY = "gray-coded bus"
@@ -113,6 +115,8 @@ class Analysis:
         self.cell_clock = {}
         self.crossings = []
         self.resets = []
+        # (destination registers, destination reset, source reset, a source register) of reset domain crossings
+        self.reset_crossings = []
         self.clock_as_data = []
         self.shared = []
         # (registers, signals) where separately synchronized signals meet again
@@ -124,6 +128,7 @@ class Analysis:
         self._find_clocks()
         self._find_crossings()
         self._find_resets()
+        self._find_reset_crossings()
         self._find_clock_as_data()
         self._apply_waivers()
 
@@ -1129,6 +1134,79 @@ class Analysis:
             if oRoot in dClockRoots:
                 self.shared.append((dClockRoots[oRoot], lCells))
 
+    def assertion_sources(self, oNet, dMemo, iDepth=0):
+        """
+        The nets whose assertion asserts a reset: the reset itself, or, through reset synchronizers, inverters and the
+        logic that combines resets, the resets it comes from. Two resets with a common source are asserted together.
+        """
+        if oNet in dMemo:
+            return dMemo[oNet]
+        dMemo[oNet] = frozenset([oNet])
+        if iDepth > 32 or not graph.is_variable(oNet):
+            return dMemo[oNet]
+        setReturn = {oNet}
+        tDriver = self.flat.driver(oNet)
+        oCell = tDriver[0] if tDriver is not None else None
+        if oCell is not None and is_register(oCell) and self.is_reset_synchronizer(oCell, self._dChain):
+            # A reset synchronizer is asserted with its own reset
+            tReset = self.reset_source(oCell)
+            setReturn |= self.assertion_sources(tReset[1], dMemo, iDepth + 1)
+        elif oCell is not None and oCell.type in RESET_LOGIC_TYPES:
+            for sPort, lBits in oCell.connections.items():
+                if self.flat.direction(oCell, sPort) == "input":
+                    for oBit in lBits:
+                        setReturn |= self.assertion_sources(oBit, dMemo, iDepth + 1)
+        dMemo[oNet] = frozenset(setReturn)
+        return dMemo[oNet]
+
+    def _find_reset_crossings(self):
+        """
+        Data from a register with one asynchronous reset into a register of the same clock that another asynchronous
+        reset clears: asserting the first changes the data at any time, so the second can capture it metastable. Safe
+        when the destination is reset whenever the source is: when its reset has every source of the other's. Registers
+        without an asynchronous reset are left out, as their data during a reset is not used; so are reset
+        synchronizers, which take a reset from anywhere.
+        """
+        self._dChain = {}
+        dMemo = {}
+        dFindings = {}
+        for oCell in self.flat.cells:
+            if not is_register(oCell):
+                continue
+            tReset = self.reset_source(oCell)
+            oDomain = self.cell_clock.get(id(oCell))
+            if tReset is None or oDomain is None or self.is_reset_synchronizer(oCell, self._dChain):
+                continue
+            oRoot = self.reset_root(tReset[1])
+            setDestination = self.assertion_sources(oRoot, dMemo)
+            for iIndex in range(len(oCell.connections.get("Q", []))):
+                lData, _ = self.split_inputs(oCell, iIndex)
+                for oNet in lData:
+                    for oSource, sPort, _ in self.sources(oNet):
+                        if oSource is None or not is_register(oSource) or sPort != "Q" or oSource is oCell:
+                            continue
+                        oSourceDomain = self.cell_clock.get(id(oSource))
+                        tSourceReset = self.reset_source(oSource)
+                        if tSourceReset is None or oSourceDomain is None or oSourceDomain.group != oDomain.group:
+                            continue
+                        oSourceRoot = self.reset_root(tSourceReset[1])
+                        if oSourceRoot == oRoot or self.assertion_sources(oSourceRoot, dMemo) <= setDestination:
+                            continue
+                        tKey = (oRoot, oSourceRoot)
+                        dFinding = dFindings.setdefault(tKey, {"cells": [], "source": oSource})
+                        if oCell not in dFinding["cells"]:
+                            dFinding["cells"].append(oCell)
+        for (oRoot, oSourceRoot), dFinding in dFindings.items():
+            self.reset_crossings.append((dFinding["cells"], self.reset_name(oRoot), self.reset_name(oSourceRoot), dFinding["source"]))
+        self.reset_crossings.sort(key=lambda t: (t[1], t[2]))
+
+    def reset_name(self, oNet):
+        sName = self.flat.net_name(oNet)
+        tDriver = self.flat.driver(oNet) if graph.is_variable(oNet) else None
+        if sName.startswith("net ") and tDriver is not None and tDriver[0] is not None:
+            sName = "logic of " + ", ".join(sorted({self.point_name(t) for t in self.sources(oNet)}))
+        return sName
+
     # Clocks used as data
 
     def _find_clock_as_data(self):
@@ -1315,6 +1393,18 @@ class Analysis:
         dReturn.update(self.box_report())
         for oReset in self.resets:
             dReturn["resets"].append({"reset": oReset.reset, "kind": oReset.kind, "detail": oReset.detail, "registers": len(oReset.cells)})
+        dReturn["reset_crossings"] = []
+        for lCells, sReset, sSourceReset, oSource in self.reset_crossings:
+            sFile, iLine = self.locate(lCells[0], self.flat.cell_name(lCells[0]).split(".")[-1])
+            dReturn["reset_crossings"].append(
+                {
+                    "reset": sReset,
+                    "source_reset": sSourceReset,
+                    "registers": [self.flat.cell_name(o) for o in lCells],
+                    "source": self.flat.cell_name(oSource),
+                    "location": f"{sFile}:{iLine}" if sFile else None,
+                },
+            )
         return dReturn
 
 
@@ -1416,6 +1506,11 @@ def report_text(dReport):
         lLines.append("  none")
     for dReset in dReport["resets"]:
         lLines.append(f"  {dReset['reset']}: {dReset['kind']}, {dReset['detail']}, {dReset['registers']} registers")
+    lLines += ["", "Reset domain crossings"]
+    if not dReport.get("reset_crossings"):
+        lLines.append("  none")
+    for dCrossing in dReport.get("reset_crossings") or []:
+        lLines.append(f"  {dCrossing['source']} (reset {dCrossing['source_reset']}) into {len(dCrossing['registers'])} registers reset by {dCrossing['reset']}")
     lCounts = {}
     for dCrossing in dReport["crossings"]:
         lCounts[dCrossing["status"]] = lCounts.get(dCrossing["status"], 0) + 1

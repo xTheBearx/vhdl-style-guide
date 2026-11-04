@@ -174,6 +174,8 @@ Design rules
 
 * :code:`design_008` to :code:`design_016` check clock domain crossings, clocks and resets, see below.
 * :code:`design_017` reports black boxes whose clock domain behaviour is not declared, see below.
+* :code:`design_018` reports reset domain crossings: data from a register with one asynchronous reset into a register
+  of the same clock that another asynchronous reset clears, unless that reset also comes from the first.
 
 See :doc:`design_rules`. Design rules are configured like other rules, for example with a different severity:
 
@@ -574,5 +576,4 @@ Limitations
   entity with its generics, as GHDL names it, such as :code:`neorv32_cpu_regfile_5_3`.
 * What a black box does with its inputs is known only from its declaration: reconvergence follows its paths and
   takes the inputs timed by one clock pin together; other inputs count one bit at a time.
-  Reset domain crossings through logic are not checked yet.
 * Formal reachability is planned.
