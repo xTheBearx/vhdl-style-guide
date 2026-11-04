@@ -11,6 +11,7 @@ class rule_003(Rule):
 
     A combinational loop feeds the output of logic back to its input without a register in between.
     Unlike lint_008, which checks one process, it finds loops through several processes, concurrent statements and instances of other entities.
+    A loop through a black box is found when the declaration of its type gives the output a path role from the input.
     Latches, which design_002 reports, are not reported again.
 
     **Violation**

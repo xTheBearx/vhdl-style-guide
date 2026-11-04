@@ -530,8 +530,10 @@ Limitations
 * Only the synthesizable part of the design is analyzed. Testbenches are not supported.
 * The design is elaborated with one set of generics. Analyze each configuration that matters, with a configuration file each.
 * Vendor primitives must be given as VHDL sources or component declarations which GHDL can elaborate as black boxes.
-  The netlist checks, design_002 to design_007, assume a black box registers its outputs and uses all of its inputs;
-  the clock domain checks use the declarations.
+  The netlist checks, design_002 to design_007, take a black box output to be registered unless the declaration of
+  the black box type gives it a :code:`path` role: design_003 then finds loops through it and design_007 follows paths
+  through it, without counting a logic level for the box. Declarations of single instances name flat paths, so only
+  the clock domain checks use them. Every input of a black box counts as used, whatever its role.
 * GHDL simplifies the logic while it builds the netlist: it removes registers nothing reads, which design_006 finds by
   comparing the netlist with the clocked processes, and it removes inverter and buffer chains and unused combinational
   signals, which a netlist cannot show. Checks for those are planned for the per-file lint.

@@ -239,11 +239,7 @@ class Analysis:
 
     def path_inputs(self, oCell, oRole, iIndex):
         """The input nets an output bit of a black box follows: the same bit of inputs as wide as needed, else all bits."""
-        lReturn = []
-        for sInput in oRole.inputs:
-            lNets = next((l for s, l in oCell.connections.items() if s.lower() == sInput.lower()), [])
-            lReturn += [lNets[iIndex]] if iIndex < len(lNets) and len(lNets) > 1 else list(lNets)
-        return [b for b in lReturn if graph.is_variable(b)]
+        return black_box.path_bits(oCell.connections, oRole, iIndex)
 
     def strip(self, oCell, iIndex, sPort="D"):
         """

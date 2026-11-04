@@ -12,6 +12,7 @@ class rule_007(Rule):
 
     A path starts at a register, a memory or an input of the design, and ends at a register, a memory or an output of the design.
     Paths through instances of other entities are counted in full, and each path is reported once: in the entity that holds the deepest part.
+    A black box ends a path, unless the declaration of its type gives the output a path role: the path then continues through it, with no logic level for the box.
     The depth counts the operators before synthesis maps them to the device: an adder, a comparison or a multiplexer is one level,
     inverters count nothing, and a chain of the same and, or or xor operator counts once.
     Long chains of if and elsif branches, and loops unrolled into chains of multiplexers, are the usual causes.
