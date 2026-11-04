@@ -15,9 +15,11 @@ class rule_025(Rule):
     Each branch, a value of the select input of a multiplexer, is first looked for in a search of **depth** clock
     cycles from reset, 20 by default, which takes at most **cover_timeout** seconds, 300 by default; the branches it
     reached by then count as reached. A branch the search does not reach gets a proof of its own, which takes at most
-    **timeout** seconds, 60 by default, for at most **maximum_proofs** branches, 20 by default. A branch proven
-    unreachable is reported. A branch neither reached nor proven is undecided, and reported when
-    **report_undecided** is set.
+    **timeout** seconds, 60 by default, for at most **maximum_proofs** branches, 20 by default; the proofs run side by
+    side, one per processor. A branch proven unreachable is reported. A branch neither reached nor proven is
+    undecided, and reported when **report_undecided** is set. A branch that only selects unknown values, such as the
+    others choice of a case statement that assigns :code:`'X'`, is how synthesis writes values never meant to occur,
+    such as unused state encodings, and is not checked.
 
     The design starts from reset: the top inputs that drive asynchronous resets are active in the first cycle.
     **assumptions** hold top inputs at a value in every cycle, such as a test mode input, as in

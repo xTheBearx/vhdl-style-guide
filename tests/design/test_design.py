@@ -240,6 +240,10 @@ class test_formal(unittest.TestCase):
                     "k": {"type": "$mux", "connections": {"A": [5], "B": [6], "S": ["1"], "Y": [12]}},
                     "e": {"type": "$eq", "connections": {"A": [5], "B": ["1"], "Y": [3]}},
                     "u_box": {"type": "box", "connections": {"O": [13]}},
+                    # A case statement whose others choice assigns 'X', and a condition that is a register bit
+                    "q": {"type": "$pmux", "connections": {"A": ["x"], "B": [6, 7], "S": [14, 15], "Y": [16]}},
+                    "r": {"type": "$dff", "connections": {"CLK": [2], "D": [5], "Q": [17]}},
+                    "t": {"type": "$mux", "connections": {"A": [5], "B": [6], "S": [17], "Y": [18]}},
                     "a": {"type": "$assert", "connections": {"A": [5], "EN": ["1"]}},
                 },
             },
@@ -250,9 +254,22 @@ class test_formal(unittest.TestCase):
         # A select used twice is one branch; a constant select has none; a $pmux has a branch per choice and its others
         lBranches = formal.branches({"top": self.modules["top"]})
         self.assertEqual(
-            [("m", (3,), 1), ("m", (3,), 0), ("p", (3, 4), 0), ("p", (3, 4), 1), ("p", (3, 4), None)],
+            [
+                ("m", (3,), 1),
+                ("m", (3,), 0),
+                ("p", (3, 4), 0),
+                ("p", (3, 4), 1),
+                ("p", (3, 4), None),
+                # The others choice that assigns 'X' is not a branch of the code
+                ("q", (14, 15), 0),
+                ("q", (14, 15), 1),
+                ("t", (17,), 1),
+                ("t", (17,), 0),
+            ],
             [(o.cell, tuple(o.select), o.value) for o in lBranches],
         )
+        # A condition that is a register bit is located at the multiplexer, not at the register
+        self.assertEqual(["t"], lBranches[7].cells)
         # Located at the logic that computes the condition first
         self.assertEqual(["e", "m"], lBranches[0].cells)
         self.assertEqual(["p"], lBranches[4].cells)
@@ -267,7 +284,7 @@ class test_formal(unittest.TestCase):
         self.assertNotIn("u_box", dCells)
         self.assertNotIn("a", dCells)
         lCovers = sorted(s for s, d in dCells.items() if d["type"] == "$cover")
-        self.assertEqual([f"\\mhsg_check_{i}" for i in range(5)], lCovers)
+        self.assertEqual(sorted(f"\\mhsg_check_{i}" for i in range(9)), lCovers)
         self.assertEqual({"src": "mhsg_branch_0"}, dCells["\\mhsg_check_0"]["attributes"])
         self.assertEqual([3], dCells["\\mhsg_check_0"]["connections"]["A"])
         # The reset is active in the first cycle; sel is 2 in every cycle: bit 0 is 0, bit 1 is 1
