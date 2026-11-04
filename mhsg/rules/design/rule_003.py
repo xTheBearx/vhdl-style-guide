@@ -27,7 +27,8 @@ class rule_003(Rule):
         self.solution = "Break the loop with a register"
 
     def check_design(self, oContext):
-        oGraph = oContext.graph()
+        # Copies of the modules whose black boxes have declarations of single instances that differ, one per instance
+        oGraph = oContext.instance_graph()
         if oGraph is None:
             return []
         lReturn = []
@@ -45,4 +46,16 @@ class rule_003(Rule):
                 if lInstances:
                     sMessage += " and instance " + ", ".join(lInstances)
                 lReturn.append(Finding(sFile, iLine, sMessage))
-        return lReturn
+        return unique(lReturn)
+
+
+def unique(lFindings):
+    """The findings without repeats: the copies of a module, one per instance, find the same problems in its code."""
+    setSeen = set()
+    lReturn = []
+    for oFinding in lFindings:
+        tKey = (oFinding.file, oFinding.line, oFinding.message)
+        if tKey not in setSeen:
+            setSeen.add(tKey)
+            lReturn.append(oFinding)
+    return lReturn
