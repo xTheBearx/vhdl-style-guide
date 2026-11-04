@@ -242,7 +242,8 @@ checks:
     title: No combinational feedback loops
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - design_003
   1.3.1.1:
     title: Synchronous-reset coding may synthesize to logic that does not reset reliably
     level: Suggestion
@@ -309,7 +310,8 @@ checks:
     title: External initial reset may need synchronization or a noise filter
     level: Recommendation 3
     severity: Note
-    status: design
+    rules:
+    - design_015
   1.3.3.3:
     title: If reset arrives before clocks run, use asynchronous reset plus a noise filter
     level: Suggestion
@@ -961,7 +963,8 @@ checks:
     title: Never connect multiple non-tri-state drivers to one net
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - design_004
   2.5.1.6:
     title: Do not connect inout ports directly to input or output ports
     level: Rule
@@ -1847,7 +1850,9 @@ checks:
     title: Net width must match the width of the instance port it connects to
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - sv_lint_001
+    - sv_lint_009
   3.2.4.1:
     title: 'Override lower-level parameters with #(...) at instantiation'
     level: Suggestion
@@ -1892,7 +1897,9 @@ checks:
     title: Clocks must be directly controllable from primary inputs
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - design_012
+    - design_013
   3.3.1.2:
     title: With selectable clock systems, fix one choice throughout test
     level: Rule
@@ -1902,12 +1909,14 @@ checks:
     title: Do not use random-logic outputs as clocks
     level: Recommendation 1
     severity: Warning
-    status: design
+    rules:
+    - design_013
   3.3.1.4:
     title: Flip-flop resets must be directly controllable from a primary input
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - design_014
   3.3.2.1:
     title: Plan dedicated test circuits for async logic and hard macros
     level: Recommendation 1
@@ -1999,17 +2008,20 @@ checks:
     title: Block random logic driving async set/reset during test
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - design_014
   3.3.6.2:
     title: Keep clock and reset networks separate
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - design_011
   3.3.6.3:
     title: A flip-flop output must not directly drive an async set/reset pin
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - design_014
   3.3.6.4:
     title: A latch output must not directly drive a flip-flop async set/reset
     level: Rule
@@ -2074,7 +2086,8 @@ checks:
     title: In standard ASICs, place gated clocks only at the top level
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - design_012
   3.4.1.2:
     title: Use EDA tools for fine-grained clock gating
     level: Suggestion

@@ -2169,7 +2169,7 @@ cases:
   - - 19
     - Remove tab
 design_cases:
-- rule: design_008
+- rule: design_003
   name: clean design
   design: &id001
     top: clean_top
@@ -2178,7 +2178,19 @@ design_cases:
       files:
       - examples/design/clean.vhd
   expected: []
+- rule: design_004
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_008
+  name: clean design
+  design: *id001
+  expected: []
 - rule: design_009
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_011
   name: clean design
   design: *id001
   expected: []
@@ -2194,7 +2206,11 @@ design_cases:
   name: clean design
   design: *id001
   expected: []
-- rule: design_008
+- rule: design_015
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_003
   name: undeclared signal
   design: &id002
     top: undeclared_top
@@ -2203,7 +2219,19 @@ design_cases:
       files:
       - examples/design/undeclared.vhd
   expected: []
+- rule: design_004
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_008
+  name: undeclared signal
+  design: *id002
+  expected: []
 - rule: design_009
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_011
   name: undeclared signal
   design: *id002
   expected: []
@@ -2219,7 +2247,11 @@ design_cases:
   name: undeclared signal
   design: *id002
   expected: []
-- rule: design_008
+- rule: design_015
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_003
   name: latch
   design: &id003
     top: latch_top
@@ -2228,7 +2260,19 @@ design_cases:
       files:
       - examples/design/latch.vhd
   expected: []
+- rule: design_004
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_008
+  name: latch
+  design: *id003
+  expected: []
 - rule: design_009
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_011
   name: latch
   design: *id003
   expected: []
@@ -2244,7 +2288,11 @@ design_cases:
   name: latch
   design: *id003
   expected: []
-- rule: design_008
+- rule: design_015
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_003
   name: combinational loop
   design: &id004
     top: loop_top
@@ -2252,8 +2300,26 @@ design_cases:
     - name: work
       files:
       - examples/design/loop.vhd
+  expected:
+  - - examples/design/loop.vhd
+    - 40
+    - Combinational loop through a, b in loop_top
+  - - examples/design/loop.vhd
+    - 45
+    - Combinational loop through e, f in loop_top and instance u_pass
+- rule: design_004
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_008
+  name: combinational loop
+  design: *id004
   expected: []
 - rule: design_009
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_011
   name: combinational loop
   design: *id004
   expected: []
@@ -2269,7 +2335,11 @@ design_cases:
   name: combinational loop
   design: *id004
   expected: []
-- rule: design_008
+- rule: design_015
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_003
   name: multiple drivers
   design: &id005
     top: md_top
@@ -2278,7 +2348,22 @@ design_cases:
       files:
       - examples/design/multiple_drivers.vhd
   expected: []
+- rule: design_004
+  name: multiple drivers
+  design: *id005
+  expected:
+  - - examples/design/multiple_drivers.vhd
+    - 37
+    - 'Signal shared_net in md_top has 2 drivers: u_first, u_second'
+- rule: design_008
+  name: multiple drivers
+  design: *id005
+  expected: []
 - rule: design_009
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_011
   name: multiple drivers
   design: *id005
   expected: []
@@ -2294,7 +2379,11 @@ design_cases:
   name: multiple drivers
   design: *id005
   expected: []
-- rule: design_008
+- rule: design_015
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_003
   name: registers
   design: &id006
     top: registers_top
@@ -2303,7 +2392,19 @@ design_cases:
       files:
       - examples/design/registers.vhd
   expected: []
+- rule: design_004
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_008
+  name: registers
+  design: *id006
+  expected: []
 - rule: design_009
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_011
   name: registers
   design: *id006
   expected: []
@@ -2319,7 +2420,14 @@ design_cases:
   name: registers
   design: *id006
   expected: []
-- rule: design_008
+- rule: design_015
+  name: registers
+  design: *id006
+  expected:
+  - - examples/design/registers.vhd
+    - 31
+    - 'Reset rst is released asynchronously: it resets registers clocked by clk without a reset synchronizer (3 registers)'
+- rule: design_003
   name: logic depth
   design: &id007
     top: depth_top
@@ -2328,7 +2436,19 @@ design_cases:
       files:
       - examples/design/depth.vhd
   expected: []
+- rule: design_004
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_008
+  name: logic depth
+  design: *id007
+  expected: []
 - rule: design_009
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_011
   name: logic depth
   design: *id007
   expected: []
@@ -2344,7 +2464,11 @@ design_cases:
   name: logic depth
   design: *id007
   expected: []
-- rule: design_008
+- rule: design_015
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_003
   name: clock domain crossings
   design: &id008
     top: cdc_top
@@ -2352,6 +2476,14 @@ design_cases:
     - name: work
       files:
       - examples/design/cdc.vhd
+  expected: []
+- rule: design_004
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_008
+  name: clock domain crossings
+  design: *id008
   expected:
   - - examples/design/cdc.vhd
     - 90
@@ -2366,6 +2498,13 @@ design_cases:
   - - examples/design/cdc.vhd
     - 95
     - bus_a (clk_a) is synchronized bit by bit into bus1_b (clk_b); the bits can arrive in different cycles
+- rule: design_011
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 198
+    - clk_c is used as a clock and as an asynchronous reset
 - rule: design_012
   name: clock domain crossings
   design: *id008
@@ -2387,7 +2526,20 @@ design_cases:
   - - examples/design/cdc.vhd
     - 163
     - Asynchronous reset is made by logic of rst_b, soft_a
-- rule: design_008
+- rule: design_015
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 136
+    - 'Reset rst_a is released asynchronously: it resets registers clocked by clk_a without a reset synchronizer'
+  - - examples/design/cdc.vhd
+    - 146
+    - Reset rst_b is synchronized to clk_b, resets registers clocked by clk_a
+  - - examples/design/cdc.vhd
+    - 198
+    - 'Reset clk_c is released asynchronously: it resets registers clocked by clk_a without a reset synchronizer'
+- rule: design_003
   name: reconvergence
   design: &id009
     top: reconvergence_top
@@ -2396,7 +2548,19 @@ design_cases:
       files:
       - examples/design/reconvergence.vhd
   expected: []
+- rule: design_004
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_008
+  name: reconvergence
+  design: *id009
+  expected: []
 - rule: design_009
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_011
   name: reconvergence
   design: *id009
   expected: []
@@ -2412,7 +2576,11 @@ design_cases:
   name: reconvergence
   design: *id009
   expected: []
-- rule: design_008
+- rule: design_015
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_003
   name: black box
   design: &id010
     top: bb_top
@@ -2421,7 +2589,19 @@ design_cases:
       files:
       - examples/design/black_box.vhd
   expected: []
+- rule: design_004
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_008
+  name: black box
+  design: *id010
+  expected: []
 - rule: design_009
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_011
   name: black box
   design: *id010
   expected: []
@@ -2437,7 +2617,11 @@ design_cases:
   name: black box
   design: *id010
   expected: []
-- rule: design_008
+- rule: design_015
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_003
   name: deep logic
   design: &id011
     top: deep_top
@@ -2446,7 +2630,19 @@ design_cases:
       files:
       - examples/extra/design_007/deep.vhd
   expected: []
+- rule: design_004
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_008
+  name: deep logic
+  design: *id011
+  expected: []
 - rule: design_009
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_011
   name: deep logic
   design: *id011
   expected: []
@@ -2462,7 +2658,11 @@ design_cases:
   name: deep logic
   design: *id011
   expected: []
-- rule: design_008
+- rule: design_015
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_003
   name: reset domain crossing
   design: &id012
     top: rdc_top
@@ -2471,7 +2671,19 @@ design_cases:
       files:
       - examples/design/rdc.vhd
   expected: []
+- rule: design_004
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_008
+  name: reset domain crossing
+  design: *id012
+  expected: []
 - rule: design_009
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_011
   name: reset domain crossing
   design: *id012
   expected: []
@@ -2490,3 +2702,7 @@ design_cases:
   - - examples/design/rdc.vhd
     - 79
     - Asynchronous reset rst_ab is made by logic
+- rule: design_015
+  name: reset domain crossing
+  design: *id012
+  expected: []
