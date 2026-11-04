@@ -940,8 +940,8 @@ designs:
   known: []
 - name: hdl_modules_asynchronous_fifo
   project: hdl-modules
-  # Each module is a library, listed without a compile order, which GHDL finds (order: auto). hard_fifo is left out:
-  # it needs the Xilinx unisim library.
+  # Each module is a library, listed without a compile order, which GHDL finds (order: auto). hard_fifo, which needs
+  # the Xilinx unisim library, is checked by hdl_modules_asynchronous_hard_fifo.
   design:
     top: asynchronous_fifo
     top_library: fifo
@@ -986,4 +986,71 @@ designs:
     - name: sine_generator
       files:
       - modules/sine_generator/src/*.vhd
+  known: []
+- name: hdl_modules_asynchronous_hard_fifo
+  project: hdl-modules
+  # The FIFO36E2 primitive through stub packages of unisim, written from the instance: no Vivado installation
+  design:
+    top: asynchronous_hard_fifo
+    top_library: hard_fifo
+    order: auto
+    generics:
+      data_width: 32
+      enable_output_register: false
+    vendor_libraries:
+    - vendor: xilinx
+      stubs: true
+    black_box_libraries: [xilinx]
+    black_boxes:
+      FIFO36E2:
+        # Tied to constants in the wrapper
+        ports:
+          CAS*: unused
+          SLEEP: unused
+    libraries:
+    - name: common
+      files:
+      - modules/common/src/*.vhd
+    - name: math
+      files:
+      - modules/math/src/*.vhd
+    - name: resync
+      files:
+      - modules/resync/src/*.vhd
+    - name: fifo
+      files:
+      - modules/fifo/src/*.vhd
+    - name: hard_fifo
+      files:
+      - modules/hard_fifo/src/*.vhd
+  known:
+  # Real by the declaration: RSTREG is timed by the read clock, and the wrapper drives it with the write side reset
+  - modules/hard_fifo/src/fifo36e2_wrapper.vhd(148)design_008 -- select_primitive.fifo36e2_wrapper_inst.fifo36e2_inst.RSTREG (clk_read) captures select_primitive.fifo36e2_wrapper_inst.reset (clk_write) without a synchronizer
+- name: surf_clock_manager_7
+  project: surf
+  # MMCME2_ADV and BUFG through stub packages of unisim: no Vivado installation
+  design:
+    top: ClockManager7
+    top_library: surf
+    order: auto
+    ghdl_options: [-fsynopsys]
+    generics:
+      NUM_CLOCKS_G: 2
+      CLKFBOUT_MULT_G: 10
+      CLKOUT0_DIVIDE_G: 10
+      CLKOUT1_DIVIDE_G: 5
+    vendor_libraries:
+    - vendor: xilinx
+      stubs: true
+    black_box_libraries: [xilinx]
+    libraries:
+    - name: surf
+      files:
+      - base/**/rtl/**/*.vhd
+      - axi/**/rtl/**/*.vhd
+      - xilinx/general/rtl/*.vhd
+      - xilinx/7Series/general/rtl/*.vhd
+      # Simulation models the clock manager instantiates when SIMULATION_G is set
+      - xilinx/general/tb/MmcmEmulation.vhd
+      - base/general/tb/ClkRst.vhd
   known: []

@@ -27,6 +27,7 @@ from mhsg.design import (
     tools,
     top,
     vendors,
+    verilog_black_boxes,
 )
 from tests import utils
 
@@ -892,6 +893,36 @@ class test_design_analysis(unittest.TestCase):
             )
             self.assertEqual((1, [f"ERROR: {sFile}(21)design_008 -- raw (clk_b) captures flag_a (clk_a) without a synchronizer"]), (iStatus, lOutput), sOrder)
 
+    def test_verilog_top_generics(self):
+        # Each set of generic values is elaborated on its own; an instance whose values are an expression is analyzed
+        # with the defaults, which design_001 reports
+        with tempfile.TemporaryDirectory() as sDirectory:
+            iStatus, lOutput = self.run_design(
+                "vtop_generics",
+                ["vtop_generics.vhd", "vtop_generics.v"],
+                dDesignKeys={"work_directory": sDirectory},
+            )
+            with open(os.path.join(sDirectory, "design.json"), encoding="utf-8") as oFile:
+                dModules = json.load(oFile)["modules"]
+        sFile = os.path.join(sTestDir, "vtop_generics.v")
+        self.assertEqual(
+            (
+                1,
+                [
+                    f"ERROR: {sFile}(23)design_001 -- Design configuration error: Instance u_expression of vtop_reg is analyzed with the "
+                    "defaults of its generics, as its own values cannot be set: a parameter is not a literal",
+                ],
+            ),
+            (iStatus, [s for s in lOutput if "design_001" in s]),
+        )
+        dTypes = {c: d["type"] for c, d in dModules["vtop_generics"]["cells"].items() if not d["type"].startswith("$")}
+        dWidths = {c: len(dModules[t]["ports"]["d"]["bits"]) for c, t in dTypes.items()}
+        self.assertEqual({"u_named": 8, "u_position": 16, "g_reg.u_generate": 4, "u_expression": 4}, dWidths)
+        # The instances with values of their own each have a module, elaborated from the entity with those values
+        self.assertEqual("vtop_reg", dTypes["u_expression"])
+        self.assertEqual(3, len({dTypes["u_named"], dTypes["u_position"], dTypes["g_reg.u_generate"]}))
+        self.assertTrue(all(dTypes[s].startswith("vtop_reg__mhsg") for s in ("u_named", "u_position", "g_reg.u_generate")))
+
     def test_combinational_loops(self):
         self.assertEqual(
             [
@@ -1368,6 +1399,56 @@ class test_design_analysis(unittest.TestCase):
             [("stub_top.vhd", 42, "design_017", "Black box SHIFTER has no declaration of its clock domain behaviour (2 instances)")],
             self.findings("stub_top", "stub_top.vhd", dDesignKeys={"vendor_libraries": [{"library": "vendorlib", "stubs": True}]}),
         )
+
+    def test_stub_types(self):
+        # Comments in the maps are skipped; a function call takes its return type; subtypes and record elements of the
+        # design resolve to the types of std_logic_1164; an aggregate that no instance gives a width gets one element;
+        # a type the stub cannot declare stands for itself with a comment, and GHDL reports it if it is used
+        oDesign = project.from_configuration(
+            {
+                "design": {
+                    "top": "stub_types_top",
+                    "vendor_libraries": [{"library": "vendorlib", "stubs": True}],
+                    "libraries": [{"name": "work", "files": [os.path.join(sTestDir, "stub_types.vhd")]}],
+                },
+            },
+        )
+        with tempfile.TemporaryDirectory() as sDirectory:
+            dFiles = stubs.write(oDesign, sDirectory)
+            with open(dFiles["vendorlib"][0], encoding="utf-8") as oFile:
+                lLines = oFile.read().splitlines()
+        self.assertEqual(
+            [
+                "  component PRIMITIVE is",
+                "    generic (",
+                "      MODE : string",
+                "    );",
+                "    port (",
+                "      CLK : in std_logic;",
+                "      DIN : in std_logic_vector(15 downto 0);",
+                "      VALID : in std_logic;",
+                "      CASIN : in std_logic_vector(0 downto 0);",
+                "      STATE : out std_logic;  -- mode_t cannot be declared here",
+                "      DOUT : out std_logic_vector(15 downto 0);",
+                "      READY : out std_logic",
+                "    );",
+                "  end component;",
+            ],
+            lLines[6:-1],
+        )
+
+    def test_stub_directions_from_models(self):
+        # Yosys' cell models give the directions of the ports of the primitives they define
+        with tempfile.TemporaryDirectory() as sDirectory:
+            os.makedirs(os.path.join(sDirectory, "xilinx"))
+            with open(os.path.join(sDirectory, "xilinx", "cells.v"), "w", encoding="utf-8") as oFile:
+                oFile.write(
+                    "module PRIM (...);\n  output [3:0] DO, DRDY;\n  // input FAKE;\n  input wire CLK;\nendmodule\nmodule OTHER (input A);\nendmodule\n",
+                )
+            self.assertEqual(
+                {"PRIM": {"DO": "output", "DRDY": "output", "CLK": "input"}},
+                verilog_black_boxes.model_directions(sDirectory, ["xilinx/cells.v"], {"prim"}),
+            )
 
     def test_stub_configuration_errors(self):
         for dEntry, sMessage in (

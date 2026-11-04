@@ -42,8 +42,8 @@ Design analysis
   reset is not used; a design that relies on such a register right after a reset would need them.
 * **Logic depth** counts operators before technology mapping, which is crude; a mapped count would be more realistic
   but slower and loses names.
-* **More real-world designs** in :code:`scripts/real_world_designs.yaml`: surf (needs the vendor libraries), the
-  hdl-modules designs that use them (hard_fifo), and a multi-clock design with vendor clocking.
+* **More real-world designs** in :code:`scripts/real_world_designs.yaml`: more of surf, which now analyzes with stub
+  vendor packages as its clock manager does, and a design whose clocks come from several vendor clocking primitives.
 
 Lint and rule sets
 ------------------
@@ -56,11 +56,12 @@ The plan, with the tools evaluated, is in the "Verilog and SystemVerilog" tab of
 (reading files, style rules, lint and design analysis) are done; see :doc:`../systemverilog`. Step 5, breadth, is
 under way: the entries below.
 
-* **Alignment of several columns**: the sv_alignment rules align one column each, such as the names of port
-  declarations; Verible also aligns the columns before it, such as the types and packed dimensions.
-* **Indentation not checked yet**: continuation lines, lists aligned after their bracket, the contents of
-  expressions (multi-line assignment patterns, randomize with blocks), preprocessor directives and inactive
-  :code:`\`ifdef` branches. Verible's formatter has rules for each; they need studying before mhsg checks them.
+* **Alignment inside packed dimensions**: sv_alignment_010 aligns the opening brackets of packed dimensions; Verible
+  may also pad inside the brackets, as in :code:`[ 4:0]` under :code:`[31:0]`, which is not checked.
+* **Indentation not checked yet**: the exact indent of continuation lines (sv_indent_002 checks only that they are
+  indented more than their statement), the contents of expressions (multi-line assignment patterns, randomize with
+  blocks), preprocessor directives and inactive :code:`\`ifdef` branches. Verible's formatter has rules for each;
+  they need studying before mhsg checks them.
 * **Inactive** :code:`\`ifdef` **branches and macro arguments** are kept as unclassified tokens (about 11% of the
   tokens of ibex, common_cells and picorv32, most in the arguments of macros such as :code:`\`ASSERT` and
   :code:`\`uvm_info`), so rules do not check them. Parsing each branch with its defines set, and macro arguments
@@ -77,11 +78,11 @@ under way: the entries below.
   files; a variable written inside an if or case before it is read still counts as read.
 * **SystemVerilog designs without the yosys-slang plugin**: Yosys' own reader handles Verilog and part of
   SystemVerilog; ibex and common_cells need the plugin, which is not packaged for Ubuntu. Not yet tried with it.
-* **Generics of VHDL entities under a Verilog top**: each entity is elaborated once with the defaults of its generics;
-  the parameters a Verilog instance sets would need an elaboration of the entity per set of values, under a name of
-  its own.
+* **Generics of VHDL entities under a Verilog top** are passed on when they are literals and the instance is in a
+  module without parameters; expressions of parameters, and instances in modules that have parameters, would need the
+  elaboration of the Verilog first, as read_slang does.
 * **Black boxes in Verilog designs with read_slang**: the modules made for black boxes are read with read_verilog
   -lib before the design; whether read_slang links instances to them is not known. Yosys has cell models for Xilinx
   only among the vendors with black box libraries.
-* **More SystemVerilog projects** in the real-world check, which runs ibex, common_cells and picorv32: OpenTitan
-  (a subset), CVA6, SERV and the sv-tests conformance suite.
+* **More SystemVerilog projects** in the real-world check, which runs ibex, common_cells, picorv32, SERV, CVA6 and the
+  sv-tests conformance suite: OpenTitan, whose size needs a subset to be chosen.

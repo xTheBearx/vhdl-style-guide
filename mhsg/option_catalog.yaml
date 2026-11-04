@@ -547,6 +547,10 @@ options:
     type: integer
     label: Levels of lists
     description: The number of levels the ports and parameters of a declaration and the connections of an instance are indented.
+  continuation_indent:
+    type: integer
+    label: Levels of continuation lines
+    description: The number of levels the fix indents a continuation line more than the line that starts its statement, when no continuation line before it shows the indent.
   allowed_numbers:
     type: list
     item_type: string
