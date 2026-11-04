@@ -264,7 +264,8 @@ checks:
     title: No flip-flop with both asynchronous set and asynchronous reset
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_always_014
   1.3.2.1:
     title: No logic on reset lines inside local modules; generate resets in a dedicated module
     level: Recommendation 1
@@ -585,7 +586,8 @@ checks:
     title: Every value a function uses must be a declared input argument
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_function_006
     note: Verilog only.
   2.1.2.4:
     title: Do not use tasks in RTL
@@ -598,7 +600,8 @@ checks:
     title: No clock-edge event controls inside tasks
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_function_008
     note: Verilog only.
   2.1.3.1:
     title: Function call argument widths must match the input declarations
@@ -629,7 +632,8 @@ checks:
     title: Functions must not assign module-level (global) signals
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_function_007
     note: Verilog only.
   2.1.4.1:
     title: Operators of equal precedence evaluate left to right
@@ -735,7 +739,8 @@ checks:
     title: Keep constants and unused signals out of sensitivity lists
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_always_010
   2.2.2.3:
     title: An always block has exactly one event control
     level: Rule
@@ -803,7 +808,8 @@ checks:
     title: A flip-flop must not have both asynchronous set and reset
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_always_014
   2.3.2.1:
     title: Blocking vs non-blocking assignment can change the inferred flip-flop circuit
     level: Suggestion
@@ -821,12 +827,14 @@ checks:
     title: One always block must not use different clock edges
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_always_012
   2.3.3.2:
     title: One always block must not use two clocks with the same edge
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_always_012
   2.3.4.1:
     title: Do not set flip-flop initial values in initial blocks
     level: Rule
@@ -854,7 +862,8 @@ checks:
     title: 'Asynchronous resets: single bit, active low, coded with negedge'
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_always_013
     note: 'Limits: reset active level low; reset edge negedge.'
   2.4.1.1:
     title: Keep latch inference clearly separate from combinational logic
@@ -978,7 +987,8 @@ checks:
     title: Signals assigned in an always block must not appear in its own sensitivity list
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_always_011
   2.7.1.1:
     title: Test timing-critical or frequently toggling signals first in if chains
     level: Recommendation 3
@@ -993,7 +1003,8 @@ checks:
     title: Combinational if chains must end in a plain else, not else-if
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_statement_010
   2.7.2.1:
     title: Merge if branches whose bodies are identical
     level: Recommendation 1
@@ -1163,7 +1174,8 @@ checks:
     title: Avoid casex and casez
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_case_005
     note: Verilog only.
   2.8.4.4:
     title: Do not scatter per-bit x wildcards in casex items
@@ -1189,13 +1201,15 @@ checks:
     title: Case item labels must be constants, not variables or expressions
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_case_006
     note: Verilog only.
   2.8.5.4:
     title: Case selector must not contain logic or arithmetic operations
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_case_007
     note: Verilog only.
   2.8.6.1:
     title: In mixed nested if/case, prefer fewer conditions with more matches
@@ -1243,7 +1257,8 @@ checks:
     title: Parenthesize mixed logical operations even when precedence is clear
     level: Recommendation 2
     severity: Note
-    status: planned
+    rules:
+    - sv_statement_012
   2.10.1.3:
     title: Parenthesize expressions with two or more arithmetic operators
     level: Recommendation 2
@@ -1438,7 +1453,8 @@ checks:
     title: No arithmetic in if conditions
     level: Recommendation 1
     severity: Warning
-    status: planned
+    rules:
+    - sv_statement_011
   2.10.7.2:
     title: Hoist common expressions out of conditional branches
     level: Recommendation 2
@@ -1448,7 +1464,8 @@ checks:
     title: Operands of / and % must be plain signals, not expressions
     level: Rule
     severity: Error
-    status: planned
+    rules:
+    - sv_statement_013
   2.10.8.2:
     title: Dividend of / or % at most 12 bits
     level: Rule
@@ -1596,7 +1613,8 @@ checks:
     title: One signal per port/reg/wire declaration line, each commented
     level: Recommendation 3
     severity: Note
-    status: planned
+    rules:
+    - sv_declaration_003
   3.1.4.1:
     title: Good signal names are key to RTL readability
     level: Suggestion

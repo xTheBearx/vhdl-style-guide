@@ -46,3 +46,26 @@ default; the starc rule set enables it.
 .. code-block:: systemverilog
 
    module fifo #(parameter int Depth = 4) ();
+
+sv_declaration_003
+##################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_declaration_one_per_line`
+
+This rule checks that a declaration names one signal, as the STARC guide recommends (3.1.3.4), so each can have
+its own comment. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   logic valid, ready;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   logic valid;  // the data is valid
+   logic ready;  // the sink takes the data

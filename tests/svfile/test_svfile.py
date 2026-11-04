@@ -551,6 +551,34 @@ class test_rules(unittest.TestCase):
             [s for s in lOutput if any(f"({r})" in s for r in lRules)],
         )
 
+    def test_starc_checks_2(self):
+        # One violation of each; the reset tested by the first if is not a clock, and the case default may be anything
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "starc", "-ap"], "starc_more2.sv")
+        lRules = ("sv_function_006", "sv_function_007", "sv_function_008", "sv_always_010", "sv_always_011", "sv_always_012")
+        lRules += ("sv_always_013", "sv_always_014", "sv_statement_010", "sv_statement_011", "sv_statement_012", "sv_statement_013")
+        lRules += ("sv_case_005", "sv_case_006", "sv_case_007", "sv_declaration_003")
+        self.assertEqual(
+            [
+                "WARNING: starc_more2.sv(13)STARC-3.1.3.4 (sv_declaration_003) -- Declare one signal per declaration",
+                "ERROR: starc_more2.sv(19)STARC-2.1.2.3 (sv_function_006) -- Pass b_i to add as arguments",
+                "ERROR: starc_more2.sv(20)STARC-2.1.3.5 (sv_function_007) -- Do not assign valid in a function: return the value",
+                "ERROR: starc_more2.sv(25)STARC-2.1.2.5 (sv_function_008) -- Do not wait for a clock edge in a task",
+                "WARNING: starc_more2.sv(28)STARC-2.2.2.2 (sv_always_010) -- Remove the constant from the sensitivity list",
+                "ERROR: starc_more2.sv(28)STARC-2.6.2.2 (sv_always_011) -- Remove r, which the block assigns, from its sensitivity list",
+                "WARNING: starc_more2.sv(32)STARC-2.3.6.2 (sv_always_013) -- Make the asynchronous reset active low, with negedge",
+                "ERROR: starc_more2.sv(32)STARC-1.3.1.7/STARC-2.3.1.7 (sv_always_014) -- Give the register at most one asynchronous reset or set",
+                "ERROR: starc_more2.sv(40)STARC-2.3.3.1/STARC-2.3.3.2 (sv_always_012) -- Clock the always block on one edge of one clock",
+                "WARNING: starc_more2.sv(45)STARC-2.10.1.2 (sv_statement_012) -- Parenthesize the mixed && and ||",
+                "WARNING: starc_more2.sv(47)STARC-2.7.1.3 (sv_statement_010) -- End the if chain with an else",
+                "WARNING: starc_more2.sv(47)STARC-2.10.7.1 (sv_statement_011) -- Compute the arithmetic outside the if condition",
+                "ERROR: starc_more2.sv(50)STARC-2.10.8.1 (sv_statement_013) -- Divide signals, not expressions",
+                "WARNING: starc_more2.sv(51)STARC-2.8.4.3 (sv_case_005) -- Use case instead of casez",
+                "WARNING: starc_more2.sv(51)STARC-2.8.5.4 (sv_case_007) -- Compute the case selector in a signal of its own",
+                "ERROR: starc_more2.sv(52)STARC-2.8.5.3 (sv_case_006) -- Use a constant as the case label, not ready",
+            ],
+            [s for s in lOutput if any(f"({r})" in s for r in lRules)],
+        )
+
     def test_lint_do254(self):
         # The default rule set of lint mode labels the SystemVerilog rules with the DO-254 checks they implement
         _, lOutput, _ = self.run_mhsg(["--lint_only"], "lint.sv")

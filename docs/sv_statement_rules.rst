@@ -216,3 +216,110 @@ This rule checks that the body of a for loop does not change its loop variable, 
 
    for (int i = 0; i < 8; i += 2) begin
    end
+
+sv_statement_010
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_if_chain_else`
+
+This rule checks that a chain of if and else if in combinational logic ends with an else, as the STARC guide asks
+(2.7.1.3). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_comb begin
+       if (a) begin
+           y = 1'b0;
+       end else if (b) begin
+           y = 1'b1;
+       end
+   end
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_comb begin
+       if (a) begin
+           y = 1'b0;
+       end else begin
+           y = 1'b1;
+       end
+   end
+
+sv_statement_011
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_no_arithmetic_in_if`
+
+This rule checks for arithmetic in the condition of an if statement, as the STARC guide asks (2.10.7.1): compute
+it in a signal of its own. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   if (count + 1 == limit) begin
+       done = 1'b1;
+   end
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign next_count = count + 1;
+   ...
+   if (next_count == limit) begin
+       done = 1'b1;
+   end
+
+sv_statement_012
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_parenthesize_logical`
+
+This rule checks that && and || are not mixed without parentheses, as the STARC guide asks (2.10.1.2). It is
+disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   assign y = a && b || c;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign y = (a && b) || c;
+
+sv_statement_013
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_divide_signals`
+
+This rule checks that the operands of / and % are plain signals or constants, not expressions, as the STARC guide
+asks (2.10.8.1). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   assign y = (a + b) / c;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign sum = a + b;
+   assign y = sum / c;
