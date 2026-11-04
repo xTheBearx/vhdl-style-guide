@@ -2705,6 +2705,9 @@
         "sv_whitespace_013",
         "sv_whitespace_014",
         "sv_whitespace_015",
+        "sv_whitespace_016",
+        "sv_whitespace_017",
+        "sv_whitespace_018",
         "type_006",
         "type_007",
         "type_100",
@@ -64933,6 +64936,147 @@
           "name": "spaces",
           "default": 2,
           "definition": "spaces"
+        }
+      ]
+    },
+    {
+      "id": "sv_whitespace_016",
+      "alias": "sv_whitespace_parenthesis",
+      "category": "sv_whitespace",
+      "groups": [
+        "whitespace"
+      ],
+      "summary": "This rule checks for no space after an opening parenthesis and before a closing one, as Verible's formatter does. A parenthesis at the end or the start of a line, or followed by a comment, is not checked.",
+      "documentation": "sv_whitespace_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 2,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_whitespace_017",
+      "alias": "sv_whitespace_brace",
+      "category": "sv_whitespace",
+      "groups": [
+        "whitespace"
+      ],
+      "summary": "This rule checks for no space after the opening brace and before the closing brace of a concatenation, a replication or an assignment pattern, as Verible's formatter does. Other braces, such as those of a struct, are not checked. A brace at the end or the start of a line, or followed by a comment, is not checked.",
+      "documentation": "sv_whitespace_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 2,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_whitespace_018",
+      "alias": "sv_whitespace_parameter_port_list",
+      "category": "sv_whitespace",
+      "groups": [
+        "whitespace"
+      ],
+      "summary": "This rule checks for one space between the parenthesis closing the parameter list of a module, interface or program and the parenthesis opening its port list, as in ) (, as Verible's formatter does.",
+      "documentation": "sv_whitespace_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 2,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
         }
       ]
     },

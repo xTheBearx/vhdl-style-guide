@@ -292,6 +292,24 @@ class test_rules(unittest.TestCase):
             dCounts,
         )
 
+    def test_bracket_spacing(self):
+        # No space inside parentheses and the braces of concatenations and assignment patterns, one space in ) (;
+        # the braces of a struct and a parenthesis followed by a comment are left alone
+        _, lOutput, _ = self.run_mhsg(["-ap"], "brackets.sv")
+        lFound = [(int(s.split("(", 1)[1].split(")", 1)[0]), s.split(")", 1)[1].split(" ")[0]) for s in only(lOutput, "sv_whitespace")]
+        self.assertEqual(
+            [(3, "sv_whitespace_018")]
+            + [(9, "sv_whitespace_016")] * 2
+            + [(9, "sv_whitespace_017")] * 4
+            + [(10, "sv_whitespace_016")] * 2
+            + [(15, "sv_whitespace_016")] * 2
+            + [(16, "sv_whitespace_016")] * 2,
+            sorted(lFound),
+        )
+        _, lOutput, sAfter = self.run_mhsg(["--fix"], "brackets.sv")
+        self.assertEqual(read("brackets.fixed.sv"), sAfter)
+        self.assertEqual([], only(lOutput, "sv_whitespace"))
+
     def test_whitespace_fix(self):
         # The fix keeps the space before the packed dimension of a type, the empty case item, the empty argument,
         # the operators in brackets and the arguments of the macro; it removes the blank lines at the end
