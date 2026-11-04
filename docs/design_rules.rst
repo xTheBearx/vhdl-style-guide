@@ -508,3 +508,26 @@ are the registers of reset synchronizers.
 **Fix**
 
 Reset b_r with rst_a too, for example with a reset that combines both, or keep a_r stable while rst_a is asserted.
+
+design_019
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_mapped_logic_depth`
+
+This rule reports the longest combinational path of the design after it is mapped to look-up tables of
+**lut_size** inputs, 6 by default, when it has more than **maximum_levels** levels, 8 by default.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: mapping takes longer than
+          the other checks.
+
+design_007 counts the operators of a path before synthesis, which tells where a path is deep but not how deep it
+is in the device. This rule flattens the design, maps it with Yosys to look-up tables, and counts the tables on
+the longest path between registers, memories and the ports of the design, which is closer to the timing of the
+device. Mapping renames most signals, so the finding names the signal the path starts at, when it has a name, and
+is reported at the top of the design.
+
+**Violation**
+
+A chain of comparisons and multiplexers that maps to more look-up tables than allowed between two registers.

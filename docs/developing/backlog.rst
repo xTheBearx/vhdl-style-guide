@@ -40,8 +40,9 @@ Design analysis
   open-logic compute their resets with logic, and were taken for clears.
 * **Reset domain crossings into registers without a reset** are not reported by design_018, as their data during a
   reset is not used; a design that relies on such a register right after a reset would need them.
-* **Logic depth** counts operators before technology mapping, which is crude; a mapped count would be more realistic
-  but slower and loses names.
+* **Logic depth after mapping** (design_019) reports only the longest path of the design, at its top, as mapping
+  renames the signals in between; each path, with names, would need a mapping that keeps them, such as abc's with
+  the -dff and -keepff options, and a report of the path from the timing of the device.
 * **More real-world designs** in :code:`scripts/real_world_designs.yaml`: more of surf, which now analyzes with stub
   vendor packages as its clock manager does, and a design whose clocks come from several vendor clocking primitives.
 
