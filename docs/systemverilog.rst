@@ -239,10 +239,14 @@ The continuation lines of a statement have no level: :code:`sv_indent_002` check
 than the line that starts the statement, so lists aligned after their opening bracket (such as the arguments of a
 call continued under the first) are kept. A line starting with a closing bracket, with the opening bracket of a port
 list, with the next expression of a case item, or after an attribute on a line of its own may be at the level of
-the statement. Its fix follows the continuation line before it, or indents by :code:`continuation_indent` levels, 2
-by default, as Verible's formatter does with its wrap width. Not checked: code in inactive :code:`\`ifdef` branches
-and lines after a macro call, whose arguments are not parsed. A comment line continuing the comment at the end of the
-line above, aligned with it, keeps that alignment.
+the statement. Its fix follows the continuation line before it, or indents by :code:`continuation_indent` levels, 1
+by default: 4 spaces, as Verible's formatter does with its wrap width. Not checked: lines after a macro call, whose
+arguments are not parsed. A comment line continuing the comment at the end of the line above, aligned with it, keeps
+that alignment.
+
+Code in an inactive :code:`\`ifdef` branch is indented as if its branch were active: MHSG parses the file again with
+each macro its conditions test switched, defined when it is not and undefined when it is, up to 8 macros, and the
+code of a branch takes the levels it has where the branch is active. Only the indentation rules check that code.
 
 :code:`sv_indent_003` puts :code:`\`ifdef`, :code:`\`ifndef`, :code:`\`elsif`, :code:`\`else` and :code:`\`endif`
 at column 0, as Verible's formatter does, and the other directives and the macro calls that start a line at the level
@@ -257,7 +261,7 @@ on other projects, with these differences:
 * Verible joins a statement that fits in the line length onto one line and re-wraps some long ones; MHSG keeps the
   lines as written and checks only their indent.
 * Verible indents continuation lines by its wrap width, 4 spaces; MHSG accepts any indent past the start of the
-  statement and its fix uses :code:`continuation_indent` levels.
+  statement, and its fix indents by 4 spaces too.
 * Verible's placement of the line after a comment inside a statement varies; MHSG treats it as any continuation line.
 * Verible leaves a file with a syntax error unchanged; MHSG checks the lines before the first error, see
   :code:`sv_syntax_001`.

@@ -21,8 +21,8 @@ A comment is indented like the next line of code, or one level more above a line
 line continuing the comment at the end of the line above, aligned with it, stays aligned with it.
 
 Continuation lines, such as the second line of a long expression, are checked by sv_indent_002; preprocessor
-directives by sv_indent_003. Code in inactive branches of conditional directives is not checked,
-nor is a file with syntax errors, whose levels may be wrong near the errors, see sv_syntax_001.
+directives by sv_indent_003. Code in an inactive branch of a conditional directive is indented as where its branch
+is active. A file with syntax errors, whose levels may be wrong near the errors, is not checked, see sv_syntax_001.
 
 Two options follow other styles. **list_indent**, 1 by default, is the number of levels the ports and parameters
 of a declaration and the connections of an instance are indented; Verible's formatter indents them by its wrap
@@ -66,8 +66,8 @@ opening bracket of a port list, with the next expression of a case item, or afte
 own, may be at the level of that line.
 
 The fix indents a continuation line like the continuation line before it in the statement, or else by
-**continuation_indent** levels, 2 by default, more than the line that starts its statement, as Verible's formatter
-does with its wrap width; a closing bracket goes to the level of that line.
+**continuation_indent** levels, 1 by default, more than the line that starts its statement: 4 spaces, Verible's
+wrap width; a closing bracket goes to the level of that line.
 Continuation lines indented more, such as arguments aligned after their opening bracket, are left as they are.
 
 **Violation**
@@ -82,7 +82,7 @@ Continuation lines indented more, such as arguments aligned after their opening 
 .. code-block:: systemverilog
 
    assign valid_o = req_i &
-           ready_i;
+       ready_i;
 
 sv_indent_003
 #############

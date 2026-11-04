@@ -247,7 +247,7 @@ class test_rules(unittest.TestCase):
         _, lOutput, _ = self.run_mhsg(["-ap"], "continuation.sv")
         self.assertEqual(
             [
-                "ERROR: continuation.sv(9)sv_indent_002 -- Indent the continuation line by 12 spaces",
+                "ERROR: continuation.sv(9)sv_indent_002 -- Indent the continuation line by 8 spaces",
                 "ERROR: continuation.sv(17)sv_indent_002 -- Indent the continuation line by 12 spaces",
             ],
             only(lOutput, "sv_indent"),

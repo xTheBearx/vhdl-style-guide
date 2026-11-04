@@ -305,20 +305,14 @@ cases:
   - - 50
     - 'Add a unit delay to the register assignment, as in <= #1'
 - rule: sv_always_026
-  file: examples/svfile/indent.sv
+  file: examples/svfile/directives.fixed.sv
   expected:
-  - - 42
-    - 'Add a unit delay to the register assignment, as in <= #1'
-  - - 40
-    - 'Add a unit delay to the register assignment, as in <= #1'
-  - - 38
+  - - 16
     - 'Add a unit delay to the register assignment, as in <= #1'
 - rule: sv_always_026
-  file: examples/svfile/indent_options.sv
+  file: examples/svfile/directives.sv
   expected:
-  - - 22
-    - 'Add a unit delay to the register assignment, as in <= #1'
-  - - 19
+  - - 16
     - 'Add a unit delay to the register assignment, as in <= #1'
 - rule: sv_always_026
   file: examples/svfile/alignment.fixed.sv
@@ -1283,14 +1277,14 @@ cases:
   - - 2
     - Use a parameter for the constant DATA_OK
 - rule: sv_module_006
-  file: examples/svfile/sample.sv
+  file: examples/svfile/directives.fixed.sv
   expected:
-  - - 2
+  - - 3
     - Use a parameter for the constant WIDTH
 - rule: sv_module_006
-  file: examples/svfile/starc_more3.sv
+  file: examples/svfile/directives.sv
   expected:
-  - - 2
+  - - 3
     - Use a parameter for the constant WIDTH
 - rule: sv_module_006
   file: examples/svfile/alignment.fixed.sv
