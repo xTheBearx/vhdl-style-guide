@@ -1354,6 +1354,15 @@ cases:
   - - 14
     - Implicit conversion truncates from 8 to 4 bits
 - rule: sv_lint_001
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 20
+    - Implicit conversion expands from 6 to 8 bits
+  - - 24
+    - Implicit conversion truncates from 16 to 8 bits
+  - - 25
+    - Implicit conversion truncates from 32 to 8 bits
+- rule: sv_lint_001
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_lint_002
@@ -1367,10 +1376,10 @@ cases:
   - - 16
     - Latch inferred for 'l_o' because it is not assigned on all control paths
 - rule: sv_lint_002
-  file: examples/svfile/verilator/vl_top.sv
+  file: examples/svfile/starc_more2.sv
   expected:
-  - - 26
-    - Latch inferred for 's_o' because it is not assigned on all control paths
+  - - 46
+    - Latch inferred for 't' because it is not assigned on all control paths
 - rule: sv_lint_002
   file: examples/svfile/alignment.fixed.sv
   expected: []
@@ -1395,10 +1404,10 @@ cases:
   - - 19
     - Cannot mix continuous and procedural assignments to variable 'm_o'
 - rule: sv_lint_003
-  file: examples/svfile/whitespace.fixed.sv
+  file: examples/svfile/starc_more4.sv
   expected:
-  - - 14
-    - Variable 'y_o' driven by always_comb procedure cannot be written to by any other process
+  - - 12
+    - Variable 'q' driven by always_ff procedure cannot be written to by any other process
 - rule: sv_lint_003
   file: examples/svfile/alignment.fixed.sv
   expected: []
@@ -1407,6 +1416,11 @@ cases:
   expected:
   - - 20
     - Implicit net 'implicit_net' created
+- rule: sv_lint_004
+  file: examples/svfile/starc_more4.sv
+  expected:
+  - - 21
+    - Implicit net 't' created
 - rule: sv_lint_004
   file: examples/svfile/alignment.fixed.sv
   expected: []
@@ -1422,17 +1436,39 @@ cases:
   - - 17
     - Unused variable 'f'
 - rule: sv_lint_005
-  file: examples/svfile/lint.sv
+  file: examples/svfile/columns.fixed.sv
   expected:
-  - - 13
-    - Variable 'spare' is assigned but its value is never used
-  - - 20
-    - Implicit net 'implicit_net' is unused elsewhere
+  - - 2
+    - Unused port signal 'clk_i'
+  - - 3
+    - Unused port signal 'a_i'
+  - - 5
+    - Unused port signal 'c_i'
+  - - 8
+    - Unused variable 'x'
+  - - 9
+    - Unused net 'y'
+  - - 10
+    - Unused variable 'z'
+  - - 11
+    - Unused net 'w'
 - rule: sv_lint_005
-  file: examples/svfile/sample.sv
+  file: examples/svfile/columns.sv
   expected:
-  - - 7
-    - Unused parameter 'Depth'
+  - - 2
+    - Unused port signal 'clk_i'
+  - - 3
+    - Unused port signal 'a_i'
+  - - 5
+    - Unused port signal 'c_i'
+  - - 8
+    - Unused variable 'x'
+  - - 9
+    - Unused net 'y'
+  - - 10
+    - Unused variable 'z'
+  - - 11
+    - Unused net 'w'
 - rule: sv_lint_005
   file: examples/svfile/alignment.fixed.sv
   expected: []
@@ -1450,6 +1486,18 @@ cases:
   - - 30
     - Comparison of differently signed types ('logic[3:0]' and 'int')
 - rule: sv_lint_007
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 19
+    - Comparison of differently signed types ('integer' and 'logic[7:0]')
+- rule: sv_lint_007
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 29
+    - Implicit conversion changes signedness from 'logic signed[2:0]' to 'logic[2:0]'
+  - - 31
+    - Implicit conversion changes signedness from 'logic signed[7:0]' to 'logic[7:0]'
+- rule: sv_lint_007
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_lint_008
@@ -1458,26 +1506,47 @@ cases:
   - - 21
     - Add b_i to the sensitivity list, or use always_comb
 - rule: sv_lint_008
+  file: examples/svfile/sensitivity.sv
+  expected:
+  - - 29
+    - Add b_i, c_i to the sensitivity list, or use always_comb
+  - - 38
+    - Add u_sub.valid to the sensitivity list, or use always_comb
+- rule: sv_lint_008
+  file: examples/svfile/sensitivity_branches.sv
+  expected:
+  - - 21
+    - Add c_i, u to the sensitivity list, or use always_comb
+- rule: sv_lint_008
   file: examples/svfile/alignment.fixed.sv
   expected: []
+- rule: sv_lint_010
+  file: examples/svfile/columns.fixed.sv
+  expected:
+  - - 4
+    - Undriven output port 'b_o'
+  - - 6
+    - Undriven output port 'd_o'
+- rule: sv_lint_010
+  file: examples/svfile/columns.sv
+  expected:
+  - - 4
+    - Undriven output port 'b_o'
+  - - 6
+    - Undriven output port 'd_o'
 - rule: sv_lint_010
   file: examples/svfile/project/sub.sv
   expected:
   - - 5
     - Undriven output port 'unused_o'
 - rule: sv_lint_010
-  file: examples/svfile/style.fixed.sv
-  expected:
-  - - 3
-    - Variable 'b' is never assigned a value
-- rule: sv_lint_010
-  file: examples/svfile/style.sv
-  expected:
-  - - 3
-    - Variable 'b' is never assigned a value
-- rule: sv_lint_010
   file: examples/svfile/alignment.fixed.sv
   expected: []
+- rule: sv_lint_012
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 42
+    - 'Variable also written to in always_comb (IEEE 1800-2017 9.2.2.2): ''r'' (Verilator MULTIDRIVEN)'
 - rule: sv_lint_012
   file: examples/svfile/alignment.fixed.sv
   expected: []
@@ -1499,6 +1568,11 @@ cases:
   expected:
   - - 23
     - Rename Data, which differs from data only in case
+- rule: sv_naming_012
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 12
+    - Rename Y_O, which differs from y_o only in case
 - rule: sv_naming_012
   file: examples/svfile/alignment.fixed.sv
   expected: []
@@ -2746,4 +2820,153 @@ design_cases:
 - rule: design_017
   name: reset domain crossing
   design: *id012
+  expected: []
+- rule: design_001
+  name: STARC design items
+  design: &id013
+    top: starc_design_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/starc_design.vhd
+  expected: []
+- rule: design_002
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_003
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_004
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_005
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_006
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_007
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_008
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_009
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_010
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_011
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_012
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_013
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_014
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_015
+  name: STARC design items
+  design: *id013
+  expected:
+  - - examples/design/starc_design.vhd
+    - 70
+    - 'Reset reset is released asynchronously: it resets registers clocked by clk without a reset synchronizer'
+- rule: design_016
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_017
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_001
+  name: inout port connections
+  design: &id014
+    top: inout_wire_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/inout_wire.v
+  expected: []
+- rule: design_002
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_003
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_004
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_005
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_006
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_007
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_008
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_009
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_010
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_011
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_012
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_013
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_014
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_015
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_016
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_017
+  name: inout port connections
+  design: *id014
   expected: []

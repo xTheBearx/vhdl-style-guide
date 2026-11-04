@@ -259,7 +259,8 @@ checks:
     title: Use asynchronous set/reset pins only for the initial reset
     level: Recommendation 1
     severity: Warning
-    status: design
+    rules:
+    - design_014
   1.3.1.4:
     title: Put synchronously-reset registers in their own hierarchy level
     level: Suggestion
@@ -277,7 +278,8 @@ checks:
     title: One reset net must not feed both asynchronous and synchronous resets
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - design_022
   1.3.1.7:
     title: No flip-flop with both asynchronous set and asynchronous reset
     level: Recommendation 1
@@ -331,7 +333,8 @@ checks:
     title: Only dummy buffers on clock trees; no other primitive cells
     level: Suggestion
     severity: Note
-    status: design
+    rules:
+    - design_012
   1.4.2.2:
     title: Balance each clock tree according to the number of sinks
     level: Suggestion
@@ -467,7 +470,8 @@ checks:
     title: Keep each hierarchy level at 40,000 gates or fewer; smaller at high frequency
     level: Recommendation 2
     severity: Note
-    status: design
+    rules:
+    - design_024
     note: 'Limits: max gates per level 40000.'
   1.6.1.2:
     title: Use 10,000-40,000-gate basic blocks; no logic above them except CTS buffers
@@ -957,7 +961,8 @@ checks:
     title: At most five tri-state drivers per bus
     level: Recommendation 2
     severity: Note
-    status: design
+    rules:
+    - design_021
     note: 'Limits: max tristate drivers 5.'
   2.5.1.5:
     title: Never connect multiple non-tri-state drivers to one net
@@ -969,7 +974,8 @@ checks:
     title: Do not connect inout ports directly to input or output ports
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - design_023
   2.5.1.7:
     title: Do not use tri-state signals in if conditions
     level: Recommendation 2
@@ -1357,12 +1363,14 @@ checks:
     title: Do not use RAM outputs directly in if conditions
     level: Recommendation 1
     severity: Warning
-    status: design
+    rules:
+    - design_020
   2.10.1.8:
     title: Do not use RAM outputs as case selectors unless default assigns x
     level: Recommendation 1
     severity: Warning
-    status: design
+    rules:
+    - design_020
   2.10.2.1:
     title: Logical results (true/false) can be used as logic values to simplify code
     level: Suggestion

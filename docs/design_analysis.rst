@@ -197,6 +197,13 @@ Design rules
 * :code:`design_017` reports black boxes whose clock domain behaviour is not declared, see below.
 * :code:`design_018` reports reset domain crossings: data from a register with one asynchronous reset into a register
   of the same clock that another asynchronous reset clears, unless that reset also comes from the first.
+* :code:`design_020` reports memory outputs that decide an if condition or a case selector (STARC 2.10.1.7, 2.10.1.8).
+* :code:`design_021` reports buses with more than :code:`maximum_drivers` tri-state drivers, 5 by default, counted
+  across the hierarchy (STARC 2.5.1.4).
+* :code:`design_022` reports resets used both as an asynchronous and as a synchronous reset (STARC 1.3.1.6).
+* :code:`design_023` reports inout ports wired directly to an input or output port of the same module (STARC 2.5.1.6).
+* :code:`design_024`, disabled by default as it takes longer, maps the design to gates and reports modules whose own
+  logic has more than :code:`maximum_gates` NAND gate equivalents, 40000 by default (STARC 1.6.1.1).
 
 See :doc:`design_rules`. Design rules are configured like other rules, for example with a different severity:
 
