@@ -1,0 +1,263 @@
+# Clock domain declarations of Lattice primitives of the ECP5 and iCE40 families, for design analysis.
+#
+# Include it in the design section with:  black_box_libraries: [lattice]
+#
+# The port names and behaviour are taken from the published documents: the FPGA Libraries Reference Guide, the ECP5
+# and ECP5-5G sysCLOCK PLL/DLL Design and User Guide (TN1263), the ECP5 Memory Usage Guide (TN1264), and the iCE40
+# Technology Library. No vendor file is copied. Check the declarations against the guide of the tool version you
+# use: a declaration in your design section takes precedence over this library, port by port.
+#
+# Ports whose behaviour depends on how a primitive is used are left out on purpose, so design analysis asks for
+# them: the registered paths of SB_GB_IO, for example. SERDES, DDR memory interfaces and other IP cores are not
+# included; declare them in the design section.
+#
+# Choices to review:
+# - PLL outputs are derived from the reference clock, so they are synchronous to it and to each other. The dynamic
+#   phase shift, standby and bypass inputs are taken to be asynchronous.
+# - The output of a dynamic clock select (DCSC) is a clock of its own, asynchronous to both inputs.
+# - The resets of DP16KD and PDPW16KD are synchronous unless RESETMODE is ASYNC.
+# - The on-chip oscillators are clocks of their own, asynchronous to every other clock.
+
+black_boxes:
+
+  # ECP5 clocks
+
+  DCCA:
+    archetype: clock_buffer
+    input: CLKI
+    output: CLKO
+    enable: CE
+    reference: FPGA libraries reference guide, DCCA
+  DCSC:
+    reference: FPGA libraries reference guide, DCSC
+    ports:
+      CLK0: clock
+      CLK1: clock
+      DCSOUT: {clock_out: {relation: independent}}
+      SEL0: async
+      SEL1: async
+      MODESEL: async
+  EHXPLLL:
+    reference: TN1263, EHXPLLL
+    archetype: clock_generator
+    input: CLKI
+    outputs: [CLKOP, CLKOS, CLKOS2, CLKOS3]
+    reset: RST
+    locked: LOCK
+    ports:
+      CLKFB: clock
+      REFCLK: {clock_out: {from: CLKI, relation: same}}
+      CLKINTFB: {clock_out: {from: CLKI, relation: derived}}
+      ENCLKOP: {enable: CLKOP}
+      ENCLKOS: {enable: CLKOS}
+      ENCLKOS2: {enable: CLKOS2}
+      ENCLKOS3: {enable: CLKOS3}
+      INTLOCK: async
+      STDBY: async
+      PLLWAKESYNC: async
+      PHASE*: async
+  OSCG:
+    reference: FPGA libraries reference guide, OSCG
+    ports:
+      OSC: {clock_out: {relation: independent}}
+
+  # ECP5 input and output buffers and registers
+
+  IB:
+    archetype: buffer
+    input: I
+    output: O
+    reference: FPGA libraries reference guide, IB
+  OB:
+    archetype: buffer
+    input: I
+    output: O
+    reference: FPGA libraries reference guide, OB
+  OBZ:
+    archetype: buffer
+    input: [I, T]
+    output: O
+    reference: FPGA libraries reference guide, OBZ
+  BB:
+    reference: FPGA libraries reference guide, BB
+    ports:
+      B: {path: [I, T]}
+      O: {path: [B]}
+  IDDRX1F:
+    reference: FPGA libraries reference guide, IDDRX1F
+    archetype: single_clock
+    clock: SCLK
+    async_reset: RST
+  ODDRX1F:
+    reference: FPGA libraries reference guide, ODDRX1F
+    archetype: single_clock
+    clock: SCLK
+    async_reset: RST
+
+  # ECP5 registers
+
+  FD1S3AX:
+    reference: FPGA libraries reference guide, FD1S3AX
+    archetype: single_clock
+    clock: CK
+  FD1P3AX:
+    reference: FPGA libraries reference guide, FD1P3AX
+    archetype: single_clock
+    clock: CK
+  FD1P3DX:
+    reference: FPGA libraries reference guide, FD1P3DX
+    archetype: single_clock
+    clock: CK
+    async_reset: CD
+  FD1P3BX:
+    reference: FPGA libraries reference guide, FD1P3BX
+    archetype: single_clock
+    clock: CK
+    async_reset: PD
+  FD1P3IX:
+    reference: FPGA libraries reference guide, FD1P3IX
+    archetype: single_clock
+    clock: CK
+  FD1P3JX:
+    reference: FPGA libraries reference guide, FD1P3JX
+    archetype: single_clock
+    clock: CK
+
+  # ECP5 block RAM
+
+  DP16KD:
+    reference: TN1264, DP16KD
+    archetype: dual_clock
+    sides:
+      CLKA: ["DIA*", "ADA*", "DOA*", CEA, OCEA, WEA, "CSA*", RSTA]
+      CLKB: ["DIB*", "ADB*", "DOB*", CEB, OCEB, WEB, "CSB*", RSTB]
+    variants:
+      - when: {RESETMODE: ASYNC}
+        ports:
+          RSTA: {reset_in: async}
+          RSTB: {reset_in: async}
+  PDPW16KD:
+    reference: TN1264, PDPW16KD
+    archetype: dual_clock
+    sides:
+      CLKW: ["DI*", "ADW*", "BE*", CEW, "CSW*"]
+      CLKR: ["DO*", "ADR*", CER, OCER, "CSR*", RST]
+    variants:
+      - when: {RESETMODE: ASYNC}
+        ports:
+          RST: {reset_in: async}
+
+  # Global reset
+
+  GSR:
+    reference: FPGA libraries reference guide, GSR
+    ports:
+      GSR: {reset_in: async}
+
+  # iCE40
+
+  SB_GB:
+    archetype: clock_buffer
+    input: USER_SIGNAL_TO_GLOBAL_BUFFER
+    output: GLOBAL_BUFFER_OUTPUT
+    reference: iCE40 technology library, SB_GB
+  SB_GB_IO:
+    reference: iCE40 technology library, SB_GB_IO
+    ports:
+      PACKAGE_PIN: clock
+      GLOBAL_BUFFER_OUTPUT: {clock_out: {from: PACKAGE_PIN, relation: same}}
+      INPUT_CLK: clock
+      OUTPUT_CLK: clock
+  SB_PLL40_CORE:
+    reference: iCE40 technology library, SB_PLL40_CORE
+    archetype: clock_generator
+    input: REFERENCECLK
+    outputs: [PLLOUTCORE, PLLOUTGLOBAL]
+    reset: RESETB
+    locked: LOCK
+    ports:
+      EXTFEEDBACK: clock
+      BYPASS: async
+      DYNAMICDELAY: async
+      LATCHINPUTVALUE: async
+      SCLK: clock
+      SDI: {sync: SCLK}
+      SDO: {sync: SCLK}
+  SB_PLL40_PAD:
+    reference: iCE40 technology library, SB_PLL40_PAD
+    archetype: clock_generator
+    input: PACKAGEPIN
+    outputs: [PLLOUTCORE, PLLOUTGLOBAL]
+    reset: RESETB
+    locked: LOCK
+    ports:
+      EXTFEEDBACK: clock
+      BYPASS: async
+      DYNAMICDELAY: async
+      LATCHINPUTVALUE: async
+      SCLK: clock
+      SDI: {sync: SCLK}
+      SDO: {sync: SCLK}
+  SB_HFOSC:
+    reference: iCE40 technology library, SB_HFOSC
+    ports:
+      CLKHF: {clock_out: {relation: independent}}
+      CLKHFEN: async
+      CLKHFPU: async
+      TRIM*: async
+  SB_LFOSC:
+    reference: iCE40 technology library, SB_LFOSC
+    ports:
+      CLKLF: {clock_out: {relation: independent}}
+      CLKLFEN: async
+      CLKLFPU: async
+  SB_RAM40_4K:
+    reference: iCE40 technology library, SB_RAM40_4K
+    archetype: dual_clock
+    sides:
+      WCLK: [WADDR, WDATA, WE, WCLKE, MASK]
+      RCLK: [RADDR, RDATA, RE, RCLKE]
+  SB_DFF:
+    archetype: single_clock
+    clock: C
+    reference: iCE40 technology library, SB_DFF
+  SB_DFFE:
+    archetype: single_clock
+    clock: C
+    reference: iCE40 technology library, SB_DFFE
+  SB_DFFSR:
+    archetype: single_clock
+    clock: C
+    reference: iCE40 technology library, SB_DFFSR
+  SB_DFFSS:
+    archetype: single_clock
+    clock: C
+    reference: iCE40 technology library, SB_DFFSS
+  SB_DFFESR:
+    archetype: single_clock
+    clock: C
+    reference: iCE40 technology library, SB_DFFESR
+  SB_DFFESS:
+    archetype: single_clock
+    clock: C
+    reference: iCE40 technology library, SB_DFFESS
+  SB_DFFR:
+    archetype: single_clock
+    clock: C
+    async_reset: R
+    reference: iCE40 technology library, SB_DFFR
+  SB_DFFS:
+    archetype: single_clock
+    clock: C
+    async_reset: S
+    reference: iCE40 technology library, SB_DFFS
+  SB_DFFER:
+    archetype: single_clock
+    clock: C
+    async_reset: R
+    reference: iCE40 technology library, SB_DFFER
+  SB_DFFES:
+    archetype: single_clock
+    clock: C
+    async_reset: S
+    reference: iCE40 technology library, SB_DFFES

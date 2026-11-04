@@ -88,7 +88,7 @@ def value_text(oValue, sType=None):
     return sValue
 
 
-def analysis_groups(oDesign, oTools, sWorkDirectory, oResult):
+def analysis_groups(oDesign, oTools, sWorkDirectory, oResult, lTops=None):
     """
     Returns the VHDL files to analyze as (library, files) pairs, in the order they are analyzed, or None if GHDL could
     not find the order; its messages are then in oResult. The Verilog files of a design of both languages are read
@@ -112,22 +112,29 @@ def analysis_groups(oDesign, oTools, sWorkDirectory, oResult):
             return None
         for sFile in lFiles:
             dLibraries.setdefault(os.path.abspath(sFile), (sLibrary, sFile))
-    sOrder = os.path.join(sDirectory, "order.txt")
-    lCommand = [oTools.ghdl, "--elab-order"] + lOptions + [f"--work={oDesign.top_library}"] + top_units(oDesign)
-    if not run_ghdl(oResult, oTools, lCommand, "analysis", sOrder):
-        return None
+    # The top entity, or for a Verilog top the VHDL entities it instantiates, as (library, units)
+    lTops = lTops if lTops is not None else [(oDesign.top_library, top_units(oDesign))]
+    lOrder = []
+    for iTop, (sLibrary, lUnits) in enumerate(lTops):
+        sOrder = os.path.join(sDirectory, f"order{iTop}.txt")
+        lCommand = [oTools.ghdl, "--elab-order"] + lOptions + [f"--work={sLibrary}"] + lUnits
+        if not run_ghdl(oResult, oTools, lCommand, "analysis", sOrder):
+            return None
+        with open(sOrder, encoding="utf-8") as oFile:
+            lOrder += [s.strip() for s in oFile.read().splitlines() if s.strip()]
     # The warnings of these steps, such as unbound components, come again when the design is analyzed and elaborated
     del oResult.messages[iMessages:]
     lGroups = []
-    with open(sOrder, encoding="utf-8") as oFile:
-        for sLine in oFile.read().splitlines():
-            tFile = dLibraries.get(os.path.abspath(sLine.strip())) if sLine.strip() else None
-            if tFile is None:
-                continue
-            if lGroups and lGroups[-1][0] == tFile[0]:
-                lGroups[-1][1].append(tFile[1])
-            else:
-                lGroups.append((tFile[0], [tFile[1]]))
+    setDone = set()
+    for sLine in lOrder:
+        tFile = dLibraries.get(os.path.abspath(sLine))
+        if tFile is None or tFile in setDone:
+            continue
+        setDone.add(tFile)
+        if lGroups and lGroups[-1][0] == tFile[0]:
+            lGroups[-1][1].append(tFile[1])
+        else:
+            lGroups.append((tFile[0], [tFile[1]]))
     if not lGroups:
         oResult.failed_stage = "analysis"
         oResult.messages.append(Message(None, 0, 0, "error", f"GHDL gave no compile order for {oDesign.top} (order: auto)", "analysis"))
@@ -147,6 +154,8 @@ def run(oDesign, oTools, sWorkDirectory):
     """Runs the steps in the work directory and returns a Result. Stops at the first step that fails."""
     if oDesign.language == "systemverilog":
         return run_verilog(oDesign, oTools, sWorkDirectory)
+    if oDesign.language == "mixed" and oDesign.top in verilog_black_boxes.defined_modules(oDesign):
+        return run_verilog_top(oDesign, oTools, sWorkDirectory)
     oResult = Result()
     os.makedirs(sWorkDirectory, exist_ok=True)
     stubs.write(oDesign, sWorkDirectory)
@@ -204,6 +213,82 @@ def run_verilog(oDesign, oTools, sWorkDirectory):
     lCommand = [oTools.yosys, *lOptions, "-q", "-l", sLog, "-p", sScript]
     oResult.commands.append(lCommand)
     oProcess = subprocess.run(lCommand, capture_output=True, text=True, env=oTools.environment, check=False)
+    oResult.messages.extend(parse_verilog_messages(oProcess.stderr, "verilog"))
+    if os.path.isfile(sLog):
+        with open(sLog, encoding="utf-8", errors="replace") as oFile:
+            oResult.yosys_log = oFile.read()
+    if oProcess.returncode != 0 or not os.path.isfile(sNetlist):
+        oResult.failed_stage = "verilog"
+        if not any(o.severity in (None, "error") for o in oResult.messages):
+            sText = (oProcess.stderr.strip() or "Yosys failed").splitlines()[-1]
+            oResult.messages.append(Message(None, 0, 0, "error", sText, "verilog"))
+        return oResult
+    with open(sNetlist, encoding="utf-8") as oFile:
+        oResult.netlist = json.load(oFile)
+    return oResult
+
+
+reEntity = re.compile(r"^\s*entity\s+([a-z]\w*)\s+is\b", re.IGNORECASE | re.MULTILINE)
+
+
+def vhdl_entities(oDesign):
+    """{entity name in lower case: library} of the VHDL files of a design."""
+    dReturn = {}
+    for oLibrary in oDesign.libraries:
+        for sFile in oLibrary.files:
+            if language.of_file(sFile) != language.VHDL:
+                continue
+            try:
+                with open(sFile, encoding="utf-8", errors="replace") as oFile:
+                    sText = re.sub(r"--[^\n]*", "", oFile.read())
+            except OSError:
+                continue
+            for sEntity in reEntity.findall(sText):
+                dReturn.setdefault(sEntity.lower(), oLibrary.name)
+    return dReturn
+
+
+def run_verilog_top(oDesign, oTools, sWorkDirectory):
+    """
+    Runs a design of both languages whose top is a Verilog module: GHDL analyzes the VHDL, Yosys elaborates each VHDL
+    entity the Verilog instantiates with the ghdl command, with the defaults of its generics, then reads the Verilog
+    and elaborates the top module.
+    """
+    oResult = Result()
+    os.makedirs(sWorkDirectory, exist_ok=True)
+    stubs.write(oDesign, sWorkDirectory)
+    dVhdlEntities = vhdl_entities(oDesign)
+    # The VHDL entities the Verilog instantiates, as the Verilog names them
+    dUsed = {s: dVhdlEntities[s.lower()] for s in verilog_black_boxes.undefined_modules(oDesign) if s.lower() in dVhdlEntities}
+    lTops = [(sLibrary, [sModule.lower()]) for sModule, sLibrary in dUsed.items()]
+    lGroups = analysis_groups(oDesign, oTools, sWorkDirectory, oResult, lTops) if lTops or oDesign.order != "auto" else []
+    if lGroups is None:
+        return oResult
+    for sLibrary, lFiles in lGroups:
+        lCommand = [oTools.ghdl, "-a"] + ghdl_options(oDesign, sWorkDirectory) + [f"--work={sLibrary}"] + lFiles
+        if not run_ghdl(oResult, oTools, lCommand, "analysis"):
+            return oResult
+    lCommands = []
+    for sModule, sLibrary in dUsed.items():
+        lCommands.append("ghdl " + " ".join(ghdl_options(oDesign, sWorkDirectory) + [f"--work={sLibrary}", "--latches", sModule.lower()]))
+        if sModule != sModule.lower():
+            # GHDL names the module in lower case; Verilog names it as written
+            lCommands.append(f"rename {sModule.lower()} {sModule}")
+    sNetlist = os.path.join(sWorkDirectory, "design.json")
+    sLog = os.path.join(sWorkDirectory, "yosys.log")
+    sBlackBoxes = verilog_black_boxes.read_commands(
+        oDesign,
+        sWorkDirectory,
+        tools.data_directory(oTools.yosys),
+        oDesign.black_box_libraries,
+        set(dUsed),
+    )
+    sRead, lOptions = verilog_read_files(oDesign, oTools, oDesign.top)
+    sScript = "; ".join([*lCommands, *([sBlackBoxes] if sBlackBoxes else []), sRead, "proc", "check", f"write_json {quote(sNetlist)}"])
+    lCommand = [oTools.yosys, *yosys_module_options(oTools), *lOptions, "-q", "-l", sLog, "-p", sScript]
+    oResult.commands.append(lCommand)
+    oProcess = subprocess.run(lCommand, capture_output=True, text=True, env=oTools.environment, check=False)
+    oResult.messages.extend(parse_messages(oProcess.stderr, "yosys"))
     oResult.messages.extend(parse_verilog_messages(oProcess.stderr, "verilog"))
     if os.path.isfile(sLog):
         with open(sLog, encoding="utf-8", errors="replace") as oFile:

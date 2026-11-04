@@ -27,8 +27,9 @@ Design analysis
 
 * **Formal reachability (plan step 6).** Cover checks per branch and state with SymbiYosys, assumptions, time budgets
   and three-way results. SymbiYosys is not packaged for Ubuntu; it needs the YosysHQ OSS CAD Suite.
-* **Black box libraries for more primitives.** Transceivers, SERDES (ISERDES, OSERDES), math blocks, Microchip micro
-  SRAM, block RAM ECC and cascade ports, and the Intel and Lattice primitives have no declarations yet.
+* **Black box libraries for more primitives.** Transceivers, PCIe and memory interface cores have no declarations;
+  the Intel and Lattice libraries cover the common primitives only. The names of the Intel megafunctions could not be
+  checked against cell models, as Yosys has none for them.
 * **Stand-in models and pragmas for black boxes** (options 4 and 5 of the black box plan): an analysis-only VHDL
   architecture for complex IP, and comment pragmas in component declarations. Not planned unless asked for.
 * **Netlist checks and declarations of single instances.** design_003 and design_007 follow the path roles of black
@@ -72,12 +73,13 @@ under way: the entries below.
 * **STARC rule set**: 50 of the 613 items of the STARC guide have rules. The per-file items (216) are planned with
   the SystemVerilog rules, the clock and reset items with design analysis of Verilog designs. The catalogue the set
   was made from records each item's limits and its Verible equivalent, kept in the notes of the set.
-* **Sensitivity lists** (sv_lint_008) are compared with the names the block reads, by name; reads through
-  functions and hierarchical names are not followed.
+* **Sensitivity lists** (sv_lint_008) follow the functions and tasks of the file, not those of packages or other
+  files; a variable written inside an if or case before it is read still counts as read.
 * **SystemVerilog designs without the yosys-slang plugin**: Yosys' own reader handles Verilog and part of
   SystemVerilog; ibex and common_cells need the plugin, which is not packaged for Ubuntu. Not yet tried with it.
-* **Mixed designs with a Verilog top** and VHDL modules: Yosys would need each VHDL entity the Verilog instantiates
-  elaborated with the ghdl command first; the design section could list them.
+* **Generics of VHDL entities under a Verilog top**: each entity is elaborated once with the defaults of its generics;
+  the parameters a Verilog instance sets would need an elaboration of the entity per set of values, under a name of
+  its own.
 * **Black boxes in Verilog designs with read_slang**: the modules made for black boxes are read with read_verilog
   -lib before the design; whether read_slang links instances to them is not known. Yosys has cell models for Xilinx
   only among the vendors with black box libraries.

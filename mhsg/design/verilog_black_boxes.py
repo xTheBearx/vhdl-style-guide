@@ -25,6 +25,8 @@ from mhsg.svFile import preprocessor, verilator
 # Yosys' cell models of the vendors whose black box libraries come with mhsg, under its data directory (+/)
 YOSYS_MODELS = {
     "xilinx": ["xilinx/cells_sim.v", "xilinx/cells_xtra.v"],
+    "lattice": ["ecp5/cells_sim.v", "ecp5/cells_bb.v", "ice40/cells_sim.v"],
+    "microchip": ["sf2/cells_sim.v"],
 }
 
 # The attribute of a stub whose inout ports are made inputs or outputs for each instance, see netlist.py
@@ -34,19 +36,32 @@ INPUT_ROLES = ("clock", "enable", "reset_in", "static")
 OUTPUT_ROLES = ("path", "clock_out", "reset_out", "synchronized")
 
 
-def undefined_modules(oDesign):
-    """Returns {module: what its instances name} for the modules the Verilog files instantiate but do not define."""
-    lFiles = oDesign.verilog_files()
-    if not lFiles:
-        return {}
+def trees(oDesign):
+    """The pyslang syntax trees of the Verilog and SystemVerilog files of a design, with its defines."""
     oOptions = preprocessor.options({"systemverilog": {"defines": oDesign.defines, "include_directories": oDesign.include_directories}})
     lTrees = []
-    for sFile in lFiles:
+    for sFile in oDesign.verilog_files():
         try:
             lTrees.append(SyntaxTree.fromFile(sFile, oOptions) if oOptions is not None else SyntaxTree.fromFile(sFile))
         except (OSError, RuntimeError, ValueError):
             continue
-    return verilator.undefined_modules(lTrees)
+    return lTrees
+
+
+def undefined_modules(oDesign, setExclude=()):
+    """
+    Returns {module: what its instances name} for the modules the Verilog files instantiate but do not define, leaving
+    out those in setExclude, such as VHDL entities.
+    """
+    if not oDesign.verilog_files():
+        return {}
+    dReturn = verilator.undefined_modules(trees(oDesign))
+    return {k: v for k, v in dReturn.items() if k not in setExclude}
+
+
+def defined_modules(oDesign):
+    """The names of the modules, interfaces and programs the Verilog and SystemVerilog files define."""
+    return {verilator.name_of(o.header.name) for oTree in trees(oDesign) for o in verilator.nodes(oTree) if o.kind in verilator.DEFINITIONS}
 
 
 def model_modules(sDataDirectory, lFiles):
@@ -117,12 +132,13 @@ def stub(oDesign, sModule, dInstances):
     return f"{sAttribute}module {sModule}{sParameters}{sPorts};\nendmodule\n"
 
 
-def read_commands(oDesign, sWorkDirectory, sDataDirectory, lLibraries):
+def read_commands(oDesign, sWorkDirectory, sDataDirectory, lLibraries, setExclude=()):
     """
     Returns the Yosys commands that read the black boxes of a design, or "" if it has none: Yosys' cell models of the
     vendors in lLibraries that define some of them, and a file of stubs for the others, written to the work directory.
+    Modules in setExclude, such as the VHDL entities of a Verilog top, are not black boxes.
     """
-    dUndefined = undefined_modules(oDesign)
+    dUndefined = undefined_modules(oDesign, setExclude)
     if not dUndefined:
         return ""
     dModels = model_modules(sDataDirectory, [s for sLibrary in lLibraries for s in YOSYS_MODELS.get(sLibrary, [])])

@@ -1,0 +1,89 @@
+# Clock domain declarations of Intel (formerly Altera) megafunctions and primitives, for design analysis.
+#
+# Include it in the design section with:  black_box_libraries: [intel]
+#
+# The port names and behaviour are taken from the published user guides: the Embedded Memory User Guide (altsyncram),
+# the SCFIFO and DCFIFO IP Cores User Guide, the PLL user guides (altpll), the Designing with Low-Level Primitives
+# User Guide (GLOBAL) and the GPIO and ALTDDIO user guides. No vendor file is copied. Check the declarations against
+# the guide of the Quartus version you use: a declaration in your design section takes precedence over this library,
+# port by port.
+#
+# Ports whose behaviour depends on how a megafunction is used are left out on purpose, so design analysis asks for
+# them: the ECC status of altsyncram and the extra outputs of altpll, for example. Transceivers, memory interfaces
+# and other IP cores are not included; declare them in the design section.
+#
+# Choices to review:
+# - The ports of side B of altsyncram are timed by clock1, unless ADDRESS_REG_B or OUTDATA_REG_B select clock0.
+#   An unregistered q_b follows the clock of its address register.
+# - altpll outputs are derived from inclk, so they are synchronous to it and to each other.
+
+black_boxes:
+
+  # Clock buffers and clock generation
+
+  global:
+    archetype: clock_buffer
+    input: a_in
+    output: a_out
+    reference: Designing with low-level primitives, GLOBAL
+  altpll:
+    archetype: clock_generator
+    input: inclk
+    outputs: clk
+    reset: areset
+    locked: locked
+    reference: ALTPLL user guide
+
+  # Memory and FIFOs
+
+  altsyncram:
+    reference: Embedded memory user guide, altsyncram
+    archetype: dual_clock
+    sides:
+      clock0: [address_a, data_a, wren_a, rden_a, byteena_a, addressstall_a, q_a, clocken0]
+      clock1: [address_b, data_b, wren_b, rden_b, byteena_b, addressstall_b, q_b, clocken1]
+    ports:
+      aclr0: {reset_in: async}
+      aclr1: {reset_in: async}
+    variants:
+      - when: {OUTDATA_REG_B: CLOCK0}
+        ports:
+          q_b: {sync: clock0}
+      - when: {OUTDATA_REG_B: CLOCK1}
+        ports:
+          q_b: {sync: clock1}
+      - when: {ADDRESS_REG_B: CLOCK0}
+        ports:
+          address_b: {sync: clock0}
+          data_b: {sync: clock0}
+          wren_b: {sync: clock0}
+          rden_b: {sync: clock0}
+          byteena_b: {sync: clock0}
+          addressstall_b: {sync: clock0}
+          q_b: {sync: clock0}
+  dcfifo:
+    reference: SCFIFO and DCFIFO IP cores user guide, DCFIFO
+    archetype: dual_clock_fifo
+    sides:
+      wrclk: [data, wrreq, wrfull, wrempty, wrusedw]
+      rdclk: [q, rdreq, rdempty, rdfull, rdusedw]
+    ports:
+      aclr: {reset_in: async}
+  scfifo:
+    reference: SCFIFO and DCFIFO IP cores user guide, SCFIFO
+    archetype: single_clock
+    clock: clock
+    async_reset: aclr
+
+  # Double data rate input and output registers
+
+  altddio_in:
+    reference: ALTDDIO user guide, ALTDDIO_IN
+    archetype: single_clock
+    clock: inclock
+    async_reset: aclr
+  altddio_out:
+    reference: ALTDDIO user guide, ALTDDIO_OUT
+    archetype: single_clock
+    clock: outclock
+    async_reset: aclr

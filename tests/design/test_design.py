@@ -536,7 +536,7 @@ class test_black_box_declarations(unittest.TestCase):
 
 class test_declaration_libraries(unittest.TestCase):
     def test_libraries_parse(self):
-        self.assertEqual(["microchip", "xilinx"], black_box.built_in_libraries())
+        self.assertEqual(["intel", "lattice", "microchip", "xilinx"], black_box.built_in_libraries())
         for sName in black_box.built_in_libraries():
             with self.subTest(sName):
                 oLibrary = black_box.from_design({"black_box_libraries": [sName]})
@@ -565,7 +565,7 @@ class test_declaration_libraries(unittest.TestCase):
     def test_unknown_library(self):
         with self.assertRaises(exceptions.ConfigurationError) as oContext:
             black_box.from_design({"black_box_libraries": ["acme"]})
-        self.assertIn("not a file or a library that comes with mhsg (microchip, xilinx)", oContext.exception.message)
+        self.assertIn("not a file or a library that comes with mhsg (intel, lattice, microchip, xilinx)", oContext.exception.message)
 
 
 class test_vendor_libraries(unittest.TestCase):
@@ -878,6 +878,19 @@ class test_design_analysis(unittest.TestCase):
             sFile = None if sFile == sTop else os.path.basename(sFile)
             lReturn.append((sFile, int(sLineNumber), sRule, sMessage))
         return lReturn
+
+    def test_verilog_top(self):
+        # The Verilog top uses a VHDL synchronizer: Yosys elaborates the entity with the ghdl command before reading
+        # the Verilog. The crossing through it is synchronized; the one in the Verilog is not
+        sFile = os.path.join(sTestDir, "vtop.v")
+        for sOrder in ("listed", "auto"):
+            iStatus, lOutput = self.run_design(
+                "vtop",
+                ["vtop_sync.vhd", "vtop.v"],
+                dCdc={"clocks": {"clk_a": "a", "clk_b": "b"}},
+                dDesignKeys={"order": sOrder},
+            )
+            self.assertEqual((1, [f"ERROR: {sFile}(21)design_008 -- raw (clk_b) captures flag_a (clk_a) without a synchronizer"]), (iStatus, lOutput), sOrder)
 
     def test_combinational_loops(self):
         self.assertEqual(
