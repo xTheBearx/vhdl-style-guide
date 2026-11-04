@@ -27,16 +27,19 @@ Design analysis
 
 * **Formal reachability (plan step 6).** Cover checks per branch and state with SymbiYosys, assumptions, time budgets
   and three-way results. SymbiYosys is not packaged for Ubuntu; it needs the YosysHQ OSS CAD Suite.
-* **Black box libraries for more primitives.** Transceivers, SERDES (ISERDES, OSERDES), math blocks, Microchip micro
-  SRAM, block RAM ECC and cascade ports, and the Intel and Lattice primitives have no declarations yet.
+* **Black box libraries for more primitives.** Transceivers, PCIe and memory interface cores have no declarations;
+  the Intel and Lattice libraries cover the common primitives only. The names of the Intel megafunctions could not be
+  checked against cell models, as Yosys has none for them.
 * **Stand-in models and pragmas for black boxes** (options 4 and 5 of the black box plan): an analysis-only VHDL
   architecture for complex IP, and comment pragmas in component declarations. Not planned unless asked for.
 * **Netlist checks and declarations of single instances.** design_003 and design_007 follow the path roles of black
   box types; the declarations of single instances name flat paths, which the module graphs do not know. design_006
   counts every black box input as used, since the roles describe clock domains, not which inputs matter.
-* **Reconvergence through clocked resets only.** Synchronous resets that feed two or more registers are not followed
-  unless :code:`follow_resets` is set; a finer rule could tell resets from clears.
-* **Reset domain crossings through logic** are not checked.
+* **Clears found without a declaration.** A synchronous clear is followed by design_016 when the cdc section lists it
+  under clears. Telling clears from resets by structure was tried and dropped: the reset crossing circuits of
+  open-logic compute their resets with logic, and were taken for clears.
+* **Reset domain crossings into registers without a reset** are not reported by design_018, as their data during a
+  reset is not used; a design that relies on such a register right after a reset would need them.
 * **Logic depth** counts operators before technology mapping, which is crude; a mapped count would be more realistic
   but slower and loses names.
 * **More real-world designs** in :code:`scripts/real_world_designs.yaml`: surf (needs the vendor libraries), the
@@ -71,8 +74,8 @@ under way: the entries below.
 * **STARC rule set**: 50 of the 613 items of the STARC guide have rules. The per-file items (216) are planned with
   the SystemVerilog rules, the clock and reset items with design analysis of Verilog designs. The catalogue the set
   was made from records each item's limits and its Verible equivalent, kept in the notes of the set.
-* **Sensitivity lists** (sv_lint_008) are compared with the names the block reads, by name; reads through
-  functions and hierarchical names are not followed.
+* **Sensitivity lists** (sv_lint_008) follow the functions and tasks of the file, not those of packages or other
+  files; a variable written inside an if or case before it is read still counts as read.
 * **SystemVerilog designs without the yosys-slang plugin**: Yosys' own reader handles Verilog and part of
   SystemVerilog; ibex and common_cells need the plugin, which is not packaged for Ubuntu. Not yet tried with it.
 * **Generics of VHDL entities under a Verilog top**: each entity is elaborated once with the defaults of its generics;
@@ -81,5 +84,5 @@ under way: the entries below.
 * **Black boxes in Verilog designs with read_slang**: the modules made for black boxes are read with read_verilog
   -lib before the design; whether read_slang links instances to them is not known. Yosys has cell models for Xilinx
   only among the vendors with black box libraries.
-* **More SystemVerilog projects** in the real-world check, which runs ibex, common_cells and picorv32: OpenTitan
-  (a subset), CVA6, SERV and the sv-tests conformance suite.
+* **More SystemVerilog projects** in the real-world check, which runs ibex, common_cells, picorv32, SERV, CVA6 and the
+  sv-tests conformance suite: OpenTitan, whose size needs a subset to be chosen.

@@ -324,6 +324,16 @@ class test_rules(unittest.TestCase):
         self.assertEqual(read("brackets.fixed.sv"), sAfter)
         self.assertEqual([], only(lOutput, "sv_whitespace"))
 
+    def test_escaped_identifier_keeps_its_space(self):
+        # An escaped identifier ends at whitespace: removing the space before the semicolon would change the code
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sCopy = os.path.join(sTemporary, "escaped.sv")
+            with open(sCopy, "w", encoding="utf-8") as oFile:
+                oFile.write("module escaped;\n    reg \\busa+index ;\n    reg \\-clock  ;\nendmodule\n")
+            subprocess.run([sys.executable, "bin/mhsg", "-f", sCopy, "--fix"], cwd=sRoot, capture_output=True, check=False)
+            with open(sCopy, encoding="utf-8") as oFile:
+                self.assertEqual("module escaped;\n    reg \\busa+index ;\n    reg \\-clock ;\nendmodule\n", oFile.read())
+
     def test_whitespace_fix(self):
         # The fix keeps the space before the packed dimension of a type, the empty case item, the empty argument,
         # the operators in brackets and the arguments of the macro; it removes the blank lines at the end
@@ -498,6 +508,18 @@ class test_rules(unittest.TestCase):
                 "ERROR: lint.sv(30)sv_lint_007 -- Comparison of differently signed types ('logic[3:0]' and 'int')",
             ],
             lOutput,
+        )
+
+    def test_sensitivity_list(self):
+        # The signals gate and twice read count for the first block; q, which copy writes first, the member of cfg and
+        # the package item do not count for the second; the hierarchical name counts for the third
+        _, lOutput, _ = self.run_mhsg(["--lint_only", "--rule_set", "none"], "sensitivity.sv")
+        self.assertEqual(
+            [
+                "ERROR: sensitivity.sv(29)sv_lint_008 -- Add b_i, c_i to the sensitivity list, or use always_comb",
+                "ERROR: sensitivity.sv(38)sv_lint_008 -- Add u_sub.valid to the sensitivity list, or use always_comb",
+            ],
+            [s for s in lOutput if "sv_lint_008" in s],
         )
 
     def test_lint_do254(self):

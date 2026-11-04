@@ -421,6 +421,9 @@ Synchronize one signal and derive the others from it in the destination domain, 
 The bits of one bus count as one signal: a gray-coded bus is meant to be combined, and design_009 reports other buses.
 A synchronous reset, an input that loads a constant into two or more registers, is a reset path rather than data
 and is not followed, unless :code:`follow_resets` is true; the crossing report lists the meetings through resets either way.
+A synchronous clear that logic computes, such as a state machine, is data: list it under :code:`clears` in the cdc
+section of the design, and it is followed. Structure cannot tell a clear from a reset, as reset crossing circuits
+compute their resets with logic too.
 
 **Violation**
 
@@ -461,3 +464,47 @@ A static port needs a justification and reviewed_by.
 
    -- vendor_dma has no declaration
    u_dma : vendor_dma port map (aclk => clk, irq => irq);
+
+design_018
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_reset_domain_crossing`
+
+This rule reports reset domain crossings: data from a register with one asynchronous reset, directly or through
+logic, into a register of the same clock that another asynchronous reset clears.
+
+.. NOTE:: This is a design rule. It runs in design analysis.
+
+Asserting the reset of the source changes its output at any time, so a destination that is not reset with it can
+capture the change metastable. The crossing is safe when the destination is reset whenever the source is: when its
+reset comes from the same reset, or combines it with others, directly or through reset synchronizers.
+Registers without an asynchronous reset are not reported, as their data during a reset is not used, and neither
+are the registers of reset synchronizers.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   process (clk, rst_a) is
+   begin
+     if rst_a = '1' then
+       a_r <= '0';
+     elsif rising_edge(clk) then
+       a_r <= d;
+     end if;
+   end process;
+
+   process (clk, rst_b) is
+   begin
+     if rst_b = '1' then
+       b_r <= '0';
+     elsif rising_edge(clk) then
+       b_r <= a_r;
+     end if;
+   end process;
+
+**Fix**
+
+Reset b_r with rst_a too, for example with a reset that combines both, or keep a_r stable while rst_a is asserted.
