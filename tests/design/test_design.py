@@ -802,6 +802,18 @@ class test_design_analysis(unittest.TestCase):
             )
         return oResult.returncode, oResult.stdout.splitlines()
 
+    def test_transceiver_library(self):
+        # The data a transceiver sends is timed by TXUSRCLK2 and the data it receives by RXUSRCLK2: only the data
+        # from the domain of clk_a crosses
+        iStatus, lOutput = self.run_design(
+            "gt_top",
+            "gt_top.sv",
+            dCdc={"clocks": {"clk_a": "a", "refclk": "r"}},
+            dDesignKeys={"black_box_libraries": ["xilinx"]},
+        )
+        sFile = os.path.join(sTestDir, "gt_top.sv")
+        self.assertEqual((1, [f"ERROR: {sFile}(20)design_008 -- u_gt.TXDATA (u_gt.TXOUTCLK) captures d_r (clk_a) without a synchronizer"]), (iStatus, lOutput))
+
     def test_systemverilog_cdc(self):
         # Yosys reads the SystemVerilog; findings are at the assignment, refined from the always block Yosys points at
         iStatus, lOutput = self.run_design("cdc_sv", "cdc_sv.sv", dCdc={"clocks": {"clk_a": "a", "clk_b": "b"}})
@@ -894,8 +906,9 @@ class test_design_analysis(unittest.TestCase):
             self.assertEqual((1, [f"ERROR: {sFile}(21)design_008 -- raw (clk_b) captures flag_a (clk_a) without a synchronizer"]), (iStatus, lOutput), sOrder)
 
     def test_verilog_top_generics(self):
-        # Each set of generic values is elaborated on its own; an instance whose values are an expression is analyzed
-        # with the defaults, which design_001 reports
+        # Each set of generic values is elaborated on its own, with the values pyslang computes: expressions and
+        # parameters of the module holding the instance too. An instance in a generate loop that sets other values in
+        # each iteration is analyzed with the defaults, which design_001 reports
         with tempfile.TemporaryDirectory() as sDirectory:
             iStatus, lOutput = self.run_design(
                 "vtop_generics",
@@ -909,19 +922,27 @@ class test_design_analysis(unittest.TestCase):
             (
                 1,
                 [
-                    f"ERROR: {sFile}(23)design_001 -- Design configuration error: Instance u_expression of vtop_reg is analyzed with the "
-                    "defaults of its generics, as its own values cannot be set: a parameter is not a literal",
+                    f"ERROR: {sFile}(31)design_001 -- Design configuration error: Instance u_loop of vtop_reg is analyzed with the "
+                    "defaults of its generics, as its own values cannot be set: the elaborations of module vtop_generics give it "
+                    "different values",
                 ],
             ),
             (iStatus, [s for s in lOutput if "design_001" in s]),
         )
         dTypes = {c: d["type"] for c, d in dModules["vtop_generics"]["cells"].items() if not d["type"].startswith("$")}
         dWidths = {c: len(dModules[t]["ports"]["d"]["bits"]) for c, t in dTypes.items()}
-        self.assertEqual({"u_named": 8, "u_position": 16, "g_reg.u_generate": 4, "u_expression": 4}, dWidths)
+        self.assertEqual(
+            {"u_named": 8, "u_position": 16, "g_reg.u_generate": 4, "u_expression": 8, "g_loop[1].u_loop": 4, "g_loop[2].u_loop": 4},
+            dWidths,
+        )
         # The instances with values of their own each have a module, elaborated from the entity with those values
-        self.assertEqual("vtop_reg", dTypes["u_expression"])
-        self.assertEqual(3, len({dTypes["u_named"], dTypes["u_position"], dTypes["g_reg.u_generate"]}))
-        self.assertTrue(all(dTypes[s].startswith("vtop_reg__mhsg") for s in ("u_named", "u_position", "g_reg.u_generate")))
+        self.assertEqual("vtop_reg", dTypes["g_loop[1].u_loop"])
+        self.assertEqual(4, len({dTypes[s] for s in ("u_named", "u_position", "g_reg.u_generate", "u_expression")}))
+        self.assertTrue(all(dTypes[s].startswith("vtop_reg__mhsg") for s in ("u_named", "u_position", "g_reg.u_generate", "u_expression")))
+        # The instance in the module with a parameter gets the width that parameter gives it
+        sInner = dModules[dModules["vtop_generics"]["cells"]["u_mid"]["type"]]["cells"]["u_inner"]["type"]
+        self.assertTrue(sInner.startswith("vtop_reg__mhsg"))
+        self.assertEqual(6, len(dModules[sInner]["ports"]["d"]["bits"]))
 
     def test_combinational_loops(self):
         self.assertEqual(

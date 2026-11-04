@@ -90,6 +90,7 @@ Rules Enforcing Alignment Rule Group
 * `sv_alignment_008 <../sv_alignment_rules.html#sv-alignment-008>`_
 * `sv_alignment_009 <../sv_alignment_rules.html#sv-alignment-009>`_
 * `sv_alignment_010 <../sv_alignment_rules.html#sv-alignment-010>`_
+* `sv_alignment_011 <../sv_alignment_rules.html#sv-alignment-011>`_
 * `type_400 <../type_rules.html#type-400>`_
 * `variable_400 <../variable_rules.html#variable-400>`_
 * `variable_401 <../variable_rules.html#variable-401>`_
