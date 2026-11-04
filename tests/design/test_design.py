@@ -907,6 +907,22 @@ class test_design_analysis(unittest.TestCase):
             lFindings,
         )
 
+    def test_paths_through_black_boxes(self):
+        # A black box registers its outputs unless a declared path leads through it: then the loop through it and the
+        # path through it count
+        dDeclared = {"black_boxes": {"LUT_BUF": {"ports": {"O": {"path": ["I"]}}}}}
+        dRules = {"design_007": {"maximum_depth": 2}}
+        lFindings = self.findings("box_path_top", "box_path.vhd", dRules=dRules, dDesignKeys=dDeclared)
+        self.assertEqual(
+            [
+                ("box_path.vhd", 34, "design_003", "Combinational loop through e, f in box_path_top and instance u_loop"),
+                ("box_path.vhd", 56, "design_007", "Path of 3 logic levels to register r in box_path_top, more than 2"),
+            ],
+            [t for t in lFindings if t[2] in ("design_003", "design_007")],
+        )
+        lFindings = self.findings("box_path_top", "box_path.vhd", dRules=dRules)
+        self.assertEqual([], [t for t in lFindings if t[2] in ("design_003", "design_007")])
+
     def test_multiple_drivers(self):
         # The bidirectional pin is not reported
         self.assertEqual(

@@ -311,6 +311,10 @@ class Library:
             raise exceptions.ConfigurationError(f"ERROR: black_box_instances in {sSource} maps instance paths to declarations")
         self.instances = [Declaration(str(k), v, sSource) for k, v in dInstances.items()] + self.instances
 
+    def find_type(self, sType):
+        """Returns the declarations of a type, the design section before library files."""
+        return [o for o in self.types if o.name.lower() == sType.lower() or fnmatch.fnmatchcase(sType.lower(), o.name.lower())]
+
     def find(self, sType, sInstance):
         """
         Returns the declarations that apply to an instance, those of the instance first, then those of its type,
@@ -318,7 +322,7 @@ class Library:
         the design section can change single ports of a library declaration.
         """
         lReturn = [o for o in self.instances if fnmatch.fnmatchcase(sInstance.lower(), o.name.lower())]
-        return lReturn + [o for o in self.types if o.name.lower() == sType.lower() or fnmatch.fnmatchcase(sType.lower(), o.name.lower())]
+        return lReturn + self.find_type(sType)
 
 
 BUILT_IN_DIRECTORY = os.path.join(os.path.dirname(os.path.dirname(__file__)), "black_box_libraries")
@@ -425,6 +429,18 @@ class Instance:
                 if not any(c in sPattern for c in "*?[") and sPattern.lower() not in setPorts:
                     lReturn.append(f"the declaration names port {sPattern}, which {self.cell.type} does not have")
         return sorted(set(lReturn))
+
+
+def path_bits(dConnections, oRole, iIndex):
+    """
+    The input bits an output bit of a black box follows through a path role: the same bit of inputs as wide as
+    needed, else all bits.
+    """
+    lReturn = []
+    for sInput in oRole.inputs:
+        lBits = next((l for s, l in dConnections.items() if s.lower() == sInput.lower()), [])
+        lReturn += [lBits[iIndex]] if iIndex < len(lBits) and len(lBits) > 1 else list(lBits)
+    return [b for b in lReturn if is_variable(b)]
 
 
 def generic_values(oCell):

@@ -34,8 +34,9 @@ Design analysis
   them.
 * **Stand-in models and pragmas for black boxes** (options 4 and 5 of the black box plan): an analysis-only VHDL
   architecture for complex IP, and comment pragmas in component declarations. Not planned unless asked for.
-* **Netlist checks and black boxes.** design_002 to design_007 still assume a black box registers its outputs and uses
-  all of its inputs; they could use the declarations, as the clock domain checks do.
+* **Netlist checks and declarations of single instances.** design_003 and design_007 follow the path roles of black
+  box types; the declarations of single instances name flat paths, which the module graphs do not know. design_006
+  counts every black box input as used, since the roles describe clock domains, not which inputs matter.
 * **Reconvergence through clocked resets only.** Synchronous resets that feed two or more registers are not followed
   unless :code:`follow_resets` is set; a finer rule could tell resets from clears.
 * **Reset domain crossings through logic** are not checked.

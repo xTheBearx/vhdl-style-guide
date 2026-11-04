@@ -65,7 +65,8 @@ class Context:
     def graph(self):
         """Returns the DesignGraph of the netlist, built once for all rules, or None without a netlist."""
         if self._oGraph is None and self.netlist is not None:
-            self._oGraph = graph.DesignGraph(self.netlist)
+            oBlackBoxes = self.design.black_boxes if self.design is not None else None
+            self._oGraph = graph.DesignGraph(self.netlist, oBlackBoxes)
         return self._oGraph
 
     def vhdl_summary(self, sFileName):
