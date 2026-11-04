@@ -2821,3 +2821,152 @@ design_cases:
   name: reset domain crossing
   design: *id012
   expected: []
+- rule: design_001
+  name: STARC design items
+  design: &id013
+    top: starc_design_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/starc_design.vhd
+  expected: []
+- rule: design_002
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_003
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_004
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_005
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_006
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_007
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_008
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_009
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_010
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_011
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_012
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_013
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_014
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_015
+  name: STARC design items
+  design: *id013
+  expected:
+  - - examples/design/starc_design.vhd
+    - 70
+    - 'Reset reset is released asynchronously: it resets registers clocked by clk without a reset synchronizer'
+- rule: design_016
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_017
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_001
+  name: inout port connections
+  design: &id014
+    top: inout_wire_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/inout_wire.v
+  expected: []
+- rule: design_002
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_003
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_004
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_005
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_006
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_007
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_008
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_009
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_010
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_011
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_012
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_013
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_014
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_015
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_016
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_017
+  name: inout port connections
+  design: *id014
+  expected: []

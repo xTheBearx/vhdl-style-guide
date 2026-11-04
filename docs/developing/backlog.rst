@@ -74,11 +74,11 @@ under way: the entries below.
 * **STARC items with judgement**: resource sharing, Gray encoding of states and the like are left to review; the rules
   on loop bounds and common expressions compare the code as written, so loop bounds given by parameters, and
   expressions written differently, are not checked.
-* **STARC rule set**: 218 of the 613 items of the STARC guide have rules, the design rules among them for the items
-  on loops, drivers, generated and gated clocks and resets. Every per-file item has a rule or is left to review
-  (status manual, with the reason in its note). The 57 items with status design need what design analysis does not
-  have: gate counts of hierarchy levels, the test modes of design for test, hierarchy identification characters,
-  and which memories and I/O cells a design uses. The catalogue the set
+* **STARC rule set**: 226 of the 613 items of the STARC guide have rules, the design rules among them for the items
+  on loops, drivers, tri-state buses, memory outputs, generated and gated clocks and resets, and gates per module.
+  Every per-file item has a rule or is left to review (status manual, with the reason in its note). The 49 items
+  with status design need what design analysis does not have: the test modes of design for test, hierarchy
+  identification characters, timing paths across blocks, and which I/O cells a design uses. The catalogue the set
   was made from records each item's limits and its Verible equivalent, kept in the notes of the set.
 * **SystemVerilog designs without the yosys-slang plugin**: Yosys' own reader handles Verilog and part of
   SystemVerilog; ibex and common_cells need the plugin, which is not packaged for Ubuntu. Not yet tried with it.

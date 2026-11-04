@@ -49,6 +49,8 @@ DESIGNS = [
     ("black box", {"top": "bb_top", "libraries": [{"name": "work", "files": ["black_box.vhd"]}]}),
     ("deep logic", {"top": "deep_top", "libraries": [{"name": "work", "files": ["extra:design_007/deep.vhd"]}]}),
     ("reset domain crossing", {"top": "rdc_top", "libraries": [{"name": "work", "files": ["rdc.vhd"]}]}),
+    ("STARC design items", {"top": "starc_design_top", "libraries": [{"name": "work", "files": ["starc_design.vhd"]}]}),
+    ("inout port connections", {"top": "inout_wire_top", "libraries": [{"name": "work", "files": ["inout_wire.v"]}]}),
 ]
 
 

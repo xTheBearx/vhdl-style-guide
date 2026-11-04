@@ -2208,6 +2208,26 @@ design_cases:
   name: clean design
   design: *id001
   expected: []
+- rule: design_020
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_021
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_022
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_023
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_024
+  name: clean design
+  design: *id001
+  expected: []
 - rule: design_003
   name: undeclared signal
   design: &id002
@@ -2249,6 +2269,26 @@ design_cases:
   name: undeclared signal
   design: *id002
   expected: []
+- rule: design_020
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_021
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_022
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_023
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_024
+  name: undeclared signal
+  design: *id002
+  expected: []
 - rule: design_003
   name: latch
   design: &id003
@@ -2287,6 +2327,26 @@ design_cases:
   design: *id003
   expected: []
 - rule: design_015
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_020
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_021
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_022
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_023
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_024
   name: latch
   design: *id003
   expected: []
@@ -2337,6 +2397,26 @@ design_cases:
   name: combinational loop
   design: *id004
   expected: []
+- rule: design_020
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_021
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_022
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_023
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_024
+  name: combinational loop
+  design: *id004
+  expected: []
 - rule: design_003
   name: multiple drivers
   design: &id005
@@ -2378,6 +2458,26 @@ design_cases:
   design: *id005
   expected: []
 - rule: design_015
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_020
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_021
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_022
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_023
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_024
   name: multiple drivers
   design: *id005
   expected: []
@@ -2425,6 +2525,26 @@ design_cases:
   - - examples/design/registers.vhd
     - 31
     - 'Reset rst is released asynchronously: it resets registers clocked by clk without a reset synchronizer (3 registers)'
+- rule: design_020
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_021
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_022
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_023
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_024
+  name: registers
+  design: *id006
+  expected: []
 - rule: design_003
   name: logic depth
   design: &id007
@@ -2463,6 +2583,26 @@ design_cases:
   design: *id007
   expected: []
 - rule: design_015
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_020
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_021
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_022
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_023
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_024
   name: logic depth
   design: *id007
   expected: []
@@ -2537,6 +2677,26 @@ design_cases:
   - - examples/design/cdc.vhd
     - 198
     - 'Reset clk_c is released asynchronously: it resets registers clocked by clk_a without a reset synchronizer'
+- rule: design_020
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_021
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_022
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_023
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_024
+  name: clock domain crossings
+  design: *id008
+  expected: []
 - rule: design_003
   name: reconvergence
   design: &id009
@@ -2575,6 +2735,26 @@ design_cases:
   design: *id009
   expected: []
 - rule: design_015
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_020
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_021
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_022
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_023
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_024
   name: reconvergence
   design: *id009
   expected: []
@@ -2619,6 +2799,26 @@ design_cases:
   name: black box
   design: *id010
   expected: []
+- rule: design_020
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_021
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_022
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_023
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_024
+  name: black box
+  design: *id010
+  expected: []
 - rule: design_003
   name: deep logic
   design: &id011
@@ -2657,6 +2857,26 @@ design_cases:
   design: *id011
   expected: []
 - rule: design_015
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_020
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_021
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_022
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_023
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_024
   name: deep logic
   design: *id011
   expected: []
@@ -2703,4 +2923,164 @@ design_cases:
 - rule: design_015
   name: reset domain crossing
   design: *id012
+  expected: []
+- rule: design_020
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_021
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_022
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_023
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_024
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_003
+  name: STARC design items
+  design: &id013
+    top: starc_design_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/starc_design.vhd
+  expected: []
+- rule: design_004
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_008
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_009
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_011
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_012
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_013
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_014
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_015
+  name: STARC design items
+  design: *id013
+  expected:
+  - - examples/design/starc_design.vhd
+    - 70
+    - 'Reset reset is released asynchronously: it resets registers clocked by clk without a reset synchronizer'
+- rule: design_020
+  name: STARC design items
+  design: *id013
+  expected:
+  - - examples/design/starc_design.vhd
+    - 96
+    - Output of memory ram is used in a condition
+- rule: design_021
+  name: STARC design items
+  design: *id013
+  expected:
+  - - examples/design/starc_design.vhd
+    - 15
+    - Bus pin_six has 6 tri-state drivers, more than 5
+- rule: design_022
+  name: STARC design items
+  design: *id013
+  expected:
+  - - examples/design/starc_design.vhd
+    - 80
+    - Reset reset is used as an asynchronous reset and as a synchronous reset
+- rule: design_023
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_024
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_003
+  name: inout port connections
+  design: &id014
+    top: inout_wire_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/inout_wire.v
+  expected: []
+- rule: design_004
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_008
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_009
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_011
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_012
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_013
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_014
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_015
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_020
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_021
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_022
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_023
+  name: inout port connections
+  design: *id014
+  expected:
+  - - examples/design/inout_wire.v
+    - 5
+    - Inout port io of inout_pad is connected directly to output port r
+  - - examples/design/inout_wire.v
+    - 17
+    - Inout port pin of inout_wire_top is connected directly to output port pin_copy
+- rule: design_024
+  name: inout port connections
+  design: *id014
   expected: []

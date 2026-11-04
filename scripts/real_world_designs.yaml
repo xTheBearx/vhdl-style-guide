@@ -18,6 +18,11 @@ designs:
   known:
   # Real by the rule: the reset request synchronizers xrstn_wdt_o and xrstn_ocd_o are reset by the raw rstn_ext_i
   - 'rtl/core/neorv32_sys.vhd(66)design_015 -- Reset rstn_i is released asynchronously: it resets registers clocked by clk_i without a reset synchronizer (2 registers)'
+  # Real by STARC 2.10.1.7: memory outputs compared in conditions read as unknown in simulation before they are written
+  - 'rtl/core/neorv32_cpu_alu.vhd(98)design_020 -- Output of memory core_complex_gen:1.core_complex_inst.cpu_inst.cpu_regfile_inst.regfile is used in a condition'
+  - 'rtl/core/neorv32_cpu_alu.vhd(99)design_020 -- Output of memory core_complex_gen:1.core_complex_inst.cpu_inst.cpu_regfile_inst.regfile is used in a condition'
+  - 'rtl/core/neorv32_cpu_alu.vhd(141)design_020 -- Output of memory core_complex_gen:1.core_complex_inst.cpu_inst.cpu_regfile_inst.regfile is used in a condition'
+  - 'rtl/core/neorv32_cpu_control.vhd(295)design_020 -- Output of memory core_complex_gen:1.core_complex_inst.cpu_inst.cpu_frontend_inst.prefetch_buffer:1.ipb_inst.memory_large.memory_large_async_read.fifo is used in a condition'
 - name: neorv32_wrapper
   project: neorv32
   environment:
@@ -46,6 +51,18 @@ designs:
   - 'rtl/core/neorv32_debug_dm.vhd(539)design_018 -- neorv32_top_inst.ocd_enabled.debug_dm_inst.dci, reset by neorv32_top_inst.rstn_ext, captures neorv32_top_inst.io_system.bus_io_switch_inst.neorv32_bus_reg_inst.device_req_o.meta, reset by neorv32_top_inst.rstn_sys: asserting neorv32_top_inst.rstn_sys alone can make it metastable'
   # Real: the same mtime_lo registers reset by the raw rstn_i, reading the timer reset by rstn_sys
   - 'rtl/core/neorv32_top.vhd(1196)design_018 -- neorv32_top_inst.mtime_lo and 1 more, reset by rstn_i, capture neorv32_top_inst.io_system.clint_enabled.clint_inst.neorv32_clint_mtime_inst.count, reset by neorv32_top_inst.rstn_sys: asserting neorv32_top_inst.rstn_sys alone can make them metastable'
+  # Real by STARC 2.10.1.7: memory outputs compared in conditions read as unknown in simulation before they are written
+  - 'rtl/core/neorv32_cache.vhd(574)design_020 -- Output of memory neorv32_top_inst.core_complex_gen:1.core_complex_inst.icache_enabled.icache_inst.neorv32_cache_ram_inst.tag_ram_inst.memory_large.spram is used in a condition'
+  - 'rtl/core/neorv32_cache.vhd(574)design_020 -- Output of memory neorv32_top_inst.core_complex_gen:1.core_complex_inst.dcache_enabled.dcache_inst.neorv32_cache_ram_inst.tag_ram_inst.memory_large.spram is used in a condition'
+  - 'rtl/core/neorv32_cpu_alu.vhd(98)design_020 -- Output of memory neorv32_top_inst.core_complex_gen:1.core_complex_inst.cpu_inst.cpu_regfile_inst.regfile is used in a condition'
+  - 'rtl/core/neorv32_cpu_alu.vhd(99)design_020 -- Output of memory neorv32_top_inst.core_complex_gen:1.core_complex_inst.cpu_inst.cpu_regfile_inst.regfile is used in a condition'
+  - 'rtl/core/neorv32_cpu_alu.vhd(141)design_020 -- Output of memory neorv32_top_inst.core_complex_gen:1.core_complex_inst.cpu_inst.cpu_regfile_inst.regfile is used in a condition'
+  - 'rtl/core/neorv32_cpu_alu_fpu.vhd(339)design_020 -- Output of memory neorv32_top_inst.core_complex_gen:1.core_complex_inst.cpu_inst.cpu_regfile_inst.regfile is used in a condition'
+  - 'rtl/core/neorv32_cpu_alu_fpu.vhd(342)design_020 -- Output of memory neorv32_top_inst.core_complex_gen:1.core_complex_inst.cpu_inst.cpu_regfile_inst.regfile is used in a condition'
+  - 'rtl/core/neorv32_cpu_alu_fpu.vhd(722)design_020 -- Output of memory neorv32_top_inst.core_complex_gen:1.core_complex_inst.cpu_inst.cpu_regfile_inst.regfile is used in a condition'
+  - 'rtl/core/neorv32_cpu_alu_muldiv.vhd(49)design_020 -- Output of memory neorv32_top_inst.core_complex_gen:1.core_complex_inst.cpu_inst.cpu_regfile_inst.regfile is used in a condition'
+  - 'rtl/core/neorv32_cpu_frontend.vhd(221)design_020 -- Output of memory neorv32_top_inst.core_complex_gen:1.core_complex_inst.cpu_inst.cpu_frontend_inst.prefetch_buffer:1.ipb_inst.memory_large.memory_large_async_read.fifo is used in a condition'
+  - 'rtl/core/neorv32_cpu_frontend.vhd(235)design_020 -- Output of memory neorv32_top_inst.core_complex_gen:1.core_complex_inst.cpu_inst.cpu_frontend_inst.prefetch_buffer:2.ipb_inst.memory_large.memory_large_async_read.fifo is used in a condition'
 - name: neorv32_latch_regfile
   project: neorv32
   environment:
@@ -64,6 +81,8 @@ designs:
   - 'rtl/core/neorv32_cpu_regfile.vhd(214)design_010 -- Clock clk_i is used as data (31 places)'
   # Real by the rule: the reset request synchronizers xrstn_wdt_o and xrstn_ocd_o are reset by the raw rstn_ext_i
   - 'rtl/core/neorv32_sys.vhd(66)design_015 -- Reset rstn_i is released asynchronously: it resets registers clocked by clk_i without a reset synchronizer (2 registers)'
+  # Real by STARC 2.10.1.7: memory outputs compared in conditions read as unknown in simulation before they are written
+  - 'rtl/core/neorv32_cpu_control.vhd(295)design_020 -- Output of memory core_complex_gen:1.core_complex_inst.cpu_inst.cpu_frontend_inst.prefetch_buffer:1.ipb_inst.memory_large.memory_large_async_read.fifo is used in a condition'
 - name: olo_axi_lite_slave
   project: open-logic
   design:
@@ -91,7 +110,11 @@ designs:
     - -frelaxed-rules
     - -Wno-hide
     - -Wno-shared
-  known: []
+  known:
+  # Real by STARC 2.10.1.7: memory outputs compared in conditions read as unknown in simulation before they are written
+  - 'src/axi/vhdl/olo_axi_master_simple.vhd(439)design_020 -- Output of memory i_axi.g_write.i_fifo_wr_trans.i_ram.g_nobe.i_ram.mem_v is used in a condition'
+  - 'src/axi/vhdl/olo_axi_master_simple.vhd(455)design_020 -- Output of memory i_axi.g_write.i_fifo_wr_resp.i_ram.g_nobe.i_ram.mem_v is used in a condition'
+  - 'src/axi/vhdl/olo_axi_master_simple.vhd(585)design_020 -- Output of memory i_axi.g_read.i_fifo_rd_resp.i_ram.g_nobe.i_ram.mem_v is used in a condition'
 - name: olo_axi_master_simple
   project: open-logic
   design:
@@ -104,7 +127,11 @@ designs:
     - -frelaxed-rules
     - -Wno-hide
     - -Wno-shared
-  known: []
+  known:
+  # Real by STARC 2.10.1.7: memory outputs compared in conditions read as unknown in simulation before they are written
+  - 'src/axi/vhdl/olo_axi_master_simple.vhd(439)design_020 -- Output of memory g_write.i_fifo_wr_trans.i_ram.g_nobe.i_ram.mem_v is used in a condition'
+  - 'src/axi/vhdl/olo_axi_master_simple.vhd(455)design_020 -- Output of memory g_write.i_fifo_wr_resp.i_ram.g_nobe.i_ram.mem_v is used in a condition'
+  - 'src/axi/vhdl/olo_axi_master_simple.vhd(585)design_020 -- Output of memory g_read.i_fifo_rd_resp.i_ram.g_nobe.i_ram.mem_v is used in a condition'
 - name: olo_axi_pl_stage
   project: open-logic
   design:
@@ -347,7 +374,10 @@ designs:
     generics:
       DataWidth_g: 8
       CrcPolynomial_g: '00000111'
-  known: []
+  known:
+  # Real by STARC 2.10.1.7: memory outputs compared in conditions read as unknown in simulation before they are written
+  - 'src/base/vhdl/olo_base_fifo_packet.vhd(393)design_020 -- Output of memory g_drop.i_fifo.b_ram.i_ram.g_nobe.i_ram.mem_v is used in a condition'
+  - 'src/base/vhdl/olo_base_fifo_packet.vhd(403)design_020 -- Output of memory g_drop.i_fifo.b_ram.i_ram.g_nobe.i_ram.mem_v is used in a condition'
 - name: olo_base_decode_firstbit
   project: open-logic
   design:
@@ -442,7 +472,9 @@ designs:
     generics:
       Width_g: 16
       Depth_g: 64
-  known: []
+  known:
+  # Real by STARC 2.10.1.7: memory outputs compared in conditions read as unknown in simulation before they are written
+  - 'src/base/vhdl/olo_base_fifo_packet.vhd(292)design_020 -- Output of memory g_small_fifo.i_pktend_fifo.i_ram.g_nobe.i_ram.mem_v is used in a condition'
 - name: olo_base_fifo_sync
   project: open-logic
   design:
@@ -754,7 +786,9 @@ designs:
     generics:
       Width_g: 16
       Depth_g: 64
-  known: []
+  known:
+  # Real by STARC 2.10.1.7: memory outputs compared in conditions read as unknown in simulation before they are written
+  - 'src/base/vhdl/olo_base_fifo_packet.vhd(292)design_020 -- Output of memory i_fifo.g_small_fifo.i_pktend_fifo.i_ram.g_nobe.i_ram.mem_v is used in a condition'
 - name: olo_ft_fifo_sync
   project: open-logic
   design:

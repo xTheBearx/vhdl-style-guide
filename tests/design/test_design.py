@@ -1053,6 +1053,41 @@ class test_design_analysis(unittest.TestCase):
             [t for t in self.findings("depth_top", "depth.vhd", dRules=dRules) if t[2] == "design_019"],
         )
 
+    def test_starc_design_items(self):
+        # Six tri-state drivers on one bus are too many, five are not, and none is a second driver for design_004.
+        # The reset is used both ways. The memory output decides an if statement; the case statement assigns 'X' in its
+        # others choice
+        self.assertEqual(
+            [
+                ("starc_design.vhd", 15, "design_021", "Bus pin_six has 6 tri-state drivers, more than 5"),
+                ("starc_design.vhd", 80, "design_022", "Reset reset is used as an asynchronous reset and as a synchronous reset"),
+                ("starc_design.vhd", 96, "design_020", "Output of memory ram is used in a condition"),
+            ],
+            [t for t in self.findings("starc_design_top", "starc_design.vhd") if t[2] in ("design_004", "design_020", "design_021", "design_022")],
+        )
+        dRules = {"design_021": {"maximum_drivers": 6}}
+        self.assertEqual([], [t for t in self.findings("starc_design_top", "starc_design.vhd", dRules=dRules) if t[2] == "design_021"])
+
+    def test_module_gates(self):
+        # Disabled by default, also in design analysis; enabled, it counts the gates of each module without its instances
+        dRules = {"design_024": {"maximum_gates": 1}}
+        self.assertEqual([], [t for t in self.findings("starc_design_top", "starc_design.vhd", dRules=dRules) if t[2] == "design_024"])
+        dRules = {"design_024": {"disable": False, "maximum_gates": 1}}
+        lFindings = [t for t in self.findings("starc_design_top", "starc_design.vhd", dRules=dRules) if t[2] == "design_024"]
+        self.assertEqual(["Module starc_design_top", "Module starc_driver"], sorted(t[3].split(" has ")[0] for t in lFindings))
+        dRules = {"design_024": {"disable": False, "maximum_gates": 1000}}
+        self.assertEqual([], [t for t in self.findings("starc_design_top", "starc_design.vhd", dRules=dRules) if t[2] == "design_024"])
+
+    def test_inout_port_connections(self):
+        # An inout port wired to an output port, in the top and in the pad
+        self.assertEqual(
+            [
+                ("inout_wire.v", 5, "design_023", "Inout port io of inout_pad is connected directly to output port r"),
+                ("inout_wire.v", 17, "design_023", "Inout port pin of inout_wire_top is connected directly to output port pin_copy"),
+            ],
+            [t for t in self.findings("inout_wire_top", "inout_wire.v") if t[2] == "design_023"],
+        )
+
     def test_multiple_drivers(self):
         # The bidirectional pin is not reported
         self.assertEqual(
