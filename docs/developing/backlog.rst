@@ -29,9 +29,6 @@ Design analysis
   and three-way results. SymbiYosys is not packaged for Ubuntu; it needs the YosysHQ OSS CAD Suite.
 * **Black box libraries for more primitives.** Transceivers, SERDES (ISERDES, OSERDES), math blocks, Microchip micro
   SRAM, block RAM ECC and cascade ports, and the Intel and Lattice primitives have no declarations yet.
-* **Stub declarations without a vendor installation.** Users without vendor tools cannot analyze designs that use
-  vendor libraries. A generated stub package, from the black box declarations or from the instantiations, would let
-  them.
 * **Stand-in models and pragmas for black boxes** (options 4 and 5 of the black box plan): an analysis-only VHDL
   architecture for complex IP, and comment pragmas in component declarations. Not planned unless asked for.
 * **Netlist checks and declarations of single instances.** design_003 and design_007 follow the path roles of black

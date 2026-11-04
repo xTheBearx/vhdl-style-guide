@@ -360,6 +360,37 @@ tried; set **path** to the installation, or name the files with **library** and 
 belong here: a library of simulation models would make GHDL synthesize the models instead of keeping black boxes.
 The vendor files are analyzed with the standard and **ghdl_options** of the design.
 
+**Without a vendor installation**, :code:`stubs: true` makes MHSG write the packages the design uses from a vendor
+library, such as :code:`unisim.vcomponents`, into :code:`stubs` in the work directory, with a component declaration for
+each vendor component the design instantiates:
+
+.. code-block:: yaml
+
+   vendor_libraries:
+     - vendor: xilinx                        # stub packages of unisim and xpm
+       stubs: true
+     - library: vendorlib                    # of any library
+       stubs: true
+
+A stub declares only the ports and generics the instances name, so the instances must associate by name:
+
+* the type of a port is that of its actual: the declared type of the signal or port, its element type for an indexed
+  name, std_logic for a character literal, std_logic_vector for a string, bit string or aggregate. An array port takes
+  the width its instances agree on, from the declared range, a slice or a literal; ranges may use constants and
+  generics with integer values;
+* the mode of a port comes from the black box declaration where a role says it, such as :code:`clock` or
+  :code:`path`. Otherwise a port whose actual is an input of the entity, a signal the design assigns, a literal or an
+  expression is an input; any other port is an output, unless another output already drives its signal;
+* the type of a generic is that of its actual: integer, real, boolean, string, time, bit_vector for a bit string, or
+  the declared type of a constant or generic. A generic that some instances leave out gets the first literal value.
+
+The types a stub can declare are those of the packages std.standard, ieee.std_logic_1164 and ieee.numeric_std; an
+actual of another type, such as a record, stops the run with a message. A file that uses two stub libraries, such as
+unisim and xpm, takes the components whose names start with :code:`xpm_` from xpm. A stub says nothing about the
+primitive beyond what the design shows, which is all design analysis needs of a black box: the vendor's own files
+remain the reference, and a mistake in an instance that the vendor's declarations would catch, such as a misspelled
+port, goes unnoticed with stubs.
+
 Each vendor primitive is then a black box, to be declared as below.
 
 Write the declarations in the **black_boxes** part of the design section, keyed by component name or a pattern, or in
