@@ -123,3 +123,49 @@ set enables it.
 .. code-block:: systemverilog
 
    // counter
+
+sv_comment_006
+##############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_comment_header_history`
+
+This rule checks that the header comment at the start of a file records its changes, matching each of
+**history_fields**, regular expressions matched ignoring case, by default a word such as modified, history or
+revision, as the STARC guide recommends (3.5.3.2) for code that is reused. sv_comment_003 checks the other fields
+of the header. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   // Module: fifo, Author: A. Designer, Date: 2026-11-04
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   // Module: fifo, Author: A. Designer, Date: 2026-11-04
+   // History: 2026-11-05 B. Reviewer, deeper buffer
+
+sv_comment_007
+##############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_comment_density`
+
+This rule checks that at least **minimum_comment_percent** percent of the lines of a module, 10 by default, have
+a comment, as the STARC guide recommends (3.5.6.1). Modules of fewer than 10 lines are not checked. It is
+disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   module fifo (...);  // 200 lines, 3 comments
+
+**Fix**
+
+Describe the ports, signals and blocks of the module in comments.

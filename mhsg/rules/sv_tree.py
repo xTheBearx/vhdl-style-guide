@@ -9,8 +9,26 @@ After fixing, the file is parsed again, as a fix can change the structure the ne
 from pyslang.parsing import Token  # pylint: disable=import-error
 from pyslang.syntax import SyntaxNode  # pylint: disable=import-error
 
-from mhsg import language, violation
+from mhsg import language, parser, violation
 from mhsg.vhdlFile.extract import tokens as extract_tokens
+
+
+def first_error_line(oFile):
+    """
+    The line of the first syntax error of a SystemVerilog file, or None. slang parses the code before it as written,
+    so the rules check it; after it, the tree may have constructs missing or misplaced, so they leave the rest alone,
+    and they fix nothing in the file.
+    """
+    lErrors = getattr(oFile, "syntax_errors", None)
+    return min(oFile.line_of(iOffset) for iOffset, _ in lErrors) if lErrors else None
+
+
+def before_errors(oFile, lToi):
+    """The tokens of interest that end before the first syntax error of a file."""
+    iLine = first_error_line(oFile)
+    if iLine is None:
+        return lToi
+    return [o for o in lToi if o.get_line_number() + sum(isinstance(t, parser.carriage_return) for t in o.get_tokens()) < iLine]
 
 
 class Problem:
@@ -46,10 +64,8 @@ class TreeRule:  # pylint: disable=no-member
     def _get_tokens_of_interest(self, oFile):
         if getattr(oFile, "dNodes", None) is None:
             return []
-        # Code slang cannot parse makes a syntax tree with constructs missing or misplaced: sv_syntax_001 reports
-        # it, and the rules on constructs leave the file alone
-        if oFile.syntax_errors and not self.checks_syntax_errors:
-            return []
+        # Code slang cannot parse makes a syntax tree with constructs missing or misplaced after it: sv_syntax_001
+        # reports it, and the rules on constructs check only the code before it
         dIndexes = {id(o): i for i, o in enumerate(oFile.lAllObjects)}
         lReturn = []
         for oProblem in self.problems(oFile):
@@ -60,7 +76,7 @@ class TreeRule:  # pylint: disable=no-member
             oToi = extract_tokens.New(iFirst, oFile.oTokenMap.get_line_number_of_index(iFirst), oFile.lAllObjects[iFirst : iLast + 1])
             oToi.dMetaData["problem"] = oProblem
             lReturn.append(oToi)
-        return lReturn
+        return lReturn if self.checks_syntax_errors else before_errors(oFile, lReturn)
 
     def _analyze(self, lToi):
         for oToi in lToi:
@@ -70,6 +86,8 @@ class TreeRule:  # pylint: disable=no-member
             self.add_violation(oViolation)
 
     def fix(self, oFile, dFixOnly=None):
+        if first_error_line(oFile) is not None:
+            return
         super().fix(oFile, dFixOnly)
         if self.fixable and self.had_violations and hasattr(oFile, "reparse"):
             oFile.reparse()

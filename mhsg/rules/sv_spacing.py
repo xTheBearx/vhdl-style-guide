@@ -16,6 +16,7 @@ import importlib
 
 from mhsg import language, parser, violation
 from mhsg.rule_group import whitespace
+from mhsg.rules.sv_tree import before_errors, first_error_line
 from mhsg.svFile import tokens
 from mhsg.vhdlFile.extract import tokens as extract_tokens
 
@@ -43,8 +44,6 @@ class Rule(whitespace.Rule):
 
     def _get_tokens_of_interest(self, oFile):
         lReturn = []
-        if getattr(oFile, "syntax_errors", None):
-            return lReturn
         lTokens = oFile.lAllObjects
         iPrevious = None
         for iToken, oToken in enumerate(lTokens):
@@ -69,7 +68,7 @@ class Rule(whitespace.Rule):
                         oToi.dMetaData["spacing"] = tSpacing
                         lReturn.append(oToi)
             iPrevious = iToken
-        return lReturn
+        return before_errors(oFile, lReturn)
 
     def _analyze(self, lToi):
         for oToi in lToi:
@@ -85,6 +84,8 @@ class Rule(whitespace.Rule):
                 self.add_violation(oViolation)
 
     def fix(self, oFile, dFixOnly=None):
+        if first_error_line(oFile) is not None:
+            return
         super().fix(oFile, dFixOnly)
         # A comment continuing a trailing comment moves with it
         if self.fixable and svFile.realign_comment_continuations(oFile.lAllObjects):

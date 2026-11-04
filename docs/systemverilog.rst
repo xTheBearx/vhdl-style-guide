@@ -127,7 +127,20 @@ what a Verible lint rule checks, its alias is the Verible rule's name.
   tests of signals that may be x, no computation on signals in for loops, clock periods as parameters, one clock per
   block, waits on levels in testbenches, simulation tasks between translate_off and translate_on, testbench delays as
   parameters (:code:`sv_statement_026` to :code:`sv_statement_034`); one state machine per module
-  (:code:`sv_case_010`); no negative values assigned (:code:`sv_literal_009`)
+  (:code:`sv_case_010`); no negative values assigned (:code:`sv_literal_009`);
+  with the widths of slang's elaboration of the file: 1-bit operands of logical operators and conditions, comparisons
+  of operands of one width, values not narrower than their targets, targets wide enough for sums and products,
+  dividers and multipliers of limited width, no reductions in wider contexts and no comparisons of integers with
+  vectors (:code:`sv_statement_035` to :code:`sv_statement_043`);
+  short top-level names that differ in more than case, no names of library cells, clock and reset base names
+  (:code:`sv_naming_018` to :code:`sv_naming_020`); macros undefined in their module, synchronously reset registers,
+  hierarchy and connections in modules of their own and in port order, registered outputs (:code:`sv_module_013` to
+  :code:`sv_module_017`); unit delays on register assignments (:code:`sv_always_026`); small case tables and grouped
+  wildcards (:code:`sv_case_011`, :code:`sv_case_012`); no priority logic in loops, short loops with comparisons, no
+  mixed signedness, one arithmetic operation per line, common expressions computed once, stimulus offset from clock
+  edges, shared expressions in signals (:code:`sv_statement_044` to :code:`sv_statement_050`); numbers named with
+  parameters (:code:`sv_literal_010`); a history in the file header and enough comments (:code:`sv_comment_006`,
+  :code:`sv_comment_007`)
 * :code:`sv_syntax_001`: code slang cannot parse
 
 The **starc** rule set enables the rules of the STARC guide that are disabled by default.
@@ -186,10 +199,11 @@ Syntax errors
 #############
 
 Each file is parsed on its own, so macros defined in other files and include files that are not found are not
-errors. Other syntax errors are reported by :code:`sv_syntax_001`, and the SystemVerilog rules skip the file: its
-syntax tree has constructs missing or misplaced, and its tokens may be classified wrongly near the errors, so checking
-or fixing it would be unsafe. Only the rules for every language, on trailing spaces, tabs and lengths, and
-:code:`sv_blank_line_001` still check it.
+errors. Other syntax errors are reported by :code:`sv_syntax_001`. slang parses the code before the first error as
+written, so the SystemVerilog style rules check it; after the error the syntax tree may have constructs missing or
+misplaced, and tokens classified wrongly, so the rules leave the rest of the file alone, and nothing in the file is
+fixed. The lint rules skip the file. The rules for every language, on trailing spaces, tabs and lengths, and
+:code:`sv_blank_line_001` check the whole file.
 
 After a fix that changes the structure of the code, such as replacing always @* with always_comb or removing a
 generate region, the file is parsed again, so the rules that follow, such as the indentation, see the fixed code.

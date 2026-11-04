@@ -516,14 +516,44 @@ class test_rules(unittest.TestCase):
         self.assertIn("    assign v = 4'b0;", lAfter)
 
     def test_syntax_errors(self):
-        # The rules on constructs skip a file slang cannot parse; sv_syntax_001 reports the error. A macro
-        # defined in another file is not an error.
+        # sv_syntax_001 reports code slang cannot parse; the rules on constructs check only the code before it. A
+        # macro defined in another file is not an error.
         with tempfile.TemporaryDirectory() as sTemporary:
             sCopy = os.path.join(sTemporary, "e.sv")
             with open(sCopy, "w", encoding="utf-8") as oFile:
                 oFile.write("module e;\n    always @* y = a +;\n    `UNDEFINED(x)\nendmodule\n")
             oResult = subprocess.run([sys.executable, "bin/mhsg", "-f", sCopy, "-of", "syntastic"], cwd=sRoot, capture_output=True, text=True, check=False)
         self.assertEqual([f"ERROR: {sCopy}(2)sv_syntax_001 -- Syntax error: expected expression"], oResult.stdout.splitlines())
+
+    def test_code_before_a_syntax_error(self):
+        # The code before the first syntax error is checked, the code after it is not, and nothing is fixed
+        sText = "module e;\nlogic  x ;\n    always_comb begin\n    x=a;\n    end\n    assign y = a +;\n  logic   z ;\nendmodule\n"
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sCopy = os.path.join(sTemporary, "e.sv")
+            with open(sCopy, "w", encoding="utf-8") as oFile:
+                oFile.write(sText)
+            oResult = subprocess.run(
+                [sys.executable, "bin/mhsg", "-f", sCopy, "-ap", "-of", "syntastic"],
+                cwd=sRoot,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            subprocess.run([sys.executable, "bin/mhsg", "-f", sCopy, "--fix"], cwd=sRoot, capture_output=True, check=False)
+            with open(sCopy, encoding="utf-8") as oFile:
+                sAfter = oFile.read()
+        self.assertEqual(
+            [
+                f"ERROR: {sCopy}(2)sv_indent_001 -- Use 4 spaces for indent",
+                f"ERROR: {sCopy}(2)sv_whitespace_003 -- Remove space before semicolon",
+                f"ERROR: {sCopy}(4)sv_indent_001 -- Use 8 spaces for indent",
+                f"ERROR: {sCopy}(4)sv_whitespace_008 -- Add a space around the operator",
+                f"ERROR: {sCopy}(4)sv_whitespace_008 -- Add a space around the operator",
+                f"ERROR: {sCopy}(6)sv_syntax_001 -- Syntax error: expected expression",
+            ],
+            oResult.stdout.splitlines(),
+        )
+        self.assertEqual(sText, sAfter)
 
     def test_lint(self):
         _, lOutput, _ = self.run_mhsg(["--lint_only", "--rule_set", "none"], "lint.sv")
@@ -792,6 +822,93 @@ class test_rules(unittest.TestCase):
         self.assertEqual(
             ["ERROR: sensitivity_branches.sv(21)sv_lint_008 -- Add c_i, u to the sensitivity list, or use always_comb"],
             [s for s in lOutput if "sv_lint_008" in s],
+        )
+
+    def test_starc_checks_7(self):
+        # The widths come from slang's elaboration of the file
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "starc", "-ap"], "starc_more7.sv")
+        lRules = (
+            "sv_statement_035",
+            "sv_statement_036",
+            "sv_statement_037",
+            "sv_statement_038",
+            "sv_statement_039",
+            "sv_statement_040",
+            "sv_statement_041",
+            "sv_statement_042",
+            "sv_statement_043",
+        )
+        self.assertEqual(
+            [
+                "WARNING: starc_more7.sv(16)STARC-2.1.4.5 (sv_statement_035) -- Compare a_i, 8 bits wide, with a value instead of using it as a truth value",
+                "WARNING: starc_more7.sv(17)STARC-2.1.5.3 (sv_statement_036) -- Make the condition c_i 1 bit wide: it has 6 bits",
+                "WARNING: starc_more7.sv(18)STARC-2.10.3.1 (sv_statement_037) -- Compare operands of the same width: a_i has 8 bits, c_i 6",
+                "WARNING: starc_more7.sv(19)STARC-2.10.4.4 (sv_statement_043) -- Compare values of one type: i == a_i compares integer with logic[7:0]",
+                "WARNING: starc_more7.sv(20)STARC-2.10.3.4 (sv_statement_038) -- Extend c_i, 6 bits wide, to the 8 bits of y_o",
+                "WARNING: starc_more7.sv(21)STARC-2.10.6.1 (sv_statement_039) -- Make sum 9 bits wide to hold the result of a_i + b_i",
+                "WARNING: starc_more7.sv(23)STARC-2.1.4.6 (sv_statement_042) -- The reduction &a_i gives 1 bit, here extended to 4",
+                "WARNING: starc_more7.sv(23)STARC-2.1.4.6 (sv_statement_042) -- The reduction &b_i gives 1 bit, here extended to 4",
+                "ERROR: starc_more7.sv(24)STARC-2.10.8.2/STARC-2.10.8.3 (sv_statement_040) -- Divide at most 12 bits: d_i has 16",
+                "ERROR: starc_more7.sv(24)STARC-2.10.8.2/STARC-2.10.8.3 (sv_statement_040) -- Divide by at most 8 bits: e_i[9:0] has 10",
+                "ERROR: starc_more7.sv(25)STARC-2.10.8.2/STARC-2.10.8.3 (sv_statement_040) -- Divide at most 12 bits: d_i has 16",
+                "WARNING: starc_more7.sv(26)STARC-2.10.6.1 (sv_statement_039) -- Make p_o 64 bits wide to hold the result of e_i * e_i",
+                "WARNING: starc_more7.sv(26)STARC-2.10.6.5 (sv_statement_041) -- Build the multiplier of e_i * e_i explicitly: its operands have up to 32 bits",
+            ],
+            [s for s in lOutput if any(f"({r})" in s for r in lRules)],
+        )
+
+    def test_starc_checks_8(self):
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "starc", "-ap"], "starc_more8.sv")
+        lRules = (
+            "sv_naming_018",
+            "sv_naming_019",
+            "sv_naming_020",
+            "sv_module_013",
+            "sv_module_014",
+            "sv_module_015",
+            "sv_module_016",
+            "sv_module_017",
+            "sv_always_026",
+            "sv_case_011",
+            "sv_case_012",
+            "sv_statement_044",
+            "sv_statement_045",
+            "sv_statement_046",
+            "sv_statement_047",
+            "sv_statement_048",
+            "sv_statement_049",
+            "sv_statement_050",
+            "sv_literal_010",
+            "sv_comment_006",
+            "sv_comment_007",
+        )
+        self.assertEqual(
+            [
+                "WARNING: starc_more8.sv(1)STARC-3.5.3.2 (sv_comment_006) -- Record the changes in the file header: modif|change|history|revision",
+                "WARNING: starc_more8.sv(5)STARC-3.5.6.1 (sv_comment_007) -- Comment the module more: 1 of its 35 lines have a comment",
+                "WARNING: starc_more8.sv(12)STARC-1.1.1.9 (sv_naming_018) -- Rename Y_O, which differs from y_o only in case",
+                "WARNING: starc_more8.sv(14)STARC-1.1.4.4 (sv_module_013) -- Undefine LOCAL with an undef directive before the end of the module",
+                "ERROR: starc_more8.sv(18)STARC-1.6.4.1 (sv_module_015) -- Move the logic to a basic block: this module connects instances",
+                "WARNING: starc_more8.sv(18)STARC-1.1.5.2 (sv_naming_020) -- Name the clock sample with a clock word, such as clk",
+                "WARNING: starc_more8.sv(18)STARC-1.1.5.2 (sv_naming_020) -- Name the reset init_n with a reset word, such as rst",
+                "WARNING: starc_more8.sv(19)STARC-2.3.1.3 (sv_always_026) -- Add a unit delay to the register assignment, as in <= #1",
+                "WARNING: starc_more8.sv(20)STARC-2.3.1.3 (sv_always_026) -- Add a unit delay to the register assignment, as in <= #1",
+                "WARNING: starc_more8.sv(21)STARC-1.3.1.4 (sv_module_014) -- Put the registers with a synchronous reset in a module of their own",
+                "WARNING: starc_more8.sv(22)STARC-2.3.1.3 (sv_always_026) -- Add a unit delay to the register assignment, as in <= #1",
+                "WARNING: starc_more8.sv(23)STARC-2.3.1.3 (sv_always_026) -- Add a unit delay to the register assignment, as in <= #1",
+                "WARNING: starc_more8.sv(24)STARC-3.1.3.1 (sv_module_016) -- Connect a in the order of the ports of sub",
+                "WARNING: starc_more8.sv(25)STARC-1.6.2.1 (sv_module_017) -- Register the output y_o",
+                "WARNING: starc_more8.sv(29)STARC-2.9.1.1 (sv_statement_044) -- The loop makes priority logic for grant: write it as such",
+                "WARNING: starc_more8.sv(30)STARC-2.9.2.3 (sv_statement_045) -- Run the loop at most 10 times: it runs 12",
+                "WARNING: starc_more8.sv(31)STARC-3.2.2.1/STARC-4.1.2.1 (sv_literal_010) -- Name 8'd5 with a parameter",
+                "WARNING: starc_more8.sv(31)STARC-2.9.1.1 (sv_statement_044) -- The loop makes priority logic for t: write it as such",
+                "WARNING: starc_more8.sv(31)STARC-2.10.6.3 (sv_statement_046) -- Do not mix signed and unsigned operands in s + a_i",
+                "WARNING: starc_more8.sv(33)STARC-2.8.4.4 (sv_case_012) -- Keep the wildcard bits of 4'b1?0? together",
+                "WARNING: starc_more8.sv(33)STARC-2.10.6.6 (sv_statement_047) -- Write one arithmetic operation per line: this one has 2",
+                "WARNING: starc_more8.sv(37)STARC-2.6.1.2 (sv_statement_050) -- Compute q & r once, in a signal: it is written 3 times",
+                "ERROR: starc_more8.sv(52)STARC-4.1.3.1/STARC-4.1.3.2 (sv_statement_049) -- Offset the stimulus from the clock edge with a delay",
+            ],
+            [s for s in lOutput if any(f"({r})" in s for r in lRules)],
         )
 
     def test_lint_do254(self):

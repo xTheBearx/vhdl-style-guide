@@ -822,3 +822,380 @@ This rule checks for delays given as numbers in testbenches, modules without por
 
    localparam int ResetTime = 100;
    initial #ResetTime rst_n = 1'b1;
+
+sv_statement_035
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_logical_operand_width`
+
+This rule checks that the operands of the logical operators &&, || and ! are 1 bit wide, as the STARC guide asks
+(2.1.4.5): compare a vector with a value instead. The widths come from slang's elaboration of the file. It is
+disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   if (count && valid) ...
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   if ((count != '0) && valid) ...
+
+sv_statement_036
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_condition_width`
+
+This rule checks that the conditions of if statements and conditional operators are 1 bit wide, as the STARC
+guide asks (2.1.5.3). Calls of functions, such as $test$plusargs, are not checked. The widths come from slang's
+elaboration of the file. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   if (count) ...
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   if (count != '0) ...
+
+sv_statement_037
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_comparison_widths`
+
+This rule checks that the operands of comparisons have the same width, as the STARC guide asks (2.10.3.1).
+Constants, such as numbers, parameters and Width - 1, expressions with a number without a width, strings and
+integers, which sv_statement_043 checks, are not checked here. The widths come from slang's elaboration of the
+file. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   if (count == limit) ...  // 8 and 6 bits
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   if (count == {2'b00, limit}) ...
+
+sv_statement_038
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_assignment_widths`
+
+This rule checks that the value of an assignment, a signal, a part of one or a concatenation, is not narrower
+than its target, as the STARC guide recommends (2.10.3.4): extend it explicitly; sv_statement_039 checks the
+results of additions and multiplications. Constants, such as numbers, parameters and strings, and fills such as
+'0, are not checked; values wider than their target are slang's WidthTruncate warning, sv_lint_001. The widths
+come from slang's elaboration of the file. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   assign sum = a;  // 9 and 8 bits
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign sum = {1'b0, a};
+
+sv_statement_039
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_result_widths`
+
+This rule checks that the target of an addition or a multiplication is wide enough for its result: one bit more
+than the widest operand of an addition, the sum of the widths for a multiplication, as the STARC guide asks
+(2.10.6.1). An operation with a constant, such as count + 1, is not checked. The widths come from slang's
+elaboration of the file. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   assign sum = a + b;  // all 8 bits
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign sum = a + b;  // sum 9 bits
+
+sv_statement_040
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_divider_widths`
+
+This rule checks the operands of divisions and remainders: the dividend at most **maximum_dividend_bits** wide,
+12 by default, and the divisor at most **maximum_divisor_bits**, 8 by default, unless it is a constant power of
+two, as the STARC guide asks (2.10.8.2, 2.10.8.3). The widths come from slang's elaboration of the file. It is
+disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   assign q = a / b;  // 16 and 16 bits
+
+**Fix**
+
+Use a divider built for the widths, or narrower operands.
+
+sv_statement_041
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_multiplier_widths`
+
+This rule checks that the operands of multiplications of two signals are at most **maximum_multiplier_bits**
+wide, 16 by default, as the STARC guide recommends (2.10.6.5): build larger multipliers explicitly. The widths
+come from slang's elaboration of the file. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   assign p = a * b;  // 32 bits each
+
+**Fix**
+
+Build the multiplier from smaller ones, or use a multiplier core.
+
+sv_statement_042
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_reduction_widths`
+
+This rule checks for reduction operators, such as &data, whose 1-bit result is extended to a wider context, such
+as an addition or a wider target, as the STARC guide recommends (2.1.4.6). The widths come from slang's
+elaboration of the file. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   assign count = &a + &b;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign count = {1'b0, &a} + {1'b0, &b};
+
+sv_statement_043
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_integer_comparisons`
+
+This rule checks for comparisons of an integer, such as an int or integer variable, with a vector of another
+type, as the STARC guide recommends (2.10.4.4): their widths and signs differ. The widths come from slang's
+elaboration of the file. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   integer i;
+   if (i == count) ...
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   if (i == int'(count)) ...
+
+sv_statement_044
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_no_loop_priority`
+
+This rule checks for for loops that build priority logic: an if without else in the loop assigns a signal the
+loop variable does not index, so the last iteration whose condition holds wins, as the STARC guide recommends
+against (2.9.1.1). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   for (int i = 0; i < 8; i++)
+       if (req[i]) grant = i;
+
+**Fix**
+
+Write the priority explicitly, for example with a case statement or a priority encoder function.
+
+sv_statement_045
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_loop_iterations`
+
+This rule checks that for loops with comparisons or logic in them run at most **maximum_iterations** times, 10 by
+default, as the STARC guide recommends (2.9.2.3). Only loops whose bounds are numbers are checked. It is disabled
+by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   for (int i = 0; i < 32; i++) if (a[i] == b[i]) ...
+
+**Fix**
+
+Compare the vectors as a whole, or split the loop.
+
+sv_statement_046
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_signedness`
+
+This rule checks for operations that mix signed and unsigned operands, as the STARC guide asks (2.10.6.3):
+SystemVerilog then treats both as unsigned. The types come from slang's elaboration of the file; numbers without
+a width are not checked. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   logic signed [7:0] s;
+   assign y = s + u;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign y = s + signed'(u);
+
+sv_statement_047
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_one_operation_per_line`
+
+This rule checks that a line has at most one arithmetic operator, as the STARC guide recommends (2.10.6.6); a + b
++ c, an addition with a carry in, is allowed. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   assign y = a * b + c - d;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign p = a * b;
+   assign y = p + c - d;
+
+sv_statement_048
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_common_expressions`
+
+This rule checks for an arithmetic expression that both branches of an if and else compute, as the STARC guide
+recommends (2.10.7.2): compute it once, before the if. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   if (sel) y = a + b;
+   else z = a + b;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign sum = a + b;
+   if (sel) y = sum;
+   else z = sum;
+
+sv_statement_049
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_stimulus_offset`
+
+This rule checks that test stimulus is not assigned right at a clock edge, after an event control such as
+@(posedge clk) without a delay, as the STARC guide recommends (4.1.3.1, 4.1.3.2), in initial blocks and tasks. It
+is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   @(posedge clk);
+   data = 8'h55;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   @(posedge clk);
+   #1 data = 8'h55;
+
+sv_statement_050
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_shared_expressions`
+
+This rule checks for an expression with an operator that reads signals, such as a & b, written in more than
+**maximum_uses** places of a module, 2 by default, as the STARC guide recommends (2.6.1.2): compute it once, in a
+signal of its own. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   assign x = a & b;
+   assign y = (a & b) | c;
+   assign z = (a & b) ^ d;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign ab = a & b;
+   assign x = ab;
+   assign y = ab | c;
+   assign z = ab ^ d;

@@ -260,6 +260,11 @@ cases:
   - - 12
     - Reset with rst_ni asynchronously
 - rule: sv_always_021
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 22
+    - Reset with srst_n asynchronously
+- rule: sv_always_021
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_always_022
@@ -292,6 +297,30 @@ cases:
   - - 18
     - Do not reset the latch with rst_ni
 - rule: sv_always_025
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_always_026
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 50
+    - 'Add a unit delay to the register assignment, as in <= #1'
+- rule: sv_always_026
+  file: examples/svfile/indent.sv
+  expected:
+  - - 42
+    - 'Add a unit delay to the register assignment, as in <= #1'
+  - - 40
+    - 'Add a unit delay to the register assignment, as in <= #1'
+  - - 38
+    - 'Add a unit delay to the register assignment, as in <= #1'
+- rule: sv_always_026
+  file: examples/svfile/indent_options.sv
+  expected:
+  - - 22
+    - 'Add a unit delay to the register assignment, as in <= #1'
+  - - 19
+    - 'Add a unit delay to the register assignment, as in <= #1'
+- rule: sv_always_026
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_case_001
@@ -339,6 +368,11 @@ cases:
   file: examples/svfile/starc_more2.sv
   expected:
   - - 51
+    - Use case instead of casez
+- rule: sv_case_005
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 32
     - Use case instead of casez
 - rule: sv_case_005
   file: examples/svfile/alignment.fixed.sv
@@ -390,6 +424,17 @@ cases:
 - rule: sv_case_010
   file: examples/svfile/alignment.fixed.sv
   expected: []
+- rule: sv_case_011
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_case_012
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 33
+    - Keep the wildcard bits of 4'b1?0? together
+- rule: sv_case_012
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
 - rule: sv_comment_001
   file: examples/svfile/declarations.sv
   expected:
@@ -435,6 +480,9 @@ cases:
   expected:
   - - 1
     - Start the file with a header comment
+- rule: sv_comment_003
+  file: examples/svfile/starc_more8.sv
+  expected: []
 - rule: sv_comment_004
   file: examples/svfile/alignment.fixed.sv
   expected:
@@ -484,6 +532,42 @@ cases:
     - Write the comment with ASCII characters only
 - rule: sv_comment_005
   file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_comment_006
+  file: examples/svfile/indent.sv
+  expected:
+  - - 1
+    - 'Record the changes in the file header: modif|change|history|revision'
+- rule: sv_comment_006
+  file: examples/svfile/lint.sv
+  expected:
+  - - 1
+    - 'Record the changes in the file header: modif|change|history|revision'
+- rule: sv_comment_006
+  file: examples/svfile/project/top.sv
+  expected:
+  - - 1
+    - 'Record the changes in the file header: modif|change|history|revision'
+- rule: sv_comment_006
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_comment_007
+  file: examples/svfile/alignment.fixed.sv
+  expected:
+  - - 1
+    - 'Comment the module more: 0 of its 25 lines have a comment'
+- rule: sv_comment_007
+  file: examples/svfile/alignment.sv
+  expected:
+  - - 1
+    - 'Comment the module more: 0 of its 25 lines have a comment'
+- rule: sv_comment_007
+  file: examples/svfile/brackets.fixed.sv
+  expected:
+  - - 1
+    - 'Comment the module more: 1 of its 19 lines have a comment'
+- rule: sv_comment_007
+  file: examples/svfile/code_tags.sv
   expected: []
 - rule: sv_declaration_002
   file: examples/svfile/starc_more.sv
@@ -576,6 +660,13 @@ cases:
   - - 40
     - Move the module to a file of its own
 - rule: sv_file_003
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 41
+    - Move the module to a file of its own
+  - - 48
+    - Move the module to a file of its own
+- rule: sv_file_003
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_file_004
@@ -623,10 +714,10 @@ cases:
   - - 40
     - Name the file of the testbench starc_more6_tb like *_tb.v, *_tb.sv, *_test.v, *_test.sv, *.vt
 - rule: sv_file_007
-  file: examples/svfile/structure.fixed.sv
+  file: examples/svfile/starc_more8.sv
   expected:
-  - - 1
-    - Name the file of the testbench structure like *_tb.v, *_tb.sv, *_test.v, *_test.sv, *.vt
+  - - 48
+    - Name the file of the testbench starc_more8_tb like *_tb.v, *_tb.sv, *_test.v, *_test.sv, *.vt
 - rule: sv_file_007
   file: examples/svfile/alignment.fixed.sv
   expected: []
@@ -870,6 +961,15 @@ cases:
   - - 14
     - Implicit conversion truncates from 8 to 4 bits
 - rule: sv_lint_001
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 20
+    - Implicit conversion expands from 6 to 8 bits
+  - - 24
+    - Implicit conversion truncates from 16 to 8 bits
+  - - 25
+    - Implicit conversion truncates from 32 to 8 bits
+- rule: sv_lint_001
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_lint_002
@@ -904,6 +1004,18 @@ cases:
   - - 30
     - Comparison of differently signed types ('logic[3:0]' and 'int')
 - rule: sv_lint_007
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 19
+    - Comparison of differently signed types ('integer' and 'logic[7:0]')
+- rule: sv_lint_007
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 29
+    - Implicit conversion changes signedness from 'logic signed[2:0]' to 'logic[2:0]'
+  - - 31
+    - Implicit conversion changes signedness from 'logic signed[7:0]' to 'logic[7:0]'
+- rule: sv_lint_007
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_lint_008
@@ -924,6 +1036,34 @@ cases:
   - - 21
     - Add c_i, u to the sensitivity list, or use always_comb
 - rule: sv_lint_008
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_009
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 18
+    - Implicit conversion from 'bit[63:0]' to 'int' changes value from 64'h100000000 to 0 (slang ConstantConversion)
+  - - 29
+    - Implicit conversion from 'logic[3:0]' to 'logic' changes value from 4'b1111 to 1'b1 (slang ConstantConversion)
+  - - 29
+    - Vector literal too large for the given number of bits (8 bits needed) (slang VectorLiteralOverflow)
+  - - 31
+    - Implicit conversion from 'logic[32:0]' to 'logic' changes value from 33'h100000000 to 1'b0 (slang ConstantConversion)
+- rule: sv_lint_009
+  file: examples/svfile/indent.sv
+  expected:
+  - - 49
+    - '''case'' marked ''unique'' has ''default'' label (slang CaseRedundantDefault)'
+- rule: sv_lint_009
+  file: examples/svfile/starc_more2.sv
+  expected:
+  - - 28
+    - Edge expression is constant (slang EventExpressionConstant)
+  - - 45
+    - '''&&'' within ''||'' (slang LogicalOpParentheses)'
+  - - 52
+    - Comparison of different types in 'casez' statement ('logic' and 'logic[1:0]') (slang CaseTypeMismatch)
+- rule: sv_lint_009
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_lint_013
@@ -1066,6 +1206,30 @@ cases:
 - rule: sv_literal_009
   file: examples/svfile/alignment.fixed.sv
   expected: []
+- rule: sv_literal_010
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 62
+    - Name 2 with a parameter
+  - - 29
+    - Name 4'hFF with a parameter
+  - - 31
+    - Name 'h1_0000_0000 with a parameter
+- rule: sv_literal_010
+  file: examples/svfile/indent.sv
+  expected:
+  - - 77
+    - Name 8 with a parameter
+  - - 108
+    - Name 64 with a parameter
+- rule: sv_literal_010
+  file: examples/svfile/starc_more2.sv
+  expected:
+  - - 51
+    - Name 2'b11 with a parameter
+- rule: sv_literal_010
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
 - rule: sv_module_002
   file: examples/svfile/structure.fixed.sv
   expected:
@@ -1195,6 +1359,75 @@ cases:
 - rule: sv_module_012
   file: examples/svfile/alignment.fixed.sv
   expected: []
+- rule: sv_module_013
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 14
+    - Undefine LOCAL with an undef directive before the end of the module
+- rule: sv_module_013
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_module_014
+  file: examples/svfile/starc_more6.sv
+  expected:
+  - - 11
+    - Put the registers with a synchronous reset in a module of their own
+- rule: sv_module_014
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 21
+    - Put the registers with a synchronous reset in a module of their own
+- rule: sv_module_014
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_module_015
+  file: examples/svfile/alignment.fixed.sv
+  expected:
+  - - 11
+    - 'Move the logic to a basic block: this module connects instances'
+- rule: sv_module_015
+  file: examples/svfile/alignment.sv
+  expected:
+  - - 11
+    - 'Move the logic to a basic block: this module connects instances'
+- rule: sv_module_015
+  file: examples/svfile/brackets.fixed.sv
+  expected:
+  - - 9
+    - 'Move the logic to a basic block: this module connects instances'
+- rule: sv_module_015
+  file: examples/svfile/code_tags.sv
+  expected: []
+- rule: sv_module_016
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 24
+    - Connect a in the order of the ports of sub
+- rule: sv_module_016
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_module_017
+  file: examples/svfile/brackets.fixed.sv
+  expected:
+  - - 9
+    - Register the output y_o
+- rule: sv_module_017
+  file: examples/svfile/brackets.sv
+  expected:
+  - - 9
+    - Register the output y_o
+- rule: sv_module_017
+  file: examples/svfile/continuation.fixed.sv
+  expected:
+  - - 8
+    - Register the output y_o
+  - - 10
+    - Register the output z_o
+  - - 15
+    - Register the output w_o
+- rule: sv_module_017
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
 - rule: sv_naming_001
   file: examples/svfile/declarations.sv
   expected:
@@ -1212,6 +1445,11 @@ cases:
     - Rename Data to match [a-z_0-9]+
   - - 15
     - Rename Valid_o to match [a-z_0-9]+
+- rule: sv_naming_008
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 12
+    - Rename Y_O to match [a-z_0-9]+
 - rule: sv_naming_008
   file: examples/svfile/alignment.fixed.sv
   expected: []
@@ -1256,6 +1494,11 @@ cases:
   expected:
   - - 23
     - Rename Data, which differs from data only in case
+- rule: sv_naming_012
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 12
+    - Rename Y_O, which differs from y_o only in case
 - rule: sv_naming_012
   file: examples/svfile/alignment.fixed.sv
   expected: []
@@ -1345,6 +1588,37 @@ cases:
   - - 12
     - Mark the active low reset rst_i with a suffix such as _n
 - rule: sv_naming_017
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_naming_018
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 23
+    - Rename Data, which differs from data only in case
+- rule: sv_naming_018
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 12
+    - Rename Y_O, which differs from y_o only in case
+- rule: sv_naming_018
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_naming_019
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_naming_020
+  file: examples/svfile/starc_more2.sv
+  expected:
+  - - 32
+    - Name the reset set_ni with a reset word, such as rst
+- rule: sv_naming_020
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 18
+    - Name the clock sample with a clock word, such as clk
+  - - 18
+    - Name the reset init_n with a reset word, such as rst
+- rule: sv_naming_020
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_statement_001
@@ -1556,6 +1830,11 @@ cases:
   - - 31
     - Add parentheses to s - r + q
 - rule: sv_statement_021
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 33
+    - Add parentheses to a_i * q - r
+- rule: sv_statement_021
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_statement_022
@@ -1640,6 +1919,13 @@ cases:
   - - 29
     - Compute a_i + q outside the loop
 - rule: sv_statement_029
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 31
+    - Compute s + a_i outside the loop
+  - - 31
+    - Compute a_i == 8'd5 outside the loop
+- rule: sv_statement_029
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_statement_030
@@ -1694,6 +1980,172 @@ cases:
 - rule: sv_statement_034
   file: examples/svfile/alignment.fixed.sv
   expected: []
+- rule: sv_statement_035
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 16
+    - Compare a_i, 8 bits wide, with a value instead of using it as a truth value
+- rule: sv_statement_035
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_036
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 17
+    - 'Make the condition c_i 1 bit wide: it has 6 bits'
+- rule: sv_statement_036
+  file: examples/svfile/whitespace.fixed.sv
+  expected:
+  - - 14
+    - 'Make the condition sum 1 bit wide: it has 8 bits'
+- rule: sv_statement_036
+  file: examples/svfile/whitespace.sv
+  expected:
+  - - 14
+    - 'Make the condition sum 1 bit wide: it has 8 bits'
+- rule: sv_statement_036
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_037
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 18
+    - 'Compare operands of the same width: a_i has 8 bits, c_i 6'
+- rule: sv_statement_037
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_038
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 20
+    - Extend c_i, 6 bits wide, to the 8 bits of y_o
+- rule: sv_statement_038
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_039
+  file: examples/svfile/starc_more.sv
+  expected:
+  - - 30
+    - Make i 33 bits wide to hold the result of i + 1
+- rule: sv_statement_039
+  file: examples/svfile/starc_more2.sv
+  expected:
+  - - 21
+    - Make add 9 bits wide to hold the result of x + b_i
+- rule: sv_statement_039
+  file: examples/svfile/starc_more6.sv
+  expected:
+  - - 29
+    - Make y_o[i] 2 bits wide to hold the result of a_i + q
+- rule: sv_statement_039
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_040
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 24
+    - 'Divide at most 12 bits: d_i has 16'
+  - - 24
+    - 'Divide by at most 8 bits: e_i[9:0] has 10'
+  - - 25
+    - 'Divide at most 12 bits: d_i has 16'
+- rule: sv_statement_040
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_041
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 26
+    - 'Build the multiplier of e_i * e_i explicitly: its operands have up to 32 bits'
+- rule: sv_statement_041
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_042
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 23
+    - The reduction &a_i gives 1 bit, here extended to 4
+  - - 23
+    - The reduction &b_i gives 1 bit, here extended to 4
+- rule: sv_statement_042
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_043
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 19
+    - 'Compare values of one type: i == a_i compares integer with logic[7:0]'
+- rule: sv_statement_043
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_044
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 29
+    - 'The loop makes priority logic for grant: write it as such'
+  - - 31
+    - 'The loop makes priority logic for t: write it as such'
+- rule: sv_statement_044
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_045
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 30
+    - 'Run the loop at most 10 times: it runs 12'
+- rule: sv_statement_045
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_046
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 19
+    - Do not mix signed and unsigned operands in i == a_i
+- rule: sv_statement_046
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 31
+    - Do not mix signed and unsigned operands in s + a_i
+- rule: sv_statement_046
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_047
+  file: examples/svfile/starc_more2.sv
+  expected:
+  - - 50
+    - 'Write one arithmetic operation per line: this one has 2'
+- rule: sv_statement_047
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 31
+    - 'Write one arithmetic operation per line: this one has 3'
+- rule: sv_statement_047
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 33
+    - 'Write one arithmetic operation per line: this one has 2'
+- rule: sv_statement_047
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_048
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_049
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 52
+    - Offset the stimulus from the clock edge with a delay
+- rule: sv_statement_049
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_050
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 37
+    - 'Compute q & r once, in a signal: it is written 3 times'
+- rule: sv_statement_050
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
 - rule: whitespace_002
   file: examples/whitespace/rule_002_test_input.fixed.vhd
   expected: []
@@ -1717,7 +2169,7 @@ cases:
   - - 19
     - Remove tab
 design_cases:
-- rule: design_008
+- rule: design_003
   name: clean design
   design: &id001
     top: clean_top
@@ -1726,7 +2178,19 @@ design_cases:
       files:
       - examples/design/clean.vhd
   expected: []
+- rule: design_004
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_008
+  name: clean design
+  design: *id001
+  expected: []
 - rule: design_009
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_011
   name: clean design
   design: *id001
   expected: []
@@ -1742,7 +2206,11 @@ design_cases:
   name: clean design
   design: *id001
   expected: []
-- rule: design_008
+- rule: design_015
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_003
   name: undeclared signal
   design: &id002
     top: undeclared_top
@@ -1751,7 +2219,19 @@ design_cases:
       files:
       - examples/design/undeclared.vhd
   expected: []
+- rule: design_004
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_008
+  name: undeclared signal
+  design: *id002
+  expected: []
 - rule: design_009
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_011
   name: undeclared signal
   design: *id002
   expected: []
@@ -1767,7 +2247,11 @@ design_cases:
   name: undeclared signal
   design: *id002
   expected: []
-- rule: design_008
+- rule: design_015
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_003
   name: latch
   design: &id003
     top: latch_top
@@ -1776,7 +2260,19 @@ design_cases:
       files:
       - examples/design/latch.vhd
   expected: []
+- rule: design_004
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_008
+  name: latch
+  design: *id003
+  expected: []
 - rule: design_009
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_011
   name: latch
   design: *id003
   expected: []
@@ -1792,7 +2288,11 @@ design_cases:
   name: latch
   design: *id003
   expected: []
-- rule: design_008
+- rule: design_015
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_003
   name: combinational loop
   design: &id004
     top: loop_top
@@ -1800,8 +2300,26 @@ design_cases:
     - name: work
       files:
       - examples/design/loop.vhd
+  expected:
+  - - examples/design/loop.vhd
+    - 40
+    - Combinational loop through a, b in loop_top
+  - - examples/design/loop.vhd
+    - 45
+    - Combinational loop through e, f in loop_top and instance u_pass
+- rule: design_004
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_008
+  name: combinational loop
+  design: *id004
   expected: []
 - rule: design_009
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_011
   name: combinational loop
   design: *id004
   expected: []
@@ -1817,7 +2335,11 @@ design_cases:
   name: combinational loop
   design: *id004
   expected: []
-- rule: design_008
+- rule: design_015
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_003
   name: multiple drivers
   design: &id005
     top: md_top
@@ -1826,7 +2348,22 @@ design_cases:
       files:
       - examples/design/multiple_drivers.vhd
   expected: []
+- rule: design_004
+  name: multiple drivers
+  design: *id005
+  expected:
+  - - examples/design/multiple_drivers.vhd
+    - 37
+    - 'Signal shared_net in md_top has 2 drivers: u_first, u_second'
+- rule: design_008
+  name: multiple drivers
+  design: *id005
+  expected: []
 - rule: design_009
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_011
   name: multiple drivers
   design: *id005
   expected: []
@@ -1842,7 +2379,11 @@ design_cases:
   name: multiple drivers
   design: *id005
   expected: []
-- rule: design_008
+- rule: design_015
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_003
   name: registers
   design: &id006
     top: registers_top
@@ -1851,7 +2392,19 @@ design_cases:
       files:
       - examples/design/registers.vhd
   expected: []
+- rule: design_004
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_008
+  name: registers
+  design: *id006
+  expected: []
 - rule: design_009
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_011
   name: registers
   design: *id006
   expected: []
@@ -1867,7 +2420,14 @@ design_cases:
   name: registers
   design: *id006
   expected: []
-- rule: design_008
+- rule: design_015
+  name: registers
+  design: *id006
+  expected:
+  - - examples/design/registers.vhd
+    - 31
+    - 'Reset rst is released asynchronously: it resets registers clocked by clk without a reset synchronizer (3 registers)'
+- rule: design_003
   name: logic depth
   design: &id007
     top: depth_top
@@ -1876,7 +2436,19 @@ design_cases:
       files:
       - examples/design/depth.vhd
   expected: []
+- rule: design_004
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_008
+  name: logic depth
+  design: *id007
+  expected: []
 - rule: design_009
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_011
   name: logic depth
   design: *id007
   expected: []
@@ -1892,7 +2464,11 @@ design_cases:
   name: logic depth
   design: *id007
   expected: []
-- rule: design_008
+- rule: design_015
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_003
   name: clock domain crossings
   design: &id008
     top: cdc_top
@@ -1900,6 +2476,14 @@ design_cases:
     - name: work
       files:
       - examples/design/cdc.vhd
+  expected: []
+- rule: design_004
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_008
+  name: clock domain crossings
+  design: *id008
   expected:
   - - examples/design/cdc.vhd
     - 90
@@ -1914,6 +2498,13 @@ design_cases:
   - - examples/design/cdc.vhd
     - 95
     - bus_a (clk_a) is synchronized bit by bit into bus1_b (clk_b); the bits can arrive in different cycles
+- rule: design_011
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 198
+    - clk_c is used as a clock and as an asynchronous reset
 - rule: design_012
   name: clock domain crossings
   design: *id008
@@ -1935,7 +2526,20 @@ design_cases:
   - - examples/design/cdc.vhd
     - 163
     - Asynchronous reset is made by logic of rst_b, soft_a
-- rule: design_008
+- rule: design_015
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 136
+    - 'Reset rst_a is released asynchronously: it resets registers clocked by clk_a without a reset synchronizer'
+  - - examples/design/cdc.vhd
+    - 146
+    - Reset rst_b is synchronized to clk_b, resets registers clocked by clk_a
+  - - examples/design/cdc.vhd
+    - 198
+    - 'Reset clk_c is released asynchronously: it resets registers clocked by clk_a without a reset synchronizer'
+- rule: design_003
   name: reconvergence
   design: &id009
     top: reconvergence_top
@@ -1944,7 +2548,19 @@ design_cases:
       files:
       - examples/design/reconvergence.vhd
   expected: []
+- rule: design_004
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_008
+  name: reconvergence
+  design: *id009
+  expected: []
 - rule: design_009
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_011
   name: reconvergence
   design: *id009
   expected: []
@@ -1960,7 +2576,11 @@ design_cases:
   name: reconvergence
   design: *id009
   expected: []
-- rule: design_008
+- rule: design_015
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_003
   name: black box
   design: &id010
     top: bb_top
@@ -1969,7 +2589,19 @@ design_cases:
       files:
       - examples/design/black_box.vhd
   expected: []
+- rule: design_004
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_008
+  name: black box
+  design: *id010
+  expected: []
 - rule: design_009
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_011
   name: black box
   design: *id010
   expected: []
@@ -1985,7 +2617,11 @@ design_cases:
   name: black box
   design: *id010
   expected: []
-- rule: design_008
+- rule: design_015
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_003
   name: deep logic
   design: &id011
     top: deep_top
@@ -1994,7 +2630,19 @@ design_cases:
       files:
       - examples/extra/design_007/deep.vhd
   expected: []
+- rule: design_004
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_008
+  name: deep logic
+  design: *id011
+  expected: []
 - rule: design_009
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_011
   name: deep logic
   design: *id011
   expected: []
@@ -2010,7 +2658,11 @@ design_cases:
   name: deep logic
   design: *id011
   expected: []
-- rule: design_008
+- rule: design_015
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_003
   name: reset domain crossing
   design: &id012
     top: rdc_top
@@ -2019,7 +2671,19 @@ design_cases:
       files:
       - examples/design/rdc.vhd
   expected: []
+- rule: design_004
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_008
+  name: reset domain crossing
+  design: *id012
+  expected: []
 - rule: design_009
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_011
   name: reset domain crossing
   design: *id012
   expected: []
@@ -2038,3 +2702,7 @@ design_cases:
   - - examples/design/rdc.vhd
     - 79
     - Asynchronous reset rst_ab is made by logic
+- rule: design_015
+  name: reset domain crossing
+  design: *id012
+  expected: []

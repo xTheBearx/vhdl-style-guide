@@ -153,6 +153,11 @@ options:
     item_type: string
     label: Case exceptions
     description: "Words that are accepted when written exactly as listed, regardless of the case option."
+  cell_names:
+    type: list
+    item_type: string
+    label: Library cell names
+    description: The names of the cells of the target library, which modules and instances may not have.
   clock:
     type: enum
     values: [event, edge]
@@ -305,6 +310,11 @@ options:
     nullable: true
     label: Header string
     description: "Text placed in the header line, positioned by header_alignment. None means no text."
+  history_fields:
+    type: list
+    item_type: string
+    label: History fields
+    description: Regular expressions, matched ignoring case, that the header comment at the start of a file must each match to record its changes.
   if_control_statements_ends_group:
     type: enum
     values: ["yes", "no"]
@@ -413,6 +423,31 @@ options:
     minimum: 1
     label: Longest name
     description: The most characters in a name other than that of a module or instance.
+  maximum_dividend_bits:
+    type: integer
+    minimum: 1
+    label: Widest dividend
+    description: The most bits the dividend of a division or remainder may have.
+  maximum_divisor_bits:
+    type: integer
+    minimum: 1
+    label: Widest divisor
+    description: The most bits the divisor of a division or remainder may have, unless it is a constant power of two.
+  maximum_iterations:
+    type: integer
+    minimum: 1
+    label: Most loop iterations
+    description: The most times a for loop with comparisons or logic may run.
+  maximum_multiplier_bits:
+    type: integer
+    minimum: 1
+    label: Widest multiplier operand
+    description: The most bits the operands of a multiplication of two signals may have.
+  maximum_name_length:
+    type: integer
+    minimum: 1
+    label: Longest module or port name
+    description: The most characters in the name of a module or a port.
   maximum_ports:
     type: integer
     minimum: 1
@@ -423,6 +458,31 @@ options:
     minimum: 1
     label: Most states
     description: The most states, items of its case statement, one state machine may have.
+  maximum_table_bits:
+    type: integer
+    minimum: 1
+    label: Most case table bits
+    description: The most selector and assigned bits of a case statement together.
+  maximum_table_inputs:
+    type: integer
+    minimum: 1
+    label: Most case table inputs
+    description: The most bits the selector of a case statement may have.
+  maximum_table_outputs:
+    type: integer
+    minimum: 1
+    label: Most case table outputs
+    description: The most bits a case statement may assign.
+  maximum_uses:
+    type: integer
+    minimum: 1
+    label: Most uses of an expression
+    description: The most places of a module an expression with an operator may be written in.
+  minimum_comment_percent:
+    type: integer
+    minimum: 0
+    label: Least comment percentage
+    description: The least percentage of the lines of a module that have a comment.
   port_pattern:
     type: string
     label: Port name pattern

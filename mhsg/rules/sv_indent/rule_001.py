@@ -3,6 +3,7 @@
 import importlib
 
 from mhsg import language, parser
+from mhsg.rules.sv_tree import before_errors, first_error_line
 from mhsg.rules.token_indent import token_indent as Rule
 from mhsg.svFile import tokens
 
@@ -67,12 +68,12 @@ class rule_001(Rule):
         self.configuration.append("begin_style")
 
     def _get_tokens_of_interest(self, oFile):
-        if getattr(oFile, "syntax_errors", None):
-            return []
         set_style_levels(oFile, int(self.list_indent), str(self.begin_style).lower() == "indented")
-        return super()._get_tokens_of_interest(oFile)
+        return before_errors(oFile, super()._get_tokens_of_interest(oFile))
 
     def fix(self, oFile, dFixOnly=None):
+        if first_error_line(oFile) is not None:
+            return
         super().fix(oFile, dFixOnly)
         # A comment continuing a trailing comment moves with it
         if self.fixable and svFile.realign_comment_continuations(oFile.lAllObjects):

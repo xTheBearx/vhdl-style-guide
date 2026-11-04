@@ -205,3 +205,27 @@ This rule checks for negative constants assigned to signals, such as count <= -1
 .. code-block:: systemverilog
 
    count <= '1;
+
+sv_literal_010
+##############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_literal_named_numbers`
+
+This rule checks for numbers other than 0 and 1 in the code, as the STARC guide recommends (3.2.2.1, 4.1.2.1):
+name them with parameters. Parameter declarations, dimensions, indexes, delays, replication counts, loop headers
+and case items are not checked. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   if (count == 8'd200) done <= 1'b1;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   localparam logic [7:0] Limit = 8'd200;
+   if (count == Limit) done <= 1'b1;
