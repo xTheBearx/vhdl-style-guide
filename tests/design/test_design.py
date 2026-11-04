@@ -1032,13 +1032,13 @@ class test_design_analysis(unittest.TestCase):
         )
 
     def test_mapped_logic_depth(self):
-        # Disabled by default, also in design analysis; enabled, it maps the design to look-up tables and counts them
-        # on the longest path
+        # Disabled by default, also in design analysis; enabled, it maps the design to look-up tables and reports each
+        # register on a path of more tables than allowed, at its assignment
         dRules = {"design_019": {"maximum_levels": 1}}
         self.assertEqual([], [t for t in self.findings("depth_top", "depth.vhd", dRules=dRules) if t[2] == "design_019"])
         dRules = {"design_019": {"disable": False, "maximum_levels": 1}}
         self.assertEqual(
-            [("depth.vhd", 50, "design_019", "Path of 2 levels of 6-input look-up tables after mapping, from b_r(3), more than 1")],
+            [("depth.vhd", 53, "design_019", "Path of 3 levels of 6-input look-up tables after mapping from b_r(1) to q, more than 1")],
             [t for t in self.findings("depth_top", "depth.vhd", dRules=dRules) if t[2] == "design_019"],
         )
 
