@@ -310,6 +310,16 @@ class test_rules(unittest.TestCase):
         self.assertEqual(read("brackets.fixed.sv"), sAfter)
         self.assertEqual([], only(lOutput, "sv_whitespace"))
 
+    def test_escaped_identifier_keeps_its_space(self):
+        # An escaped identifier ends at whitespace: removing the space before the semicolon would change the code
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sCopy = os.path.join(sTemporary, "escaped.sv")
+            with open(sCopy, "w", encoding="utf-8") as oFile:
+                oFile.write("module escaped;\n    reg \\busa+index ;\n    reg \\-clock  ;\nendmodule\n")
+            subprocess.run([sys.executable, "bin/mhsg", "-f", sCopy, "--fix"], cwd=sRoot, capture_output=True, check=False)
+            with open(sCopy, encoding="utf-8") as oFile:
+                self.assertEqual("module escaped;\n    reg \\busa+index ;\n    reg \\-clock ;\nendmodule\n", oFile.read())
+
     def test_whitespace_fix(self):
         # The fix keeps the space before the packed dimension of a type, the empty case item, the empty argument,
         # the operators in brackets and the arguments of the macro; it removes the blank lines at the end

@@ -76,3 +76,18 @@ projects:
     url: https://github.com/YosysHQ/picorv32.git
     commit: ef203c2b0a3fb793280f5114941416c425c5b461
     known_issues: {}
+
+  - name: serv
+    url: https://github.com/olofk/serv.git
+    commit: f200eb2ed7b69ac1c6b8eddd47654522aeee5ce8
+    known_issues: {}
+
+  - name: cva6
+    url: https://github.com/openhwgroup/cva6.git
+    commit: 742dc82a0c706e0a3bfb98b709fd3ee06d50d12a
+    known_issues: {}
+
+  - name: sv_tests
+    url: https://github.com/chipsalliance/sv-tests.git
+    commit: b8cbf49962ccac836dcb54ecb00feb2ae1fa4f9f
+    known_issues: {}
