@@ -23,6 +23,8 @@
 #   released synchronously to the divided clock; that release is not checked.
 # - The ECC ports of block RAM belong to the read side (port A) in simple dual port mode, except the parity output and
 #   the error injection inputs, which belong to the write side (port B). The cascade ports belong to their side.
+# - The reset of the 7 series FIFOs (FIFO18E1, FIFO36E1) is asynchronous; that of the UltraScale FIFOs (FIFO18E2,
+#   FIFO36E2) is synchronous to the write clock.
 
 black_boxes:
 
@@ -627,6 +629,33 @@ black_boxes:
       dest_clk: clock
       src_arst: {reset_in: async}
       dest_arst: {reset_out: {clock: dest_clk, release: sync}}
+
+  # Built-in FIFOs: the cascade and sleep ports are left for the design to declare
+
+  FIFO36E1:
+    reference: UG953, FIFO36E1
+    archetype: dual_clock_fifo
+    sides: &fifo_e1
+      WRCLK: [DI, DIP, WREN, FULL, ALMOSTFULL, WRCOUNT, WRERR, INJECTDBITERR, INJECTSBITERR, ECCPARITY]
+      RDCLK: [DO, DOP, RDEN, EMPTY, ALMOSTEMPTY, RDCOUNT, RDERR, REGCE, RSTREG, SBITERR, DBITERR]
+    ports:
+      RST: {reset_in: async}
+  FIFO18E1:
+    reference: UG953, FIFO18E1
+    archetype: dual_clock_fifo
+    sides: *fifo_e1
+    ports:
+      RST: {reset_in: async}
+  FIFO36E2:
+    reference: UG974, FIFO36E2
+    archetype: dual_clock_fifo
+    sides: &fifo_e2
+      WRCLK: [DIN, DINP, WREN, FULL, PROGFULL, WRCOUNT, WRERR, WRRSTBUSY, INJECTDBITERR, INJECTSBITERR, ECCPARITY, RST]
+      RDCLK: [DOUT, DOUTP, RDEN, EMPTY, PROGEMPTY, RDCOUNT, RDERR, RDRSTBUSY, REGCE, RSTREG, SBITERR, DBITERR]
+  FIFO18E2:
+    reference: UG974, FIFO18E2
+    archetype: dual_clock_fifo
+    sides: *fifo_e2
 
   # XPM FIFOs and memories
 
