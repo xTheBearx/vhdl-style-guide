@@ -42,8 +42,8 @@ Design analysis
   reset is not used; a design that relies on such a register right after a reset would need them.
 * **Logic depth** counts operators before technology mapping, which is crude; a mapped count would be more realistic
   but slower and loses names.
-* **More real-world designs** in :code:`scripts/real_world_designs.yaml`: surf (needs the vendor libraries), the
-  hdl-modules designs that use them (hard_fifo), and a multi-clock design with vendor clocking.
+* **More real-world designs** in :code:`scripts/real_world_designs.yaml`: more of surf, which now analyzes with stub
+  vendor packages as its clock manager does, and a design whose clocks come from several vendor clocking primitives.
 
 Lint and rule sets
 ------------------
