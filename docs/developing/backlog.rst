@@ -75,8 +75,8 @@ under way: the entries below.
 * **STARC rule set**: 50 of the 613 items of the STARC guide have rules. The per-file items (216) are planned with
   the SystemVerilog rules, the clock and reset items with design analysis of Verilog designs. The catalogue the set
   was made from records each item's limits and its Verible equivalent, kept in the notes of the set.
-* **Sensitivity lists** (sv_lint_008) are compared with the names the block reads, by name; reads through
-  functions and hierarchical names are not followed.
+* **Sensitivity lists** (sv_lint_008) follow the functions and tasks of the file, not those of packages or other
+  files; a variable written inside an if or case before it is read still counts as read.
 * **SystemVerilog designs without the yosys-slang plugin**: Yosys' own reader handles Verilog and part of
   SystemVerilog; ibex and common_cells need the plugin, which is not packaged for Ubuntu. Not yet tried with it.
 * **Mixed designs with a Verilog top** and VHDL modules: Yosys would need each VHDL entity the Verilog instantiates
