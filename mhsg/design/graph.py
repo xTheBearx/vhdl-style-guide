@@ -614,14 +614,13 @@ class DesignGraph:
         """
         if self.paths is None or sModule is None or not self.black_boxes.instances:
             return []
-        lPaths = self.paths(sModule, sCell)
-        lFound = None
-        for sPath in lPaths:
+        lFound = []
+        for iPath, sPath in enumerate(self.paths(sModule, sCell)):
             lDeclarations = [o for o in self.black_boxes.instances if fnmatch.fnmatchcase(sPath.lower(), o.name.lower())]
-            if lFound is not None and [id(o) for o in lDeclarations] != [id(o) for o in lFound]:
+            if iPath > 0 and [id(o) for o in lDeclarations] != [id(o) for o in lFound]:
                 return []
             lFound = lDeclarations
-        return lFound or []
+        return lFound
 
     def module_ports(self, sModule):
         """Returns {port: direction} of a module in the netlist, or None."""
