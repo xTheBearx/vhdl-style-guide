@@ -32,8 +32,8 @@ Design analysis
   checked against cell models, as Yosys has none for them.
 * **Stand-in models and pragmas for black boxes** (options 4 and 5 of the black box plan): an analysis-only VHDL
   architecture for complex IP, and comment pragmas in component declarations. Not planned unless asked for.
-* **Netlist checks and declarations of single instances.** design_003 and design_007 follow the path roles of black
-  box types; the declarations of single instances name flat paths, which the module graphs do not know. design_006
+* **Netlist checks and declarations of single instances.** design_003 and design_007 check each module once, so a
+  declaration of single instances applies only when it applies to every instance of the cell in the design. design_006
   counts every black box input as used, since the roles describe clock domains, not which inputs matter.
 * **Clears found without a declaration.** A synchronous clear is followed by design_016 when the cdc section lists it
   under clears. Telling clears from resets by structure was tried and dropped: the reset crossing circuits of

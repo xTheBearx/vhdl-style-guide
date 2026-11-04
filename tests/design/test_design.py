@@ -996,6 +996,14 @@ class test_design_analysis(unittest.TestCase):
         )
         lFindings = self.findings("box_path_top", "box_path.vhd", dRules=dRules)
         self.assertEqual([], [t for t in lFindings if t[2] in ("design_003", "design_007")])
+        # A declaration of the single instance u_loop applies to it only: the loop through it is found, the path through
+        # u_path is not
+        dDeclared = {"black_box_instances": {"u_loop": {"ports": {"O": {"path": ["I"]}}}}}
+        lFindings = self.findings("box_path_top", "box_path.vhd", dRules=dRules, dDesignKeys=dDeclared)
+        self.assertEqual(
+            [("box_path.vhd", 34, "design_003", "Combinational loop through e, f in box_path_top and instance u_loop")],
+            [t for t in lFindings if t[2] in ("design_003", "design_007")],
+        )
 
     def test_multiple_drivers(self):
         # The bidirectional pin is not reported

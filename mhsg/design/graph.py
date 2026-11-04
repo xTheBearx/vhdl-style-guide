@@ -9,6 +9,8 @@ of its outputs without passing a register, which inputs it uses, and the logic d
 A bit is a net bit number of the netlist. Constant bits, "0", "1", "x" and "z", are left out of the graphs.
 """
 
+import fnmatch
+
 from mhsg.design import netlist
 
 # Cells that hold state: their outputs do not depend on their inputs in the same clock cycle
@@ -144,9 +146,9 @@ class ModuleGraph:
     def box_path(self, sCell, sPort):
         """
         Returns the path role declared for an output port of a black box, see black_box.py, or None. The declarations
-        of the type apply; those of single instances name flat paths, which a module does not know.
+        of the type apply, and those of single instances when they apply to every instance of the cell in the design.
         """
-        return self.design.box_role(self.cells[sCell], sPort, "path")
+        return self.design.box_role(self.cells[sCell], sPort, "path", self.name, sCell)
 
     def input_bits(self, sCell):
         dCell = self.cells[sCell]
@@ -537,10 +539,12 @@ class ModuleGraph:
 class DesignGraph:
     """The graphs and summaries of all modules of a netlist."""
 
-    def __init__(self, oNetlist, oBlackBoxes=None):
+    def __init__(self, oNetlist, oBlackBoxes=None, fPaths=None):
         self.netlist = oNetlist
         # The black box declarations, see black_box.py
         self.black_boxes = oBlackBoxes
+        # (module, cell) -> the flat names of the instances of the cell in the design, such as u_top.u_box
+        self.paths = fPaths
         self._dBoxes = {}
         self.latch_cells = {}
         for sModule, sCell, _ in oNetlist.latches():
@@ -583,21 +587,40 @@ class DesignGraph:
                 self._lInProgress.remove(sModule)
         return self._dSummaries[sModule]
 
-    def box_role(self, dCell, sPort, sKind):
-        """The role of a kind declared for a port of a black box cell by the declarations of its type, or None."""
+    def box_role(self, dCell, sPort, sKind, sModule=None, sCell=None):
+        """
+        The role of a kind declared for a port of a black box cell, or None: by the declarations of single instances
+        when the same ones apply to every instance of the cell in the design, then by those of its type.
+        """
         if self.black_boxes is None:
             return None
         # Imported here: black_box imports this module
         from mhsg.design import black_box  # pylint: disable=import-outside-toplevel
 
         sType = str(dCell.get("type"))
-        tKey = (sType, tuple(sorted((str(k), str(v)) for k, v in (dCell.get("parameters") or {}).items())))
+        lInstances = self.instance_declarations(sModule, sCell)
+        tKey = (sType, tuple(sorted((str(k), str(v)) for k, v in (dCell.get("parameters") or {}).items())), tuple(id(o) for o in lInstances))
         if tKey not in self._dBoxes:
-            lDeclarations = self.black_boxes.find_type(sType)
+            lDeclarations = lInstances + self.black_boxes.find_type(sType)
             self._dBoxes[tKey] = black_box.Instance(CellView(dCell), lDeclarations) if lDeclarations else None
         oInstance = self._dBoxes[tKey]
         oRole = oInstance.role(sPort) if oInstance is not None else None
         return oRole if oRole is not None and oRole.kind == sKind else None
+
+    def instance_declarations(self, sModule, sCell):
+        """
+        The declarations of single instances that apply to every instance of a cell in the design, which a module graph
+        shares; none when they differ between the instances.
+        """
+        if self.paths is None or sModule is None or not self.black_boxes.instances:
+            return []
+        lFound = []
+        for iPath, sPath in enumerate(self.paths(sModule, sCell)):
+            lDeclarations = [o for o in self.black_boxes.instances if fnmatch.fnmatchcase(sPath.lower(), o.name.lower())]
+            if iPath > 0 and [id(o) for o in lDeclarations] != [id(o) for o in lFound]:
+                return []
+            lFound = lDeclarations
+        return lFound
 
     def module_ports(self, sModule):
         """Returns {port: direction} of a module in the netlist, or None."""

@@ -48,10 +48,26 @@ class Context:
         self._dFiles = {}
         self._oGraph = None
 
+    def flat(self):
+        """Returns the flat netlist, built once, or None without a netlist."""
+        if getattr(self, "_oFlat", None) is None and self.netlist is not None:
+            self._oFlat = flat.FlatDesign(self.netlist)
+        return getattr(self, "_oFlat", None)
+
+    def box_paths(self, sModule, sCell):
+        """The flat names of the instances of a black box cell of a module, such as u_top.u_box."""
+        if getattr(self, "_dBoxPaths", None) is None:
+            self._dBoxPaths = {}
+            oFlat = self.flat()
+            for oCell in oFlat.cells if oFlat is not None else []:
+                if oCell.is_black_box():
+                    self._dBoxPaths.setdefault((oCell.module, oCell.name), []).append(repr(oCell))
+        return self._dBoxPaths.get((sModule, sCell), [])
+
     def cdc(self):
         """Returns the clock domain crossing Analysis of the flat netlist, built once, or None without a netlist."""
         if getattr(self, "_oCdc", None) is None and self.netlist is not None:
-            oFlat = flat.FlatDesign(self.netlist)
+            oFlat = self.flat()
             dConstraints = self.design.cdc if self.design is not None else {}
             oBlackBoxes = self.design.black_boxes if self.design is not None else None
             self._oCdc = cdc.Analysis(oFlat, dConstraints, self.locate_cell, oBlackBoxes)
@@ -66,7 +82,7 @@ class Context:
         """Returns the DesignGraph of the netlist, built once for all rules, or None without a netlist."""
         if self._oGraph is None and self.netlist is not None:
             oBlackBoxes = self.design.black_boxes if self.design is not None else None
-            self._oGraph = graph.DesignGraph(self.netlist, oBlackBoxes)
+            self._oGraph = graph.DesignGraph(self.netlist, oBlackBoxes, self.box_paths)
         return self._oGraph
 
     def vhdl_summary(self, sFileName):
