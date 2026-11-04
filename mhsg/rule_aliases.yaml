@@ -1326,3 +1326,4 @@ sv_alignment_007: sv_alignment_case_items
 sv_alignment_008: sv_alignment_struct_members
 sv_alignment_009: sv_alignment_port_types
 sv_alignment_010: sv_alignment_packed_dimensions
+sv_alignment_011: sv_alignment_dimension_colons

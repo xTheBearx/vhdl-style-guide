@@ -6,7 +6,7 @@ module alignment (
     localparam int AddrWidth = 4;
     localparam int Count = 2;
     logic        valid;
-    logic [7:0]  data;
+    logic [ 7:0] data;
     logic [15:0] wide;
     assign valid_o    = valid;
     assign data = data_i;
