@@ -655,16 +655,14 @@ cases:
   - - 56
     - Move the module to a file of its own
 - rule: sv_file_003
-  file: examples/svfile/starc_more6.sv
+  file: examples/svfile/dimensions.fixed.sv
   expected:
-  - - 40
+  - - 12
     - Move the module to a file of its own
 - rule: sv_file_003
-  file: examples/svfile/starc_more8.sv
+  file: examples/svfile/dimensions.sv
   expected:
-  - - 41
-    - Move the module to a file of its own
-  - - 48
+  - - 12
     - Move the module to a file of its own
 - rule: sv_file_003
   file: examples/svfile/alignment.fixed.sv
@@ -709,15 +707,15 @@ cases:
   - - 56
     - Name the file of the testbench second like *_tb.v, *_tb.sv, *_test.v, *_test.sv, *.vt
 - rule: sv_file_007
-  file: examples/svfile/starc_more6.sv
+  file: examples/svfile/dimensions.fixed.sv
   expected:
-  - - 40
-    - Name the file of the testbench starc_more6_tb like *_tb.v, *_tb.sv, *_test.v, *_test.sv, *.vt
+  - - 12
+    - Name the file of the testbench dimensions_flush like *_tb.v, *_tb.sv, *_test.v, *_test.sv, *.vt
 - rule: sv_file_007
-  file: examples/svfile/starc_more8.sv
+  file: examples/svfile/dimensions.sv
   expected:
-  - - 48
-    - Name the file of the testbench starc_more8_tb like *_tb.v, *_tb.sv, *_test.v, *_test.sv, *.vt
+  - - 12
+    - Name the file of the testbench dimensions_flush like *_tb.v, *_tb.sv, *_test.v, *_test.sv, *.vt
 - rule: sv_file_007
   file: examples/svfile/alignment.fixed.sv
   expected: []

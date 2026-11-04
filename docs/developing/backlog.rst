@@ -41,9 +41,6 @@ Design analysis
   open-logic compute their resets with logic, and were taken for clears.
 * **Reset domain crossings into registers without a reset** are not reported by design_018, as their data during a
   reset is not used; a design that relies on such a register right after a reset would need them.
-* **Logic depth after mapping** (design_019) reports only the longest path of the design, at its top, as mapping
-  renames the signals in between; each path, with names, would need a mapping that keeps them, such as abc's with
-  the -dff and -keepff options, and a report of the path from the timing of the device.
 * **More real-world designs** in :code:`scripts/real_world_designs.yaml`: surf's designs with SimpleDualPortRam wait
   for GHDL, see :doc:`dependency_issues`, and its transceiver wrappers need the Xilinx IP cores they instantiate.
 
