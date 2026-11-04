@@ -100,6 +100,17 @@ class ResetFinding:
         self.detail = sDetail
 
 
+def gray_pairs(lPairs):
+    """
+    Returns whether the exclusive or inputs of consecutive bits, see Analysis.gray_terms, make a gray code: each bit
+    shares an input with the next, and every bit but the top one is an exclusive or of two signals.
+    """
+    for iIndex in range(len(lPairs) - 1):
+        if not lPairs[iIndex] & lPairs[iIndex + 1]:
+            return False
+    return all(len(s) == 2 for s in lPairs[:-1])
+
+
 class Analysis:
     def __init__(self, oFlat, dConstraints=None, fLocate=None, oBlackBoxes=None):
         self.flat = oFlat
@@ -550,7 +561,7 @@ class Analysis:
         setSeen = {(id(oCell), iIndex)}
         while True:
             oQ = oCell.connections["Q"][iIndex]
-            lNext = [t for t in self._dFollowers.get(oQ, []) if self.cell_clock.get(id(t[0])) is oDomain and t[0] is not oCell]
+            lNext = [t for t in self._dFollowers.get(oQ, []) if self.cell_clock.get(id(t[0])) is oDomain and (t[0] is not oCell or t[1] != iIndex)]
             if len(lNext) != 1:
                 return iStages, oCell, iIndex
             oNext, iNext, lCells = lNext[0]
@@ -638,14 +649,25 @@ class Analysis:
                 tKey = (id(tSource[0]), oCrossing.clock.group)
                 dBySource.setdefault(tKey, []).append((oCrossing, tSource))
         for lMembers in dBySource.values():
-            setBits = {t[1][2] for t in lMembers}
-            if len(setBits) < 2:
-                continue
             oSource = lMembers[0][1][0]
-            sStatus = GRAY if self.gray_coded(oSource) else BUS
-            for oCrossing, _ in lMembers:
-                oCrossing.status = sStatus
-                oCrossing.detail = f"{len(setBits)} bits of {self.flat.cell_name(oSource)}" + (", gray coded" if sStatus == GRAY else " cross separately")
+            # The bits a register synchronizes together form a bus; so do bits each synchronized by a register of its
+            # own. A bit synchronized alone, beside a bus from the same source register, such as a flag in the record
+            # that also holds a gray coded pointer, is a signal of its own
+            dDestinations = {}
+            for oCrossing, tSource in lMembers:
+                dDestinations.setdefault(id(oCrossing), (oCrossing, set()))[1].add(tSource[2])
+            lGroups = [[t] for t in dDestinations.values() if len(t[1]) > 1]
+            lSingle = [t for t in dDestinations.values() if len(t[1]) == 1]
+            if len(lSingle) > 1:
+                lGroups.append(lSingle)
+            for lGroup in lGroups:
+                setBits = set().union(*(t[1] for t in lGroup))
+                if len(setBits) < 2:
+                    continue
+                sStatus = GRAY if self.gray_coded(oSource, setBits) else BUS
+                for oCrossing, _ in lGroup:
+                    oCrossing.status = sStatus
+                    oCrossing.detail = f"{len(setBits)} bits of {self.flat.cell_name(oSource)}" + (", gray coded" if sStatus == GRAY else " cross separately")
 
     def _find_reconvergence(self, bFollowResets):
         """
@@ -976,11 +998,15 @@ class Analysis:
                         lWork.append(tNext)
         return dTags
 
-    def gray_coded(self, oCell):
-        """Returns whether a register is loaded with the gray code of a binary value: bit i is b(i) xor b(i+1), the top bit b(n)."""
-        lPairs = []
+    def gray_coded(self, oCell, setBits=None):
+        """
+        Returns whether a register, or the bits of it given, is loaded with the gray code of a binary value: bit i is
+        b(i) xor b(i+1), the top bit b(n). A choice between gray coded values, such as the code of an address or of
+        the address before it, is gray coded too: each value is checked.
+        """
+        lTerms = []
         lQ = oCell.connections.get("Q", [])
-        for iIndex in range(len(lQ)):
+        for iIndex in sorted(setBits) if setBits is not None else range(len(lQ)):
             oNet, _, _ = self.strip(oCell, iIndex)
             tDriver = self.flat.driver(oNet) if graph.is_variable(oNet) else None
             # A register that copies another one, such as the input register of a synchronizer: look at the original
@@ -989,19 +1015,36 @@ class Analysis:
                     break
                 oNet, _, _ = self.strip(tDriver[0], tDriver[2])
                 tDriver = self.flat.driver(oNet) if graph.is_variable(oNet) else None
-            if tDriver is not None and tDriver[0] is not None and tDriver[0].type in ("$xor", "$xnor"):
-                oXor, _, iOut = tDriver
-                lInputs = [graph.extend(oXor.connections.get("A", []), iOut, False), graph.extend(oXor.connections.get("B", []), iOut, False)]
-                lPairs.append({b for b in lInputs if graph.is_variable(b)})
-            else:
-                lPairs.append({oNet})
-        if len(lPairs) < 2:
+            lTerms.append(self.gray_terms(oNet))
+        if len(lTerms) < 2:
             return False
-        for iIndex in range(len(lPairs) - 1):
-            if not lPairs[iIndex] & lPairs[iIndex + 1]:
-                return False
-        # Only the top bit may be a plain copy; every other bit must be an exclusive or
-        return all(len(s) == 2 for s in lPairs[:-1])
+        # The bits must make the same choices, as the bits of one multiplexer do
+        setKeys = set(lTerms[0])
+        if any(set(d) != setKeys for d in lTerms[1:]):
+            return False
+        return all(gray_pairs([d[k] for d in lTerms]) for k in setKeys)
+
+    def gray_terms(self, oNet, iDepth=0):
+        """
+        {choice: the inputs of the exclusive or that drives a net, or the net itself}, where a choice is the select
+        nets and branches of the multiplexers between the net and the exclusive or, such as ((sel, 1),).
+        """
+        tDriver = self.flat.driver(oNet) if graph.is_variable(oNet) else None
+        if tDriver is not None and tDriver[0] is not None and tDriver[0].type in ("$xor", "$xnor"):
+            oXor, _, iOut = tDriver
+            lInputs = [graph.extend(oXor.connections.get("A", []), iOut, False), graph.extend(oXor.connections.get("B", []), iOut, False)]
+            return {(): {b for b in lInputs if graph.is_variable(b)}}
+        if tDriver is not None and tDriver[0] is not None and tDriver[0].type == "$mux" and iDepth < 3:
+            oMux, _, iOut = tDriver
+            lSelect = oMux.connections.get("S", [])
+            sSelect = repr(lSelect[0]) if lSelect else ""
+            dReturn = {}
+            for iBranch, sPort in ((0, "A"), (1, "B")):
+                oInput = graph.extend(oMux.connections.get(sPort, []), iOut, False)
+                for tKey, setInputs in self.gray_terms(oInput, iDepth + 1).items():
+                    dReturn[((sSelect, iBranch), *tKey)] = setInputs
+            return dReturn
+        return {(): {oNet}}
 
     # Resets
 

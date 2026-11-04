@@ -43,8 +43,9 @@ Design analysis
 * **Logic depth after mapping** (design_019) reports only the longest path of the design, at its top, as mapping
   renames the signals in between; each path, with names, would need a mapping that keeps them, such as abc's with
   the -dff and -keepff options, and a report of the path from the timing of the device.
-* **More real-world designs** in :code:`scripts/real_world_designs.yaml`: more of surf, which now analyzes with stub
-  vendor packages as its clock manager does, and a design whose clocks come from several vendor clocking primitives.
+* **More real-world designs** in :code:`scripts/real_world_designs.yaml`: a design whose clocks come from several vendor
+  clocking primitives. surf's clock manager and dual clock FIFO are analyzed; its designs with SimpleDualPortRam wait
+  for GHDL, see :doc:`dependency_issues`.
 
 Lint and rule sets
 ------------------

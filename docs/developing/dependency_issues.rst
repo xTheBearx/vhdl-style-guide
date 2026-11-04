@@ -61,6 +61,12 @@ registers in the source.
 **Limitation: two instances driving one signal are not reported.** :code:`ghdl synth` succeeds; design_004 finds the
 drivers in the netlist, and Yosys' :code:`check` reports :code:`multiple conflicting drivers`.
 
+**Limitation: ghdl synth checks the widths of a branch a constant condition never selects.** In
+:code:`y <= a when WIDE_G else (others => b);` with :code:`WIDE_G` false and :code:`a` wider than :code:`y`, simulation
+runs, the analysis only warns, and :code:`ghdl synth` stops with :code:`out of bound expression` (through the Yosys
+plugin: :code:`mismatching vector length`). surf's SimpleDualPortRam assigns its write enables this way, so the surf
+designs that use it, such as AxiLiteAsync, cannot be analyzed; design_001 reports the error.
+
 **Quirk: an assert in a clocked process becomes a register.** The register holds the condition until the clock edge and
 feeds only a :code:`$assert` cell. design_005 reported a constant one as never changing; the register graph now leaves
 out registers that only feed assertions (:code:`assertion_register` in :code:`mhsg/design/graph.py`).

@@ -1054,3 +1054,28 @@ designs:
       - xilinx/general/tb/MmcmEmulation.vhd
       - base/general/tb/ClkRst.vhd
   known: []
+- name: surf_synchronizer_fifo
+  project: surf
+  # A dual clock FIFO with gray coded pointers, synchronized by vector shift registers
+  design:
+    top: SynchronizerFifo
+    top_library: surf
+    order: auto
+    ghdl_options: [-fsynopsys, -frelaxed]
+    generics:
+      COMMON_CLK_G: false
+      DATA_WIDTH_G: 8
+    vendor_libraries:
+    - vendor: xilinx
+      stubs: true
+    black_box_libraries: [xilinx]
+    libraries:
+    - name: surf
+      files:
+      - base/**/rtl/**/*.vhd
+      - base/ram/inferred/*.vhd
+      - xilinx/general/rtl/*.vhd
+  known:
+  # Real by the rule: the ready flag of each side, which only changes after a reset, meets the gray coded pointer
+  - 'base/fifo/rtl/inferred/FifoRdFsm.vhd(314)design_016 -- Separately synchronized gen_async.fifoasync_1.u_wr_fsm.r (by gen_async.fifoasync_1.u_wrindex.crossdomainsyncreg) and gen_async.fifoasync_1.u_wr_fsm.r(0) (by gen_async.fifoasync_1.u_wrrdy.crossdomainsyncreg(0)) from wr_clk meet again in gen_async.fifoasync_1.u_rd_fsm.r (rd_clk)'
+  - 'base/fifo/rtl/inferred/FifoWrFsm.vhd(230)design_016 -- Separately synchronized gen_async.fifoasync_1.u_rd_fsm.r (by gen_async.fifoasync_1.u_rdindex.crossdomainsyncreg) and gen_async.fifoasync_1.u_rd_fsm.r(0) (by gen_async.fifoasync_1.u_rdrdy.crossdomainsyncreg(0)) from rd_clk meet again in gen_async.fifoasync_1.u_wr_fsm.r (wr_clk)'

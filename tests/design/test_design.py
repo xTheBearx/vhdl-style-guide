@@ -947,6 +947,11 @@ class test_design_analysis(unittest.TestCase):
             [t for t in self.findings("rdc_top", "rdc.vhd") if t[2] == "design_018"],
         )
 
+    def test_vector_synchronizer(self):
+        # A synchronizer written as one vector register, each bit a stage, is a synchronizer: the bits of one register
+        # follow each other as a chain
+        self.assertEqual([], self.findings("vector_sync", "vector_sync.vhd", dCdc={"clocks": {"clk_a": "a", "clk_b": "b"}}))
+
     def test_clears(self):
         # A clear listed under clears is followed like data: x_a meets y_a in the registers it clears. Without the
         # list it is taken for a reset, as the synchronized reset of r3_b and r4_b is

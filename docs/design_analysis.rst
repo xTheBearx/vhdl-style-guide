@@ -223,16 +223,18 @@ A register of another, asynchronous domain is a crossing, classified as:
 | Status                         | Meaning                                                                         |
 +================================+=================================================================================+
 | synchronized                   | Captured directly by two or more registers in series, each feeding only the     |
-|                                | next.                                                                           |
+|                                | next. The registers may be the bits of one vector, shifted along it.            |
 +--------------------------------+---------------------------------------------------------------------------------+
 | gray-coded bus                 | The bits of a bus synchronized one by one, loaded with the gray code of a       |
-|                                | value, so only one bit changes at a time.                                       |
+|                                | value, or a choice between such codes, so only one bit changes at a time.       |
 +--------------------------------+---------------------------------------------------------------------------------+
 | qualified by enable            | Data held stable and captured when an enable synchronized to the destination    |
 |                                | clock allows it, as in a handshake.                                             |
 +--------------------------------+---------------------------------------------------------------------------------+
-| bus synchronized bit by bit    | Several bits of one register synchronized one by one: they can arrive in        |
-|                                | different cycles. Reported by design_009.                                       |
+| bus synchronized bit by bit    | Several bits of one register synchronized one by one, by one register or by     |
+|                                | registers of a bit each: they can arrive in different cycles. A bit synchronized|
+|                                | alone beside them, such as a flag of the same record, is a signal of its own.   |
+|                                | Reported by design_009.                                                         |
 +--------------------------------+---------------------------------------------------------------------------------+
 | logic before synchronizer      | Logic between the domains feeds the first stage and can glitch. Reported by     |
 |                                | design_009.                                                                     |
