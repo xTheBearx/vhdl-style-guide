@@ -129,7 +129,7 @@ def from_configuration(dConfiguration):
     return oDesign
 
 
-CDC_KEYS = ("clocks", "clock_groups", "inputs", "waivers")
+CDC_KEYS = ("clocks", "clock_groups", "inputs", "waivers", "clears")
 
 
 def read_cdc(dCdc):
@@ -147,6 +147,8 @@ def read_cdc(dCdc):
         raise exceptions.ConfigurationError("ERROR: clock_groups in the cdc section is a list of lists of clock names")
     if any(not isinstance(d, dict) or "signal" not in d for d in dCdc.get("waivers") or []):
         raise exceptions.ConfigurationError("ERROR: each waiver in the cdc section needs a signal and a justification")
+    if not isinstance(dCdc.get("clears") or [], list):
+        raise exceptions.ConfigurationError("ERROR: clears in the cdc section is a list of signal names or patterns")
     return dict(dCdc)
 
 

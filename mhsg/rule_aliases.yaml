@@ -289,6 +289,7 @@ design_014: design_generated_reset
 design_015: design_reset_release
 design_016: design_reconvergence
 design_017: design_black_box_declaration
+design_018: design_reset_domain_crossing
 element_association_100: element_association_space_between_others_and_arrow
 element_association_101: element_association_space_after_arrow
 element_association_102: element_association_space_before_arrow
@@ -1126,6 +1127,7 @@ whitespace_102: whitespace_space_before_direction_keyword
 whitespace_103: whitespace_space_after_direction_keyword
 whitespace_200: whitespace_consecutive_blank_lines
 sv_indent_001: sv_indent_code
+sv_indent_002: sv_indent_continuation
 sv_whitespace_001: sv_whitespace_before_comma
 sv_whitespace_002: sv_whitespace_after_comma
 sv_whitespace_003: sv_whitespace_before_semicolon

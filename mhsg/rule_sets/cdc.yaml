@@ -51,3 +51,7 @@ checks:
     title: Declare the clock domain behaviour of every black box
     severity: Error
     rules: [design_017]
+  "011":
+    title: Avoid reset domain crossings
+    severity: Error
+    rules: [design_018]
