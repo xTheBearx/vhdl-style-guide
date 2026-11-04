@@ -351,6 +351,12 @@ class test_slang_netlists(unittest.TestCase):
         }
         dReturn, dRenamed = netlist.architecture_names(dModules)
         self.assertEqual({"fifo_Brtl": "fifo"}, dRenamed)
+        # With the library and the values of the generics: the values stay
+        dWithGenerics = {"bus_gateway_Bbus_gateway_rtl_Lneorv32_16384_16_7aacc8c0": {}, "bootrom_Bbootrom_rtl_Lneorv32": {}}
+        self.assertEqual(
+            {"bus_gateway_Bbus_gateway_rtl_Lneorv32_16384_16_7aacc8c0": "bus_gateway_16384_16_7aacc8c0", "bootrom_Bbootrom_rtl_Lneorv32": "bootrom"},
+            netlist.architecture_names(dWithGenerics)[1],
+        )
         self.assertEqual(["top", "fifo", "mod_Bx", "cell_Ba", "cell_Bb"], list(dReturn))
         self.assertEqual("fifo", dReturn["top"]["cells"]["u_f"]["type"])
 

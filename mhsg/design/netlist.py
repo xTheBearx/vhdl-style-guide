@@ -304,21 +304,23 @@ class Netlist:
 
 
 # GHDL 7 names the module of an entity instantiated directly after the entity and its architecture, such as
-# fifo_Brtl; GHDL writes entity names in lower case, so the upper case B can only be this suffix
-reArchitecture = re.compile(r"^([a-z0-9_]+?)_B[a-z][a-z0-9_]*$")
+# fifo_Brtl, and adds the library and the values of the generics, such as fifo_Brtl_Lwork_16_4f2a...; GHDL writes
+# entity names in lower case, so the upper case B and L can only be these parts. A library name ends at its first
+# underscore here, as the values that follow are not told apart from it
+reArchitecture = re.compile(r"^([a-z0-9_]+?)_B[a-z][a-z0-9_]*?(?:_L[a-z][a-z0-9]*(_[a-z0-9_]+)?)?$")
 
 
 def architecture_names(dModules):
     """
-    Returns (the modules with the architecture GHDL 7 adds to some module names taken out, as GHDL 4 names them, unless
-    two modules would then have one name, {old name: new name}). Modules with a src attribute come from Verilog and
+    Returns (the modules with the architecture and library GHDL 7 adds to some module names taken out, keeping the
+    values of the generics, unless two modules would then have one name, {old name: new name}). Modules with a src attribute come from Verilog and
     keep their names.
     """
     dRename = {}
     for sModule, dModule in dModules.items():
         oMatch = reArchitecture.match(sModule)
         if oMatch and "src" not in dModule.get("attributes", {}):
-            dRename[sModule] = oMatch.group(1)
+            dRename[sModule] = oMatch.group(1) + (oMatch.group(2) or "")
     lNew = [dRename.get(s, s) for s in dModules]
     setClashes = {s for s in lNew if lNew.count(s) > 1}
     dRename = {k: v for k, v in dRename.items() if v not in setClashes}

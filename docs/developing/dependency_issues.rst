@@ -79,8 +79,11 @@ cell. MHSG passes :code:`--latches` and finds the looped multiplexers too (:code
 **Quirk:** :code:`ghdl synth --help` fails with :code:`unknown command option`; the help is :code:`ghdl help synth`.
 
 **Quirk: GHDL 7.0.0-dev names the module of an entity instantiated directly after the entity and its architecture**,
-such as :code:`box_instances_cell_Brtl` for GHDL 4's :code:`box_instances_cell`, as in the OSS CAD Suite of 2026-11.
-MHSG takes the architecture out of the names when no two modules would then share one (:code:`mhsg/design/netlist.py`).
+such as :code:`box_instances_cell_Brtl` for GHDL 4's :code:`box_instances_cell`, as in the OSS CAD Suite of 2026-11,
+and adds the library and the values of the generics, such as
+:code:`neorv32_bus_gateway_Bneorv32_bus_gateway_rtl_Lneorv32_16384_16_..._7aacc8c0...`. MHSG takes the architecture
+and the library out of the names, keeping the values, when no two modules would then share one
+(:code:`mhsg/design/netlist.py`).
 
 GHDL plugin for Yosys
 ---------------------
