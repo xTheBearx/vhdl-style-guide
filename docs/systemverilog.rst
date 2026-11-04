@@ -51,15 +51,17 @@ Verible checks, except that indentation is 4 spaces and lines are 80 characters,
 what a Verible lint rule checks, its alias is the Verible rule's name.
 
 * :code:`sv_indent_001`: indentation, 4 spaces per level
+* :code:`sv_indent_002`: continuation lines indented more than the line that starts their statement
 * :code:`sv_whitespace_001` to :code:`sv_whitespace_018`: the spaces between tokens, as Verible's formatter sets
   them: none before a comma or semicolon, after @ or #, around ++ or after a unary operator, before the parenthesis
   of a call or the bracket of a select; at least one after a comma and around binary and assignment operators; one
   between if, for or case and its parenthesis and around the colon of a block label; at least two before a comment
   at the end of a line
 * :code:`sv_blank_line_001`: no blank lines at the end of the file
-* :code:`sv_alignment_001` to :code:`sv_alignment_008`: columns of port declarations, named port and parameter
+* :code:`sv_alignment_001` to :code:`sv_alignment_010`: columns of port declarations, named port and parameter
   connections, declarations, assignments, parameters, case items and struct members, aligned or flush left by how
-  the author wrote them, as Verible's formatter infers it
+  the author wrote them, as Verible's formatter infers it; before the names, the types of port declarations after
+  their directions and the packed dimensions of declarations, the columns left to right
 * :code:`sv_always_001` to :code:`sv_always_004`: always_comb instead of always @*, blocking assignments in
   always_comb, nonblocking assignments in sequential logic, no mixing of the two in one block
 * :code:`sv_case_001`, :code:`sv_case_002`: a default item in every case statement that is not unique, and last
@@ -217,10 +219,14 @@ the connections of an instance; enum and struct members; case items; and a state
 always block or a case item, unless it is a begin-end block. end, else, endmodule and closing brackets are at the
 level of what they close.
 
-Not checked: the continuation lines of a statement, lists aligned after their opening bracket (such as the
-arguments of a call continued under the first), anything inside an expression, preprocessor directives and code in
-inactive :code:`\`ifdef` branches. A comment line continuing the comment at the end of the line above, aligned
-with it, keeps that alignment.
+The continuation lines of a statement have no level: :code:`sv_indent_002` checks only that they are indented more
+than the line that starts the statement, so lists aligned after their opening bracket (such as the arguments of a
+call continued under the first) are kept. A line starting with a closing bracket, with the opening bracket of a port
+list, with the next expression of a case item, or after an attribute on a line of its own may be at the level of
+the statement. Its fix follows the continuation line before it, or indents by :code:`continuation_indent` levels, 2
+by default, as Verible's formatter does with its wrap width. Not checked: preprocessor directives, code in inactive
+:code:`\`ifdef` branches and lines after a macro call, whose arguments are not parsed. A comment line continuing the
+comment at the end of the line above, aligned with it, keeps that alignment.
 
 Code tags
 ---------

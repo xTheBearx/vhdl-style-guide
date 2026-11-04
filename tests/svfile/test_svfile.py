@@ -239,6 +239,20 @@ class test_rules(unittest.TestCase):
     def test_indent_clean(self):
         self.assertEqual([], only(self.run_mhsg(["-ap"], "indent.sv")[1], "sv_indent", "sv_whitespace"))
 
+    def test_continuation_lines(self):
+        # Only the continuation lines at or left of their statement are reported: the aligned arguments, the closing
+        # bracket, the line after the attribute and the next expression of the case item are not
+        _, lOutput, sAfter = self.run_mhsg(["--fix"], "continuation.sv")
+        self.assertEqual(read("continuation.fixed.sv"), sAfter)
+        _, lOutput, _ = self.run_mhsg(["-ap"], "continuation.sv")
+        self.assertEqual(
+            [
+                "ERROR: continuation.sv(9)sv_indent_002 -- Indent the continuation line by 12 spaces",
+                "ERROR: continuation.sv(17)sv_indent_002 -- Indent the continuation line by 12 spaces",
+            ],
+            only(lOutput, "sv_indent"),
+        )
+
     def test_indent_fix(self):
         # Every line whose indent is checked is indented by one space; the fix restores the file
         sText = read("indent.sv")
@@ -309,6 +323,23 @@ class test_rules(unittest.TestCase):
         _, lOutput, sAfter = self.run_mhsg(["--fix"], "brackets.sv")
         self.assertEqual(read("brackets.fixed.sv"), sAfter)
         self.assertEqual([], only(lOutput, "sv_whitespace"))
+
+    def test_alignment_columns(self):
+        # The types after the directions, then the packed dimensions, are aligned before the names; a port without a
+        # type and a declaration without a dimension stay in their groups. The dimension of b_o is in its column until
+        # the fix moves the types
+        _, lOutput, sAfter = self.run_mhsg(["--fix"], "columns.sv")
+        self.assertEqual(read("columns.fixed.sv"), sAfter)
+        _, lOutput, _ = self.run_mhsg(["-ap"], "columns.sv")
+        self.assertEqual(
+            [
+                "ERROR: columns.sv(2)sv_alignment_009 -- Align logic in column 12",
+                "ERROR: columns.sv(3)sv_alignment_009 -- Align logic in column 12",
+                "ERROR: columns.sv(9)sv_alignment_010 -- Align [ in column 11",
+                "ERROR: columns.sv(11)sv_alignment_010 -- Align [ in column 11",
+            ],
+            only(lOutput, "sv_alignment"),
+        )
 
     def test_escaped_identifier_keeps_its_space(self):
         # An escaped identifier ends at whitespace: removing the space before the semicolon would change the code
@@ -737,6 +768,14 @@ class test_rules(unittest.TestCase):
                 "WARNING: starc_more6.sv(46)STARC-4.1.8.4 (sv_statement_032) -- Wait for done on a clock edge, not on its own edge",
             ],
             [s for s in lOutput if any(f"({r})" in s for r in lRules)],
+        )
+
+    def test_sensitivity_list_branches(self):
+        # t is written in both branches before it is read; u only in one, so its old value is read
+        _, lOutput, _ = self.run_mhsg(["--lint_only", "--rule_set", "none"], "sensitivity_branches.sv")
+        self.assertEqual(
+            ["ERROR: sensitivity_branches.sv(21)sv_lint_008 -- Add c_i, u to the sensitivity list, or use always_comb"],
+            [s for s in lOutput if "sv_lint_008" in s],
         )
 
     def test_lint_do254(self):

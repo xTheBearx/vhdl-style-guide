@@ -202,3 +202,59 @@ forces one.
 
    logic       valid;
    logic [7:0] data;
+
+sv_alignment_009
+################
+
+|phase_5| |error| |alignment|
+
+Alias: :code:`sv_alignment_port_types`
+
+This rule aligns the types of the port declarations of a module, interface or program header in a column after
+their directions, as Verible's formatter does. Ports without a type after their direction, such as input clk, are
+left out without ending the group. By default it infers whether the author meant them aligned or flush left;
+**policy** set to align or flush_left forces one.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   module fifo (
+       input logic clk_i,
+       output logic [7:0] data_o
+   );
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   module fifo (
+       input  logic clk_i,
+       output logic [7:0] data_o
+   );
+
+sv_alignment_010
+################
+
+|phase_5| |error| |alignment|
+
+Alias: :code:`sv_alignment_packed_dimensions`
+
+This rule aligns the packed dimensions of the port declarations of a header, and of consecutive variable and net
+declarations, in a column, as Verible's formatter does. Declarations without a packed dimension are left out
+without ending the group. By default it infers whether the author meant them aligned or flush left; **policy**
+set to align or flush_left forces one.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   logic [7:0] data;
+   wire [3:0] strobe;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   logic [7:0] data;
+   wire  [3:0] strobe;

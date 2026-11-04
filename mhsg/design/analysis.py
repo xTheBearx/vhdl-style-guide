@@ -41,17 +41,35 @@ svFile = importlib.import_module("mhsg.svFile.svFile")
 class Context:
     """What the design rules see: the design, the result of the tools, the netlist, and the VHDL files when needed."""
 
-    def __init__(self, oDesign, oResult, oNetlist):
+    def __init__(self, oDesign, oResult, oNetlist, oTools=None):
         self.design = oDesign
         self.result = oResult
         self.netlist = oNetlist
+        # The tools, for rules that run them again, such as design_019
+        self.tools = oTools
         self._dFiles = {}
         self._oGraph = None
+
+    def flat(self):
+        """Returns the flat netlist, built once, or None without a netlist."""
+        if getattr(self, "_oFlat", None) is None and self.netlist is not None:
+            self._oFlat = flat.FlatDesign(self.netlist)
+        return getattr(self, "_oFlat", None)
+
+    def box_paths(self, sModule, sCell):
+        """The flat names of the instances of a black box cell of a module, such as u_top.u_box."""
+        if getattr(self, "_dBoxPaths", None) is None:
+            self._dBoxPaths = {}
+            oFlat = self.flat()
+            for oCell in oFlat.cells if oFlat is not None else []:
+                if oCell.is_black_box():
+                    self._dBoxPaths.setdefault((oCell.module, oCell.name), []).append(repr(oCell))
+        return self._dBoxPaths.get((sModule, sCell), [])
 
     def cdc(self):
         """Returns the clock domain crossing Analysis of the flat netlist, built once, or None without a netlist."""
         if getattr(self, "_oCdc", None) is None and self.netlist is not None:
-            oFlat = flat.FlatDesign(self.netlist)
+            oFlat = self.flat()
             dConstraints = self.design.cdc if self.design is not None else {}
             oBlackBoxes = self.design.black_boxes if self.design is not None else None
             self._oCdc = cdc.Analysis(oFlat, dConstraints, self.locate_cell, oBlackBoxes)
@@ -66,7 +84,7 @@ class Context:
         """Returns the DesignGraph of the netlist, built once for all rules, or None without a netlist."""
         if self._oGraph is None and self.netlist is not None:
             oBlackBoxes = self.design.black_boxes if self.design is not None else None
-            self._oGraph = graph.DesignGraph(self.netlist, oBlackBoxes)
+            self._oGraph = graph.DesignGraph(self.netlist, oBlackBoxes, self.box_paths)
         return self._oGraph
 
     def vhdl_summary(self, sFileName):
@@ -169,7 +187,7 @@ def design_rules(oConfig, lLocalRules):
     oRules = rule_list.rule_list(vhdlFile.vhdlFile([""]), oConfig.severity_list, lLocalRules)
     lDesignRules = [o for o in oRules.rules if getattr(o, "design", False)]
     for oRule in lDesignRules:
-        oRule.disable = False
+        oRule.disable = oRule.disabled_in_design
     rule_set.apply(oRules, oConfig)
     oRules.configure(oConfig)
     return oRules, [o for o in lDesignRules if not o.disable]
@@ -196,7 +214,7 @@ def run(commandLineArguments, oConfig):
             # Locations come from GHDL's Verilog for VHDL, and from the src attributes of the netlist for Verilog
             dLocations = netlist.read_locations(oResult.verilog_file, lFiles) if oResult.verilog_file else {}
             oNetlist = netlist.Netlist(oResult.netlist, dLocations, lFiles)
-        oContext = Context(oDesign, oResult, oNetlist)
+        oContext = Context(oDesign, oResult, oNetlist, oTools)
         lFindings = [(oRule, oFinding) for oRule in lRules for oFinding in oRule.check_design(oContext)]
         write_cdc_report(getattr(commandLineArguments, "cdc_report", None), oContext, dRecord)
         write_black_box_template(getattr(commandLineArguments, "black_box_template", None), oContext)

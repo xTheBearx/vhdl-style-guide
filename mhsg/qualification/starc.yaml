@@ -538,9 +538,11 @@ cases:
   - - 3
     - Write the width of the port with a parameter
 - rule: sv_dimension_004
-  file: examples/svfile/declarations.sv
+  file: examples/svfile/columns.fixed.sv
   expected:
-  - - 14
+  - - 3
+    - Write the width of the port with a parameter
+  - - 4
     - Write the width of the port with a parameter
 - rule: sv_dimension_004
   file: examples/svfile/brackets.fixed.sv
@@ -556,10 +558,10 @@ cases:
   - - 1
     - Name the file after module brackets
 - rule: sv_file_001
-  file: examples/svfile/sensitivity.sv
+  file: examples/svfile/columns.fixed.sv
   expected:
-  - - 3
-    - Name the file after module sens
+  - - 1
+    - Name the file after module columns
 - rule: sv_file_001
   file: examples/svfile/alignment.sv
   expected: []
@@ -917,6 +919,11 @@ cases:
   - - 38
     - Add u_sub.valid to the sensitivity list, or use always_comb
 - rule: sv_lint_008
+  file: examples/svfile/sensitivity_branches.sv
+  expected:
+  - - 21
+    - Add c_i, u to the sensitivity list, or use always_comb
+- rule: sv_lint_008
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_lint_013
@@ -1126,6 +1133,16 @@ cases:
 - rule: sv_module_006
   file: examples/svfile/alignment.fixed.sv
   expected: []
+- rule: sv_module_007
+  file: examples/svfile/columns.fixed.sv
+  expected:
+  - - 5
+    - Move the input port c_i before the output ports
+- rule: sv_module_007
+  file: examples/svfile/columns.sv
+  expected:
+  - - 5
+    - Move the input port c_i before the output ports
 - rule: sv_module_007
   file: examples/svfile/starc_more4.sv
   expected:
