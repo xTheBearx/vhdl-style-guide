@@ -1225,3 +1225,5 @@ sv_alignment_005: sv_alignment_assignments
 sv_alignment_006: sv_alignment_parameters
 sv_alignment_007: sv_alignment_case_items
 sv_alignment_008: sv_alignment_struct_members
+sv_alignment_009: sv_alignment_port_types
+sv_alignment_010: sv_alignment_packed_dimensions

@@ -30,15 +30,18 @@ class Rule(TreeRule, alignment.Rule):
         self.policy = "infer"
         self.blank_line_ends_group = "no"
         self.configuration.extend(["policy", "blank_line_ends_group"])
-        # After the case items, whose alignment moves what follows their colons
-        self.subphase = 2
+        # After the case items, whose alignment moves what follows their colons, and after the columns before the
+        # names of declarations, which move the names (sv_alignment_009 and 010)
+        self.subphase = 4
         # The fewest spaces between the token before the column and the token in it
         self.minimum_spaces = 1
 
     def alignment_groups(self, oFile):
         """
         Yields lists of rows of a group: (item, syntax token to align), where the item is the syntax node of the row,
-        such as a declaration; or None for an item that ends a run. A row counts only when its item starts its line.
+        such as a declaration; None for an item that ends a run; or False for an item that has nothing in the column
+        but does not end the run, such as a port without a packed dimension. A row counts only when its item starts
+        its line.
         """
         raise NotImplementedError
 
@@ -49,6 +52,8 @@ class Rule(TreeRule, alignment.Rule):
         for lGroup in self.alignment_groups(oFile):
             lRows = []
             for tRow in lGroup:
+                if tRow is False:
+                    continue
                 oItem, oSyntaxTarget = tRow if tRow is not None else (None, None)
                 oTarget = oFile.token_at(oSyntaxTarget) if oSyntaxTarget is not None else None
                 oLeft = dBefore.get(id(oTarget)) if oTarget is not None else None
