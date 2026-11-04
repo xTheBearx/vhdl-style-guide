@@ -539,6 +539,14 @@ class test_rules(unittest.TestCase):
             [s for s in lOutput if "sv_lint_008" in s],
         )
 
+    def test_sensitivity_list_branches(self):
+        # t is written in both branches before it is read; u only in one, so its old value is read
+        _, lOutput, _ = self.run_mhsg(["--lint_only", "--rule_set", "none"], "sensitivity_branches.sv")
+        self.assertEqual(
+            ["ERROR: sensitivity_branches.sv(21)sv_lint_008 -- Add c_i, u to the sensitivity list, or use always_comb"],
+            [s for s in lOutput if "sv_lint_008" in s],
+        )
+
     def test_lint_do254(self):
         # The default rule set of lint mode labels the SystemVerilog rules with the DO-254 checks they implement
         _, lOutput, _ = self.run_mhsg(["--lint_only"], "lint.sv")
