@@ -239,6 +239,20 @@ class test_rules(unittest.TestCase):
     def test_indent_clean(self):
         self.assertEqual([], only(self.run_mhsg(["-ap"], "indent.sv")[1], "sv_indent", "sv_whitespace"))
 
+    def test_continuation_lines(self):
+        # Only the continuation lines at or left of their statement are reported: the aligned arguments, the closing
+        # bracket, the line after the attribute and the next expression of the case item are not
+        _, lOutput, sAfter = self.run_mhsg(["--fix"], "continuation.sv")
+        self.assertEqual(read("continuation.fixed.sv"), sAfter)
+        _, lOutput, _ = self.run_mhsg(["-ap"], "continuation.sv")
+        self.assertEqual(
+            [
+                "ERROR: continuation.sv(9)sv_indent_002 -- Indent the continuation line by 12 spaces",
+                "ERROR: continuation.sv(17)sv_indent_002 -- Indent the continuation line by 12 spaces",
+            ],
+            only(lOutput, "sv_indent"),
+        )
+
     def test_indent_fix(self):
         # Every line whose indent is checked is indented by one space; the fix restores the file
         sText = read("indent.sv")

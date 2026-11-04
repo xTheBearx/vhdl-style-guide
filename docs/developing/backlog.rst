@@ -55,9 +55,10 @@ under way: the entries below.
 
 * **Alignment of several columns**: the sv_alignment rules align one column each, such as the names of port
   declarations; Verible also aligns the columns before it, such as the types and packed dimensions.
-* **Indentation not checked yet**: continuation lines, lists aligned after their bracket, the contents of
-  expressions (multi-line assignment patterns, randomize with blocks), preprocessor directives and inactive
-  :code:`\`ifdef` branches. Verible's formatter has rules for each; they need studying before mhsg checks them.
+* **Indentation not checked yet**: the exact indent of continuation lines (sv_indent_002 checks only that they are
+  indented more than their statement), the contents of expressions (multi-line assignment patterns, randomize with
+  blocks), preprocessor directives and inactive :code:`\`ifdef` branches. Verible's formatter has rules for each;
+  they need studying before mhsg checks them.
 * **Inactive** :code:`\`ifdef` **branches and macro arguments** are kept as unclassified tokens (about 11% of the
   tokens of ibex, common_cells and picorv32, most in the arguments of macros such as :code:`\`ASSERT` and
   :code:`\`uvm_info`), so rules do not check them. Parsing each branch with its defines set, and macro arguments

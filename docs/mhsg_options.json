@@ -2045,6 +2045,7 @@
         "subprogram_instantiation_300",
         "subtype_001",
         "sv_indent_001",
+        "sv_indent_002",
         "type_001",
         "type_005",
         "type_012",
@@ -3110,6 +3111,11 @@
       "label": "Names per declaration",
       "description": "Maximum number of variables allowed in a single variable declaration.",
       "minimum": 1
+    },
+    "continuation_indent": {
+      "type": "integer",
+      "label": "Levels of continuation lines",
+      "description": "The number of levels the fix indents a continuation line more than the line that starts its statement, when no continuation line before it shows the indent."
     },
     "differential_suffixes": {
       "type": "list",
@@ -62122,6 +62128,58 @@
           "name": "begin_style",
           "default": "aligned",
           "definition": "begin_style"
+        }
+      ]
+    },
+    {
+      "id": "sv_indent_002",
+      "alias": "sv_indent_continuation",
+      "category": "sv_indent",
+      "groups": [
+        "indent"
+      ],
+      "summary": "This rule checks that a continuation line, such as the second line of a long expression or of the arguments of a call, is indented more than the line that starts its statement. A line that starts with a closing bracket, with the opening bracket of a port list, with the next expression of a case item, or after an attribute on a line of its own, may be at the level of that line.",
+      "documentation": "sv_indent_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 4,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": false,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": true,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "continuation_indent",
+          "default": 2,
+          "definition": "continuation_indent"
         }
       ]
     },

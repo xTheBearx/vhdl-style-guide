@@ -51,6 +51,7 @@ Verible checks, except that indentation is 4 spaces and lines are 80 characters,
 what a Verible lint rule checks, its alias is the Verible rule's name.
 
 * :code:`sv_indent_001`: indentation, 4 spaces per level
+* :code:`sv_indent_002`: continuation lines indented more than the line that starts their statement
 * :code:`sv_whitespace_001` to :code:`sv_whitespace_018`: the spaces between tokens, as Verible's formatter sets
   them: none before a comma or semicolon, after @ or #, around ++ or after a unary operator, before the parenthesis
   of a call or the bracket of a select; at least one after a comma and around binary and assignment operators; one
@@ -179,10 +180,14 @@ the connections of an instance; enum and struct members; case items; and a state
 always block or a case item, unless it is a begin-end block. end, else, endmodule and closing brackets are at the
 level of what they close.
 
-Not checked: the continuation lines of a statement, lists aligned after their opening bracket (such as the
-arguments of a call continued under the first), anything inside an expression, preprocessor directives and code in
-inactive :code:`\`ifdef` branches. A comment line continuing the comment at the end of the line above, aligned
-with it, keeps that alignment.
+The continuation lines of a statement have no level: :code:`sv_indent_002` checks only that they are indented more
+than the line that starts the statement, so lists aligned after their opening bracket (such as the arguments of a
+call continued under the first) are kept. A line starting with a closing bracket, with the opening bracket of a port
+list, with the next expression of a case item, or after an attribute on a line of its own may be at the level of
+the statement. Its fix follows the continuation line before it, or indents by :code:`continuation_indent` levels, 2
+by default, as Verible's formatter does with its wrap width. Not checked: preprocessor directives, code in inactive
+:code:`\`ifdef` branches and lines after a macro call, whose arguments are not parsed. A comment line continuing the
+comment at the end of the line above, aligned with it, keeps that alignment.
 
 Code tags
 ---------
