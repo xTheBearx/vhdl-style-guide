@@ -126,7 +126,11 @@ what a Verible lint rule checks, its alias is the Verible rule's name.
   tests of signals that may be x, no computation on signals in for loops, clock periods as parameters, one clock per
   block, waits on levels in testbenches, simulation tasks between translate_off and translate_on, testbench delays as
   parameters (:code:`sv_statement_026` to :code:`sv_statement_034`); one state machine per module
-  (:code:`sv_case_010`); no negative values assigned (:code:`sv_literal_009`)
+  (:code:`sv_case_010`); no negative values assigned (:code:`sv_literal_009`);
+  with the widths of slang's elaboration of the file: 1-bit operands of logical operators and conditions, comparisons
+  of operands of one width, values not narrower than their targets, targets wide enough for sums and products,
+  dividers and multipliers of limited width, no reductions in wider contexts and no comparisons of integers with
+  vectors (:code:`sv_statement_035` to :code:`sv_statement_043`)
 * :code:`sv_syntax_001`: code slang cannot parse
 
 The **starc** rule set enables the rules of the STARC guide that are disabled by default.

@@ -321,6 +321,15 @@ Rules Enforcing Structure Rule Group
 * `sv_statement_032 <../sv_statement_rules.html#sv-statement-032>`_
 * `sv_statement_033 <../sv_statement_rules.html#sv-statement-033>`_
 * `sv_statement_034 <../sv_statement_rules.html#sv-statement-034>`_
+* `sv_statement_035 <../sv_statement_rules.html#sv-statement-035>`_
+* `sv_statement_036 <../sv_statement_rules.html#sv-statement-036>`_
+* `sv_statement_037 <../sv_statement_rules.html#sv-statement-037>`_
+* `sv_statement_038 <../sv_statement_rules.html#sv-statement-038>`_
+* `sv_statement_039 <../sv_statement_rules.html#sv-statement-039>`_
+* `sv_statement_040 <../sv_statement_rules.html#sv-statement-040>`_
+* `sv_statement_041 <../sv_statement_rules.html#sv-statement-041>`_
+* `sv_statement_042 <../sv_statement_rules.html#sv-statement-042>`_
+* `sv_statement_043 <../sv_statement_rules.html#sv-statement-043>`_
 * `sv_syntax_001 <../sv_syntax_rules.html#sv-syntax-001>`_
 * `sv_typedef_001 <../sv_typedef_rules.html#sv-typedef-001>`_
 * `sv_typedef_002 <../sv_typedef_rules.html#sv-typedef-002>`_

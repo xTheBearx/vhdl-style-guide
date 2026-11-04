@@ -870,6 +870,15 @@ cases:
   - - 14
     - Implicit conversion truncates from 8 to 4 bits
 - rule: sv_lint_001
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 20
+    - Implicit conversion expands from 6 to 8 bits
+  - - 24
+    - Implicit conversion truncates from 16 to 8 bits
+  - - 25
+    - Implicit conversion truncates from 32 to 8 bits
+- rule: sv_lint_001
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_lint_002
@@ -903,6 +912,11 @@ cases:
   expected:
   - - 30
     - Comparison of differently signed types ('logic[3:0]' and 'int')
+- rule: sv_lint_007
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 19
+    - Comparison of differently signed types ('integer' and 'logic[7:0]')
 - rule: sv_lint_007
   file: examples/svfile/alignment.fixed.sv
   expected: []
@@ -1692,6 +1706,104 @@ cases:
   - - 44
     - Give the delay 5 with a parameter
 - rule: sv_statement_034
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_035
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 16
+    - Compare a_i, 8 bits wide, with a value instead of using it as a truth value
+- rule: sv_statement_035
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_036
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 17
+    - 'Make the condition c_i 1 bit wide: it has 6 bits'
+- rule: sv_statement_036
+  file: examples/svfile/whitespace.fixed.sv
+  expected:
+  - - 14
+    - 'Make the condition sum 1 bit wide: it has 8 bits'
+- rule: sv_statement_036
+  file: examples/svfile/whitespace.sv
+  expected:
+  - - 14
+    - 'Make the condition sum 1 bit wide: it has 8 bits'
+- rule: sv_statement_036
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_037
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 18
+    - 'Compare operands of the same width: a_i has 8 bits, c_i 6'
+- rule: sv_statement_037
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_038
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 20
+    - Extend c_i, 6 bits wide, to the 8 bits of y_o
+- rule: sv_statement_038
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_039
+  file: examples/svfile/starc_more.sv
+  expected:
+  - - 30
+    - Make i 33 bits wide to hold the result of i + 1
+- rule: sv_statement_039
+  file: examples/svfile/starc_more2.sv
+  expected:
+  - - 21
+    - Make add 9 bits wide to hold the result of x + b_i
+- rule: sv_statement_039
+  file: examples/svfile/starc_more6.sv
+  expected:
+  - - 29
+    - Make y_o[i] 2 bits wide to hold the result of a_i + q
+- rule: sv_statement_039
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_040
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 24
+    - 'Divide at most 12 bits: d_i has 16'
+  - - 24
+    - 'Divide by at most 8 bits: e_i[9:0] has 10'
+  - - 25
+    - 'Divide at most 12 bits: d_i has 16'
+- rule: sv_statement_040
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_041
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 26
+    - 'Build the multiplier of e_i * e_i explicitly: its operands have up to 32 bits'
+- rule: sv_statement_041
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_042
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 23
+    - The reduction &a_i gives 1 bit, here extended to 4
+  - - 23
+    - The reduction &b_i gives 1 bit, here extended to 4
+- rule: sv_statement_042
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_043
+  file: examples/svfile/starc_more7.sv
+  expected:
+  - - 19
+    - 'Compare values of one type: i == a_i compares integer with logic[7:0]'
+- rule: sv_statement_043
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: whitespace_002
