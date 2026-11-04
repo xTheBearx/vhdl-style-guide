@@ -12,7 +12,7 @@ from pyslang import ast  # pylint: disable=import-error
 from mhsg.rules.sv_nodes import source
 from mhsg.rules.sv_tree import Problem
 
-KINDS = ("BinaryOp", "UnaryOp", "ConditionalOp", "Conditional", "Conversion", "Assignment")
+KINDS = ("BinaryOp", "UnaryOp", "ConditionalOp", "Conditional", "Conversion", "Assignment", "Case")
 # The conversions slang adds to an operand, which give it the width of its context
 IMPLICIT = ("Implicit", "Propagated")
 
@@ -127,3 +127,21 @@ def has_unsized(oExpression):
         return True
     lOperands = [getattr(oOwn, s, None) for s in ("left", "right", "operand")]
     return any(o is not None and has_unsized(o) for o in lOperands)
+
+
+def case_statements(oFile):
+    """The case statements of a file."""
+    return nodes(oFile, "Case")
+
+
+def assignments(oStatement):
+    """The assignments under a statement."""
+    lReturn = []
+
+    def visit(oNode):
+        if oNode.kind.name == "Assignment":
+            lReturn.append(oNode)
+        return True
+
+    oStatement.visit(visit)
+    return lReturn

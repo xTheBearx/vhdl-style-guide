@@ -268,3 +268,122 @@ disabled by default; the starc rule set enables it.
 **Fix**
 
 Instantiate the primitive in a technology dependent module, or let synthesis infer it.
+
+sv_module_013
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_module_local_macros`
+
+This rule checks that a text macro defined inside a module is undefined with an undef directive before the end
+of the module, so it is used only there, as the STARC guide recommends (1.1.4.4). It is disabled by default; the
+starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   module fifo;
+       `define DEPTH 4
+   endmodule
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   module fifo;
+       `define DEPTH 4
+       `undef DEPTH
+   endmodule
+
+sv_module_014
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_module_synchronous_reset_modules`
+
+This rule checks that registers with a synchronous reset are in modules of their own, without other registers, as
+the STARC guide recommends (1.3.1.4). Synchronous resets are told as for sv_always_021. It is disabled by
+default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i) if (!srst_n) a <= '0; else a <= d;
+   always_ff @(posedge clk_i or negedge rst_n) ...
+
+**Fix**
+
+Move the registers with a synchronous reset to a module of their own.
+
+sv_module_015
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_module_hierarchy_only`
+
+This rule checks that a module that instantiates other modules holds no logic of its own, always blocks or
+continuous assignments, as the STARC guide recommends (1.6.4.1) for the levels of the hierarchy above the basic
+blocks. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   sub u_sub (.a(a), .y(y));
+   assign z = y & en;
+
+**Fix**
+
+Move the logic into a module of its own and instantiate it.
+
+sv_module_016
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_module_connection_order`
+
+This rule checks that the named port connections of an instance of a module the file defines are in the order of
+the ports of the module, as the STARC guide recommends (3.1.3.1). It is disabled by default; the starc rule set
+enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   sub u_sub (.y(y), .a(a));  // sub declares a, then y
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   sub u_sub (.a(a), .y(y));
+
+sv_module_017
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_module_registered_outputs`
+
+This rule checks that the outputs of a module are registered, not driven by logic of a continuous assignment or a
+combinational always block, as the STARC guide recommends (1.6.2.1) for basic blocks. An output assigned a signal
+as it is, such as assign y_o = q, is taken to be registered. It is disabled by default; the starc rule set
+enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   assign y_o = a & b;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i) y_o <= a & b;

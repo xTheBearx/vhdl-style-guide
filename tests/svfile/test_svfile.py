@@ -811,6 +811,60 @@ class test_rules(unittest.TestCase):
             [s for s in lOutput if any(f"({r})" in s for r in lRules)],
         )
 
+    def test_starc_checks_8(self):
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "starc", "-ap"], "starc_more8.sv")
+        lRules = (
+            "sv_naming_018",
+            "sv_naming_019",
+            "sv_naming_020",
+            "sv_module_013",
+            "sv_module_014",
+            "sv_module_015",
+            "sv_module_016",
+            "sv_module_017",
+            "sv_always_026",
+            "sv_case_011",
+            "sv_case_012",
+            "sv_statement_044",
+            "sv_statement_045",
+            "sv_statement_046",
+            "sv_statement_047",
+            "sv_statement_048",
+            "sv_statement_049",
+            "sv_statement_050",
+            "sv_literal_010",
+            "sv_comment_006",
+            "sv_comment_007",
+        )
+        self.assertEqual(
+            [
+                "WARNING: starc_more8.sv(1)STARC-3.5.3.2 (sv_comment_006) -- Record the changes in the file header: modif|change|history|revision",
+                "WARNING: starc_more8.sv(5)STARC-3.5.6.1 (sv_comment_007) -- Comment the module more: 1 of its 35 lines have a comment",
+                "WARNING: starc_more8.sv(12)STARC-1.1.1.9 (sv_naming_018) -- Rename Y_O, which differs from y_o only in case",
+                "WARNING: starc_more8.sv(14)STARC-1.1.4.4 (sv_module_013) -- Undefine LOCAL with an undef directive before the end of the module",
+                "ERROR: starc_more8.sv(18)STARC-1.6.4.1 (sv_module_015) -- Move the logic to a basic block: this module connects instances",
+                "WARNING: starc_more8.sv(18)STARC-1.1.5.2 (sv_naming_020) -- Name the clock sample with a clock word, such as clk",
+                "WARNING: starc_more8.sv(18)STARC-1.1.5.2 (sv_naming_020) -- Name the reset init_n with a reset word, such as rst",
+                "WARNING: starc_more8.sv(19)STARC-2.3.1.3 (sv_always_026) -- Add a unit delay to the register assignment, as in <= #1",
+                "WARNING: starc_more8.sv(20)STARC-2.3.1.3 (sv_always_026) -- Add a unit delay to the register assignment, as in <= #1",
+                "WARNING: starc_more8.sv(21)STARC-1.3.1.4 (sv_module_014) -- Put the registers with a synchronous reset in a module of their own",
+                "WARNING: starc_more8.sv(22)STARC-2.3.1.3 (sv_always_026) -- Add a unit delay to the register assignment, as in <= #1",
+                "WARNING: starc_more8.sv(23)STARC-2.3.1.3 (sv_always_026) -- Add a unit delay to the register assignment, as in <= #1",
+                "WARNING: starc_more8.sv(24)STARC-3.1.3.1 (sv_module_016) -- Connect a in the order of the ports of sub",
+                "WARNING: starc_more8.sv(25)STARC-1.6.2.1 (sv_module_017) -- Register the output y_o",
+                "WARNING: starc_more8.sv(29)STARC-2.9.1.1 (sv_statement_044) -- The loop makes priority logic for grant: write it as such",
+                "WARNING: starc_more8.sv(30)STARC-2.9.2.3 (sv_statement_045) -- Run the loop at most 10 times: it runs 12",
+                "WARNING: starc_more8.sv(31)STARC-3.2.2.1/STARC-4.1.2.1 (sv_literal_010) -- Name 8'd5 with a parameter",
+                "WARNING: starc_more8.sv(31)STARC-2.9.1.1 (sv_statement_044) -- The loop makes priority logic for t: write it as such",
+                "WARNING: starc_more8.sv(31)STARC-2.10.6.3 (sv_statement_046) -- Do not mix signed and unsigned operands in s + a_i",
+                "WARNING: starc_more8.sv(33)STARC-2.8.4.4 (sv_case_012) -- Keep the wildcard bits of 4'b1?0? together",
+                "WARNING: starc_more8.sv(33)STARC-2.10.6.6 (sv_statement_047) -- Write one arithmetic operation per line: this one has 2",
+                "WARNING: starc_more8.sv(37)STARC-2.6.1.2 (sv_statement_050) -- Compute q & r once, in a signal: it is written 3 times",
+                "ERROR: starc_more8.sv(52)STARC-4.1.3.1/STARC-4.1.3.2 (sv_statement_049) -- Offset the stimulus from the clock edge with a delay",
+            ],
+            [s for s in lOutput if any(f"({r})" in s for r in lRules)],
+        )
+
     def test_lint_do254(self):
         # The default rule set of lint mode labels the SystemVerilog rules with the DO-254 checks they implement
         _, lOutput, _ = self.run_mhsg(["--lint_only"], "lint.sv")

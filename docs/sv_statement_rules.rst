@@ -1031,3 +1031,171 @@ elaboration of the file. It is disabled by default; the starc rule set enables i
 .. code-block:: systemverilog
 
    if (i == int'(count)) ...
+
+sv_statement_044
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_no_loop_priority`
+
+This rule checks for for loops that build priority logic: an if without else in the loop assigns a signal the
+loop variable does not index, so the last iteration whose condition holds wins, as the STARC guide recommends
+against (2.9.1.1). It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   for (int i = 0; i < 8; i++)
+       if (req[i]) grant = i;
+
+**Fix**
+
+Write the priority explicitly, for example with a case statement or a priority encoder function.
+
+sv_statement_045
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_loop_iterations`
+
+This rule checks that for loops with comparisons or logic in them run at most **maximum_iterations** times, 10 by
+default, as the STARC guide recommends (2.9.2.3). Only loops whose bounds are numbers are checked. It is disabled
+by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   for (int i = 0; i < 32; i++) if (a[i] == b[i]) ...
+
+**Fix**
+
+Compare the vectors as a whole, or split the loop.
+
+sv_statement_046
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_signedness`
+
+This rule checks for operations that mix signed and unsigned operands, as the STARC guide asks (2.10.6.3):
+SystemVerilog then treats both as unsigned. The types come from slang's elaboration of the file; numbers without
+a width are not checked. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   logic signed [7:0] s;
+   assign y = s + u;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign y = s + signed'(u);
+
+sv_statement_047
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_one_operation_per_line`
+
+This rule checks that a line has at most one arithmetic operator, as the STARC guide recommends (2.10.6.6); a + b
++ c, an addition with a carry in, is allowed. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   assign y = a * b + c - d;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign p = a * b;
+   assign y = p + c - d;
+
+sv_statement_048
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_common_expressions`
+
+This rule checks for an arithmetic expression that both branches of an if and else compute, as the STARC guide
+recommends (2.10.7.2): compute it once, before the if. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   if (sel) y = a + b;
+   else z = a + b;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign sum = a + b;
+   if (sel) y = sum;
+   else z = sum;
+
+sv_statement_049
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_stimulus_offset`
+
+This rule checks that test stimulus is not assigned right at a clock edge, after an event control such as
+@(posedge clk) without a delay, as the STARC guide recommends (4.1.3.1, 4.1.3.2), in initial blocks and tasks. It
+is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   @(posedge clk);
+   data = 8'h55;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   @(posedge clk);
+   #1 data = 8'h55;
+
+sv_statement_050
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_shared_expressions`
+
+This rule checks for an expression with an operator that reads signals, such as a & b, written in more than
+**maximum_uses** places of a module, 2 by default, as the STARC guide recommends (2.6.1.2): compute it once, in a
+signal of its own. It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   assign x = a & b;
+   assign y = (a & b) | c;
+   assign z = (a & b) ^ d;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign ab = a & b;
+   assign x = ab;
+   assign y = ab | c;
+   assign z = ab ^ d;

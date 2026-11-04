@@ -640,3 +640,26 @@ disabled by default; the starc rule set enables it.
 
    always_latch
        if (en) q <= d;
+
+sv_always_026
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_unit_delay`
+
+This rule checks that the nonblocking assignments of edge triggered always blocks have a unit delay, such as q <=
+#1 d, as the STARC guide recommends (2.3.1.3) so that simulation shows the register change after the clock edge.
+It is disabled by default; the starc rule set enables it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i) q <= d;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i) q <= #1 d;
