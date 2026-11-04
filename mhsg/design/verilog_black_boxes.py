@@ -136,7 +136,12 @@ def defined_modules(oDesign):
     return {verilator.name_of(o.header.name) for oTree in trees(oDesign) for o in verilator.nodes(oTree) if o.kind in verilator.DEFINITIONS}
 
 
-reDirection = re.compile(r"\b(input|output|inout)\b\s*(?:wire\b|reg\b|signed\b|\[[^\]]*\]|\s)*([A-Za-z_][\w$]*(?:\s*,\s*[A-Za-z_][\w$]*)*)")
+# A direction, then the names it declares; a name after a comma is not the direction of the next declaration, as in
+# output O, input I0
+reDirection = re.compile(
+    r"\b(input|output|inout)\b\s*(?:wire\b|reg\b|signed\b|\[[^\]]*\]|\s)*"
+    r"((?!(?:input|output|inout)\b)[A-Za-z_][\w$]*(?:\s*,\s*(?!(?:input|output|inout)\b)[A-Za-z_][\w$]*)*)",
+)
 
 
 def model_directions(sDataDirectory, lFiles, setModules):
