@@ -18,7 +18,7 @@ import re
 import subprocess
 
 from mhsg import language
-from mhsg.design import stubs, tools, top, verilog_black_boxes
+from mhsg.design import netlist, stubs, tools, top, verilog_black_boxes
 
 # GHDL writes file:line:column:severity: text, or file:line:column:(assert severity): text for assertion reports
 reMessage = re.compile(
@@ -188,8 +188,7 @@ def run(oDesign, oTools, sWorkDirectory):
         sScript = sRead + "; ghdl " + " ".join(elaboration_options(oDesign, sWorkDirectory, lPatched) + top_units(oDesign))
         sScript += f"; hierarchy -check -top {oDesign.top}; proc; check; write_json {sNetlist}"
     lCommand = [oTools.yosys, *yosys_module_options(oTools), *lOptions, "-q", "-l", sLog, "-p", sScript]
-    oResult.commands.append(lCommand)
-    oProcess = subprocess.run(lCommand, capture_output=True, text=True, env=oTools.environment, check=False)
+    oProcess, lCommand = run_tool(lCommand, oTools, oResult)
     oResult.messages.extend(parse_messages(oResult.unpatch(oProcess.stderr), "yosys"))
     if os.path.isfile(sLog):
         with open(sLog, encoding="utf-8", errors="replace") as oFile:
@@ -211,9 +210,8 @@ def run_verilog(oDesign, oTools, sWorkDirectory):
     sRead, lOptions = verilog_read(oDesign, oTools, oDesign.top, sWorkDirectory)
     sScript = f"{sRead}; proc; check; write_json {quote(sNetlist)}"
     lCommand = [oTools.yosys, *lOptions, "-q", "-l", sLog, "-p", sScript]
-    oResult.commands.append(lCommand)
-    oProcess = subprocess.run(lCommand, capture_output=True, text=True, env=oTools.environment, check=False)
-    oResult.messages.extend(parse_verilog_messages(oProcess.stderr, "verilog"))
+    oProcess, lCommand = run_tool(lCommand, oTools, oResult)
+    oResult.messages.extend(parse_verilog_messages(oProcess.stderr, "verilog", design_files(oDesign)))
     if os.path.isfile(sLog):
         with open(sLog, encoding="utf-8", errors="replace") as oFile:
             oResult.yosys_log = oFile.read()
@@ -270,14 +268,13 @@ def run_verilog_top(oDesign, oTools, sWorkDirectory):
             return oResult
     lCommands = []
     dCopies = {}
-    bSlang = tools.slang_options(oTools.yosys) is not None if getattr(oTools, "slang", False) else False
-    if not bSlang:
-        tVariants = entity_variants(oDesign, oTools, sWorkDirectory, oResult, dUsed)
-        if tVariants is None:
-            return oResult
-        lCommands += [f"read_json {quote(s)}" for s in tVariants[0]]
-        # The instances with generics of their own name the modules elaborated with them, in copies of their files
-        dCopies = edited_copies(tVariants[1], sWorkDirectory)
+    # Also with read_slang, which imports the modules Yosys holds without their parameters
+    tVariants = entity_variants(oDesign, oTools, sWorkDirectory, oResult, dUsed)
+    if tVariants is None:
+        return oResult
+    lCommands += [f"read_json {quote(s)}" for s in tVariants[0]]
+    # The instances with generics of their own name the modules elaborated with them, in copies of their files
+    dCopies = edited_copies(tVariants[1], sWorkDirectory)
     for sModule, sLibrary in dUsed.items():
         lCommands.append("ghdl " + " ".join(ghdl_options(oDesign, sWorkDirectory) + [f"--work={sLibrary}", "--latches", sModule.lower()]))
         if sModule != sModule.lower():
@@ -285,25 +282,18 @@ def run_verilog_top(oDesign, oTools, sWorkDirectory):
             lCommands.append(f"rename {sModule.lower()} {sModule}")
     sNetlist = os.path.join(sWorkDirectory, "design.json")
     sLog = os.path.join(sWorkDirectory, "yosys.log")
-    sBlackBoxes = verilog_black_boxes.read_commands(
-        oDesign,
-        sWorkDirectory,
-        tools.data_directory(oTools.yosys),
-        oDesign.black_box_libraries,
-        set(dUsed),
-    )
-    sRead, lOptions = verilog_read_files(oDesign, oTools, oDesign.top, dCopies)
+    sBlackBoxes, tStubs = black_box_reads(oDesign, oTools, sWorkDirectory, set(dUsed))
+    sRead, lOptions = verilog_read_files(oDesign, oTools, oDesign.top, dCopies, tStubs)
     lFirst = [s for s in lCommands if s.startswith(("read_json", "ghdl", "rename"))]
     lAfter = [s for s in lCommands if s not in lFirst]
     sScript = "; ".join(
         [*lFirst, *([sBlackBoxes] if sBlackBoxes else []), *lAfter, *([sRead] if sRead else []), "proc", "check", f"write_json {quote(sNetlist)}"],
     )
     lCommand = [oTools.yosys, *yosys_module_options(oTools), *lOptions, "-q", "-l", sLog, "-p", sScript]
-    oResult.commands.append(lCommand)
-    oProcess = subprocess.run(lCommand, capture_output=True, text=True, env=oTools.environment, check=False)
+    oProcess, lCommand = run_tool(lCommand, oTools, oResult)
     dOriginals = {v: k for k, v in dCopies.items()}
     oResult.messages.extend(parse_messages(oProcess.stderr, "yosys"))
-    for oMessage in parse_verilog_messages(oProcess.stderr, "verilog"):
+    for oMessage in parse_verilog_messages(oProcess.stderr, "verilog", design_files(oDesign, dCopies)):
         oMessage.file = dOriginals.get(oMessage.file, oMessage.file)
         oResult.messages.append(oMessage)
     if os.path.isfile(sLog):
@@ -378,8 +368,7 @@ def entity_variants(oDesign, oTools, sWorkDirectory, oResult, dUsed):
         lOptions = ghdl_options(oDesign, sWorkDirectory) + [f"--work={dUsed[sType]}", "--latches", *[f"-g{k}={v}" for k, v in tGenerics]]
         sScript = "ghdl " + " ".join(lOptions + [sType.lower()]) + f"; write_json {quote(sJson)}"
         lCommand = [oTools.yosys, *yosys_module_options(oTools), "-q", "-p", sScript]
-        oResult.commands.append(lCommand)
-        oProcess = subprocess.run(lCommand, capture_output=True, text=True, env=oTools.environment, check=False)
+        oProcess, lCommand = run_tool(lCommand, oTools, oResult)
         oResult.messages.extend(parse_messages(oProcess.stderr, "elaboration"))
         if oProcess.returncode != 0 or not os.path.isfile(sJson):
             oResult.failed_stage = "elaboration"
@@ -466,22 +455,59 @@ def verilog_read(oDesign, oTools, sTop, sWorkDirectory=None):
     Yosys has it, else read_verilog -sv. With sTop, the commands also elaborate that top module with the parameters
     set under generics. With a work directory, the black boxes are read first, see verilog_black_boxes.py.
     """
-    sBlackBoxes = (
-        verilog_black_boxes.read_commands(oDesign, sWorkDirectory, tools.data_directory(oTools.yosys), oDesign.black_box_libraries) if sWorkDirectory else ""
-    )
-    sScript, lOptions = verilog_read_files(oDesign, oTools, sTop)
+    sBlackBoxes, tStubs = black_box_reads(oDesign, oTools, sWorkDirectory) if sWorkDirectory else ("", None)
+    sScript, lOptions = verilog_read_files(oDesign, oTools, sTop, tStubs=tStubs)
     return (sBlackBoxes + "; " + sScript if sBlackBoxes else sScript), lOptions
 
 
-def verilog_read_files(oDesign, oTools, sTop, dCopies=None):
-    """Returns (Yosys command, Yosys options) that read the Verilog files of a design, or the copies of dCopies."""
+# read_slang flattens the design unless told to keep its hierarchy, an option it calls experimental, see run_tool
+KEEP_HIERARCHY = "--keep-hierarchy"
+
+
+def run_tool(lCommand, oTools, oResult):
+    """
+    Runs a command of GHDL or Yosys, records it, and returns (the completed process, the command run). When read_slang
+    fails to keep the hierarchy, without an error in the Verilog, the command runs again with a flat design.
+    """
+    oResult.commands.append(lCommand)
+    oProcess = subprocess.run(lCommand, capture_output=True, text=True, env=oTools.environment, check=False)
+    sScript = lCommand[-1]
+    if oProcess.returncode != 0 and f"read_slang {KEEP_HIERARCHY} " in sScript and not any(o.file for o in parse_verilog_messages(oProcess.stderr, "verilog")):
+        lCommand = [*lCommand[:-1], sScript.replace(f"read_slang {KEEP_HIERARCHY} ", "read_slang ")]
+        oResult.commands.append(lCommand)
+        oProcess = subprocess.run(lCommand, capture_output=True, text=True, env=oTools.environment, check=False)
+    return oProcess, lCommand
+
+
+def black_box_reads(oDesign, oTools, sWorkDirectory, setExclude=()):
+    """
+    Returns (Yosys commands that read the black boxes, (stub file, stub modules) for read_slang or None). read_verilog
+    reads the stubs before the design; read_slang reads them with it, see verilog_read_files.
+    """
+    bSlang = getattr(oTools, "slang", False) and tools.slang_options(oTools.yosys) is not None
+    sDataDirectory = tools.data_directory(oTools.yosys)
+    if not bSlang:
+        return verilog_black_boxes.read_commands(oDesign, sWorkDirectory, sDataDirectory, oDesign.black_box_libraries, setExclude), None
+    sCommands, sStubFile, lNames = verilog_black_boxes.black_boxes(oDesign, sWorkDirectory, sDataDirectory, oDesign.black_box_libraries, setExclude, True)
+    return sCommands, ((sStubFile, lNames) if sStubFile is not None else None)
+
+
+def verilog_read_files(oDesign, oTools, sTop, dCopies=None, tStubs=None):
+    """
+    Returns (Yosys command, Yosys options) that read the Verilog files of a design, or the copies of dCopies. With
+    read_slang, tStubs is (file, modules) of the stubs of black boxes, read with the design and kept as black boxes.
+    """
     lDefines = [f"-D{sName}" if oValue is None else f"-D{sName}={verilog_value(oValue)}" for sName, oValue in oDesign.defines.items()]
     lIncludes = [f"-I{quote(s)}" for s in oDesign.include_directories]
     lFiles = [quote((dCopies or {}).get(s, s)) for s in oDesign.verilog_files()]
     lSlang = tools.slang_options(oTools.yosys) if getattr(oTools, "slang", False) else None
     if lSlang is not None:
         lTop = [f"--top {sTop}"] + [f"-G {sName}={verilog_value(oValue)}" for sName, oValue in oDesign.generics.items()] if sTop else []
-        return " ".join(["read_slang", *lDefines, *lIncludes, *lTop, *lFiles]), lSlang
+        lBlackBoxes = []
+        if tStubs is not None:
+            lBlackBoxes = [f"--blackboxed-module {s}" for s in tStubs[1]]
+            lFiles = [quote(tStubs[0]), *lFiles]
+        return " ".join(["read_slang", KEEP_HIERARCHY, *lDefines, *lIncludes, *lTop, *lBlackBoxes, *lFiles]), lSlang
     sScript = " ".join(["read_verilog -sv", *lDefines, *lIncludes, *lFiles])
     if sTop:
         lParameters = [f"-chparam {sName} {verilog_value(oValue)}" for sName, oValue in oDesign.generics.items()]
@@ -505,17 +531,37 @@ def quote(sText):
 reVerilogMessage = re.compile(r"^(?P<file>.+?\.(?:sv|svh|v|vh)):(?P<line>\d+): (?P<severity>ERROR|Warning): (?P<text>.*)$", re.IGNORECASE)
 
 
-def parse_verilog_messages(sOutput, sStage):
-    """Returns the messages of Yosys reading and elaborating Verilog: located ones, and errors without a location."""
+def parse_verilog_messages(sOutput, sStage, dFiles=None):
+    """
+    Returns the messages of Yosys reading and elaborating Verilog: located ones, and errors without a location. dFiles
+    maps the files Yosys names to the names the design gives them: read_slang names them relative to its directory.
+    The summary read_slang adds to located errors is left out.
+    """
+    dNames = {netlist.normalise(k): v for k, v in (dFiles or {}).items()}
     lReturn = []
     for sLine in sOutput.splitlines():
         sLine = sLine.strip()
         oMatch = reVerilogMessage.match(sLine)
         if oMatch:
-            lReturn.append(Message(oMatch.group("file"), int(oMatch.group("line")), 0, oMatch.group("severity").lower(), oMatch.group("text"), sStage))
+            sFile = oMatch.group("file")
+            sFile = dNames.get(netlist.normalise(sFile), sFile) if dNames else sFile
+            lReturn.append(Message(sFile, int(oMatch.group("line")), 0, oMatch.group("severity").lower(), oMatch.group("text"), sStage))
         elif sLine.startswith("ERROR: "):
             lReturn.append(Message(None, 0, 0, "error", sLine[len("ERROR: ") :].replace("`\\", "`"), sStage))
+    if any(o.file is not None and o.severity == "error" for o in lReturn):
+        lReturn = [o for o in lReturn if o.file is not None or not o.text.startswith(ELABORATION_FAILED)]
     return lReturn
+
+
+# The error read_slang ends with when it found others
+ELABORATION_FAILED = "Design elaboration failed"
+
+
+def design_files(oDesign, dCopies=None):
+    """{file as Yosys reads it: file as the design names it} for the Verilog files of a design and their copies."""
+    dReturn = {s: s for s in oDesign.verilog_files()}
+    dReturn.update({v: k for k, v in (dCopies or {}).items()})
+    return dReturn
 
 
 def yosys_module_options(oTools):
@@ -526,8 +572,7 @@ def yosys_module_options(oTools):
 
 def run_ghdl(oResult, oTools, lCommand, sStage, sOutput=None):
     """Runs a GHDL command, records its messages, and returns True if it succeeded."""
-    oResult.commands.append(lCommand)
-    oProcess = subprocess.run(lCommand, capture_output=True, text=True, env=oTools.environment, check=False)
+    oProcess, lCommand = run_tool(lCommand, oTools, oResult)
     oResult.messages.extend(parse_messages(oResult.unpatch(oProcess.stderr), sStage))
     if sOutput is not None:
         with open(sOutput, "w", encoding="utf-8") as oFile:

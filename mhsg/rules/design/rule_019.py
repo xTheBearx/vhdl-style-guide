@@ -141,10 +141,26 @@ class LutGraph:
                 continue
             # An input still on the stack closes a combinational loop: it counts as a start
             lDepths = [self._dDepths.get(b, (0, b)) for b in lInputs]
-            iLevels, oStart = max(lDepths, key=lambda t: t[0]) if lDepths else (0, oTop)
+            if lDepths:
+                # Of paths as deep, the one from the first name, so that the finding does not depend on the mapping
+                iLevels = max(t[0] for t in lDepths)
+                oStart = min((t[1] for t in lDepths if t[0] == iLevels), key=self.order)
+            else:
+                iLevels, oStart = 0, oTop
             self._dDepths[oTop] = (iLevels + 1, oStart)
             lStack.pop()
         return self._dDepths[oBit]
+
+    def order(self, oBit):
+        """Sorts the nets a path can start at: named ones first, by name."""
+        sName = self.name(oBit)
+        return (sName == "", sName, oBit if isinstance(oBit, int) else -1)
+
+    def deeper(self, iLevels, oStart, tWorst):
+        """Whether a path is deeper than the worst so far, or as deep and from a net first in order."""
+        if tWorst is None:
+            return True
+        return iLevels > tWorst[0] or (iLevels == tWorst[0] and self.order(oStart) < self.order(tWorst[3]))
 
     def name(self, oBit):
         """The name of a net, or "" for one Yosys named, such as u_alu.2165.B, whose name tells nothing."""
@@ -165,13 +181,13 @@ class LutGraph:
                     continue
                 for oBit in dCell.get("connections", {}).get(sPort, []):
                     iLevels, oStart = self.depth(oBit)
-                    if iLevels > dWorst.get(sEnd, (-1,))[0]:
-                        dWorst[sEnd] = (iLevels, self.name(oStart), dCell.get("attributes", {}).get("src", ""))
+                    if self.deeper(iLevels, oStart, dWorst.get(sEnd)):
+                        dWorst[sEnd] = (iLevels, self.name(oStart), dCell.get("attributes", {}).get("src", ""), oStart)
         for sPort, dPort in self.module.get("ports", {}).items():
             if dPort.get("direction") not in ("output", "inout"):
                 continue
             for oBit in dPort.get("bits", []):
                 iLevels, oStart = self.depth(oBit)
-                if iLevels > dWorst.get(sPort, (-1,))[0]:
-                    dWorst[sPort] = (iLevels, self.name(oStart), "")
+                if self.deeper(iLevels, oStart, dWorst.get(sPort)):
+                    dWorst[sPort] = (iLevels, self.name(oStart), "", oStart)
         return sorted(((t[0], t[1], sEnd, t[2]) for sEnd, t in dWorst.items()), key=lambda t: (-t[0], t[2]))

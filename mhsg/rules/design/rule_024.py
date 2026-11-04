@@ -26,6 +26,7 @@ TRANSISTORS = {
     "$_MUX_": 12,
     "$_XOR_": 12,
     "$_XNOR_": 12,
+    "$_TBUF_": 8,
 }
 FLIP_FLOP_TRANSISTORS = 24
 LATCH_TRANSISTORS = 12
