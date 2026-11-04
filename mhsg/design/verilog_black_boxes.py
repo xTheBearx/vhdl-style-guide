@@ -25,6 +25,8 @@ from mhsg.svFile import preprocessor, verilator
 # Yosys' cell models of the vendors whose black box libraries come with mhsg, under its data directory (+/)
 YOSYS_MODELS = {
     "xilinx": ["xilinx/cells_sim.v", "xilinx/cells_xtra.v"],
+    "lattice": ["ecp5/cells_sim.v", "ecp5/cells_bb.v", "ice40/cells_sim.v"],
+    "microchip": ["sf2/cells_sim.v"],
 }
 
 # The attribute of a stub whose inout ports are made inputs or outputs for each instance, see netlist.py

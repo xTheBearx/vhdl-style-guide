@@ -11,12 +11,15 @@
 # Generated cores, such as clock conditioning circuits, take the names given in Libero, such as PF_CCC_C0, and are
 # matched with patterns; check that the port names of your configuration match. Ports whose behaviour depends on how
 # a macro is used are left out on purpose, so design analysis asks for them: the latch mode of SLE, and the ECC and
-# busy ports of the RAM blocks, for example. Math blocks, micro SRAM, transceivers and other IP cores are not
-# included; declare them in the design section.
+# busy ports of the RAM blocks, and the bypass selection of micro SRAM, for example. Transceivers and other IP cores
+# are not included; declare them in the design section.
 #
 # Choices to review:
 # - Clock conditioning circuit outputs are derived from REF_CLK_0, so they are synchronous to it and to each other.
 # - The on-chip oscillators are clocks of their own, asynchronous to every other clock.
+# - The read side of micro SRAM (RAM64x12) is taken to be registered on R_CLK; with the address and data registers
+#   bypassed (R_ADDR_BYPASS, R_DATA_BYPASS), the read is combinational and the design must declare R_DATA as a path.
+# - The math block (MACC_PA) is taken to be clocked by CLK throughout, with AL_N as its asynchronous reset.
 
 black_boxes:
 
@@ -164,6 +167,23 @@ black_boxes:
       CLK: clock
       FABRIC_RESET_N: {reset_out: {clock: CLK, release: sync}}
       "*": async
+
+  # Micro SRAM and math blocks (PolarFire)
+
+  RAM64x12:
+    reference: PolarFire family FPGA macro library guide, RAM64x12
+    archetype: dual_clock
+    sides:
+      W_CLK: [W_EN, W_ADDR, W_DATA, BLK_EN]
+      R_CLK: [R_ADDR, R_ADDR_EN, R_ADDR_SL_N, R_ADDR_SD, R_DATA, R_DATA_EN, R_DATA_SL_N, R_DATA_SD]
+    ports:
+      R_ADDR_AL_N: {reset_in: async}
+      R_DATA_AL_N: {reset_in: async}
+  MACC_PA:
+    reference: PolarFire family FPGA macro library guide, MACC_PA
+    archetype: single_clock
+    clock: CLK
+    async_reset: AL_N
 
   # SmartFusion2 and IGLOO2 system reset
 

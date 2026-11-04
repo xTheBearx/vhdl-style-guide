@@ -27,16 +27,19 @@ Design analysis
 
 * **Formal reachability (plan step 6).** Cover checks per branch and state with SymbiYosys, assumptions, time budgets
   and three-way results. SymbiYosys is not packaged for Ubuntu; it needs the YosysHQ OSS CAD Suite.
-* **Black box libraries for more primitives.** Transceivers, SERDES (ISERDES, OSERDES), math blocks, Microchip micro
-  SRAM, block RAM ECC and cascade ports, and the Intel and Lattice primitives have no declarations yet.
+* **Black box libraries for more primitives.** Transceivers, PCIe and memory interface cores have no declarations;
+  the Intel and Lattice libraries cover the common primitives only. The names of the Intel megafunctions could not be
+  checked against cell models, as Yosys has none for them.
 * **Stand-in models and pragmas for black boxes** (options 4 and 5 of the black box plan): an analysis-only VHDL
   architecture for complex IP, and comment pragmas in component declarations. Not planned unless asked for.
 * **Netlist checks and declarations of single instances.** design_003 and design_007 follow the path roles of black
   box types; the declarations of single instances name flat paths, which the module graphs do not know. design_006
   counts every black box input as used, since the roles describe clock domains, not which inputs matter.
-* **Reconvergence through clocked resets only.** Synchronous resets that feed two or more registers are not followed
-  unless :code:`follow_resets` is set; a finer rule could tell resets from clears.
-* **Reset domain crossings through logic** are not checked.
+* **Clears found without a declaration.** A synchronous clear is followed by design_016 when the cdc section lists it
+  under clears. Telling clears from resets by structure was tried and dropped: the reset crossing circuits of
+  open-logic compute their resets with logic, and were taken for clears.
+* **Reset domain crossings into registers without a reset** are not reported by design_018, as their data during a
+  reset is not used; a design that relies on such a register right after a reset would need them.
 * **Logic depth** counts operators before technology mapping, which is crude; a mapped count would be more realistic
   but slower and loses names.
 * **More real-world designs** in :code:`scripts/real_world_designs.yaml`: more of surf, which now analyzes with stub

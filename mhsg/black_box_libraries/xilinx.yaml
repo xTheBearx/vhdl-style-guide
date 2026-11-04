@@ -8,8 +8,8 @@
 # declaration in your design section takes precedence over this library, port by port.
 #
 # Ports whose behaviour depends on how the primitive is used are left out on purpose, so design analysis asks for
-# them: the ECC and cascade ports of block RAM, for example. Transceivers, SERDES, PCIe, memory interfaces and other
-# IP cores are not included; declare them in the design section.
+# them: the dynamic clock selection and cascade ports of the SERDES and delays, for example. Transceivers, PCIe, memory
+# interfaces and other IP cores are not included; declare them in the design section.
 #
 # Choices to review:
 # - The output of a clock multiplexer (BUFGMUX, BUFGCTRL) is a clock of its own, asynchronous to both inputs. This
@@ -17,6 +17,12 @@
 # - MMCM and PLL outputs are derived from CLKIN1 (CLKIN for UltraScale PLLs), so they are synchronous to it and to
 #   each other. A design that switches to CLKIN2 should declare the outputs itself.
 # - Outputs of XPM synchronizers are listed in the crossing report for manual review, with their stages.
+# - The data input of a deserializer (ISERDES) is sampled by its high-speed clock; the data from the pin is taken to be
+#   timed by that clock, as source-synchronous interfaces are. Its outputs are timed by the divided clock, or by the
+#   FIFO read clock when the ISERDESE3 FIFO is enabled. The resets of the SERDES are asynchronous inputs that must be
+#   released synchronously to the divided clock; that release is not checked.
+# - The ECC ports of block RAM belong to the read side (port A) in simple dual port mode, except the parity output and
+#   the error injection inputs, which belong to the write side (port B). The cascade ports belong to their side.
 # - The reset of the 7 series FIFOs (FIFO18E1, FIFO36E1) is asynchronous; that of the UltraScale FIFOs (FIFO18E2,
 #   FIFO36E2) is synchronous to the write clock.
 
@@ -380,6 +386,43 @@ black_boxes:
       CNTVALUEOUT: {sync: C}
       REGRST: {sync: C}
       CINVCTRL: {sync: C}
+  ODELAYE2:
+    reference: UG953, ODELAYE2
+    ports:
+      C: clock
+      DATAOUT: {path: [ODATAIN, CLKIN]}
+      CE: {sync: C}
+      INC: {sync: C}
+      LD: {sync: C}
+      LDPIPEEN: {sync: C}
+      CNTVALUEIN: {sync: C}
+      CNTVALUEOUT: {sync: C}
+      REGRST: {sync: C}
+      CINVCTRL: {sync: C}
+  IDELAYE3:
+    reference: UG974, IDELAYE3
+    ports:
+      CLK: clock
+      DATAOUT: {path: [IDATAIN, DATAIN]}
+      CE: {sync: CLK}
+      INC: {sync: CLK}
+      LOAD: {sync: CLK}
+      CNTVALUEIN: {sync: CLK}
+      CNTVALUEOUT: {sync: CLK}
+      EN_VTC: {sync: CLK}
+      RST: {reset_in: async}
+  ODELAYE3:
+    reference: UG974, ODELAYE3
+    ports:
+      CLK: clock
+      DATAOUT: {path: [ODATAIN]}
+      CE: {sync: CLK}
+      INC: {sync: CLK}
+      LOAD: {sync: CLK}
+      CNTVALUEIN: {sync: CLK}
+      CNTVALUEOUT: {sync: CLK}
+      EN_VTC: {sync: CLK}
+      RST: {reset_in: async}
   IDELAYCTRL:
     reference: UG953/UG974, IDELAYCTRL
     ports:
@@ -387,7 +430,69 @@ black_boxes:
       RST: {reset_in: async}
       RDY: async
 
-  # Block RAM: the ECC and cascade ports are left for the design to declare
+  # Serializers and deserializers
+
+  ISERDESE2:
+    reference: UG953, ISERDESE2
+    ports:
+      CLK: clock
+      CLKB: clock
+      CLKDIV: clock
+      CLKDIVP: clock
+      OCLK: clock
+      OCLKB: clock
+      D: {sync: CLK}
+      DDLY: {sync: CLK}
+      Q*: {sync: CLKDIV}
+      BITSLIP: {sync: CLKDIV}
+      CE1: {sync: CLKDIV}
+      CE2: {sync: CLKDIV}
+      RST: {reset_in: async}
+      O: {path: [D]}
+  OSERDESE2:
+    reference: UG953, OSERDESE2
+    ports:
+      CLK: clock
+      CLKDIV: clock
+      D*: {sync: CLKDIV}
+      T[1-4]: {sync: CLKDIV}
+      OCE: {sync: CLK}
+      TCE: {sync: CLK}
+      OQ: {sync: CLK}
+      TQ: {sync: CLK}
+      OFB: {sync: CLK}
+      TFB: {sync: CLK}
+      RST: {reset_in: async}
+  ISERDESE3:
+    reference: UG974, ISERDESE3
+    ports:
+      CLK: clock
+      CLK_B: clock
+      CLKDIV: clock
+      FIFO_RD_CLK: clock
+      D: {sync: CLK}
+      Q: {sync: CLKDIV}
+      FIFO_RD_EN: {sync: FIFO_RD_CLK}
+      FIFO_EMPTY: {sync: FIFO_RD_CLK}
+      INTERNAL_DIVCLK: {clock_out: {from: CLK, relation: derived}}
+      RST: {reset_in: async}
+    variants:
+      - when: {FIFO_ENABLE: "TRUE"}
+        ports:
+          Q: {sync: FIFO_RD_CLK}
+  OSERDESE3:
+    reference: UG974, OSERDESE3
+    ports:
+      CLK: clock
+      CLKDIV: clock
+      D: {sync: CLKDIV}
+      T: {sync: CLKDIV}
+      OQ: {sync: CLK}
+      T_OUT: {path: [T]}
+      RST: {reset_in: async}
+
+  # Block RAM
+
 
   RAMB18E1:
     reference: UG953, RAMB18E1
@@ -399,16 +504,48 @@ black_boxes:
     reference: UG953, RAMB36E1
     archetype: dual_clock
     sides: *ramb_e1
+    ports:
+      DBITERR: {sync: CLKARDCLK}
+      SBITERR: {sync: CLKARDCLK}
+      RDADDRECC: {sync: CLKARDCLK}
+      ECCPARITY: {sync: CLKBWRCLK}
+      INJECTDBITERR: {sync: CLKBWRCLK}
+      INJECTSBITERR: {sync: CLKBWRCLK}
+      CASCADEINA: {sync: CLKARDCLK}
+      CASCADEOUTA: {sync: CLKARDCLK}
+      CASCADEINB: {sync: CLKBWRCLK}
+      CASCADEOUTB: {sync: CLKBWRCLK}
   RAMB18E2:
     reference: UG974, RAMB18E2
     archetype: dual_clock
     sides: &ramb_e2
       CLKARDCLK: [ADDRARDADDR, ADDRENA, DINADIN, DINPADINP, DOUTADOUT, DOUTPADOUTP, ENARDEN, REGCEAREGCE, RSTRAMARSTRAM, RSTREGARSTREG, WEA]
       CLKBWRCLK: [ADDRBWRADDR, ADDRENB, DINBDIN, DINPBDINP, DOUTBDOUT, DOUTPBDOUTP, ENBWREN, REGCEB, RSTRAMB, RSTREGB, WEBWE]
+    ports:
+      CAS*A: {sync: CLKARDCLK}
+      CAS*_A: {sync: CLKARDCLK}
+      CAS*B: {sync: CLKBWRCLK}
+      CAS*_B: {sync: CLKBWRCLK}
   RAMB36E2:
     reference: UG974, RAMB36E2
     archetype: dual_clock
     sides: *ramb_e2
+    ports:
+      DBITERR: {sync: CLKARDCLK}
+      SBITERR: {sync: CLKARDCLK}
+      RDADDRECC: {sync: CLKARDCLK}
+      ECCPIPECE: {sync: CLKARDCLK}
+      CASINDBITERR: {sync: CLKARDCLK}
+      CASINSBITERR: {sync: CLKARDCLK}
+      CASOUTDBITERR: {sync: CLKARDCLK}
+      CASOUTSBITERR: {sync: CLKARDCLK}
+      ECCPARITY: {sync: CLKBWRCLK}
+      INJECTDBITERR: {sync: CLKBWRCLK}
+      INJECTSBITERR: {sync: CLKBWRCLK}
+      CAS*A: {sync: CLKARDCLK}
+      CAS*_A: {sync: CLKARDCLK}
+      CAS*B: {sync: CLKBWRCLK}
+      CAS*_B: {sync: CLKBWRCLK}
 
   # Configuration
 

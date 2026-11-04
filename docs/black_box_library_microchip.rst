@@ -42,5 +42,9 @@
   Reference: PolarFire FPGA power-up and resets user guide, PF_INIT_MONITOR.
 * ``CORERESET_PF_*``: ``CLK``: clock; ``FABRIC_RESET_N``: reset released synchronously to CLK; ``*``: async.
   Reference: CoreReset_PF handbook.
+* ``RAM64x12`` (dual_clock): ``R_ADDR_AL_N``: asynchronous reset; ``R_DATA_AL_N``: asynchronous reset; ``W_CLK``: clock; ``W_EN``: timed by W_CLK; ``W_ADDR``: timed by W_CLK; ``W_DATA``: timed by W_CLK; ``BLK_EN``: timed by W_CLK; ``R_CLK``: clock; ``R_ADDR``: timed by R_CLK; ``R_ADDR_EN``: timed by R_CLK; ``R_ADDR_SL_N``: timed by R_CLK; ``R_ADDR_SD``: timed by R_CLK; ``R_DATA``: timed by R_CLK; ``R_DATA_EN``: timed by R_CLK; ``R_DATA_SL_N``: timed by R_CLK; ``R_DATA_SD``: timed by R_CLK.
+  Reference: PolarFire family FPGA macro library guide, RAM64x12.
+* ``MACC_PA`` (single_clock): ``CLK``: clock; ``AL_N``: asynchronous reset; ``*``: timed by CLK.
+  Reference: PolarFire family FPGA macro library guide, MACC_PA.
 * ``SYSRESET``: ``DEVRST_N``: async; ``POWER_ON_RESET_N``: async.
   Reference: SmartFusion2 and IGLOO2 macro library guide, SYSRESET.

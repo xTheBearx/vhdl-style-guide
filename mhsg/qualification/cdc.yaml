@@ -49,6 +49,10 @@ design_cases:
   name: clean design
   design: *id001
   expected: []
+- rule: design_018
+  name: clean design
+  design: *id001
+  expected: []
 - rule: design_008
   name: undeclared signal
   design: &id002
@@ -91,6 +95,10 @@ design_cases:
   design: *id002
   expected: []
 - rule: design_017
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_018
   name: undeclared signal
   design: *id002
   expected: []
@@ -139,6 +147,10 @@ design_cases:
   name: latch
   design: *id003
   expected: []
+- rule: design_018
+  name: latch
+  design: *id003
+  expected: []
 - rule: design_008
   name: combinational loop
   design: &id004
@@ -184,6 +196,10 @@ design_cases:
   name: combinational loop
   design: *id004
   expected: []
+- rule: design_018
+  name: combinational loop
+  design: *id004
+  expected: []
 - rule: design_008
   name: multiple drivers
   design: &id005
@@ -226,6 +242,10 @@ design_cases:
   design: *id005
   expected: []
 - rule: design_017
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_018
   name: multiple drivers
   design: *id005
   expected: []
@@ -277,6 +297,10 @@ design_cases:
   name: registers
   design: *id006
   expected: []
+- rule: design_018
+  name: registers
+  design: *id006
+  expected: []
 - rule: design_008
   name: logic depth
   design: &id007
@@ -319,6 +343,10 @@ design_cases:
   design: *id007
   expected: []
 - rule: design_017
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_018
   name: logic depth
   design: *id007
   expected: []
@@ -400,6 +428,10 @@ design_cases:
   name: clock domain crossings
   design: *id008
   expected: []
+- rule: design_018
+  name: clock domain crossings
+  design: *id008
+  expected: []
 - rule: design_008
   name: reconvergence
   design: &id009
@@ -457,6 +489,10 @@ design_cases:
   name: reconvergence
   design: *id009
   expected: []
+- rule: design_018
+  name: reconvergence
+  design: *id009
+  expected: []
 - rule: design_008
   name: black box
   design: &id010
@@ -508,6 +544,10 @@ design_cases:
   - - examples/design/black_box.vhd
     - 57
     - Black box xpm_cdc_single has no declaration of its clock domain behaviour
+- rule: design_018
+  name: black box
+  design: *id010
+  expected: []
 - rule: design_008
   name: deep logic
   design: &id011
@@ -553,3 +593,62 @@ design_cases:
   name: deep logic
   design: *id011
   expected: []
+- rule: design_018
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_008
+  name: reset domain crossing
+  design: &id012
+    top: rdc_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/rdc.vhd
+  expected: []
+- rule: design_009
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_010
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_011
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_012
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_013
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_014
+  name: reset domain crossing
+  design: *id012
+  expected:
+  - - examples/design/rdc.vhd
+    - 79
+    - Asynchronous reset rst_ab is made by logic
+- rule: design_015
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_016
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_017
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_018
+  name: reset domain crossing
+  design: *id012
+  expected:
+  - - examples/design/rdc.vhd
+    - 69
+    - 'other_r, reset by rst_b, captures a_r, reset by rst_a: asserting rst_a alone can make it metastable'
