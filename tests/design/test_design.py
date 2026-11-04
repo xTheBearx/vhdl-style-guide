@@ -536,7 +536,7 @@ class test_black_box_declarations(unittest.TestCase):
 
 class test_declaration_libraries(unittest.TestCase):
     def test_libraries_parse(self):
-        self.assertEqual(["microchip", "xilinx"], black_box.built_in_libraries())
+        self.assertEqual(["intel", "lattice", "microchip", "xilinx"], black_box.built_in_libraries())
         for sName in black_box.built_in_libraries():
             with self.subTest(sName):
                 oLibrary = black_box.from_design({"black_box_libraries": [sName]})
@@ -565,7 +565,7 @@ class test_declaration_libraries(unittest.TestCase):
     def test_unknown_library(self):
         with self.assertRaises(exceptions.ConfigurationError) as oContext:
             black_box.from_design({"black_box_libraries": ["acme"]})
-        self.assertIn("not a file or a library that comes with mhsg (microchip, xilinx)", oContext.exception.message)
+        self.assertIn("not a file or a library that comes with mhsg (intel, lattice, microchip, xilinx)", oContext.exception.message)
 
 
 class test_vendor_libraries(unittest.TestCase):
@@ -899,6 +899,35 @@ class test_design_analysis(unittest.TestCase):
                 ("loop.vhd", 45, "design_003", "Combinational loop through e, f in loop_top and instance u_pass"),
             ],
             self.findings("loop_top", "loop.vhd"),
+        )
+
+    def test_reset_domain_crossings(self):
+        # Only the register on the other reset is reported: the same reset, a reset that combines both and no reset
+        # are safe
+        self.assertEqual(
+            [
+                (
+                    "rdc.vhd",
+                    69,
+                    "design_018",
+                    "other_r, reset by rst_b, captures a_r, reset by rst_a: asserting rst_a alone can make it metastable",
+                ),
+            ],
+            [t for t in self.findings("rdc_top", "rdc.vhd") if t[2] == "design_018"],
+        )
+
+    def test_clears(self):
+        # A clear listed under clears is followed like data: x_a meets y_a in the registers it clears. Without the
+        # list it is taken for a reset, as the synchronized reset of r3_b and r4_b is
+        dCdc = {"clocks": {"clk_a": "a", "clk_b": "b"}}
+        self.assertEqual([], self.findings("clear_top", "clear.vhd", dCdc=dCdc))
+        sMessage = "Separately synchronized x_a (by x_meta) and y_a (by y_meta) from clk_a meet again in"
+        self.assertEqual(
+            [
+                ("clear.vhd", 56, "design_016", f"{sMessage} r1_b (clk_b)"),
+                ("clear.vhd", 57, "design_016", f"{sMessage} r2_b (clk_b)"),
+            ],
+            self.findings("clear_top", "clear.vhd", dCdc={**dCdc, "clears": ["clr_*"]}),
         )
 
     def test_reconvergence_in_black_boxes(self):
