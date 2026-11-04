@@ -70,8 +70,9 @@ under way: the entries below.
 * **Files with syntax errors** are skipped by the SystemVerilog rules, as a VHDL file that does not parse is. The
   defines and include directories of the systemverilog section let fewer files fall in this case; the real-world
   check runs without them.
-* **STARC lint items needing data flow**: the per-file items of the STARC guide on loop bounds, resource sharing and
-  common expressions need more than slang's types, which the rules on widths use.
+* **STARC items with judgement**: resource sharing, Gray encoding of states and the like are left to review; the rules
+  on loop bounds and common expressions compare the code as written, so loop bounds given by parameters, and
+  expressions written differently, are not checked.
 * **STARC rule set**: 218 of the 613 items of the STARC guide have rules, the design rules among them for the items
   on loops, drivers, generated and gated clocks and resets. Every per-file item has a rule or is left to review
   (status manual, with the reason in its note). The 57 items with status design need what design analysis does not
