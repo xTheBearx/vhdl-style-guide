@@ -23,15 +23,15 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.1.2.1    | Module and instance names must be 2 to 32 characters long                                 | Error    | Implemented                  | :code:`sv_naming_013`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.1.2.2    | Prefix the top-level block name with a hierarchy identification character                 | Note     | Planned, design analysis     |                                                |
+| STARC-1.1.2.2    | Prefix the top-level block name with a hierarchy identification character                 | Note     | Implemented, design analysis | :code:`design_043`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.1.2.3    | A sub-block's hierarchy ID extends its parent's hierarchy ID                              | Note     | Planned, design analysis     |                                                |
+| STARC-1.1.2.3    | A sub-block's hierarchy ID extends its parent's hierarchy ID                              | Note     | Implemented, design analysis | :code:`design_043`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.1.2.4    | Output port names begin with the block's hierarchy ID followed by an underscore           | Note     | Planned, design analysis     |                                                |
+| STARC-1.1.2.4    | Output port names begin with the block's hierarchy ID followed by an underscore           | Note     | Implemented, design analysis | :code:`design_043`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.1.2.5    | Ports and internal signals should follow distinguishable naming conventions               | Note     | Implemented                  | :code:`sv_naming_016`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.1.2.6    | Nets driven by an output port keep that port's name in the parent                         | Note     | Planned, design analysis     |                                                |
+| STARC-1.1.2.6    | Nets driven by an output port keep that port's name in the parent                         | Note     | Implemented, design analysis | :code:`design_044`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.1.3.1    | Internal signal names should be distinguishable from port names by convention             | Note     | Implemented                  | :code:`sv_naming_016`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -155,7 +155,7 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.6.1.1    | Keep each hierarchy level at 40,000 gates or fewer; smaller at high frequency             | Note     | Implemented, design analysis | :code:`design_024`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.6.1.2    | Use 10,000-40,000-gate basic blocks; no logic above them except CTS buffers               | Warning  | Planned, design analysis     |                                                |
+| STARC-1.6.1.2    | Use 10,000-40,000-gate basic blocks; no logic above them except CTS buffers               | Warning  | Implemented, design analysis | :code:`design_024`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.6.1.3    | Partitioning below basic blocks is left to the designer                                   | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -163,17 +163,17 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.6.2.1    | Basic blocks: combinational inputs, registered (flip-flop) outputs                        | Note     | Implemented                  | :code:`sv_module_017`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.6.2.2    | Otherwise, a timing path should span at most two blocks                                   | Warning  | Planned, design analysis     |                                                |
+| STARC-1.6.2.2    | Otherwise, a timing path should span at most two blocks                                   | Warning  | Implemented, design analysis | :code:`design_045`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.6.2.3    | These partition limits do not apply below basic blocks                                    | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.6.3.1    | Keep speed-critical paths within two sub-blocks of a basic block                          | Note     | Planned, design analysis     |                                                |
+| STARC-1.6.3.1    | Keep speed-critical paths within two sub-blocks of a basic block                          | Note     | Implemented, design analysis | :code:`design_045`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.6.3.2    | With speed problems, stay within three sub-blocks                                         | Note     | Planned, design analysis     |                                                |
+| STARC-1.6.3.2    | With speed problems, stay within three sub-blocks                                         | Note     | Implemented, design analysis | :code:`design_045`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.6.4.1    | Modules above basic blocks contain only instances and interconnect, no logic              | Error    | Implemented                  | :code:`sv_module_015`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.6.4.2    | On critical paths, even sub-block parents should contain only connections                 | Note     | Planned, design analysis     |                                                |
+| STARC-1.6.4.2    | On critical paths, even sub-block parents should contain only connections                 | Note     | Implemented, design analysis | :code:`design_046`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.6.4.3    | A ~40,000-gate basic block should have at most 500 I/O ports                              | Note     | Implemented                  | :code:`sv_module_009`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -185,7 +185,7 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.6.6.2    | Very large ASICs cannot be synthesized flat from the top                                  | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-1.6.6.3    | For high-drive outputs of 200k-800k-gate levels, use a buffer-only module                 | Note     | Planned, design analysis     |                                                |
+| STARC-1.6.6.3    | For high-drive outputs of 200k-800k-gate levels, use a buffer-only module                 | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-1.7.1.1    | Do not use gated clocks in FPGA implementations                                           | Warning  | Implemented, design analysis | :code:`design_012`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -591,7 +591,7 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.2.2.1    | Express constants as parameters where possible                                            | Note     | Implemented                  | :code:`sv_literal_010`                         |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.2.2.2    | Put design-wide global parameters in a separate file                                      | Note     | Planned, design analysis     |                                                |
+| STARC-3.2.2.2    | Put design-wide global parameters in a separate file                                      | Note     | Implemented                  | :code:`sv_lint_016`                            |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.2.2.3    | Load parameter files with \`include                                                       | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+

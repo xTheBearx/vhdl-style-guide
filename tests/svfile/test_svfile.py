@@ -993,10 +993,12 @@ class test_rules(unittest.TestCase):
         )
 
     def test_parameters_of_the_run(self):
-        # sv_lint_014 and sv_lint_015 check the parameters of the modules of the run against each other
+        # sv_lint_014 and sv_lint_015 check the parameters of the modules of the run against each other, sv_lint_016
+        # the macros one file defines and another uses
         lOutput = self.run_project(["params_sub.sv", "params_top.sv"], ["--lint_only", "--rule_set", "none"])
         self.assertEqual(
             [
+                "ERROR: params_sub.sv(2)sv_lint_016 -- Macro PARAMS_DEPTH is used in params_top.sv but defined in the file of params_sub: define it in a file of global parameters",
                 "ERROR: params_top.sv(3)sv_lint_015 -- Parameter WIDTH is also declared in module params_sub",
                 "ERROR: params_top.sv(7)sv_lint_014 -- Instance of params_sub sets 1 of its 2 parameters; also set DEPTH",
             ],

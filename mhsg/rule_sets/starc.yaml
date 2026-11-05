@@ -105,17 +105,20 @@ checks:
     title: Prefix the top-level block name with a hierarchy identification character
     level: Recommendation 3
     severity: Note
-    status: design
+    rules:
+    - design_043
   1.1.2.3:
     title: A sub-block's hierarchy ID extends its parent's hierarchy ID
     level: Recommendation 3
     severity: Note
-    status: design
+    rules:
+    - design_043
   1.1.2.4:
     title: Output port names begin with the block's hierarchy ID followed by an underscore
     level: Recommendation 3
     severity: Note
-    status: design
+    rules:
+    - design_043
     note: 'Limits: output port prefix <hier_id>_.'
   1.1.2.5:
     title: Ports and internal signals should follow distinguishable naming conventions
@@ -127,7 +130,8 @@ checks:
     title: Nets driven by an output port keep that port's name in the parent
     level: Recommendation 2
     severity: Note
-    status: design
+    rules:
+    - design_044
   1.1.3.1:
     title: Internal signal names should be distinguishable from port names by convention
     level: Suggestion
@@ -489,8 +493,9 @@ checks:
     title: Use 10,000-40,000-gate basic blocks; no logic above them except CTS buffers
     level: Recommendation 1
     severity: Warning
-    status: design
-    note: 'Limits: basic block min gates 10000; basic block max gates 40000.'
+    rules:
+    - design_024
+    note: 'Limits: basic block min gates 10000; basic block max gates 40000. Maximum only: the most gates of a module, maximum_gates of design_024; the minimum and the logic above the basic blocks are left to review.'
   1.6.1.3:
     title: Partitioning below basic blocks is left to the designer
     level: Suggestion
@@ -513,7 +518,8 @@ checks:
     title: Otherwise, a timing path should span at most two blocks
     level: Recommendation 1
     severity: Warning
-    status: design
+    rules:
+    - design_045
     note: 'Limits: max blocks per path 2.'
   1.6.2.3:
     title: These partition limits do not apply below basic blocks
@@ -524,14 +530,16 @@ checks:
     title: Keep speed-critical paths within two sub-blocks of a basic block
     level: Suggestion
     severity: Note
-    status: design
-    note: 'Limits: max subblocks per critical path 2.'
+    rules:
+    - design_045
+    note: 'Limits: max subblocks per critical path 2. Paths of all speeds, not only critical ones.'
   1.6.3.2:
     title: With speed problems, stay within three sub-blocks
     level: Recommendation 3
     severity: Note
-    status: design
-    note: 'Limits: max subblocks per critical path 3.'
+    rules:
+    - design_045
+    note: 'Limits: max subblocks per critical path 3. Paths of all speeds; set maximum_blocks of design_045 to 3.'
   1.6.4.1:
     title: Modules above basic blocks contain only instances and interconnect, no logic
     level: Rule
@@ -542,7 +550,9 @@ checks:
     title: On critical paths, even sub-block parents should contain only connections
     level: Recommendation 3
     severity: Note
-    status: design
+    rules:
+    - design_046
+    note: 'Parents of all blocks, not only those on critical paths.'
   1.6.4.3:
     title: A ~40,000-gate basic block should have at most 500 I/O ports
     level: Recommendation 2
@@ -575,8 +585,8 @@ checks:
     title: For high-drive outputs of 200k-800k-gate levels, use a buffer-only module
     level: Suggestion
     severity: Note
-    status: design
-    note: 'Limits: level gates min 200000; level gates max 800000.'
+    status: manual
+    note: 'Limits: level gates min 200000; level gates max 800000. Drive strength and buffering are set in synthesis and layout.'
   1.7.1.1:
     title: Do not use gated clocks in FPGA implementations
     level: Recommendation 1
@@ -1834,7 +1844,8 @@ checks:
     title: Put design-wide global parameters in a separate file
     level: Recommendation 3
     severity: Note
-    status: design
+    rules:
+    - sv_lint_016
   3.2.2.3:
     title: Load parameter files with `include
     level: Recommendation 3

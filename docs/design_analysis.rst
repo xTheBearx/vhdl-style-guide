@@ -236,6 +236,12 @@ Design rules
   3.3.5.2 to 3.3.5.7); :code:`design_040` clocks that reach registers on both edges in test mode (3.3.5.1);
   :code:`design_041` latches neither transparent in test mode nor enabled by the inverted clock (3.3.4.2, 3.3.4.3);
   :code:`design_042` inout ports of the top level whose direction is not fixed during scan shift (3.3.8.3).
+* Disabled by default, for the structure of the hierarchy in STARC: :code:`design_043` checks hierarchy IDs, a module
+  name beginning with an ID matching :code:`id_pattern` and :code:`separator`, extending the ID of the module above,
+  and output ports beginning with the ID (1.1.2.2 to 1.1.2.4); :code:`design_044` nets that an output of an instance
+  drives under another name (1.1.2.6); :code:`design_045` register to register paths whose logic spans more than
+  :code:`maximum_blocks` blocks, 2 by default (1.6.2.2, 1.6.3.1, 1.6.3.2); :code:`design_046` modules with logic
+  between their instances (1.6.4.2).
 * :code:`design_025`, disabled by default as it needs SymbiYosys and takes longer, reports branches that can never be
   taken from reset: it searches :code:`depth` cycles from reset for a way to take each branch, then tries to prove
   each branch it did not reach unreachable, within :code:`timeout` seconds each. Branches neither reached nor proven

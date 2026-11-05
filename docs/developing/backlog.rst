@@ -78,14 +78,14 @@ under way: the entries below.
 * **STARC items with judgement**: resource sharing, Gray encoding of states and the like are left to review; the rules
   on loop bounds and common expressions compare the code as written, so loop bounds given by parameters, and
   expressions written differently, are not checked.
-* **STARC rule set**: 263 of the 613 items of the STARC guide have rules, the design rules among them for the items
+* **STARC rule set**: 273 of the 613 items of the STARC guide have rules, the design rules among them for the items
   on loops, latches, drivers, tri-state buses, memory outputs and placement, clock domains per block, generated and
   gated clocks and resets and where they are made, black boxes on clocks and resets, the contents of the top level,
-  I/O cells, gates per module, and clocks, latches and pins in test mode. Every per-file item has a rule or is left to
-  review (status manual, with the reason in its note). The 11 items with status design need what design analysis does
-  not have: hierarchy identification characters, timing paths across blocks, gate counts of blocks and levels, and a
-  file of global parameters. The catalogue the set was made from records each item's limits and its Verible
-  equivalent, kept in the notes of the set.
+  I/O cells, gates per module, clocks, latches and pins in test mode, hierarchy IDs and paths across blocks. Every
+  other item is left to review (status manual, with the reason in its note): synthesis and timing scripts, design
+  management and judgement. Items on speed-critical paths are checked on all paths, as design analysis has no timing;
+  the minimum gates of a basic block is not checked. The catalogue the set was made from records each item's limits
+  and its Verible equivalent, kept in the notes of the set.
 * **SystemVerilog designs without the yosys-slang plugin**: Yosys' own reader handles Verilog and part of
   SystemVerilog; ibex and common_cells need the plugin, which is not packaged for Ubuntu. ibex_core and the gray-code
   CDC FIFO of common_cells are checked with the plugin of the OSS CAD Suite, in the design-oss job of CI.

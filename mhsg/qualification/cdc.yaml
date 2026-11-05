@@ -940,3 +940,52 @@ design_cases:
   name: STARC design for test
   design: *id017
   expected: []
+- rule: design_008
+  name: STARC design items 4
+  design: &id018
+    top: A_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/starc_design4.vhd
+  expected: []
+- rule: design_009
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_010
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_011
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_012
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_013
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_014
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_015
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_016
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_017
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_018
+  name: STARC design items 4
+  design: *id018
+  expected: []

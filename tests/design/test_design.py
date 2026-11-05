@@ -1446,6 +1446,24 @@ class test_design_analysis(unittest.TestCase):
         )
         self.assertEqual(11, len(lFindings), lFindings)
 
+    def test_starc_design_items_4(self):
+        # Hierarchy IDs: C_logic does not extend A of A_top, and badout lacks A_; the output of u_ab drives ab_out, not a
+        # net named after it; the glue in the top between u_ab and u_c makes a path of three blocks. C_data keeps its
+        # name, AB_regs extends A
+        lRules = ("design_043", "design_044", "design_045", "design_046")
+        dRules = {s: {"disable": False} for s in lRules}
+        self.assertEqual(
+            [
+                ("starc_design4.vhd", 51, "design_043", "Hierarchy ID c of c_logic does not extend ID A of A_top"),
+                ("starc_design4.vhd", 51, "design_045", "Paths into u_c.c_data span 3 blocks: the top level, u_ab, u_c"),
+                ("starc_design4.vhd", 80, "design_044", "Outputs of instance u_ab in A_top drive nets of other names: ab_data drives ab_out"),
+                ("starc_design4.vhd", 90, "design_043", "Output port badout of A_top does not begin with A_"),
+                ("starc_design4.vhd", 90, "design_046", "Module A_top holds logic between its instances (1 cell)"),
+            ],
+            sorted(t for t in self.findings("A_top", "starc_design4.vhd", dRules=dRules) if t[2] in lRules),
+        )
+        self.assertEqual([], [t for t in self.findings("A_top", "starc_design4.vhd") if t[2] in lRules])
+
     def test_test_mode_values(self):
         # The values of test_mode and scan_shift are 0 or 1
         iStatus, lOutput = self.run_design("starc_dft_top", "starc_dft.vhd", dDesignKeys={"test_mode": {"scan_mode": 2}})

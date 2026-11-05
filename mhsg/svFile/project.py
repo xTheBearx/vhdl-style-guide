@@ -11,6 +11,7 @@ instances are checked against the modules they instantiate.
 
 import hashlib
 import os
+import re
 
 import pyslang
 from pyslang import analysis, ast  # pylint: disable=import-error
@@ -124,7 +125,7 @@ def collect(lFiles, dConfig, bVerilator=False):
         tDiagnostic = (oDiagnostic.location.offset, sName, oEngine.formatMessage(oDiagnostic))
         if tDiagnostic not in dEntry["diagnostics"]:
             dEntry["diagnostics"].append(tDiagnostic)
-    for sPath, iOffset, sName, sMessage in parameter_diagnostics(lFiles):
+    for sPath, iOffset, sName, sMessage in parameter_diagnostics(lFiles) + macro_diagnostics(lFiles, dTexts):
         tDiagnostic = (iOffset, sName, sMessage)
         if tDiagnostic not in dReturn[sPath]["diagnostics"]:
             dReturn[sPath]["diagnostics"].append(tDiagnostic)
@@ -214,4 +215,69 @@ def parameter_diagnostics(lFiles):
                 iGiven = len(lNames) - len(lMissing)
                 sMessage = f"Instance of {sType} sets {iGiven} of its {len(lNames)} parameters; also set {', '.join(lMissing)}"
                 lReturn.append((sPath, oInstance.getFirstToken().location.offset, diagnostics.PARTIAL_OVERRIDE, sMessage))
+    return lReturn
+
+
+# Compiler directives, which are not macros
+DIRECTIVES = {
+    "begin_keywords",
+    "celldefine",
+    "default_nettype",
+    "define",
+    "else",
+    "elsif",
+    "end_keywords",
+    "endcelldefine",
+    "endif",
+    "ifdef",
+    "ifndef",
+    "include",
+    "line",
+    "nounconnected_drive",
+    "pragma",
+    "resetall",
+    "timescale",
+    "unconnected_drive",
+    "undef",
+    "undefineall",
+    "__FILE__",
+    "__LINE__",
+}
+reComment = re.compile(r"//[^\n]*|/\*.*?\*/", re.DOTALL)
+reDefine = re.compile(r"`define\s+(\w+)")
+reMacro = re.compile(r"`(\w+)")
+DESIGN_UNITS = ("ModuleDeclaration", "InterfaceDeclaration", "ProgramDeclaration")
+
+
+def without_comments(sText):
+    """The text with its comments replaced by spaces, so offsets do not change."""
+    return reComment.sub(lambda o: re.sub(r"[^\n]", " ", o.group(0)), sText)
+
+
+def macro_diagnostics(lFiles, dTexts):
+    """
+    Returns (file, offset, name, message) of the macros defined in a file with a module, an interface or a program
+    and used in another file of the run: design-wide parameters that belong in a file of their own.
+    """
+    dDefines = {}
+    dUsers = {}
+    dUnits = {}
+    for sPath, oTree in lFiles:
+        lUnits = [o.header.name.valueText for s in DESIGN_UNITS for o in walk(oTree.root, s)]
+        if lUnits:
+            dUnits[sPath] = sorted(lUnits)[0]
+        sText = without_comments(dTexts.get(sPath, ""))
+        for oMatch in reDefine.finditer(sText):
+            dDefines.setdefault(oMatch.group(1), (sPath, oMatch.start(1)))
+        for oMatch in reMacro.finditer(sText):
+            if oMatch.group(1) not in DIRECTIVES:
+                dUsers.setdefault(oMatch.group(1), set()).add(sPath)
+    lReturn = []
+    for sMacro, (sPath, iOffset) in sorted(dDefines.items()):
+        lOthers = sorted(os.path.basename(s) for s in dUsers.get(sMacro, set()) if s != sPath)
+        if sPath not in dUnits or not lOthers:
+            continue
+        sOthers = ", ".join(lOthers[:3]) + (", ..." if len(lOthers) > 3 else "")
+        sMessage = f"Macro {sMacro} is used in {sOthers} but defined in the file of {dUnits[sPath]}: define it in a file of global parameters"
+        lReturn.append((sPath, iOffset, diagnostics.GLOBAL_MACRO, sMessage))
     return lReturn

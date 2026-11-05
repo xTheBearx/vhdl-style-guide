@@ -145,6 +145,10 @@ With multiple options available, the user is required to make the decision.
 * `design_040 <design_rules.html#design-040>`_
 * `design_041 <design_rules.html#design-041>`_
 * `design_042 <design_rules.html#design-042>`_
+* `design_043 <design_rules.html#design-043>`_
+* `design_044 <design_rules.html#design-044>`_
+* `design_045 <design_rules.html#design-045>`_
+* `design_046 <design_rules.html#design-046>`_
 * `function_600 <function_rules.html#function-600>`_
 * `function_601 <function_rules.html#function-601>`_
 * `generate_017 <generate_rules.html#generate-017>`_
@@ -328,6 +332,7 @@ Rules on the design of SystemVerilog and Verilog code that only the designer can
 * `sv_lint_013 <sv_lint_rules.html#sv-lint-013>`_
 * `sv_lint_014 <sv_lint_rules.html#sv-lint-014>`_
 * `sv_lint_015 <sv_lint_rules.html#sv-lint-015>`_
+* `sv_lint_016 <sv_lint_rules.html#sv-lint-016>`_
 * `sv_literal_002 <sv_literal_rules.html#sv-literal-002>`_
 * `sv_literal_003 <sv_literal_rules.html#sv-literal-003>`_
 * `sv_literal_004 <sv_literal_rules.html#sv-literal-004>`_
