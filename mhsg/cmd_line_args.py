@@ -4,7 +4,7 @@ import glob
 import os
 import sys
 
-import yaml
+from mhsg import yaml_files
 
 from . import utils
 from .CustomArgumentParser import CustomArgumentParser
@@ -188,7 +188,7 @@ def get_predefined_style_descriptions():
     for sStyle in lStyles:
         if sStyle.endswith(".yaml"):
             with open(os.path.join(sStylePath, sStyle), encoding="utf-8") as yaml_file:
-                tempConfiguration = yaml.safe_load(yaml_file)
+                tempConfiguration = yaml_files.safe_load(yaml_file)
             dReturn[tempConfiguration["name"]] = tempConfiguration.get("description", "")
     return dReturn
 

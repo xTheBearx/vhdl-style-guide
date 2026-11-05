@@ -7,6 +7,8 @@ import sys
 
 import yaml
 
+from mhsg import yaml_files
+
 from . import exceptions, junit, rule_aliases, severity, utils
 
 
@@ -31,7 +33,7 @@ def open_configuration_file(sFileName, sJUnitFileName=None):
     """Attempts to open a configuration file and read its contents."""
     try:
         with open(sFileName, encoding="utf-8") as yaml_file:
-            dTemp = yaml.full_load(yaml_file)
+            dTemp = yaml_files.full_load(yaml_file)
             check_for_deprecated_rule_options(dTemp, sFileName)
             resolve_rule_aliases(dTemp, sFileName)
             return dTemp

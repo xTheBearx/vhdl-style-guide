@@ -401,10 +401,22 @@ class vhdlFile:
             self._oLintModel = model.Model(self)
         return self._oLintModel
 
+    def cached(self, sKey, fCompute):
+        """
+        Returns what fCompute() returns for the tokens as they are now, computed once until a fix changes them: for
+        what several rules derive from all the tokens of the file, such as the column of each token.
+        """
+        tState = (getattr(self, "iVersion", 0), id(self.lAllObjects), len(self.lAllObjects))
+        dCache = self.__dict__.setdefault("_dCached", {})
+        if sKey not in dCache or dCache[sKey][0] != tState:
+            dCache[sKey] = (tState, fCompute())
+        return dCache[sKey][1]
+
     def update(self, lUpdates, bUpdateMap):
         self.clear_declarations()
         if len(lUpdates) == 0:
             return
+        self.iVersion = getattr(self, "iVersion", 0) + 1
         # Updates are applied from the end of the file backwards, so earlier start indexes stay valid
         for oUpdate in sorted(lUpdates, key=lambda oUpdate: oUpdate.oTokens.iStartIndex, reverse=True):
             iStart = oUpdate.oTokens.iStartIndex
@@ -427,6 +439,7 @@ class vhdlFile:
         return process_tokens(self.lAllObjects)
 
     def update_token_map(self):
+        self.iVersion = getattr(self, "iVersion", 0) + 1
         self.oTokenMap = self.build_token_map()
 
     def set_indent_map(self, dIndentMap):

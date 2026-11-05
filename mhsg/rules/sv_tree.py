@@ -58,7 +58,7 @@ class TreeRule:  # pylint: disable=no-member
             return []
         # Code slang cannot parse makes a syntax tree with constructs missing or misplaced in its design unit:
         # sv_syntax_001 reports it, and the rules on constructs check the other units
-        dIndexes = {id(o): i for i, o in enumerate(oFile.lAllObjects)}
+        dIndexes = oFile.cached("indexes", lambda: {id(o): i for i, o in enumerate(oFile.lAllObjects)})
         lReturn = []
         for oProblem in self.problems(oFile):
             iFirst = dIndexes.get(id(oProblem.first))

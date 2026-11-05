@@ -12,7 +12,7 @@ import os
 
 import yaml
 
-from mhsg import exceptions, severity
+from mhsg import exceptions, severity, yaml_files
 
 RULE_SET_DIRECTORY = os.path.join(os.path.dirname(__file__), "rule_sets")
 
@@ -200,7 +200,7 @@ def load(sNameOrPath, sDirectory=None, lLoading=None):
         raise exceptions.ConfigurationError(f"ERROR: rule set {sFileName} includes itself through extends")
     try:
         with open(sFileName, encoding="utf-8") as oFile:
-            dRuleSet = yaml.safe_load(oFile)
+            dRuleSet = yaml_files.safe_load(oFile)
     except (OSError, yaml.YAMLError) as e:
         raise exceptions.ConfigurationError(f"ERROR: could not read rule set {sFileName}: {e}") from e
     if not isinstance(dRuleSet, dict):

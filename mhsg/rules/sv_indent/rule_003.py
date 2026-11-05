@@ -62,10 +62,11 @@ class rule_003(Rule):
                 lLevels.append(oToken.get_indent() + (1 if getattr(oToken, "closing", False) else 0))
         lReturn = []
         bContinued = False
+        dIndex = {id(o): i for i, o in enumerate(oFile.lAllObjects)}
         for iIndex, oToi in enumerate(lLines):
             oToken = oToi.get_tokens()[-1]
             bInBody = bContinued
-            bContinued = line_continues(oFile, oToi)
+            bContinued = line_continues(oFile, oToi, dIndex)
             if bInBody or not isinstance(oToken, tokens.preprocessor):
                 continue
             sText = oToken.get_value().split("(")[0].strip().lower()
@@ -97,15 +98,18 @@ class rule_003(Rule):
         oViolation.set_tokens(([parser.whitespace(sWanted)] if sWanted else []) + [lLine[-1]])
 
 
-def line_continues(oFile, oToi):
-    """Whether the line of a token ends with a backslash, which continues a `define on the next line."""
+def line_continues(oFile, oToi, dIndex=None):
+    """
+    Whether the line of a token ends with a backslash, which continues a `define on the next line. dIndex, {id of a
+    token: its index in the file}, saves looking the token up.
+    """
     oToken = oToi.get_tokens()[-1]
     lObjects = oFile.lAllObjects
-    try:
-        iIndex = next(i for i, o in enumerate(lObjects) if o is oToken)
-    except StopIteration:
+    iIndex = dIndex.get(id(oToken)) if dIndex is not None else next((i for i, o in enumerate(lObjects) if o is oToken), None)
+    if iIndex is None:
         return False
-    for oItem in lObjects[iIndex:]:
+    for iItem in range(iIndex, len(lObjects)):
+        oItem = lObjects[iItem]
         if isinstance(oItem, parser.carriage_return):
             return False
         sValue = oItem.get_value() if hasattr(oItem, "get_value") else ""
