@@ -77,6 +77,12 @@ Rules Disabled by Default
 * `design_023 <design_rules.html#design-023>`_
 * `design_024 <design_rules.html#design-024>`_
 * `design_025 <design_rules.html#design-025>`_
+* `design_026 <design_rules.html#design-026>`_
+* `design_027 <design_rules.html#design-027>`_
+* `design_028 <design_rules.html#design-028>`_
+* `design_029 <design_rules.html#design-029>`_
+* `design_030 <design_rules.html#design-030>`_
+* `design_031 <design_rules.html#design-031>`_
 * `expression_001 <expression_rules.html#expression-001>`_
 * `file_100 <file_rules.html#file-100>`_
 * `function_600 <function_rules.html#function-600>`_

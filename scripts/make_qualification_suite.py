@@ -51,6 +51,7 @@ DESIGNS = [
     ("reset domain crossing", {"top": "rdc_top", "libraries": [{"name": "work", "files": ["rdc.vhd"]}]}),
     ("STARC design items", {"top": "starc_design_top", "libraries": [{"name": "work", "files": ["starc_design.vhd"]}]}),
     ("inout port connections", {"top": "inout_wire_top", "libraries": [{"name": "work", "files": ["inout_wire.v"]}]}),
+    ("STARC design items 2", {"top": "starc2_top", "libraries": [{"name": "work", "files": ["starc_design2.vhd"]}]}),
 ]
 
 

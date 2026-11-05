@@ -1353,6 +1353,30 @@ class test_design_analysis(unittest.TestCase):
             self.findings("box_ip_top", "box_ip.vhd", dCdc=dCdc, dDesignKeys=dBoxes),
         )
 
+    def test_starc_design_items_2(self):
+        # Three latches on one phase, a loop through a latch, a bidirectional net driven and read in one module; the
+        # rules disabled by default: a tri-state enable from a register, a memory in a submodule, two clock domains
+        lRules = ("design_023", "design_026", "design_027", "design_028", "design_029", "design_030", "design_031")
+        dCdc = {"clocks": {"clk_a": "a", "clk_b": "b"}}
+        self.assertEqual(
+            [
+                ("starc_design2.vhd", 83, "design_027", "Latch l3 ends a chain of 3 latches on the same phase, more than 2"),
+                ("starc_design2.vhd", 91, "design_026", "Loop through latches: la, lb in starc2_top"),
+                ("starc_design2.vhd", 105, "design_023", "Inout port pin_r of starc2_top is connected directly to output port q"),
+                ("starc_design2.vhd", 112, "design_029", "Bidirectional net pin is driven and read in starc2_top"),
+            ],
+            sorted(t for t in self.findings("starc2_top", "starc_design2.vhd", dCdc=dCdc) if t[2] in lRules),
+        )
+        dRules = {s: {"disable": False} for s in ("design_028", "design_030", "design_031")}
+        self.assertEqual(
+            [
+                ("starc_design2.vhd", 100, "design_031", "Registers of the top-level module are in 2 clock domains: clk_a, clk_b"),
+                ("starc_design2.vhd", 105, "design_028", "Tri-state enable comes from oe_r, not from top inputs only"),
+                ("starc_design2.vhd", 116, "design_030", "Memory ram is in starc2_ram, not in the top-level module"),
+            ],
+            sorted(t for t in self.findings("starc2_top", "starc_design2.vhd", dCdc=dCdc, dRules=dRules) if t[2] in ("design_028", "design_030", "design_031")),
+        )
+
     def test_registers(self):
         # ready_r changes once after reset and q_r has an enable: neither is reported
         self.assertEqual(

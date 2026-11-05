@@ -63,6 +63,11 @@ class rule_023(Rule):
                         continue
                     setReported.add((sInout, sPort))
                     sFile, iLine = port_location(oContext, sModule, sPort)
+                    if sFile is None:
+                        # GHDL writes no locations on nets: the cells that drive the inout port, else any of the module
+                        setInout = {b for b, s in dInout.items() if s == sInout}
+                        lDrivers = [c for c, d in dModule.get("cells", {}).items() if any(b in setInout for b in d.get("connections", {}).get("Y", []))]
+                        sFile, iLine = self.locate(oContext, sModule, lDrivers + list(dModule.get("cells", {})))
                     sMessage = f"Inout port {display_name(sInout)} of {module_text(sModule)} is connected directly to {sDirection} port {display_name(sPort)}"
                     lReturn.append(Finding(sFile, iLine, sMessage))
         return lReturn

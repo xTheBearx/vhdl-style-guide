@@ -2182,6 +2182,10 @@ design_cases:
   name: clean design
   design: *id001
   expected: []
+- rule: design_010
+  name: clean design
+  design: *id001
+  expected: []
 - rule: design_011
   name: clean design
   design: *id001
@@ -2219,6 +2223,30 @@ design_cases:
   design: *id001
   expected: []
 - rule: design_024
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_026
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_027
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_028
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_029
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_030
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_031
   name: clean design
   design: *id001
   expected: []
@@ -2243,6 +2271,10 @@ design_cases:
   name: undeclared signal
   design: *id002
   expected: []
+- rule: design_010
+  name: undeclared signal
+  design: *id002
+  expected: []
 - rule: design_011
   name: undeclared signal
   design: *id002
@@ -2280,6 +2312,30 @@ design_cases:
   design: *id002
   expected: []
 - rule: design_024
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_026
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_027
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_028
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_029
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_030
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_031
   name: undeclared signal
   design: *id002
   expected: []
@@ -2304,6 +2360,10 @@ design_cases:
   name: latch
   design: *id003
   expected: []
+- rule: design_010
+  name: latch
+  design: *id003
+  expected: []
 - rule: design_011
   name: latch
   design: *id003
@@ -2341,6 +2401,30 @@ design_cases:
   design: *id003
   expected: []
 - rule: design_024
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_026
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_027
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_028
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_029
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_030
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_031
   name: latch
   design: *id003
   expected: []
@@ -2371,6 +2455,10 @@ design_cases:
   name: combinational loop
   design: *id004
   expected: []
+- rule: design_010
+  name: combinational loop
+  design: *id004
+  expected: []
 - rule: design_011
   name: combinational loop
   design: *id004
@@ -2408,6 +2496,30 @@ design_cases:
   design: *id004
   expected: []
 - rule: design_024
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_026
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_027
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_028
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_029
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_030
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_031
   name: combinational loop
   design: *id004
   expected: []
@@ -2435,6 +2547,10 @@ design_cases:
   name: multiple drivers
   design: *id005
   expected: []
+- rule: design_010
+  name: multiple drivers
+  design: *id005
+  expected: []
 - rule: design_011
   name: multiple drivers
   design: *id005
@@ -2475,6 +2591,30 @@ design_cases:
   name: multiple drivers
   design: *id005
   expected: []
+- rule: design_026
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_027
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_028
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_029
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_030
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_031
+  name: multiple drivers
+  design: *id005
+  expected: []
 - rule: design_003
   name: registers
   design: &id006
@@ -2493,6 +2633,10 @@ design_cases:
   design: *id006
   expected: []
 - rule: design_009
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_010
   name: registers
   design: *id006
   expected: []
@@ -2539,6 +2683,30 @@ design_cases:
   name: registers
   design: *id006
   expected: []
+- rule: design_026
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_027
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_028
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_029
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_030
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_031
+  name: registers
+  design: *id006
+  expected: []
 - rule: design_003
   name: logic depth
   design: &id007
@@ -2557,6 +2725,10 @@ design_cases:
   design: *id007
   expected: []
 - rule: design_009
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_010
   name: logic depth
   design: *id007
   expected: []
@@ -2600,6 +2772,30 @@ design_cases:
   name: logic depth
   design: *id007
   expected: []
+- rule: design_026
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_027
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_028
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_029
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_030
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_031
+  name: logic depth
+  design: *id007
+  expected: []
 - rule: design_003
   name: clock domain crossings
   design: &id008
@@ -2630,6 +2826,13 @@ design_cases:
   - - examples/design/cdc.vhd
     - 95
     - bus_a (clk_a) is synchronized bit by bit into bus1_b (clk_b); the bits can arrive in different cycles
+- rule: design_010
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 69
+    - Clock clk_b is used as data
 - rule: design_011
   name: clock domain crossings
   design: *id008
@@ -2691,6 +2894,33 @@ design_cases:
   name: clock domain crossings
   design: *id008
   expected: []
+- rule: design_026
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_027
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_028
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_029
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_030
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_031
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 69
+    - 'Registers of the top-level module are in 3 clock domains: clk_a, clk_b, clk_c'
 - rule: design_003
   name: reconvergence
   design: &id009
@@ -2712,6 +2942,10 @@ design_cases:
   name: reconvergence
   design: *id009
   expected: []
+- rule: design_010
+  name: reconvergence
+  design: *id009
+  expected: []
 - rule: design_011
   name: reconvergence
   design: *id009
@@ -2752,6 +2986,33 @@ design_cases:
   name: reconvergence
   design: *id009
   expected: []
+- rule: design_026
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_027
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_028
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_029
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_030
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_031
+  name: reconvergence
+  design: *id009
+  expected:
+  - - examples/design/reconvergence.vhd
+    - 63
+    - 'Registers of the top-level module are in 2 clock domains: clk_a, clk_b'
 - rule: design_003
   name: black box
   design: &id010
@@ -2773,6 +3034,10 @@ design_cases:
   name: black box
   design: *id010
   expected: []
+- rule: design_010
+  name: black box
+  design: *id010
+  expected: []
 - rule: design_011
   name: black box
   design: *id010
@@ -2810,6 +3075,30 @@ design_cases:
   design: *id010
   expected: []
 - rule: design_024
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_026
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_027
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_028
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_029
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_030
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_031
   name: black box
   design: *id010
   expected: []
@@ -2834,6 +3123,10 @@ design_cases:
   name: deep logic
   design: *id011
   expected: []
+- rule: design_010
+  name: deep logic
+  design: *id011
+  expected: []
 - rule: design_011
   name: deep logic
   design: *id011
@@ -2874,6 +3167,30 @@ design_cases:
   name: deep logic
   design: *id011
   expected: []
+- rule: design_026
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_027
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_028
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_029
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_030
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_031
+  name: deep logic
+  design: *id011
+  expected: []
 - rule: design_003
   name: reset domain crossing
   design: &id012
@@ -2892,6 +3209,10 @@ design_cases:
   design: *id012
   expected: []
 - rule: design_009
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_010
   name: reset domain crossing
   design: *id012
   expected: []
@@ -2938,6 +3259,30 @@ design_cases:
   name: reset domain crossing
   design: *id012
   expected: []
+- rule: design_026
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_027
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_028
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_029
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_030
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_031
+  name: reset domain crossing
+  design: *id012
+  expected: []
 - rule: design_003
   name: STARC design items
   design: &id013
@@ -2956,6 +3301,10 @@ design_cases:
   design: *id013
   expected: []
 - rule: design_009
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_010
   name: STARC design items
   design: *id013
   expected: []
@@ -3011,6 +3360,30 @@ design_cases:
   name: STARC design items
   design: *id013
   expected: []
+- rule: design_026
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_027
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_028
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_029
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_030
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_031
+  name: STARC design items
+  design: *id013
+  expected: []
 - rule: design_003
   name: inout port connections
   design: &id014
@@ -3029,6 +3402,10 @@ design_cases:
   design: *id014
   expected: []
 - rule: design_009
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_010
   name: inout port connections
   design: *id014
   expected: []
@@ -3078,3 +3455,137 @@ design_cases:
   name: inout port connections
   design: *id014
   expected: []
+- rule: design_026
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_027
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_028
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_029
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_030
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_031
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_003
+  name: STARC design items 2
+  design: &id015
+    top: starc2_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/starc_design2.vhd
+  expected: []
+- rule: design_004
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_008
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_009
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_010
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_011
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_012
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_013
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_014
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_015
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_020
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_021
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_022
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_023
+  name: STARC design items 2
+  design: *id015
+  expected:
+  - - examples/design/starc_design2.vhd
+    - 105
+    - Inout port pin_r of starc2_top is connected directly to output port q
+- rule: design_024
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_026
+  name: STARC design items 2
+  design: *id015
+  expected:
+  - - examples/design/starc_design2.vhd
+    - 91
+    - 'Loop through latches: la, lb in starc2_top'
+- rule: design_027
+  name: STARC design items 2
+  design: *id015
+  expected:
+  - - examples/design/starc_design2.vhd
+    - 83
+    - Latch l3 ends a chain of 3 latches on the same phase, more than 2
+- rule: design_028
+  name: STARC design items 2
+  design: *id015
+  expected:
+  - - examples/design/starc_design2.vhd
+    - 105
+    - Tri-state enable comes from oe_r, not from top inputs only
+- rule: design_029
+  name: STARC design items 2
+  design: *id015
+  expected:
+  - - examples/design/starc_design2.vhd
+    - 112
+    - Bidirectional net pin is driven and read in starc2_top
+- rule: design_030
+  name: STARC design items 2
+  design: *id015
+  expected:
+  - - examples/design/starc_design2.vhd
+    - 116
+    - Memory ram is in starc2_ram, not in the top-level module
+- rule: design_031
+  name: STARC design items 2
+  design: *id015
+  expected:
+  - - examples/design/starc_design2.vhd
+    - 100
+    - 'Registers of the top-level module are in 2 clock domains: clk_a, clk_b'
