@@ -90,15 +90,17 @@ class test_svfile(unittest.TestCase):
         )
 
     def test_macro_arguments(self):
-        # The arguments of a macro use are classified where the macro places them, and checked; the body of the
-        # definition is not
+        # The arguments of a macro use are classified where the macro places them, and the body of the definition
+        # where its use places it, so both are checked
         sText = "`define CHECK(name, cond) assert property (@(posedge clk) cond);\nmodule m (input logic clk, a, b);\n    `CHECK(eq, a==b)\nendmodule\n"
         lTokens = tokens_of(sText)
         lEquals = [o for o in lTokens if o.get_value() == "=="]
         self.assertEqual(1, len(lEquals))
         self.assertTrue(lEquals[0].macro_argument)
         self.assertIsInstance(lEquals[0], tokens.of("EqualityExpression", "operatorToken"))
-        self.assertIsInstance([o for o in lTokens if o.get_value() == "assert"][0], tokens.unclassified)
+        oAssert = [o for o in lTokens if o.get_value() == "assert"][0]
+        self.assertIsInstance(oAssert, tokens.of("AssertPropertyStatement", "keyword"))
+        self.assertTrue(oAssert.macro_body)
 
     def test_classification(self):
         lTokens = tokens_of(read("sample.sv"))
@@ -1065,6 +1067,25 @@ class test_rules(unittest.TestCase):
             ],
             [s for s in lOutput if "sv_lint_01" in s],
         )
+
+    def test_lint_of_inactive_code_and_macro_arguments(self):
+        # The code of the inactive branch is linted with WIDE defined, and the warning in the code a macro argument
+        # expands to is reported at the argument
+        _, lOutput, _ = self.run_mhsg(["--lint_only", "--rule_set", "none"], "lint_unparsed.sv")
+        self.assertEqual(
+            [
+                "ERROR: lint_unparsed.sv(9)sv_lint_001 -- Implicit conversion truncates from 8 to 4 bits",
+                "ERROR: lint_unparsed.sv(13)sv_lint_001 -- Implicit conversion truncates from 8 to 4 bits",
+            ],
+            only(lOutput, "sv_lint"),
+        )
+
+    def test_whole_lines_of_inactive_code(self):
+        # Every token of a line of an inactive branch is classified and checked, not only the first
+        lTokens = tokens_of("module m;\n`ifdef X\n    assign y = a&b;\n`endif\nendmodule\n")
+        oAnd = [o for o in lTokens if o.get_value() == "&"][0]
+        self.assertTrue(oAnd.inactive)
+        self.assertIsInstance(oAnd, tokens.of("BinaryAndExpression", "operatorToken"))
 
     def test_lint_of_a_file_alone(self):
         # Alone, top.sv uses a module the run does not know, so unused and undriven signals are not checked

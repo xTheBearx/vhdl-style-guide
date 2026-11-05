@@ -113,7 +113,8 @@ def collect(lFiles, dConfig, bVerilator=False):
     for oTree in lTrees:
         lDiagnostics.extend(oTree.diagnostics)
     for oDiagnostic in lDiagnostics:
-        tFile = dBuffers.get(oDiagnostic.location.buffer.id)
+        oLocation = lint.original_location(oSourceManager, oDiagnostic.location)
+        tFile = dBuffers.get(oLocation.buffer.id)
         if tFile is None:
             continue
         dEntry = dReturn[tFile[0]]
@@ -122,7 +123,7 @@ def collect(lFiles, dConfig, bVerilator=False):
             if sName in lint.UNKNOWN:
                 dEntry["incomplete"] = True
             continue
-        tDiagnostic = (oDiagnostic.location.offset, sName, oEngine.formatMessage(oDiagnostic))
+        tDiagnostic = (oLocation.offset, sName, oEngine.formatMessage(oDiagnostic))
         if tDiagnostic not in dEntry["diagnostics"]:
             dEntry["diagnostics"].append(tDiagnostic)
     for sPath, iOffset, sName, sMessage in parameter_diagnostics(lFiles) + macro_diagnostics(lFiles, dTexts):
