@@ -992,6 +992,17 @@ class test_rules(unittest.TestCase):
             self.run_project(["top.sv", "sub.sv"], ["--lint_only", "--rule_set", "none"]),
         )
 
+    def test_parameters_of_the_run(self):
+        # sv_lint_014 and sv_lint_015 check the parameters of the modules of the run against each other
+        lOutput = self.run_project(["params_sub.sv", "params_top.sv"], ["--lint_only", "--rule_set", "none"])
+        self.assertEqual(
+            [
+                "ERROR: params_top.sv(3)sv_lint_015 -- Parameter WIDTH is also declared in module params_sub",
+                "ERROR: params_top.sv(7)sv_lint_014 -- Instance of params_sub sets 1 of its 2 parameters; also set DEPTH",
+            ],
+            [s for s in lOutput if "sv_lint_01" in s],
+        )
+
     def test_lint_of_a_file_alone(self):
         # Alone, top.sv uses a module the run does not know, so unused and undriven signals are not checked
         self.assertEqual([], self.run_project(["top.sv"], ["--lint_only", "--rule_set", "none"]))

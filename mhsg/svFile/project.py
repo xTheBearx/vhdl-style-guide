@@ -14,10 +14,10 @@ import os
 
 import pyslang
 from pyslang import analysis, ast  # pylint: disable=import-error
-from pyslang.syntax import SyntaxTree  # pylint: disable=import-error
+from pyslang.syntax import SyntaxNode, SyntaxTree  # pylint: disable=import-error
 
 from mhsg import config, language
-from mhsg.rules.sv_lint import verilator_rule
+from mhsg.rules.sv_lint import diagnostics, verilator_rule
 from mhsg.svFile import lint, preprocessor, verilator
 from mhsg.vhdlFile import utils
 
@@ -124,6 +124,10 @@ def collect(lFiles, dConfig, bVerilator=False):
         tDiagnostic = (oDiagnostic.location.offset, sName, oEngine.formatMessage(oDiagnostic))
         if tDiagnostic not in dEntry["diagnostics"]:
             dEntry["diagnostics"].append(tDiagnostic)
+    for sPath, iOffset, sName, sMessage in parameter_diagnostics(lFiles):
+        tDiagnostic = (iOffset, sName, sMessage)
+        if tDiagnostic not in dReturn[sPath]["diagnostics"]:
+            dReturn[sPath]["diagnostics"].append(tDiagnostic)
     # Verilator's warnings, when sv_lint_011 is enabled and Verilator installed, see verilator.py
     sVerilator = verilator.find(dConfig) if bVerilator else None
     if sVerilator is not None:
@@ -132,3 +136,82 @@ def collect(lFiles, dConfig, bVerilator=False):
             if tDiagnostic not in dReturn[sPath]["diagnostics"]:
                 dReturn[sPath]["diagnostics"].append(tDiagnostic)
     return dReturn
+
+
+def syntax_nodes(oNode):
+    """The nodes among the children of a node, without the tokens."""
+    return [o for o in oNode if isinstance(o, SyntaxNode)]
+
+
+def walk(oNode, sKind):
+    """Yields the nodes of a kind under a node, in the order of the text."""
+    lStack = [oNode]
+    while lStack:
+        oCurrent = lStack.pop()
+        if oCurrent.kind.name == sKind:
+            yield oCurrent
+        lStack.extend(reversed(syntax_nodes(oCurrent)))
+
+
+def module_parameters(oModule):
+    """
+    The (name, token, overridable) of the parameters of a module: in its parameter port list, then in its body. With a
+    parameter port list, the parameters of the body are local, as localparam declarations always are.
+    """
+    lReturn = []
+    oList = oModule.header.parameters
+    bHeader = oList is not None
+    lDeclarations = syntax_nodes(oList.declarations) if bHeader else []
+    sKeyword = "parameter"
+    for oDeclaration in lDeclarations:
+        # A declaration without a keyword continues the kind of the one before it
+        sKeyword = oDeclaration.keyword.valueText or sKeyword
+        for oDeclarator in syntax_nodes(oDeclaration.declarators):
+            lReturn.append((oDeclarator.name.valueText, oDeclarator.name, sKeyword == "parameter"))
+    for oStatement in walk(oModule, "ParameterDeclarationStatement"):
+        oDeclaration = oStatement.parameter
+        bOverridable = oDeclaration.keyword.valueText == "parameter" and not bHeader
+        for oDeclarator in syntax_nodes(oDeclaration.declarators):
+            lReturn.append((oDeclarator.name.valueText, oDeclarator.name, bOverridable))
+    return lReturn
+
+
+def parameter_diagnostics(lFiles):
+    """
+    Returns (file, offset, name, message) of the instances that set some but not all of the parameters of a module of
+    the run, and of the parameters named like one of another module of the run.
+    """
+    lReturn = []
+    dModules = {}
+    lModules = []
+    for sPath, oTree in lFiles:
+        for oModule in walk(oTree.root, "ModuleDeclaration"):
+            sName = oModule.header.name.valueText
+            lParameters = module_parameters(oModule)
+            dModules.setdefault(sName, lParameters)
+            lModules.append((sPath, sName, oModule, lParameters))
+    dFirst = {}
+    for sPath, sName, _, lParameters in lModules:
+        for sParameter, oToken, _ in lParameters:
+            sFirst = dFirst.setdefault(sParameter, sName)
+            if sFirst != sName:
+                lReturn.append((sPath, oToken.location.offset, diagnostics.REUSED_PARAMETER, f"Parameter {sParameter} is also declared in module {sFirst}"))
+    for sPath, sName, oModule, _ in lModules:
+        for oInstance in walk(oModule, "HierarchyInstantiation"):
+            sType = oInstance.type.valueText
+            if oInstance.parameters is None or sType not in dModules:
+                continue
+            lNames = [s for s, _, b in dModules[sType] if b]
+            lAssignments = syntax_nodes(oInstance.parameters.parameters)
+            if not lAssignments:
+                continue
+            if all(o.kind.name == "NamedParamAssignment" for o in lAssignments):
+                setGiven = {o.name.valueText for o in lAssignments}
+                lMissing = [s for s in lNames if s not in setGiven]
+            else:
+                lMissing = lNames[len(lAssignments) :]
+            if lMissing:
+                iGiven = len(lNames) - len(lMissing)
+                sMessage = f"Instance of {sType} sets {iGiven} of its {len(lNames)} parameters; also set {', '.join(lMissing)}"
+                lReturn.append((sPath, oInstance.getFirstToken().location.offset, diagnostics.PARTIAL_OVERRIDE, sMessage))
+    return lReturn

@@ -368,3 +368,62 @@ sv_lint_011.
            default: y = '0;
        endcase
    end
+
+sv_lint_014
+###########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`sv_lint_partial_parameter_override`
+
+This rule checks that an instance that sets parameters of a module sets all of them.
+
+.. NOTE:: This is a lint rule. It runs in lint mode, on the SystemVerilog files of a run compiled together, and
+          checks the instances of modules defined in the run. It is disabled by default: a design need not follow
+          it.
+
+Each parameter the instance leaves out takes the default of the module, which can change with the module without
+the instance showing it. Parameters of the module that are local, localparam declarations and parameters of the
+body of a module with a parameter port list, cannot be set and are not counted.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   fifo #(.WIDTH(8)) u_fifo (.clk_i(clk_i));
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   fifo #(.WIDTH(8), .DEPTH(16)) u_fifo (.clk_i(clk_i));
+
+sv_lint_015
+###########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`sv_lint_reused_parameter_name`
+
+This rule checks that the parameters of a module are not named like parameters of another module of the run.
+
+.. NOTE:: This is a lint rule. It runs in lint mode, on the SystemVerilog files of a run compiled together. It is
+          disabled by default: a design need not follow it.
+
+A name used for parameters of several modules is easily set in the wrong module, and a defparam or a search for
+the name finds them all. Parameters and localparam declarations are both checked; the first module of the run
+that declares a name keeps it.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   module fifo #(parameter WIDTH = 8) (...);
+   module top #(parameter WIDTH = 16) (...);
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   module fifo #(parameter FIFO_WIDTH = 8) (...);
+   module top #(parameter TOP_WIDTH = 16) (...);
