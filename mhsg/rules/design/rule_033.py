@@ -13,7 +13,7 @@ class rule_033(Rule):
     declared to take them.
 
     .. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: it needs every black box
-              declared, see :doc:`black boxes <black_boxes>`.
+              declared, see the black boxes of :doc:`design_analysis`.
 
     Inside a black box, design analysis cannot follow a clock, a reset or a tri-state bus, and scan test cannot
     control it. An input declared as a clock or a reset of the box, or named by another of its roles, such as the
