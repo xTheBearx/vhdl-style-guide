@@ -63,8 +63,9 @@ under way: the entries below.
   declaration, by spaces after the bracket; the least significant bounds, and further dimensions, are not aligned.
 * **Indentation not checked yet**: continuation lines are checked to be indented more than their statement, and fixed
   by **continuation_indent** levels; continuation lines indented more, such as arguments aligned after their bracket,
-  are not checked. The contents of expressions, such as multi-line assignment patterns and randomize with blocks, are
-  not checked; Verible's formatter has rules for them.
+  are not checked. Assignment patterns over several lines are checked by sv_indent_004; the contents of other
+  expressions, such as randomize with blocks and calls inside conditions, are not; Verible's formatter has rules for
+  them.
 * **Code the syntax tree does not have**: the code of inactive :code:`\`ifdef` branches is classified from parses with
   the macros of their conditions switched, at most 8 of them, and the arguments of macro uses where the macros place
   them, so rules check both; rules that read the syntax tree, such as the lint rules, do not see them, and macro

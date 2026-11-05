@@ -404,6 +404,17 @@ class test_rules(unittest.TestCase):
         )
         self.assertEqual([], only(self.run_mhsg(["-ap"], "dimensions.fixed.sv")[1], "sv_alignment"))
 
+    def test_assignment_pattern_indent(self):
+        # The elements of a pattern whose '{ ends its line are one level in from that line and the } at it, as Verible
+        # lays them out; a nested pattern from the line of its own '{; a continuous assign one level more; a pattern
+        # written on the line of its '{ is left alone
+        _, lOutput, sAfter = self.run_mhsg(["--fix"], "patterns.sv")
+        self.assertEqual(read("patterns.fixed.sv"), sAfter)
+        _, lOutput, _ = self.run_mhsg(["-ap"], "patterns.sv")
+        self.assertEqual(13, len([s for s in lOutput if ")sv_indent_004 " in s]))
+        self.assertIn("ERROR: patterns.sv(13)sv_indent_004 -- Indent the line of the assignment pattern by 16 spaces", lOutput)
+        self.assertEqual([], only(self.run_mhsg(["-ap"], "patterns.fixed.sv")[1], "sv_indent"))
+
     def test_escaped_identifier_keeps_its_space(self):
         # An escaped identifier ends at whitespace: removing the space before the semicolon would change the code
         with tempfile.TemporaryDirectory() as sTemporary:

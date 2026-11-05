@@ -122,3 +122,40 @@ The lines a :code:`\`define` continues with a backslash are not checked.
    `endif
        `ASSERT(a_q_known, !$isunknown(a_q))
    end
+
+sv_indent_004
+#############
+
+|phase_4| |error| |indent|
+
+Alias: :code:`sv_indent_assignment_pattern`
+
+This rule checks the indent of an assignment pattern written over several lines, as Verible's formatter lays it
+out: when the opening '{ ends its line, each element that starts a line is indented **continuation_indent**
+levels, 1 by default, more than the line of the '{, and a closing } that starts a line is at the level of that
+line. A pattern in an element is indented from the line of its own '{. As Verible does, the elements of a pattern
+that is the value of a continuous assign are indented one level more, and its closing } one level.
+
+A pattern whose first element is on the line of its '{ is left as written.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_comb begin
+       cfg = '{
+         mode: 2'b01,
+           size: 4'd8
+         };
+   end
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_comb begin
+       cfg = '{
+           mode: 2'b01,
+           size: 4'd8
+       };
+   end
