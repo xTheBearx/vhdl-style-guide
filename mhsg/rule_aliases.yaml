@@ -310,6 +310,10 @@ design_035: design_one_clock_one_edge
 design_036: design_top_level_registers
 design_037: design_io_cell_placement
 design_038: design_crossing_without_latch
+design_039: design_test_mode_clock
+design_040: design_test_mode_clock_edge
+design_041: design_test_mode_latch
+design_042: design_scan_shift_bidirectional
 element_association_100: element_association_space_between_others_and_arrow
 element_association_101: element_association_space_after_arrow
 element_association_102: element_association_space_before_arrow

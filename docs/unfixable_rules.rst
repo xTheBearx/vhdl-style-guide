@@ -141,6 +141,10 @@ With multiple options available, the user is required to make the decision.
 * `design_036 <design_rules.html#design-036>`_
 * `design_037 <design_rules.html#design-037>`_
 * `design_038 <design_rules.html#design-038>`_
+* `design_039 <design_rules.html#design-039>`_
+* `design_040 <design_rules.html#design-040>`_
+* `design_041 <design_rules.html#design-041>`_
+* `design_042 <design_rules.html#design-042>`_
 * `function_600 <function_rules.html#function-600>`_
 * `function_601 <function_rules.html#function-601>`_
 * `generate_017 <generate_rules.html#generate-017>`_

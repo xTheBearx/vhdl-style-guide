@@ -977,3 +977,89 @@ design_008.
 **Violation**
 
 A register of clk_a feeding the first stage of a synchronizer clocked by clk_b.
+
+design_039
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_test_mode_clock`
+
+This rule reports registers whose clock the tester does not control in test mode: the clock does not come from a
+top-level input, or the clock output of a black box such as a PLL, through buffers, inverters, and gates and
+multiplexers whose other inputs are held in test mode.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: it needs the inputs that
+          select test mode, see :code:`test_mode` in :doc:`design_analysis`.
+
+In scan test, every register shifts and captures on a clock the tester drives. A clock made by a register, such as
+a divider, or by a latch, needs a multiplexer that selects a top-level clock in test mode; a gated clock needs its
+gating signal forced, with an OR into an AND gate or an AND into an OR gate, so the clock passes; a multiplexer of
+clocks needs its select fixed. The values of the test_mode inputs of the design section are propagated through
+the logic to decide which gates and multiplexers pass the clock.
+
+**Violation**
+
+A clock divider whose output clocks registers, with no test-mode multiplexer.
+
+design_040
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_test_mode_clock_edge`
+
+This rule reports clocks that, in test mode, reach registers on both edges.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: it needs the inputs that
+          select test mode, see :code:`test_mode` in :doc:`design_analysis`.
+
+In scan test, the registers of a scan chain shift on one edge of one clock. Registers on the other edge of the same
+clock, such as those of a falling_edge process or behind an inverter, need a test-mode multiplexer that brings
+their clock to the phase of the others. The clocks are followed back as in design_039; registers whose clock is not
+controlled in test mode are left to it.
+
+**Violation**
+
+Registers on rising_edge(clk) and on falling_edge(clk), with no test-mode selection of the inverted clock.
+
+design_041
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_test_mode_latch`
+
+This rule reports latches that, in test mode, are neither held transparent nor enabled by the inverted clock.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: it needs the inputs that
+          select test mode, see :code:`test_mode` in :doc:`design_analysis`.
+
+Scan test shifts through registers, not latches. A latch held open in test mode is a wire the test sees through; a
+single latch enabled while the clock of the registers is low, by the inverted clock, holds its data for the half
+cycle the registers need. Any other latch blocks the test. The enable is followed back as the clocks of
+design_039.
+
+**Violation**
+
+A latch enabled by a register output, with no test-mode forcing of the enable.
+
+design_042
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_scan_shift_bidirectional`
+
+This rule reports bidirectional top-level ports whose direction is not fixed during the shift of the scan chains.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: it needs the inputs that
+          select test mode and scan shift, see :code:`test_mode` and :code:`scan_shift` in :doc:`design_analysis`.
+
+While the scan chains shift, the registers that control the tri-state drivers of the pins take arbitrary values: a
+pin may then drive against the tester. The enable of each tri-state driver of an inout port of the top level must
+be constant when the test_mode and scan_shift inputs of the design section have their values.
+
+**Violation**
+
+The output enable of an inout port driven by a register, with no forcing in scan shift.

@@ -67,6 +67,10 @@ The design is described in the **design** section of a configuration file:
   GHDL cannot set a generic of type real or time from the command line, so MHSG analyzes a copy of the file of the top
   entity in which the value is the default. Findings still name the original file, at the same lines.
 * **ghdl_options** are passed to GHDL, for example :code:`-fsynopsys` for designs which use the Synopsys packages.
+* **test_mode** maps the top inputs that select test mode to their values there, such as :code:`scan_mode: 1`, and
+  **scan_shift** those that shift the scan chains, such as :code:`scan_enable: 1`, for the design for test rules
+  design_039 to design_042. Their values are propagated through the logic: a gate or multiplexer whose other inputs
+  they fix passes the clock in test mode.
 * **work_directory** keeps the files of GHDL and Yosys, such as the Verilog and the JSON netlist, in a directory,
   for a closer look. Without it they are written to a temporary directory and removed.
 
@@ -225,6 +229,12 @@ Design rules
   :code:`design_037` I/O cells, the black boxes matching :code:`io_cells`, below the top level outside a block of I/O
   cells (1.6.6.1); :code:`design_038` data crossing between unrelated clocks without a latch on the inverted source
   clock (1.5.2.1, 3.3.7.2).
+* Disabled by default, the design for test rules for STARC, with the inputs of **test_mode** and **scan_shift** held:
+  :code:`design_039` reports registers whose clock does not come from a top-level input in test mode, made by a
+  register or latch, through a gate or a clock multiplexer the test mode does not fix, or held constant (3.3.1.2,
+  3.3.5.2 to 3.3.5.7); :code:`design_040` clocks that reach registers on both edges in test mode (3.3.5.1);
+  :code:`design_041` latches neither transparent in test mode nor enabled by the inverted clock (3.3.4.2, 3.3.4.3);
+  :code:`design_042` inout ports of the top level whose direction is not fixed during scan shift (3.3.8.3).
 * :code:`design_025`, disabled by default as it needs SymbiYosys and takes longer, reports branches that can never be
   taken from reset: it searches :code:`depth` cycles from reset for a way to take each branch, then tries to prove
   each branch it did not reach unreachable, within :code:`timeout` seconds each. Branches neither reached nor proven

@@ -869,3 +869,71 @@ design_cases:
   name: STARC design items 3
   design: *id016
   expected: []
+- rule: design_008
+  name: STARC design for test
+  design: &id017
+    top: starc_dft_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/starc_dft.vhd
+    test_mode:
+      scan_mode: 1
+    scan_shift:
+      scan_en: 1
+  expected: []
+- rule: design_009
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_010
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_011
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_012
+  name: STARC design for test
+  design: *id017
+  expected:
+  - - examples/design/starc_dft.vhd
+    - 51
+    - Clock clk is gated by logic into div_clk (1 register)
+  - - examples/design/starc_dft.vhd
+    - 68
+    - Clock clk is gated by logic into gclk (1 register)
+  - - examples/design/starc_dft.vhd
+    - 69
+    - Clock clk is gated by logic into gclk2 (1 register)
+  - - examples/design/starc_dft.vhd
+    - 86
+    - Clock clk is gated by logic into mclk (1 register)
+- rule: design_013
+  name: STARC design for test
+  design: *id017
+  expected:
+  - - examples/design/starc_dft.vhd
+    - 42
+    - Clock div2_q is made by a register from clk (1 register)
+- rule: design_014
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_015
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_016
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_017
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_018
+  name: STARC design for test
+  design: *id017
+  expected: []

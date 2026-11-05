@@ -1374,9 +1374,17 @@ class Analysis:
                         for oInput in self.comb_inputs(*tDriver):
                             setClockNets.add(oInput)
                         break
+        # The clocks of registers, and those they come from: an input that only gates a clock, such as a test mode
+        # input, is found as a clock while the gate is followed but clocks nothing
+        setUsed = set()
+        for oDomain in self.clocks.values():
+            oCurrent = oDomain if oDomain.registers > 0 else None
+            while oCurrent and oCurrent.key not in setUsed:
+                setUsed.add(oCurrent.key)
+                oCurrent = oCurrent.parent
         dReaders = {}
         for oDomain in self.clocks.values():
-            if oDomain.kind not in ("port", "box"):
+            if oDomain.kind not in ("port", "box") or oDomain.key not in setUsed:
                 continue
             lWork = [oDomain.net]
             setSeen = set()
@@ -1402,8 +1410,8 @@ class Analysis:
                         if oRole is not None and oRole.kind in ("sync", "async", "static"):
                             dReaders.setdefault((oDomain.key, oCell.module, oCell.name), (oDomain, oCell))
                         continue
-                    # A clock pin, or an asynchronous reset, which is a shared clock and reset
-                    if (sPort == "CLK" and is_clocked(oCell)) or sPort in RESET_PORTS:
+                    # A clock pin, the enable of a latch, or an asynchronous reset, which is a shared clock and reset
+                    if (sPort == "CLK" and is_clocked(oCell)) or (sPort == "EN" and oCell.type in netlist.LATCH_TYPES) or sPort in RESET_PORTS:
                         continue
                     lOutputs = [b for s, l in oCell.connections.items() if self.flat.direction(oCell, s) == "output" for b in l if graph.is_variable(b)]
                     if oCell.type in TRANSPARENT_TYPES:
