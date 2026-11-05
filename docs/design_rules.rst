@@ -839,7 +839,7 @@ through logic.
 
 The logic of a black box is not seen by design analysis, nor controlled by scan test, so a clock, reset or enable
 it makes is neither checked nor testable. Outputs declared as clocks or resets of the box, see
-:doc:`black boxes <black_boxes>`, such as those of a clock buffer, a PLL or a reset controller, are made for it
+the black boxes of :doc:`design_analysis`, such as those of a clock buffer, a PLL or a reset controller, are made for it
 and not reported, nor is the reset of a reset synchronizer, which makes a reset from any signal, such as the lock
 output of a PLL. A path through a box, such as an input buffer, is followed to what drives it.
 
@@ -858,7 +858,7 @@ This rule reports clocks, asynchronous resets and tri-state outputs connected to
 declared to take them.
 
 .. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: it needs every black box
-          declared, see :doc:`black boxes <black_boxes>`.
+          declared, see the black boxes of :doc:`design_analysis`.
 
 Inside a black box, design analysis cannot follow a clock, a reset or a tri-state bus, and scan test cannot
 control it. An input declared as a clock or a reset of the box, or named by another of its roles, such as the
