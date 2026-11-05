@@ -38,3 +38,7 @@ from .rule_035 import rule_035
 from .rule_036 import rule_036
 from .rule_037 import rule_037
 from .rule_038 import rule_038
+from .rule_039 import rule_039
+from .rule_040 import rule_040
+from .rule_041 import rule_041
+from .rule_042 import rule_042

@@ -61,6 +61,15 @@ DESIGNS = [
             "black_boxes": {"vendor_ip": {"ports": {"clk_i": "clock", "d_i": {"sync": "clk_i"}, "ready_o": "async"}}},
         },
     ),
+    (
+        "STARC design for test",
+        {
+            "top": "starc_dft_top",
+            "libraries": [{"name": "work", "files": ["starc_dft.vhd"]}],
+            "test_mode": {"scan_mode": 1},
+            "scan_shift": {"scan_en": 1},
+        },
+    ),
 ]
 
 

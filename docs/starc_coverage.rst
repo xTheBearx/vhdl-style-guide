@@ -623,7 +623,7 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.3.1.1    | Clocks must be directly controllable from primary inputs                                  | Error    | Implemented, design analysis | :code:`design_012`, :code:`design_013`         |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.3.1.2    | With selectable clock systems, fix one choice throughout test                             | Error    | Planned, design analysis     |                                                |
+| STARC-3.3.1.2    | With selectable clock systems, fix one choice throughout test                             | Error    | Implemented, design analysis | :code:`design_039`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.3.1.3    | Do not use random-logic outputs as clocks                                                 | Warning  | Implemented, design analysis | :code:`design_013`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -641,25 +641,25 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.3.4.1    | No feedback loops through latches                                                         | Error    | Implemented, design analysis | :code:`design_026`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.3.4.2    | Make latches transparent during test                                                      | Warning  | Planned, design analysis     |                                                |
+| STARC-3.3.4.2    | Make latches transparent during test                                                      | Warning  | Implemented, design analysis | :code:`design_041`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.3.4.3    | Use single-stage latches clocked by the inverted clock                                    | Note     | Planned, design analysis     |                                                |
+| STARC-3.3.4.3    | Use single-stage latches clocked by the inverted clock                                    | Note     | Implemented, design analysis | :code:`design_041`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.3.4.4    | For more than two latch stages (two-phase), add designer-written fault patterns           | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.3.5.1    | In test mode, bring clocks of different phases to one phase                               | Warning  | Planned, design analysis     |                                                |
+| STARC-3.3.5.1    | In test mode, bring clocks of different phases to one phase                               | Warning  | Implemented, design analysis | :code:`design_040`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.3.5.2    | Flip-flop-derived clocks need a test-mode selector                                        | Warning  | Planned, design analysis     |                                                |
+| STARC-3.3.5.2    | Flip-flop-derived clocks need a test-mode selector                                        | Warning  | Implemented, design analysis | :code:`design_039`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.3.5.3    | OR-gated clocks: force the gating signal with an AND in test                              | Warning  | Planned, design analysis     |                                                |
+| STARC-3.3.5.3    | OR-gated clocks: force the gating signal with an AND in test                              | Warning  | Implemented, design analysis | :code:`design_039`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.3.5.4    | AND-gated clocks: force the gating signal with an OR in test                              | Warning  | Planned, design analysis     |                                                |
+| STARC-3.3.5.4    | AND-gated clocks: force the gating signal with an OR in test                              | Warning  | Implemented, design analysis | :code:`design_039`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.3.5.5    | Latch-output clock gating: OR scan-select into the stage before the latch                 | Note     | Planned, design analysis     |                                                |
+| STARC-3.3.5.5    | Latch-output clock gating: OR scan-select into the stage before the latch                 | Note     | Implemented, design analysis | :code:`design_039`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.3.5.6    | Flip-flop-output clock gating: force with AND after the flip-flop                         | Note     | Planned, design analysis     |                                                |
+| STARC-3.3.5.6    | Flip-flop-output clock gating: force with AND after the flip-flop                         | Note     | Implemented, design analysis | :code:`design_039`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.3.5.7    | Latch output used as clock: force with OR on the latch clock input                        | Note     | Planned, design analysis     |                                                |
+| STARC-3.3.5.7    | Latch output used as clock: force with OR on the latch clock input                        | Note     | Implemented, design analysis | :code:`design_039`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.3.5.8    | Put clock-generation modules at top level so DFT logic can be added                       | Note     | Implemented, design analysis | :code:`design_034`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
@@ -681,9 +681,9 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.3.8.2    | Tri-state enables come from inputs or an input-controlled decoder                         | Note     | Implemented, design analysis | :code:`design_028`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.3.8.3    | Fix the direction of external bidirectional pins during scan shift                        | Note     | Planned, design analysis     |                                                |
+| STARC-3.3.8.3    | Fix the direction of external bidirectional pins during scan shift                        | Note     | Implemented, design analysis | :code:`design_042`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-3.3.9.1    | Use boundary scan on I/O of hard macros and async blocks                                  | Warning  | Planned, design analysis     |                                                |
+| STARC-3.3.9.1    | Use boundary scan on I/O of hard macros and async blocks                                  | Warning  | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-3.3.9.2    | Alternative: bypass I/O instead of boundary scan                                          | Note     | Manual review                |                                                |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+

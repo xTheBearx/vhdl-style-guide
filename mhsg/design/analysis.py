@@ -29,6 +29,7 @@ from mhsg.design import (
     project,
     runner,
     source_summary,
+    test_mode,
     tools,
     top,
 )
@@ -74,6 +75,23 @@ class Context:
             oBlackBoxes = self.design.black_boxes if self.design is not None else None
             self._oCdc = cdc.Analysis(oFlat, dConstraints, self.locate_cell, oBlackBoxes)
         return getattr(self, "_oCdc", None)
+
+    def test_mode(self, bShift=False):
+        """
+        Returns the TestMode of the flat design, see test_mode.py: with the values of test_mode, and with those of
+        scan_shift too for the shift of the scan chains; None without a netlist.
+        """
+        if getattr(self, "_dTestModes", None) is None:
+            self._dTestModes = {}
+        if bShift not in self._dTestModes:
+            oAnalysis = self.cdc()
+            if oAnalysis is None:
+                return None
+            dValues = dict(getattr(self.design, "test_mode", None) or {})
+            if bShift:
+                dValues.update(getattr(self.design, "scan_shift", None) or {})
+            self._dTestModes[bShift] = test_mode.TestMode(oAnalysis, dValues)
+        return self._dTestModes[bShift]
 
     def locate_cell(self, oCell, sSignal=None):
         """Returns (file, line) of a flat cell, refined to the assignment of the signal."""

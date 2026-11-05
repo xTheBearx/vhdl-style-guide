@@ -1005,13 +1005,13 @@ class test_design_analysis(unittest.TestCase):
         self.assertEqual([], [t for t in lFindings if t[2] not in ("design_015",)])
 
     def test_systemverilog_cdc(self):
-        # Yosys reads the SystemVerilog; findings are at the assignment, refined from the always block Yosys points at
+        # Yosys reads the SystemVerilog; findings are at the assignment, refined from the always block Yosys points at.
+        # en_a, which gates clk_a, is not a clock: it clocks no register
         iStatus, lOutput = self.run_design("cdc_sv", "cdc_sv.sv", dCdc={"clocks": {"clk_a": "a", "clk_b": "b"}})
         sFile = os.path.join(sTestDir, "cdc_sv.sv")
         self.assertEqual(1, iStatus)
         self.assertEqual(
             [
-                f"ERROR: {sFile}(16)design_010 -- Clock en_a is used as data",
                 f"ERROR: {sFile}(18)design_015 -- Reset rst_ni is released asynchronously: it resets registers clocked by clk_a without a reset synchronizer (3 registers)",
                 f"ERROR: {sFile}(30)design_008 -- unsync_b (clk_b) captures flag_a (clk_a) without a synchronizer",
                 f"ERROR: {sFile}(43)design_009 -- Logic on x_a (clk_a), y_a (clk_a) before synchronizer s1x_b (clk_b) can glitch",
@@ -1411,6 +1411,44 @@ class test_design_analysis(unittest.TestCase):
             ],
             sorted(t for t in self.findings("starc3_top", "starc_design3.vhd", dCdc=dCdc, dDesignKeys=dKeys, dRules=dRules) if t[2] in lRules),
         )
+
+    def test_starc_design_for_test(self):
+        # In test mode, scan_mode is 1: the divided clock selected away from its divider and the gated clock forced on
+        # pass; the second divider, the gate on en_r and the multiplexer on sel_r do not. A latch transparent in test
+        # mode and one on the inverted clock pass; the one enabled by a register does not. During scan shift, scan_en is
+        # 1 and releases pin, but not pin2
+        lRules = ("design_039", "design_040", "design_041", "design_042")
+        dRules = {s: {"disable": False} for s in lRules}
+        dKeys = {"test_mode": {"scan_mode": 1}, "scan_shift": {"scan_en": 1}}
+        self.assertEqual(
+            [
+                ("starc_dft.vhd", 42, "design_039", "In test mode, the clock of r(1) comes from register div2_q, not from a top-level input"),
+                ("starc_dft.vhd", 69, "design_039", "In test mode, the clock of r(3) passes a gate whose other input, en_r, is not held in test mode"),
+                ("starc_dft.vhd", 86, "design_039", "In test mode, the clock of r(4) passes a clock multiplexer whose select, sel_r, is not held in test mode"),
+                ("starc_dft.vhd", 99, "design_040", "In test mode, clock clk reaches 8 registers on the rising edge and 1 on the falling edge"),
+                ("starc_dft.vhd", 121, "design_041", "Latch lb is neither transparent in test mode nor enabled by the inverted clock"),
+                ("starc_dft.vhd", 127, "design_042", "During scan shift, the direction of inout port pin2 is not fixed"),
+            ],
+            sorted(t for t in self.findings("starc_dft_top", "starc_dft.vhd", dRules=dRules, dDesignKeys=dKeys) if t[2] in lRules),
+        )
+        # Without test_mode, the multiplexer of the divided clock, the forced gate, the latch forced open and pin are
+        # reported too
+        lFindings = [t for t in self.findings("starc_dft_top", "starc_dft.vhd", dRules=dRules) if t[2] in lRules]
+        self.assertIn(
+            (
+                "starc_dft.vhd",
+                68,
+                "design_039",
+                "In test mode, the clock of r(2) passes a gate whose other input, logic of en_r, scan_mode, is not held in test mode",
+            ),
+            lFindings,
+        )
+        self.assertEqual(10, len(lFindings), lFindings)
+
+    def test_test_mode_values(self):
+        # The values of test_mode and scan_shift are 0 or 1
+        iStatus, lOutput = self.run_design("starc_dft_top", "starc_dft.vhd", dDesignKeys={"test_mode": {"scan_mode": 2}})
+        self.assertEqual((1, ["ERROR: test_mode in the design section: the value of scan_mode is 2; expected 0 or 1"]), (iStatus, lOutput))
 
     def test_registers(self):
         # ready_r changes once after reset and q_r has an enable: neither is reported

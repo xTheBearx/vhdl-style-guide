@@ -1967,7 +1967,11 @@
         "design_035",
         "design_036",
         "design_037",
-        "design_038"
+        "design_038",
+        "design_039",
+        "design_040",
+        "design_041",
+        "design_042"
       ]
     },
     {
@@ -21165,6 +21169,194 @@
         "design"
       ],
       "summary": "This rule reports data from a register of one clock domain that reaches a register of an unrelated clock domain without passing a latch.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_039",
+      "alias": "design_test_mode_clock",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports registers whose clock the tester does not control in test mode: the clock does not come from a top-level input, or the clock output of a black box such as a PLL, through buffers, inverters, and gates and multiplexers whose other inputs are held in test mode.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_040",
+      "alias": "design_test_mode_clock_edge",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports clocks that, in test mode, reach registers on both edges.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_041",
+      "alias": "design_test_mode_latch",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports latches that, in test mode, are neither held transparent nor enabled by the inverted clock.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_042",
+      "alias": "design_scan_shift_bidirectional",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports bidirectional top-level ports whose direction is not fixed during the shift of the scan chains.",
       "documentation": "design_rules.rst",
       "options": [
         {

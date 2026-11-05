@@ -3146,3 +3146,104 @@ design_cases:
   name: STARC design items 3
   design: *id016
   expected: []
+- rule: design_001
+  name: STARC design for test
+  design: &id017
+    top: starc_dft_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/starc_dft.vhd
+    test_mode:
+      scan_mode: 1
+    scan_shift:
+      scan_en: 1
+  expected: []
+- rule: design_002
+  name: STARC design for test
+  design: *id017
+  expected:
+  - - examples/design/starc_dft.vhd
+    - 107
+    - Synthesis infers a latch for lt in starc_dft_top
+  - - examples/design/starc_dft.vhd
+    - 114
+    - Synthesis infers a latch for li in starc_dft_top
+  - - examples/design/starc_dft.vhd
+    - 121
+    - Synthesis infers a latch for lb in starc_dft_top
+- rule: design_003
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_004
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_005
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_006
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_007
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_008
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_009
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_010
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_011
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_012
+  name: STARC design for test
+  design: *id017
+  expected:
+  - - examples/design/starc_dft.vhd
+    - 51
+    - Clock clk is gated by logic into div_clk (1 register)
+  - - examples/design/starc_dft.vhd
+    - 68
+    - Clock clk is gated by logic into gclk (1 register)
+  - - examples/design/starc_dft.vhd
+    - 69
+    - Clock clk is gated by logic into gclk2 (1 register)
+  - - examples/design/starc_dft.vhd
+    - 86
+    - Clock clk is gated by logic into mclk (1 register)
+- rule: design_013
+  name: STARC design for test
+  design: *id017
+  expected:
+  - - examples/design/starc_dft.vhd
+    - 42
+    - Clock div2_q is made by a register from clk (1 register)
+- rule: design_014
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_015
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_016
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_017
+  name: STARC design for test
+  design: *id017
+  expected: []

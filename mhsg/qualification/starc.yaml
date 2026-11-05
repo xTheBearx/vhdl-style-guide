@@ -2287,6 +2287,22 @@ design_cases:
   name: clean design
   design: *id001
   expected: []
+- rule: design_039
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_040
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_041
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_042
+  name: clean design
+  design: *id001
+  expected: []
 - rule: design_003
   name: undeclared signal
   design: &id002
@@ -2401,6 +2417,22 @@ design_cases:
   design: *id002
   expected: []
 - rule: design_038
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_039
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_040
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_041
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_042
   name: undeclared signal
   design: *id002
   expected: []
@@ -2521,6 +2553,25 @@ design_cases:
   design: *id003
   expected: []
 - rule: design_038
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_039
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_040
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_041
+  name: latch
+  design: *id003
+  expected:
+  - - examples/design/latch.vhd
+    - 17
+    - Latch q is open while clock en is high, not transparent in test mode
+- rule: design_042
   name: latch
   design: *id003
   expected: []
@@ -2647,6 +2698,22 @@ design_cases:
   name: combinational loop
   design: *id004
   expected: []
+- rule: design_039
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_040
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_041
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_042
+  name: combinational loop
+  design: *id004
+  expected: []
 - rule: design_003
   name: multiple drivers
   design: &id005
@@ -2767,6 +2834,25 @@ design_cases:
   name: multiple drivers
   design: *id005
   expected: []
+- rule: design_039
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_040
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_041
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_042
+  name: multiple drivers
+  design: *id005
+  expected:
+  - - examples/design/multiple_drivers.vhd
+    - 52
+    - During scan shift, the direction of inout port pin is not fixed
 - rule: design_003
   name: registers
   design: &id006
@@ -2890,6 +2976,22 @@ design_cases:
   name: registers
   design: *id006
   expected: []
+- rule: design_039
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_040
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_041
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_042
+  name: registers
+  design: *id006
+  expected: []
 - rule: design_003
   name: logic depth
   design: &id007
@@ -3007,6 +3109,22 @@ design_cases:
   design: *id007
   expected: []
 - rule: design_038
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_039
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_040
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_041
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_042
   name: logic depth
   design: *id007
   expected: []
@@ -3202,6 +3320,28 @@ design_cases:
   - - examples/design/cdc.vhd
     - 103
     - data_b (clk_b) takes data from data_a (clk_a) without a latch on the inverted clk_a
+- rule: design_039
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 81
+    - In test mode, the clock of div_q comes from register div_a, not from a top-level input
+  - - examples/design/cdc.vhd
+    - 170
+    - In test mode, the clock of gated_q passes a gate whose other input, gate_en_a, is not held in test mode
+- rule: design_040
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_041
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_042
+  name: clock domain crossings
+  design: *id008
+  expected: []
 - rule: design_003
   name: reconvergence
   design: &id009
@@ -3346,6 +3486,22 @@ design_cases:
   - - examples/design/reconvergence.vhd
     - 98
     - rst_meta (clk_b) takes data from rst_a (clk_a) without a latch on the inverted clk_a
+- rule: design_039
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_040
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_041
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_042
+  name: reconvergence
+  design: *id009
+  expected: []
 - rule: design_003
   name: black box
   design: &id010
@@ -3472,6 +3628,25 @@ design_cases:
   name: black box
   design: *id010
   expected: []
+- rule: design_039
+  name: black box
+  design: *id010
+  expected:
+  - - examples/design/black_box.vhd
+    - 41
+    - In test mode, the clock of r comes from black box output u_buf.O, not declared as a clock output
+- rule: design_040
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_041
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_042
+  name: black box
+  design: *id010
+  expected: []
 - rule: design_003
   name: deep logic
   design: &id011
@@ -3589,6 +3764,22 @@ design_cases:
   design: *id011
   expected: []
 - rule: design_038
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_039
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_040
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_041
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_042
   name: deep logic
   design: *id011
   expected: []
@@ -3724,6 +3915,22 @@ design_cases:
   name: reset domain crossing
   design: *id012
   expected: []
+- rule: design_039
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_040
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_041
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_042
+  name: reset domain crossing
+  design: *id012
+  expected: []
 - rule: design_003
   name: STARC design items
   design: &id013
@@ -3856,6 +4063,28 @@ design_cases:
   name: STARC design items
   design: *id013
   expected: []
+- rule: design_039
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_040
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_041
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_042
+  name: STARC design items
+  design: *id013
+  expected:
+  - - examples/design/starc_design.vhd
+    - 15
+    - During scan shift, the direction of inout port pin_six is not fixed
+  - - examples/design/starc_design.vhd
+    - 15
+    - During scan shift, the direction of inout port pins is not fixed
 - rule: design_003
   name: inout port connections
   design: &id014
@@ -3979,6 +4208,25 @@ design_cases:
   name: inout port connections
   design: *id014
   expected: []
+- rule: design_039
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_040
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_041
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_042
+  name: inout port connections
+  design: *id014
+  expected:
+  - - examples/design/inout_wire.v
+    - 7
+    - During scan shift, the direction of inout port pin_pad is not fixed
 - rule: design_003
   name: STARC design items 2
   design: &id015
@@ -4123,6 +4371,40 @@ design_cases:
   name: STARC design items 2
   design: *id015
   expected: []
+- rule: design_039
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_040
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_041
+  name: STARC design items 2
+  design: *id015
+  expected:
+  - - examples/design/starc_design2.vhd
+    - 69
+    - Latch l1 is open while clock g is high, not transparent in test mode
+  - - examples/design/starc_design2.vhd
+    - 76
+    - Latch l2 is open while clock g is high, not transparent in test mode
+  - - examples/design/starc_design2.vhd
+    - 83
+    - Latch l3 is open while clock g is high, not transparent in test mode
+  - - examples/design/starc_design2.vhd
+    - 91
+    - Latch la is open while clock g is high, not transparent in test mode
+- rule: design_042
+  name: STARC design items 2
+  design: *id015
+  expected:
+  - - examples/design/starc_design2.vhd
+    - 105
+    - During scan shift, the direction of inout port pin_r is not fixed
+  - - examples/design/starc_design2.vhd
+    - 106
+    - During scan shift, the direction of inout port pin is not fixed
 - rule: design_003
   name: STARC design items 3
   design: &id016
@@ -4285,3 +4567,231 @@ design_cases:
   - - examples/design/starc_design3.vhd
     - 203
     - b_r (clk_b) takes data from a_r (clk_a) without a latch on the inverted clk_a
+- rule: design_039
+  name: STARC design items 3
+  design: *id016
+  expected:
+  - - examples/design/starc_design3.vhd
+    - 103
+    - In test mode, the clock of u_core.slow_r comes from register u_core.div_q, not from a top-level input
+  - - examples/design/starc_design3.vhd
+    - 182
+    - In test mode, the clock of ip_r comes from black box output u_ip.ready_o, not declared as a clock output
+- rule: design_040
+  name: STARC design items 3
+  design: *id016
+  expected:
+  - - examples/design/starc_design3.vhd
+    - 211
+    - In test mode, clock clk_a reaches 4 registers on the rising edge and 1 on the falling edge
+- rule: design_041
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_042
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_003
+  name: STARC design for test
+  design: &id017
+    top: starc_dft_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/starc_dft.vhd
+    test_mode:
+      scan_mode: 1
+    scan_shift:
+      scan_en: 1
+  expected: []
+- rule: design_004
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_008
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_009
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_010
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_011
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_012
+  name: STARC design for test
+  design: *id017
+  expected:
+  - - examples/design/starc_dft.vhd
+    - 51
+    - Clock clk is gated by logic into div_clk (1 register)
+  - - examples/design/starc_dft.vhd
+    - 68
+    - Clock clk is gated by logic into gclk (1 register)
+  - - examples/design/starc_dft.vhd
+    - 69
+    - Clock clk is gated by logic into gclk2 (1 register)
+  - - examples/design/starc_dft.vhd
+    - 86
+    - Clock clk is gated by logic into mclk (1 register)
+- rule: design_013
+  name: STARC design for test
+  design: *id017
+  expected:
+  - - examples/design/starc_dft.vhd
+    - 42
+    - Clock div2_q is made by a register from clk (1 register)
+- rule: design_014
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_015
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_020
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_021
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_022
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_023
+  name: STARC design for test
+  design: *id017
+  expected:
+  - - examples/design/starc_dft.vhd
+    - 126
+    - Inout port pin of starc_dft_top is connected directly to output port q
+  - - examples/design/starc_dft.vhd
+    - 127
+    - Inout port pin2 of starc_dft_top is connected directly to output port q
+- rule: design_024
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_026
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_027
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_028
+  name: STARC design for test
+  design: *id017
+  expected:
+  - - examples/design/starc_dft.vhd
+    - 126
+    - Tri-state enable comes from oe_r, not from top inputs only
+  - - examples/design/starc_dft.vhd
+    - 127
+    - Tri-state enable comes from oe_r, not from top inputs only
+- rule: design_029
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_030
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_031
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_032
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_033
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_034
+  name: STARC design for test
+  design: *id017
+  expected:
+  - - examples/design/starc_dft.vhd
+    - 42
+    - Clock div2_q is generated in the top-level module, not in a block of its own
+  - - examples/design/starc_dft.vhd
+    - 51
+    - Clock div_clk is generated in the top-level module, not in a block of its own
+  - - examples/design/starc_dft.vhd
+    - 68
+    - Clock gclk is generated in the top-level module, not in a block of its own
+  - - examples/design/starc_dft.vhd
+    - 69
+    - Clock gclk2 is generated in the top-level module, not in a block of its own
+  - - examples/design/starc_dft.vhd
+    - 86
+    - Clock mclk is generated in the top-level module, not in a block of its own
+- rule: design_035
+  name: STARC design for test
+  design: *id017
+  expected:
+  - - examples/design/starc_dft.vhd
+    - 99
+    - Clock clk clocks 11 registers on the rising edge and 1 on the falling edge
+- rule: design_036
+  name: STARC design for test
+  design: *id017
+  expected:
+  - - examples/design/starc_dft.vhd
+    - 41
+    - 'Registers or latches in the top-level module, outside of blocks: div_q, en_r, g_r, lb and 5 more'
+- rule: design_037
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_038
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_039
+  name: STARC design for test
+  design: *id017
+  expected:
+  - - examples/design/starc_dft.vhd
+    - 42
+    - In test mode, the clock of r(1) comes from register div2_q, not from a top-level input
+  - - examples/design/starc_dft.vhd
+    - 69
+    - In test mode, the clock of r(3) passes a gate whose other input, en_r, is not held in test mode
+  - - examples/design/starc_dft.vhd
+    - 86
+    - In test mode, the clock of r(4) passes a clock multiplexer whose select, sel_r, is not held in test mode
+- rule: design_040
+  name: STARC design for test
+  design: *id017
+  expected:
+  - - examples/design/starc_dft.vhd
+    - 99
+    - In test mode, clock clk reaches 8 registers on the rising edge and 1 on the falling edge
+- rule: design_041
+  name: STARC design for test
+  design: *id017
+  expected:
+  - - examples/design/starc_dft.vhd
+    - 121
+    - Latch lb is neither transparent in test mode nor enabled by the inverted clock
+- rule: design_042
+  name: STARC design for test
+  design: *id017
+  expected:
+  - - examples/design/starc_dft.vhd
+    - 127
+    - During scan shift, the direction of inout port pin2 is not fixed

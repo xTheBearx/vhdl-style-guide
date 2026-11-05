@@ -90,6 +90,10 @@ Rules Disabled by Default
 * `design_036 <design_rules.html#design-036>`_
 * `design_037 <design_rules.html#design-037>`_
 * `design_038 <design_rules.html#design-038>`_
+* `design_039 <design_rules.html#design-039>`_
+* `design_040 <design_rules.html#design-040>`_
+* `design_041 <design_rules.html#design-041>`_
+* `design_042 <design_rules.html#design-042>`_
 * `expression_001 <expression_rules.html#expression-001>`_
 * `file_100 <file_rules.html#file-100>`_
 * `function_600 <function_rules.html#function-600>`_
