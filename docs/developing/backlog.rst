@@ -66,9 +66,11 @@ under way: the entries below.
   them.
 * **Code the syntax tree does not have**: the code of inactive :code:`\`ifdef` branches is classified from parses with
   the macros of their conditions switched, at most 8 of them, and the arguments of macro uses where the macros place
-  them, so rules check both; rules that read the syntax tree, such as the lint rules, do not see them, and macro
-  arguments are not indented by sv_indent_001. The bodies of macro definitions, which are text until a macro is used,
-  are not checked.
+  them, so rules check both. The lint rules lint the code of inactive branches in the file on its own with the
+  macros switched, and report the warnings in the code macro arguments expand to at the arguments; the other rules
+  that read the syntax tree do not see either, and macro arguments are not indented by sv_indent_001. The bodies of macro definitions are classified where the first use of
+  each macro in the file places them, and checked but for their indentation; the bodies of macros the file does not
+  use are not checked.
 * **Files with syntax errors** are checked and fixed but for the part of each design unit with an error, from the
   line of its first error to the end of the unit, where slang's syntax tree may be wrong. Checking that part too would
   need slang's recovery inside a unit to be trusted, or each item of the unit parsed on its own.

@@ -6,8 +6,8 @@ The tokens come from slang's lexer run on the text as written, before preprocess
 with its macro uses, directives and inactive `ifdef branches. Each token is then looked up in slang's syntax tree by
 its offset, which tells the syntax node and field it belongs to. The code of inactive `ifdef branches is classified
 from parses with the macros of their conditions switched, and marked inactive; the arguments of macro uses where the
-macro places them, marked macro_argument. Tokens no parse places, such as the bodies of macro definitions, are
-unclassified.
+macro places them, marked macro_argument; and the bodies of macro definitions where the first use of each macro places
+them, marked macro_body. Tokens no parse places, such as the bodies of macros never used, are unclassified.
 
 svFile shares the methods of vhdlFile that work on the list of tokens, such as get_tokens_matching and get_lines,
 so the fix pipeline and the rules that only look at whitespace, comments and lines work unchanged. Rules declare the
@@ -144,7 +144,31 @@ class svFile(vhdl.vhdlFile):
                 self.lint_model = lint.LintModel.from_project(dEntry)
             else:
                 self.lint_model = lint.LintModel(self.syntax_tree, self.buffer_id)
+            self.add_inactive_warnings(self.lint_model)
         return self.lint_model
+
+    def add_inactive_warnings(self, oModel):
+        """
+        Adds to a lint model the warnings in the code of inactive `ifdef branches: from the file linted on its own with
+        each macro of its conditions switched, see switched_trees.
+        """
+        setInactive = {o.offset for o in self.lAllObjects if getattr(o, "inactive", False) and getattr(o, "offset", None) is not None}
+        if not setInactive:
+            return
+        dConfig = getattr(self.configuration, "dConfig", None)
+        sPath = os.path.abspath(self.filename) if self.filename and self.filename != "stdin" else ""
+        sText = "\n".join(self.get_lines()[1:]) + "\n"
+        setSeen = {(o.offset, o.name) for o in oModel.diagnostics}
+        for oTree, iBuffer in switched_trees(sText, sPath or self.filename or "source.sv", preprocessor.options(dConfig)):
+            for oDiagnostic in lint.LintModel(oTree, iBuffer).diagnostics:
+                tKey = (oDiagnostic.offset, oDiagnostic.name)
+                # The first token at or after the offset of a warning is the one it is reported at
+                oToken = self.token_at_or_after(oDiagnostic.offset)
+                if tKey in setSeen or oToken is None or oToken.offset not in setInactive:
+                    continue
+                setSeen.add(tKey)
+                oModel.diagnostics.append(oDiagnostic)
+        oModel.diagnostics.sort(key=lambda o: o.offset)
 
     def set_indent_map(self, dIndentMap):
         """Indentation of SystemVerilog is not configured yet."""
@@ -275,6 +299,8 @@ def build_tokens(sText, sFileName, bTree=False, oOptions=None, sPath=""):
             oNew.closing = oInfo.closing
             if oInfo.argument:
                 oNew.macro_argument = True
+            if oInfo.body:
+                oNew.macro_body = True
         # The offset of the token in the text, by which rules find it from the syntax tree
         oNew.offset = oToken.location.offset
         add_text(lReturn, oNew)
@@ -293,20 +319,15 @@ reCondition = re.compile(r"`(?:ifdef|ifndef|elsif)\s+([A-Za-z_][A-Za-z0-9_$]*)")
 MAX_ALTERNATE_PARSES = 8
 
 
-def inactive_levels(sText, sPath, oOptions, dClasses):
+def switched_trees(sText, sPath, oOptions):
     """
-    Returns {offset: token_info} for the tokens that only parses with a macro of the `ifdef conditions of a text
-    switched have: defined when it is not, undefined when it is. One parse for each macro, at most
-    MAX_ALTERNATE_PARSES; the first parse that has a token gives its level.
+    Yields (syntax tree, buffer id) of the parses of a text with a macro of its `ifdef conditions switched: defined when
+    it is not, undefined when it is. One parse for each macro, at most MAX_ALTERNATE_PARSES.
     """
     lMacros = list(dict.fromkeys(reCondition.findall(sText)))[:MAX_ALTERNATE_PARSES]
-    if not lMacros:
-        return {}
     oBase = getattr(oOptions, "preprocessorOptions", None) if oOptions is not None else None
     lDefines = list(oBase.predefines) if oBase is not None else []
     lIncludes = list(oBase.additionalIncludePaths) if oBase is not None else []
-    dReturn = {}
-    sStarts = line_starts(sText)
     for sMacro in lMacros:
         bDefined = any(s.split("=")[0] == sMacro for s in lDefines)
         oSwitched = PreprocessorOptions()
@@ -319,8 +340,19 @@ def inactive_levels(sText, sPath, oOptions, dClasses):
             oTree = SyntaxTree.fromBuffer(oBuffer, oManager, pyslang.Bag([oSwitched]))
         except (RuntimeError, ValueError):
             continue
-        for iOffset, oInfo in classify(oTree, oBuffer.id.id, sStarts).items():
-            if iOffset not in dClasses and iOffset not in dReturn and oInfo.indent is not None:
+        yield oTree, oBuffer.id.id
+
+
+def inactive_levels(sText, sPath, oOptions, dClasses):
+    """
+    Returns {offset: token_info} for the tokens that only the parses with a macro of the `ifdef conditions of a text
+    switched have, see switched_trees; the first parse that has a token gives its level.
+    """
+    dReturn = {}
+    sStarts = line_starts(sText)
+    for oTree, iBuffer in switched_trees(sText, sPath, oOptions):
+        for iOffset, oInfo in classify(oTree, iBuffer, sStarts).items():
+            if iOffset not in dClasses and iOffset not in dReturn:
                 dReturn[iOffset] = oInfo
     return dReturn
 
@@ -411,9 +443,9 @@ def fields(oNode):
 class token_info:
     """What the syntax tree tells about a token of the file."""
 
-    __slots__ = ("syntax", "field", "kind", "indent", "closing", "argument")
+    __slots__ = ("syntax", "field", "kind", "indent", "closing", "argument", "body")
 
-    def __init__(self, tSyntax, sField, sKind, iIndent, bClosing, bArgument=False):
+    def __init__(self, tSyntax, sField, sKind, iIndent, bClosing, bArgument=False, bBody=False):
         # The syntax node kinds from the root down to the node holding the token
         self.syntax = tSyntax
         # The field of that node holding the token, or None for an element of a list
@@ -425,6 +457,8 @@ class token_info:
         self.closing = bClosing
         # True for a token in the arguments of a macro use, classified where the macro places it
         self.argument = bArgument
+        # True for a token in the body of a macro definition, classified where a use of the macro places it
+        self.body = bBody
 
 
 def line_starts(sText):
@@ -452,9 +486,11 @@ def classify(oTree, iBuffer, sLineStarts, dNodes=None, oSourceManager=None):
     # The indent levels of the tokens that start an item, such as a statement or a port: {offset: level}
     dItemStarts = {}
     lStack = [(oTree.root, (), 0)]
-    # The offsets of the tokens in the arguments of macro uses, and what they are where the macros place them
+    # The offsets of the tokens in the arguments of macro uses, and what they are where the macros place them; and the
+    # tokens of the bodies of macro definitions where the first use of each places them
     sMacroArguments = set()
     dArguments = {}
+    dBodies = {}
     first_offset = _first_offset_function(iBuffer)
     iRoot = first_offset(oTree.root)
     if iRoot is not None:
@@ -487,11 +523,13 @@ def classify(oTree, iBuffer, sLineStarts, dNodes=None, oSourceManager=None):
                     if iIndent is None and iLevel is not None and bHasBody and indent.is_own_line(sChildKind):
                         iIndent = iLevel
                     dReturn[iOffset] = token_info(tPath, sField, sChildKind, iIndent, bClosing)
-                elif oSourceManager is not None and oChild.rawText and oSourceManager.isMacroArgLoc(oChild.location):
+                elif oSourceManager is not None and oChild.rawText and oSourceManager.isMacroLoc(oChild.location):
+                    bArgument = oSourceManager.isMacroArgLoc(oChild.location)
                     oOriginal = oSourceManager.getFullyOriginalLoc(oChild.location)
-                    if oOriginal.buffer.id == iBuffer and oOriginal.offset not in dArguments:
+                    dTarget = dArguments if bArgument else dBodies
+                    if oOriginal.buffer.id == iBuffer and oOriginal.offset not in dTarget:
                         sField, _ = dFields.get(("T", iOffset), (None, False))
-                        dArguments[oOriginal.offset] = token_info(tPath, sField, oChild.kind.name, None, False, True)
+                        dTarget[oOriginal.offset] = token_info(tPath, sField, oChild.kind.name, None, False, bArgument, not bArgument)
                 for oTrivia in oChild.trivia:
                     oSyntax = oTrivia.syntax()
                     if oSyntax is not None and oSyntax.kind.name == "MacroUsage" and oSyntax.args is not None:
@@ -520,6 +558,8 @@ def classify(oTree, iBuffer, sLineStarts, dNodes=None, oSourceManager=None):
         dReturn.pop(iOffset, None)
         if iOffset in dArguments:
             dReturn[iOffset] = dArguments[iOffset]
+    for iOffset, oInfo in dBodies.items():
+        dReturn.setdefault(iOffset, oInfo)
     return dReturn
 
 
