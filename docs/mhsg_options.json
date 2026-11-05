@@ -62713,7 +62713,7 @@
       "groups": [
         "alignment"
       ],
-      "summary": "This rule aligns the colons of the packed dimensions that sv_alignment_010 aligns, by spaces after the opening bracket, as Verible's formatter does: [ 4:0] under [31:0]. Only the first packed dimension of a declaration is aligned, when it is a range such as [7:0]. By default it infers whether the author meant them aligned, as for the other alignment rules; policy set to align or flush_left forces one.",
+      "summary": "This rule aligns the packed dimensions of the declarations that sv_alignment_010 aligns, as Verible's formatter does: the text inside the brackets of each dimension is aligned right, by spaces after the opening bracket, so [ 4:0] goes under [31:0], and the brackets of the next dimension line up. Declarations without a dimension leave its column alone. By default it infers whether the author meant them aligned, as for the other alignment rules; policy set to align or flush_left forces one.",
       "documentation": "sv_alignment_rules.rst",
       "options": [
         {

@@ -389,16 +389,19 @@ class test_rules(unittest.TestCase):
         )
 
     def test_alignment_inside_dimensions(self):
-        # The colons of the packed dimensions aligned in a column are aligned too, by spaces after the bracket; a
-        # dimension much wider than the others leaves them flush left
+        # The packed dimensions aligned in a column are aligned too, each aligned right inside its brackets by spaces
+        # after the bracket, as Verible does; a dimension much wider than the others leaves them flush left
         _, lOutput, sAfter = self.run_mhsg(["--fix"], "dimensions.sv")
         self.assertEqual(read("dimensions.fixed.sv"), sAfter)
         _, lOutput, _ = self.run_mhsg(["-ap"], "dimensions.sv")
         self.assertEqual(
             [
-                "ERROR: dimensions.sv(3)sv_alignment_011 -- Use 1 space(s) after [ to align the colon",
-                "ERROR: dimensions.sv(7)sv_alignment_011 -- Use 1 space(s) after [ to align the colon",
-                "ERROR: dimensions.sv(9)sv_alignment_011 -- Use 1 space(s) after [ to align the colon",
+                "ERROR: dimensions.sv(3)sv_alignment_011 -- Use 1 space(s) after [ to align the dimension",
+                "ERROR: dimensions.sv(7)sv_alignment_011 -- Use 1 space(s) after [ to align the dimension",
+                "ERROR: dimensions.sv(9)sv_alignment_011 -- Use 1 space(s) after [ to align the dimension",
+                "ERROR: dimensions.sv(14)sv_alignment_011 -- Use 2 space(s) after [ to align the dimension",
+                "ERROR: dimensions.sv(14)sv_alignment_011 -- Use 1 space(s) after [ to align the dimension",
+                "ERROR: dimensions.sv(15)sv_alignment_011 -- Use 1 space(s) after [ to align the dimension",
             ],
             only(lOutput, "sv_alignment"),
         )
@@ -1069,7 +1072,7 @@ class test_rules(unittest.TestCase):
                 "ERROR: alignment.sv(7)sv_alignment_006 -- Use 1 space(s) before =",
                 "ERROR: alignment.sv(8)sv_alignment_004 -- Align valid in column 18",
                 "ERROR: alignment.sv(9)sv_alignment_004 -- Align data in column 18",
-                "ERROR: alignment.sv(9)sv_alignment_011 -- Use 1 space(s) after [ to align the colon",
+                "ERROR: alignment.sv(9)sv_alignment_011 -- Use 1 space(s) after [ to align the dimension",
                 "ERROR: alignment.sv(10)sv_alignment_004 -- Align wide in column 18",
                 "ERROR: alignment.sv(16)sv_alignment_002 -- Align ( in column 19",
             ],

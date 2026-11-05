@@ -59,8 +59,6 @@ The plan, with the tools evaluated, is in the "Verilog and SystemVerilog" tab of
 (reading files, style rules, lint and design analysis) are done; see :doc:`../systemverilog`. Step 5, breadth, is
 under way: the entries below.
 
-* **Alignment inside packed dimensions**: sv_alignment_011 aligns the colons of the first packed dimension of each
-  declaration, by spaces after the bracket; the least significant bounds, and further dimensions, are not aligned.
 * **Indentation not checked yet**: continuation lines are checked to be indented more than their statement, and fixed
   by **continuation_indent** levels; continuation lines indented more, such as arguments aligned after their bracket,
   are not checked. The contents of expressions, such as multi-line assignment patterns and randomize with blocks, are
