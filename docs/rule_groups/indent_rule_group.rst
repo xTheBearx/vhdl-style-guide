@@ -103,6 +103,7 @@ Rules Enforcing Indent Rule Group
 * `sv_indent_001 <../sv_indent_rules.html#sv-indent-001>`_
 * `sv_indent_002 <../sv_indent_rules.html#sv-indent-002>`_
 * `sv_indent_003 <../sv_indent_rules.html#sv-indent-003>`_
+* `sv_indent_004 <../sv_indent_rules.html#sv-indent-004>`_
 * `type_001 <../type_rules.html#type-001>`_
 * `type_005 <../type_rules.html#type-005>`_
 * `type_012 <../type_rules.html#type-012>`_
