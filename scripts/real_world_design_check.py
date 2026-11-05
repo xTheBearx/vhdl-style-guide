@@ -42,7 +42,8 @@ def run_design(dDesign, sProjectDirectory, iTimeout):
     with tempfile.TemporaryDirectory(prefix="mhsg_design_check_") as sDirectory:
         sConfiguration = os.path.join(sDirectory, "design.yaml")
         with open(sConfiguration, "w", encoding="utf-8") as oFile:
-            yaml.safe_dump({"design": dDesign["design"]}, oFile)
+            # rule enables rules disabled by default for a design, such as the design for test rules with test_mode
+            yaml.safe_dump({"design": dDesign["design"], "rule": dDesign.get("rule") or {}}, oFile)
         fStart = time.time()
         try:
             oProcess = subprocess.run(

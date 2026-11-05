@@ -1415,19 +1415,20 @@ class test_design_analysis(unittest.TestCase):
     def test_starc_design_for_test(self):
         # In test mode, scan_mode is 1: the divided clock selected away from its divider and the gated clock forced on
         # pass; the second divider, the gate on en_r and the multiplexer on sel_r do not. A latch transparent in test
-        # mode and one on the inverted clock pass; the one enabled by a register does not. During scan shift, scan_en is
-        # 1 and releases pin, but not pin2
+        # mode and one on the inverted clock pass; the one enabled by a register does not. The clock gate whose enable is
+        # latched while the clock is low passes, as its enable is forced. During scan shift, scan_en is 1 and releases
+        # pin, but not pin2
         lRules = ("design_039", "design_040", "design_041", "design_042")
         dRules = {s: {"disable": False} for s in lRules}
         dKeys = {"test_mode": {"scan_mode": 1}, "scan_shift": {"scan_en": 1}}
         self.assertEqual(
             [
-                ("starc_dft.vhd", 42, "design_039", "In test mode, the clock of r(1) comes from register div2_q, not from a top-level input"),
-                ("starc_dft.vhd", 69, "design_039", "In test mode, the clock of r(3) passes a gate whose other input, en_r, is not held in test mode"),
-                ("starc_dft.vhd", 86, "design_039", "In test mode, the clock of r(4) passes a clock multiplexer whose select, sel_r, is not held in test mode"),
-                ("starc_dft.vhd", 99, "design_040", "In test mode, clock clk reaches 8 registers on the rising edge and 1 on the falling edge"),
-                ("starc_dft.vhd", 121, "design_041", "Latch lb is neither transparent in test mode nor enabled by the inverted clock"),
-                ("starc_dft.vhd", 127, "design_042", "During scan shift, the direction of inout port pin2 is not fixed"),
+                ("starc_dft.vhd", 44, "design_039", "In test mode, the clock of r(1) comes from register div2_q, not from a top-level input"),
+                ("starc_dft.vhd", 71, "design_039", "In test mode, the clock of r(3) passes a gate whose other input, en_r, is not held in test mode"),
+                ("starc_dft.vhd", 88, "design_039", "In test mode, the clock of r(4) passes a clock multiplexer whose select, sel_r, is not held in test mode"),
+                ("starc_dft.vhd", 101, "design_040", "In test mode, clock clk reaches 9 registers on the rising edge and 1 on the falling edge"),
+                ("starc_dft.vhd", 123, "design_041", "Latch lb is neither transparent in test mode nor enabled by the inverted clock"),
+                ("starc_dft.vhd", 146, "design_042", "During scan shift, the direction of inout port pin2 is not fixed"),
             ],
             sorted(t for t in self.findings("starc_dft_top", "starc_dft.vhd", dRules=dRules, dDesignKeys=dKeys) if t[2] in lRules),
         )
@@ -1437,13 +1438,13 @@ class test_design_analysis(unittest.TestCase):
         self.assertIn(
             (
                 "starc_dft.vhd",
-                68,
+                70,
                 "design_039",
                 "In test mode, the clock of r(2) passes a gate whose other input, logic of en_r, scan_mode, is not held in test mode",
             ),
             lFindings,
         )
-        self.assertEqual(10, len(lFindings), lFindings)
+        self.assertEqual(11, len(lFindings), lFindings)
 
     def test_test_mode_values(self):
         # The values of test_mode and scan_shift are 0 or 1

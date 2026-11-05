@@ -10,7 +10,7 @@ entity starc_dft_top is
     scan_mode : in    std_logic;
     scan_en   : in    std_logic;
     d         : in    std_logic;
-    q         : out   std_logic_vector(10 downto 0);
+    q         : out   std_logic_vector(11 downto 0);
     pin       : inout std_logic;
     pin2      : inout std_logic
   );
@@ -28,10 +28,12 @@ architecture rtl of starc_dft_top is
   signal gclk    : std_logic;
   signal gclk2   : std_logic;
   signal mclk    : std_logic;
-  signal r       : std_logic_vector(5 downto 0);
+  signal r       : std_logic_vector(6 downto 0);
   signal lt      : std_logic;
   signal li      : std_logic;
   signal lb      : std_logic;
+  signal icg_en  : std_logic;
+  signal icg_clk : std_logic;
 
 begin
 
@@ -119,6 +121,23 @@ begin
   begin
     if g_r = '1' then
       lb <= d;
+    end if;
+  end process;
+
+  -- A clock gate as clock gating cells are built: the enable latched while the clock is low, forced in test mode
+  process (clk, en_r, scan_mode) is
+  begin
+    if clk = '0' then
+      icg_en <= en_r or scan_mode;
+    end if;
+  end process;
+
+  icg_clk <= clk and icg_en;
+
+  process (icg_clk) is
+  begin
+    if rising_edge(icg_clk) then
+      r(6) <= d;
     end if;
   end process;
 

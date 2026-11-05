@@ -3164,14 +3164,17 @@ design_cases:
   design: *id017
   expected:
   - - examples/design/starc_dft.vhd
-    - 107
+    - 109
     - Synthesis infers a latch for lt in starc_dft_top
   - - examples/design/starc_dft.vhd
-    - 114
+    - 116
     - Synthesis infers a latch for li in starc_dft_top
   - - examples/design/starc_dft.vhd
-    - 121
+    - 123
     - Synthesis infers a latch for lb in starc_dft_top
+  - - examples/design/starc_dft.vhd
+    - 131
+    - Synthesis infers a latch for icg_en in starc_dft_top
 - rule: design_003
   name: STARC design for test
   design: *id017
@@ -3213,23 +3216,26 @@ design_cases:
   design: *id017
   expected:
   - - examples/design/starc_dft.vhd
-    - 51
+    - 53
     - Clock clk is gated by logic into div_clk (1 register)
   - - examples/design/starc_dft.vhd
-    - 68
+    - 70
     - Clock clk is gated by logic into gclk (1 register)
   - - examples/design/starc_dft.vhd
-    - 69
+    - 71
     - Clock clk is gated by logic into gclk2 (1 register)
   - - examples/design/starc_dft.vhd
-    - 86
+    - 88
     - Clock clk is gated by logic into mclk (1 register)
+  - - examples/design/starc_dft.vhd
+    - 135
+    - Clock clk is gated by logic into icg_clk (1 register)
 - rule: design_013
   name: STARC design for test
   design: *id017
   expected:
   - - examples/design/starc_dft.vhd
-    - 42
+    - 44
     - Clock div2_q is made by a register from clk (1 register)
 - rule: design_014
   name: STARC design for test

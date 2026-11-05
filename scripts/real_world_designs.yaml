@@ -1201,6 +1201,38 @@ designs:
   - 'rtl/ibex_core.sv(1461)design_007 -- Path of 77 logic levels into instance cs_registers_i in ibex_core, more than 48'
   - 'rtl/ibex_id_stage.sv(616)design_007 -- Path of 59 logic levels into instance controller_i in ibex_id_stage, more than 48'
   - 'rtl/ibex_id_stage.sv(798)design_007 -- Path of 59 logic levels to register branch_jump_set_done_q in ibex_id_stage, more than 48'
+- name: ibex_register_file_latch
+  project: ibex
+  requires: [read_slang]
+  # The latch register file with its clock gates, in test mode: the design for test rules
+  design:
+    top: ibex_register_file_latch
+    include_directories:
+    - vendor/lowrisc_ip/ip/prim/rtl
+    libraries:
+    - name: work
+      files:
+      - rtl/ibex_pkg.sv
+      - rtl/ibex_cheriot_pkg.sv
+      - vendor/lowrisc_ip/ip/prim_generic/rtl/prim_clock_gating.sv
+      - rtl/ibex_register_file_latch.sv
+    test_mode:
+      test_en_i: 1
+  rule:
+    design_039: {disable: false}
+    design_040: {disable: false}
+    design_041: {disable: false}
+    design_042: {disable: false}
+  known:
+  # Real by the rule: the register file takes a reset synchronized outside it
+  - 'rtl/ibex_register_file_latch.sv(344)design_015 -- Reset rst_ni is released asynchronously: it resets registers clocked by g_plain_rf.clk_int without a reset synchronizer'
+  # The latches of the register file and of the clock gates, by design
+  - 'rtl/ibex_register_file_latch.sv(382)design_002 -- Synthesis infers a latch for g_plain_rf.mem in ibex_register_file_latch (992 latches)'
+  - 'vendor/lowrisc_ip/ip/prim_generic/rtl/prim_clock_gating.sv(23)design_002 -- Synthesis infers a latch for en_latch in prim_clock_gating (32 latches)'
+  - 'vendor/lowrisc_ip/ip/prim_generic/rtl/prim_clock_gating.sv(26)design_012 -- Clock clk_i is gated by logic into g_plain_rf.clk_int (1 register)'
+  # Real by STARC 3.3.4.2: the latches of the register file open while the clock is high, also in test mode; the clock
+  # gates, whose enables test_en_i forces, pass the clock in test mode and are not reported
+  - 'rtl/ibex_register_file_latch.sv(382)design_041 -- Latch g_plain_rf.mem (992 bits) is open while clock clk_i is high, not transparent in test mode'
 - name: common_cells_cdc_fifo_gray
   project: common_cells
   requires: [read_slang]

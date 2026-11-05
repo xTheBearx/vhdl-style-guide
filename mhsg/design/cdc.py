@@ -1419,8 +1419,24 @@ class Analysis:
                         continue
                     if any(b in setClockNets for b in lOutputs):
                         continue
+                    if self.part_of_latch(lOutputs, oDomain.net):
+                        continue
                     dReaders.setdefault((oDomain.key, oCell.module, oCell.name), (oDomain, oCell))
         self.clock_as_data = list(dReaders.values())
+
+    def part_of_latch(self, lOutputs, oClockNet):
+        """
+        Whether logic reading a clock only feeds the data of latches that the clock enables, or nothing: the
+        multiplexers Yosys makes for a latch written as if the clock is low, the data is taken.
+        """
+        for oNet in lOutputs:
+            for oReader, sPort, _ in self.flat.readers.get(oNet, []):
+                if oReader is None or oReader.type not in netlist.LATCH_TYPES or sPort != "D":
+                    return False
+                oEnable = oReader.connections.get("EN", [None])[0]
+                if self.through_transparent(oEnable)[0] != oClockNet:
+                    return False
+        return True
 
     # Waivers
 
