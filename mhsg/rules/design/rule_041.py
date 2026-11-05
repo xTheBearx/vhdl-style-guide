@@ -31,7 +31,6 @@ class rule_041(Rule):
         oTest = oContext.test_mode()
         if oTest is None:
             return []
-        oFlat = oTest.flat
         lReturn = []
         for oCell, sPin, iLevel in oTest.clocked_cells():
             if oCell.type not in netlist.LATCH_TYPES:
