@@ -25,10 +25,10 @@ Deferred for now: these need Vivado and Libero installed.
 Design analysis
 ---------------
 
-* **Formal reachability of states and liveness.** design_025 checks branches with SymbiYosys; states are covered
-  through the branches that enter them. Cover checks of states as such, properties that something always happens
-  again (liveness), and proofs of more branches in parallel are not done. SymbiYosys is not packaged for Ubuntu; it
-  needs the YosysHQ OSS CAD Suite, so CI runs design_025 only to the message that it is missing.
+* **Formal reachability of states and liveness.** design_025 checks branches with SymbiYosys, its proofs in
+  parallel; states are covered through the branches that enter them. Cover checks of states as such, and properties
+  that something always happens again (liveness), are not done. SymbiYosys is not packaged for Ubuntu: CI runs
+  design_025 in the design-oss job, with the OSS CAD Suite.
 * **Black box libraries for more primitives.** The transceivers of Intel and Microchip, and memory controllers, are
   IP cores whose names the vendor tools choose: they are declared with the transceiver and memory_controller
   archetypes, not in libraries. The Intel and Lattice libraries cover the common primitives and the ECP5 SERDES. The
@@ -61,16 +61,15 @@ under way: the entries below.
 
 * **Alignment inside packed dimensions**: sv_alignment_011 aligns the colons of the first packed dimension of each
   declaration, by spaces after the bracket; the least significant bounds, and further dimensions, are not aligned.
-* **Indentation not checked yet**: the exact indent of continuation lines (sv_indent_002 checks only that they are
-  indented more than their statement), the contents of expressions (multi-line assignment patterns, randomize with
-  blocks), preprocessor directives and inactive :code:`\`ifdef` branches. Verible's formatter has rules for each;
-  they need studying before mhsg checks them. Its macro tests (formatter_macro_test.cc) put directives at the top
-  level of a file flush left, and the code of an :code:`\`ifdef` branch there too; none shows a directive inside a
-  module or a begin-end block, which is the case that matters.
-* **Inactive** :code:`\`ifdef` **branches and macro arguments** are kept as unclassified tokens (about 11% of the
-  tokens of ibex, common_cells and picorv32, most in the arguments of macros such as :code:`\`ASSERT` and
-  :code:`\`uvm_info`), so rules do not check them. Parsing each branch with its defines set, and macro arguments
-  that are expressions, would let rules check them.
+* **Indentation not checked yet**: continuation lines are checked to be indented more than their statement, and fixed
+  by **continuation_indent** levels; continuation lines indented more, such as arguments aligned after their bracket,
+  are not checked. The contents of expressions, such as multi-line assignment patterns and randomize with blocks, are
+  not checked; Verible's formatter has rules for them.
+* **Code the syntax tree does not have**: the code of inactive :code:`\`ifdef` branches is classified from parses with
+  the macros of their conditions switched, at most 8 of them, and the arguments of macro uses where the macros place
+  them, so rules check both; rules that read the syntax tree, such as the lint rules, do not see them, and macro
+  arguments are not indented by sv_indent_001. The bodies of macro definitions, which are text until a macro is used,
+  are not checked.
 * **Files with syntax errors** are checked by the SystemVerilog rules up to the first error only, and not fixed.
   Checking the code after it would need slang's recovery to be trusted, or each module parsed on its own. The
   defines and include directories of the systemverilog section let fewer files fall in this case; the real-world
@@ -92,6 +91,3 @@ under way: the entries below.
 * **Generics of VHDL entities under a Verilog top** are passed on when every elaboration of the instance gives it the
   same values; an instance in a generate loop, or in a module elaborated with several sets of parameters, that gets
   other values each time would need one copy of its module per set, as Yosys makes for Verilog modules.
-* **Black boxes in Verilog designs with read_slang**: the modules made for black boxes are read with read_verilog
-  -lib before the design; whether read_slang links instances to them is not known. Yosys has cell models for Xilinx
-  only among the vendors with black box libraries.
