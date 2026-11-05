@@ -68,12 +68,13 @@ under way: the entries below.
   the macros of their conditions switched, at most 8 of them, and the arguments of macro uses where the macros place
   them, so rules check both. The lint rules lint the code of inactive branches in the file on its own with the
   macros switched, and report the warnings in the code macro arguments expand to at the arguments; the other rules
-  that read the syntax tree do not see either, and macro arguments are not indented by sv_indent_001. The bodies of macro definitions are classified where the first use of
-  each macro in the file places them, and checked but for their indentation; the bodies of macros the file does not
-  use are not checked.
-* **Files with syntax errors** are checked and fixed but for the part of each design unit with an error, from the
-  line of its first error to the end of the unit, where slang's syntax tree may be wrong. Checking that part too would
-  need slang's recovery inside a unit to be trusted, or each item of the unit parsed on its own.
+  that read the syntax tree do not see either, and macro arguments are not indented by sv_indent_001. The bodies of
+  macro definitions are classified where the first use of each macro in the file places them, and checked but for
+  their indentation; the bodies of macros the file does not use are not checked.
+* **Files with syntax errors** are checked and fixed but for the part of each item of a design unit with an error,
+  from the line of the error to the end of the item, where slang's syntax tree may be wrong; for an error outside the
+  items, such as in the header of a module, the rest of the unit. Checking that part too would need slang's recovery
+  inside an item to be trusted.
 * **STARC items with judgement**: resource sharing, Gray encoding of states and the like are left to review; the rules
   on loop bounds and common expressions compare the code as written, so loop bounds given by parameters, and
   expressions written differently, are not checked.

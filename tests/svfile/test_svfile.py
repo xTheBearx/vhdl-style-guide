@@ -600,8 +600,8 @@ class test_rules(unittest.TestCase):
         self.assertEqual([f"ERROR: {sCopy}(2)sv_syntax_001 -- Syntax error: expected expression"], oResult.stdout.splitlines())
 
     def test_code_before_a_syntax_error(self):
-        # The code before the first syntax error is checked and fixed, the code after it, to the end of its module,
-        # is not
+        # The code before the syntax error is checked and fixed, and so are the items of the module after the one with
+        # the error; the item with the error is not, from the line of the error
         sText = "module e;\nlogic  x ;\n    always_comb begin\n    x=a;\n    end\n    assign y = a +;\n  logic   z ;\nendmodule\n"
         with tempfile.TemporaryDirectory() as sTemporary:
             sCopy = os.path.join(sTemporary, "e.sv")
@@ -625,13 +625,15 @@ class test_rules(unittest.TestCase):
                 f"ERROR: {sCopy}(4)sv_whitespace_008 -- Add a space around the operator",
                 f"ERROR: {sCopy}(4)sv_whitespace_008 -- Add a space around the operator",
                 f"ERROR: {sCopy}(6)sv_syntax_001 -- Syntax error: expected expression",
+                f"ERROR: {sCopy}(7)sv_indent_001 -- Use 4 spaces for indent",
+                f"ERROR: {sCopy}(7)sv_whitespace_003 -- Remove space before semicolon",
             ],
             oResult.stdout.splitlines(),
         )
-        self.assertEqual("module e;\n    logic  x;\n    always_comb begin\n        x = a;\n    end\n    assign y = a +;\n  logic   z ;\nendmodule\n", sAfter)
+        self.assertEqual("module e;\n    logic  x;\n    always_comb begin\n        x = a;\n    end\n    assign y = a +;\n    logic   z;\nendmodule\n", sAfter)
 
     def test_units_after_a_syntax_error(self):
-        # A syntax error leaves its module alone, from its line on; the modules before and after it are checked
+        # A syntax error leaves its item alone, from its line on; the other items and modules are checked
         sText = "module a;\nlogic x;\nendmodule\n\nmodule b;\n    logic y;\n    wire w = ;\n  logic v;\nendmodule\n\nmodule c;\nlogic z;\nendmodule\n"
         with tempfile.TemporaryDirectory() as sTemporary:
             sCopy = os.path.join(sTemporary, "u.sv")
@@ -648,6 +650,8 @@ class test_rules(unittest.TestCase):
             [
                 f"ERROR: {sCopy}(2)sv_indent_001 -- Use 4 spaces for indent",
                 f"ERROR: {sCopy}(7)sv_syntax_001 -- Syntax error: expected expression",
+                f"ERROR: {sCopy}(8)sv_alignment_004 -- Align v in column 11",
+                f"ERROR: {sCopy}(8)sv_indent_001 -- Use 4 spaces for indent",
                 f"ERROR: {sCopy}(12)sv_indent_001 -- Use 4 spaces for indent",
             ],
             [s for s in oResult.stdout.splitlines() if "sv_comment" not in s and "sv_file" not in s],
