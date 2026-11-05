@@ -95,6 +95,7 @@ class svFile(vhdl.vhdlFile):
         )
         self.dTokenAtOffset = {o.offset: o for o in self.lAllObjects if getattr(o, "offset", None) is not None}
         self.syntax_errors = syntax_errors(self.syntax_tree)
+        mark_error_units(self.lAllObjects, error_spans(self.syntax_tree, self.buffer_id, self.line_offsets))
         self.lint_model = None
         vhdl.set_code_tags(self.lAllObjects)
         self.oTokenMap = self.build_token_map()
@@ -158,6 +159,55 @@ class svFile(vhdl.vhdlFile):
 PREPROCESSOR_DIAGNOSTICS = {"UnknownDirective", "CouldNotOpenIncludeFile", "UndefinedMacro", "UnknownDiagPragma"}
 # Diagnostics of style that sv_label_001 reports and fixes; the syntax tree is complete
 STYLE_DIAGNOSTICS = {"EndNameMismatch", "EndNameNotEmpty"}
+
+
+def error_spans(oTree, iBuffer, lLineOffsets):
+    """
+    The (first, last) offsets of the parts of a file slang may have parsed wrongly: in each design unit, such as a
+    module or a package, that holds a syntax error, from the line of its first error to its end; for an error outside
+    the units, from that line to the next unit. slang parses the code before an error as written, and starts again at
+    the next unit. An error in an included file makes the whole file such a part.
+    """
+    lErrors = []
+    for oDiagnostic in oTree.diagnostics:
+        sName = str(oDiagnostic.code).replace("DiagCode(", "").rstrip(")")
+        if not oDiagnostic.isError() or sName in PREPROCESSOR_DIAGNOSTICS | STYLE_DIAGNOSTICS:
+            continue
+        if oDiagnostic.location.buffer.id != iBuffer:
+            return [(0, float("inf"))]
+        lErrors.append(oDiagnostic.location.offset)
+    if not lErrors:
+        return []
+    lUnits = []
+    for oMember in getattr(oTree.root, "members", None) or []:
+        oFirst = oMember.getFirstToken()
+        oLast = oMember.getLastToken()
+        if oFirst is None or oLast is None or oFirst.location.buffer.id != iBuffer or oLast.location.buffer.id != iBuffer:
+            continue
+        lUnits.append((oFirst.location.offset, oLast.location.offset + len(oLast.rawText)))
+    lUnits.sort()
+    dSpans = {}
+    for iError in sorted(lErrors):
+        iLine = lLineOffsets[bisect.bisect_right(lLineOffsets, iError) - 1] if lLineOffsets else 0
+        tUnit = next(((a, b) for a, b in lUnits if a <= iError <= b), None)
+        iEnd = tUnit[1] if tUnit is not None else min((a for a, b in lUnits if a > iError), default=float("inf"))
+        # The first error of a unit starts its part
+        dSpans.setdefault(iEnd, (iLine, iEnd))
+    return list(dSpans.values())
+
+
+def mark_error_units(lTokens, lSpans):
+    """Marks in_error the tokens of the parts of a file that slang may have parsed wrongly, see error_spans."""
+    if not lSpans:
+        return
+    lOffsets = [(i, o.offset) for i, o in enumerate(lTokens) if getattr(o, "offset", None) is not None]
+    for iFirst, iLast in lSpans:
+        lInside = [i for i, iOffset in lOffsets if iFirst <= iOffset <= iLast]
+        if not lInside:
+            continue
+        # The whitespace and comments between the tokens of the part are in it too
+        for oToken in lTokens[lInside[0] : lInside[-1] + 1]:
+            oToken.in_error = True
 
 
 def in_buffer(oNode, iBuffer):
