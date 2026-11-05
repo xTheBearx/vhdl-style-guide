@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import language, parser, violation
-from mhsg.rules.sv_indent import rule_004
+from mhsg.rules.sv_indent.rule_004 import expanded_lines
 from mhsg.rules.sv_tree import before_errors
 from mhsg.rules.token_indent import token_indent as Rule
 from mhsg.svFile import tokens
@@ -62,7 +62,7 @@ class rule_002(Rule):
         setLists = set()
         if getattr(oFile, "dNodes", None) is not None:
             dLines = {id(o.get_tokens()[-1]): o for o in lLines if not isinstance(o.get_tokens()[-1], parser.comment)}
-            setLists = set(rule_004.expanded_lines(oFile, dLines, int(self.continuation_indent) * self.indent_size, self.indent_size))
+            setLists = set(expanded_lines(oFile, dLines, int(self.continuation_indent) * self.indent_size, self.indent_size))
         for oToi in lLines:
             lLine = oToi.get_tokens()
             oToken = lLine[-1]
