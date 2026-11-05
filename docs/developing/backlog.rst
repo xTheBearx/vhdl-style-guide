@@ -61,9 +61,9 @@ under way: the entries below.
 
 * **Indentation not checked yet**: continuation lines are checked to be indented more than their statement, and fixed
   by **continuation_indent** levels; continuation lines indented more, such as arguments aligned after their bracket,
-  are not checked. Assignment patterns over several lines are checked by sv_indent_004; the contents of other
-  expressions, such as randomize with blocks and calls inside conditions, are not; Verible's formatter has rules for
-  them.
+  are not checked. Assignment patterns, call arguments and randomize with constraints whose opening bracket ends
+  its line are checked by sv_indent_004, as Verible lays them out; the other ways Verible breaks lines, such as a
+  call on the right of a blocking assignment, which it lays out in several ways, are not.
 * **Code the syntax tree does not have**: the code of inactive :code:`\`ifdef` branches is classified from parses with
   the macros of their conditions switched, at most 8 of them, and the arguments of macro uses where the macros place
   them, so rules check both; rules that read the syntax tree, such as the lint rules, do not see them, and macro

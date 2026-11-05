@@ -253,14 +253,15 @@ class test_rules(unittest.TestCase):
 
     def test_continuation_lines(self):
         # Only the continuation lines at or left of their statement are reported: the aligned arguments, the closing
-        # bracket, the line after the attribute and the next expression of the case item are not
+        # bracket, the line after the attribute and the next expression of the case item are not. The arguments of the
+        # call whose ( ends its line are sv_indent_004's
         _, lOutput, sAfter = self.run_mhsg(["--fix"], "continuation.sv")
         self.assertEqual(read("continuation.fixed.sv"), sAfter)
         _, lOutput, _ = self.run_mhsg(["-ap"], "continuation.sv")
         self.assertEqual(
             [
                 "ERROR: continuation.sv(9)sv_indent_002 -- Indent the continuation line by 8 spaces",
-                "ERROR: continuation.sv(17)sv_indent_002 -- Indent the continuation line by 12 spaces",
+                "ERROR: continuation.sv(17)sv_indent_004 -- Indent the line of the list by 12 spaces",
             ],
             only(lOutput, "sv_indent"),
         )
@@ -415,8 +416,18 @@ class test_rules(unittest.TestCase):
         self.assertEqual(read("patterns.fixed.sv"), sAfter)
         _, lOutput, _ = self.run_mhsg(["-ap"], "patterns.sv")
         self.assertEqual(13, len([s for s in lOutput if ")sv_indent_004 " in s]))
-        self.assertIn("ERROR: patterns.sv(13)sv_indent_004 -- Indent the line of the assignment pattern by 16 spaces", lOutput)
+        self.assertIn("ERROR: patterns.sv(13)sv_indent_004 -- Indent the line of the list by 16 spaces", lOutput)
         self.assertEqual([], only(self.run_mhsg(["-ap"], "patterns.fixed.sv")[1], "sv_indent"))
+
+    def test_expanded_list_indent(self):
+        # The arguments of a call and the constraints of a randomize with whose bracket ends its line are one level in,
+        # two in the condition of an if, as Verible lays them out; arguments after the ( are left alone
+        _, lOutput, sAfter = self.run_mhsg(["--fix"], "lists.sv")
+        self.assertEqual(read("lists.fixed.sv"), sAfter)
+        _, lOutput, _ = self.run_mhsg(["-ap"], "lists.sv")
+        self.assertEqual(9, len([s for s in lOutput if ")sv_indent_004 " in s]))
+        self.assertIn("ERROR: lists.sv(6)sv_indent_004 -- Indent the line of the list by 16 spaces", lOutput)
+        self.assertEqual([], only(self.run_mhsg(["-ap"], "lists.fixed.sv")[1], "sv_indent"))
 
     def test_escaped_identifier_keeps_its_space(self):
         # An escaped identifier ends at whitespace: removing the space before the semicolon would change the code
