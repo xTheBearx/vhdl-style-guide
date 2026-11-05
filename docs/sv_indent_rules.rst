@@ -22,7 +22,7 @@ line continuing the comment at the end of the line above, aligned with it, stays
 
 Continuation lines, such as the second line of a long expression, are checked by sv_indent_002; preprocessor
 directives by sv_indent_003. Code in an inactive branch of a conditional directive is indented as where its branch
-is active. A file with syntax errors, whose levels may be wrong near the errors, is not checked, see sv_syntax_001.
+is active. In a design unit with a syntax error, the code from the error on is not checked, see sv_syntax_001.
 
 Two options follow other styles. **list_indent**, 1 by default, is the number of levels the ports and parameters
 of a declaration and the connections of an instance are indented; Verible's formatter indents them by its wrap

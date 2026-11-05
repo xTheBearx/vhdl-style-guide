@@ -576,7 +576,8 @@ class test_rules(unittest.TestCase):
         self.assertEqual([f"ERROR: {sCopy}(2)sv_syntax_001 -- Syntax error: expected expression"], oResult.stdout.splitlines())
 
     def test_code_before_a_syntax_error(self):
-        # The code before the first syntax error is checked, the code after it is not, and nothing is fixed
+        # The code before the first syntax error is checked and fixed, the code after it, to the end of its module,
+        # is not
         sText = "module e;\nlogic  x ;\n    always_comb begin\n    x=a;\n    end\n    assign y = a +;\n  logic   z ;\nendmodule\n"
         with tempfile.TemporaryDirectory() as sTemporary:
             sCopy = os.path.join(sTemporary, "e.sv")
@@ -603,7 +604,30 @@ class test_rules(unittest.TestCase):
             ],
             oResult.stdout.splitlines(),
         )
-        self.assertEqual(sText, sAfter)
+        self.assertEqual("module e;\n    logic  x;\n    always_comb begin\n        x = a;\n    end\n    assign y = a +;\n  logic   z ;\nendmodule\n", sAfter)
+
+    def test_units_after_a_syntax_error(self):
+        # A syntax error leaves its module alone, from its line on; the modules before and after it are checked
+        sText = "module a;\nlogic x;\nendmodule\n\nmodule b;\n    logic y;\n    wire w = ;\n  logic v;\nendmodule\n\nmodule c;\nlogic z;\nendmodule\n"
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sCopy = os.path.join(sTemporary, "u.sv")
+            with open(sCopy, "w", encoding="utf-8") as oFile:
+                oFile.write(sText)
+            oResult = subprocess.run(
+                [sys.executable, "bin/mhsg", "-f", sCopy, "-ap", "-of", "syntastic"],
+                cwd=sRoot,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+        self.assertEqual(
+            [
+                f"ERROR: {sCopy}(2)sv_indent_001 -- Use 4 spaces for indent",
+                f"ERROR: {sCopy}(7)sv_syntax_001 -- Syntax error: expected expression",
+                f"ERROR: {sCopy}(12)sv_indent_001 -- Use 4 spaces for indent",
+            ],
+            [s for s in oResult.stdout.splitlines() if "sv_comment" not in s and "sv_file" not in s],
+        )
 
     def test_lint(self):
         _, lOutput, _ = self.run_mhsg(["--lint_only", "--rule_set", "none"], "lint.sv")
