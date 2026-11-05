@@ -61,14 +61,16 @@ under way: the entries below.
 
 * **Indentation not checked yet**: continuation lines are checked to be indented more than their statement, and fixed
   by **continuation_indent** levels; continuation lines indented more, such as arguments aligned after their bracket,
-  are not checked. Assignment patterns over several lines are checked by sv_indent_004; the contents of other
-  expressions, such as randomize with blocks and calls inside conditions, are not; Verible's formatter has rules for
-  them.
+  are not checked. Assignment patterns, call arguments and randomize with constraints whose opening bracket ends
+  its line are checked by sv_indent_004, as Verible lays them out; the other ways Verible breaks lines, such as a
+  call on the right of a blocking assignment, which it lays out in several ways, are not.
 * **Code the syntax tree does not have**: the code of inactive :code:`\`ifdef` branches is classified from parses with
   the macros of their conditions switched, at most 8 of them, and the arguments of macro uses where the macros place
-  them, so rules check both; rules that read the syntax tree, such as the lint rules, do not see them, and macro
-  arguments are not indented by sv_indent_001. The bodies of macro definitions, which are text until a macro is used,
-  are not checked.
+  them, so rules check both. The lint rules lint the code of inactive branches in the file on its own with the
+  macros switched, and report the warnings in the code macro arguments expand to at the arguments; the other rules
+  that read the syntax tree do not see either, and macro arguments are not indented by sv_indent_001. The bodies of
+  macro definitions are classified where the first use of each macro in the file places them, and checked but for
+  their indentation; the bodies of macros the file does not use are not checked.
 * **Files with syntax errors** are checked and fixed but for the part of each item of a design unit with an error,
   from the line of the error to the end of the item, where slang's syntax tree may be wrong; for an error outside the
   items, such as in the header of a module, the rest of the unit. Checking that part too would need slang's recovery
@@ -85,8 +87,7 @@ under way: the entries below.
   the minimum gates of a basic block is not checked. The catalogue the set was made from records each item's limits
   and its Verible equivalent, kept in the notes of the set.
 * **SystemVerilog designs without the yosys-slang plugin**: Yosys' own reader handles Verilog and part of
-  SystemVerilog; ibex and common_cells need the plugin, which is not packaged for Ubuntu. ibex_core and the gray-code
-  CDC FIFO of common_cells are checked with the plugin of the OSS CAD Suite, in the design-oss job of CI.
-* **Generics of VHDL entities under a Verilog top** are passed on when every elaboration of the instance gives it the
-  same values; an instance in a generate loop, or in a module elaborated with several sets of parameters, that gets
-  other values each time would need one copy of its module per set, as Yosys makes for Verilog modules.
+  SystemVerilog, and the plugin is not packaged for Ubuntu; design analysis says so when the reader fails, and the
+  tools of the design section, or MHSG_YOSYS, name a Yosys that has it, such as that of the OSS CAD Suite. ibex_core
+  and the gray-code CDC FIFO of common_cells are checked with it in the design-oss job of CI. Converting the files
+  with sv2v for Yosys' own reader was not tried: sv2v could not be fetched where mhsg was developed.

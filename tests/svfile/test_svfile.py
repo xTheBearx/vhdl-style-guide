@@ -90,15 +90,17 @@ class test_svfile(unittest.TestCase):
         )
 
     def test_macro_arguments(self):
-        # The arguments of a macro use are classified where the macro places them, and checked; the body of the
-        # definition is not
+        # The arguments of a macro use are classified where the macro places them, and the body of the definition
+        # where its use places it, so both are checked
         sText = "`define CHECK(name, cond) assert property (@(posedge clk) cond);\nmodule m (input logic clk, a, b);\n    `CHECK(eq, a==b)\nendmodule\n"
         lTokens = tokens_of(sText)
         lEquals = [o for o in lTokens if o.get_value() == "=="]
         self.assertEqual(1, len(lEquals))
         self.assertTrue(lEquals[0].macro_argument)
         self.assertIsInstance(lEquals[0], tokens.of("EqualityExpression", "operatorToken"))
-        self.assertIsInstance([o for o in lTokens if o.get_value() == "assert"][0], tokens.unclassified)
+        oAssert = [o for o in lTokens if o.get_value() == "assert"][0]
+        self.assertIsInstance(oAssert, tokens.of("AssertPropertyStatement", "keyword"))
+        self.assertTrue(oAssert.macro_body)
 
     def test_classification(self):
         lTokens = tokens_of(read("sample.sv"))
@@ -253,14 +255,15 @@ class test_rules(unittest.TestCase):
 
     def test_continuation_lines(self):
         # Only the continuation lines at or left of their statement are reported: the aligned arguments, the closing
-        # bracket, the line after the attribute and the next expression of the case item are not
+        # bracket, the line after the attribute and the next expression of the case item are not. The arguments of the
+        # call whose ( ends its line are sv_indent_004's
         _, lOutput, sAfter = self.run_mhsg(["--fix"], "continuation.sv")
         self.assertEqual(read("continuation.fixed.sv"), sAfter)
         _, lOutput, _ = self.run_mhsg(["-ap"], "continuation.sv")
         self.assertEqual(
             [
                 "ERROR: continuation.sv(9)sv_indent_002 -- Indent the continuation line by 8 spaces",
-                "ERROR: continuation.sv(17)sv_indent_002 -- Indent the continuation line by 12 spaces",
+                "ERROR: continuation.sv(17)sv_indent_004 -- Indent the line of the list by 12 spaces",
             ],
             only(lOutput, "sv_indent"),
         )
@@ -415,8 +418,18 @@ class test_rules(unittest.TestCase):
         self.assertEqual(read("patterns.fixed.sv"), sAfter)
         _, lOutput, _ = self.run_mhsg(["-ap"], "patterns.sv")
         self.assertEqual(13, len([s for s in lOutput if ")sv_indent_004 " in s]))
-        self.assertIn("ERROR: patterns.sv(13)sv_indent_004 -- Indent the line of the assignment pattern by 16 spaces", lOutput)
+        self.assertIn("ERROR: patterns.sv(13)sv_indent_004 -- Indent the line of the list by 16 spaces", lOutput)
         self.assertEqual([], only(self.run_mhsg(["-ap"], "patterns.fixed.sv")[1], "sv_indent"))
+
+    def test_expanded_list_indent(self):
+        # The arguments of a call and the constraints of a randomize with whose bracket ends its line are one level in,
+        # two in the condition of an if, as Verible lays them out; arguments after the ( are left alone
+        _, lOutput, sAfter = self.run_mhsg(["--fix"], "lists.sv")
+        self.assertEqual(read("lists.fixed.sv"), sAfter)
+        _, lOutput, _ = self.run_mhsg(["-ap"], "lists.sv")
+        self.assertEqual(9, len([s for s in lOutput if ")sv_indent_004 " in s]))
+        self.assertIn("ERROR: lists.sv(6)sv_indent_004 -- Indent the line of the list by 16 spaces", lOutput)
+        self.assertEqual([], only(self.run_mhsg(["-ap"], "lists.fixed.sv")[1], "sv_indent"))
 
     def test_escaped_identifier_keeps_its_space(self):
         # An escaped identifier ends at whitespace: removing the space before the semicolon would change the code
@@ -1058,6 +1071,25 @@ class test_rules(unittest.TestCase):
             ],
             [s for s in lOutput if "sv_lint_01" in s],
         )
+
+    def test_lint_of_inactive_code_and_macro_arguments(self):
+        # The code of the inactive branch is linted with WIDE defined, and the warning in the code a macro argument
+        # expands to is reported at the argument
+        _, lOutput, _ = self.run_mhsg(["--lint_only", "--rule_set", "none"], "lint_unparsed.sv")
+        self.assertEqual(
+            [
+                "ERROR: lint_unparsed.sv(9)sv_lint_001 -- Implicit conversion truncates from 8 to 4 bits",
+                "ERROR: lint_unparsed.sv(13)sv_lint_001 -- Implicit conversion truncates from 8 to 4 bits",
+            ],
+            only(lOutput, "sv_lint"),
+        )
+
+    def test_whole_lines_of_inactive_code(self):
+        # Every token of a line of an inactive branch is classified and checked, not only the first
+        lTokens = tokens_of("module m;\n`ifdef X\n    assign y = a&b;\n`endif\nendmodule\n")
+        oAnd = [o for o in lTokens if o.get_value() == "&"][0]
+        self.assertTrue(oAnd.inactive)
+        self.assertIsInstance(oAnd, tokens.of("BinaryAndExpression", "operatorToken"))
 
     def test_lint_of_a_file_alone(self):
         # Alone, top.sv uses a module the run does not know, so unused and undriven signals are not checked

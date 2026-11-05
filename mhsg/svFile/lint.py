@@ -55,8 +55,10 @@ class LintModel:
         setSeen = set()
         lAll = list(oTree.diagnostics) + lDiagnostics
         self.incomplete = any(oDiagnostic.isError() and diagnostic_name(oDiagnostic) in UNKNOWN for oDiagnostic in lAll)
+        oSourceManager = oCompilation.sourceManager
         for oDiagnostic in lDiagnostics:
-            if oDiagnostic.isError() or oDiagnostic.location.buffer.id != iBuffer:
+            oLocation = original_location(oSourceManager, oDiagnostic.location)
+            if oDiagnostic.isError() or oLocation.buffer.id != iBuffer:
                 continue
             sName = diagnostic_name(oDiagnostic)
             if self.incomplete and is_undriven_or_unused(sName):
@@ -65,11 +67,11 @@ class LintModel:
             if sName.startswith("Unused") and sMessage.startswith("unused package"):
                 # A package is used by other files: linted on its own, all of it looks unused
                 continue
-            tKey = (oDiagnostic.location.offset, sName)
+            tKey = (oLocation.offset, sName)
             if tKey in setSeen:
                 continue
             setSeen.add(tKey)
-            self.diagnostics.append(Diagnostic(oDiagnostic.location.offset, sName, sMessage))
+            self.diagnostics.append(Diagnostic(oLocation.offset, sName, sMessage))
         self.diagnostics.sort(key=lambda o: o.offset)
 
     @classmethod
@@ -91,3 +93,13 @@ class LintModel:
 def diagnostic_name(oDiagnostic):
     """The name of a slang diagnostic, such as WidthTruncate."""
     return str(oDiagnostic.code).replace("DiagCode(", "").rstrip(")")
+
+
+def original_location(oSourceManager, oLocation):
+    """The location of a diagnostic in the file: in the arguments of a macro use for one in the code they expand to."""
+    try:
+        if oSourceManager.isMacroArgLoc(oLocation):
+            return oSourceManager.getFullyOriginalLoc(oLocation)
+    except (RuntimeError, ValueError, TypeError):
+        pass
+    return oLocation

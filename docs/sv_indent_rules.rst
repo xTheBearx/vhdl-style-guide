@@ -68,7 +68,8 @@ own, may be at the level of that line.
 The fix indents a continuation line like the continuation line before it in the statement, or else by
 **continuation_indent** levels, 1 by default, more than the line that starts its statement: 4 spaces, Verible's
 wrap width; a closing bracket goes to the level of that line.
-Continuation lines indented more, such as arguments aligned after their opening bracket, are left as they are.
+Continuation lines indented more, such as arguments aligned after their opening bracket, are left as they are, and
+the lines of lists whose opening bracket ends its line are sv_indent_004's.
 
 **Violation**
 
@@ -128,15 +129,18 @@ sv_indent_004
 
 |phase_4| |error| |indent|
 
-Alias: :code:`sv_indent_assignment_pattern`
+Alias: :code:`sv_indent_expanded_list`
 
-This rule checks the indent of an assignment pattern written over several lines, as Verible's formatter lays it
-out: when the opening '{ ends its line, each element that starts a line is indented **continuation_indent**
-levels, 1 by default, more than the line of the '{, and a closing } that starts a line is at the level of that
-line. A pattern in an element is indented from the line of its own '{. As Verible does, the elements of a pattern
-that is the value of a continuous assign are indented one level more, and its closing } one level.
+This rule checks the indent of a list written over several lines, as Verible's formatter lays it out: the elements
+of an assignment pattern, the arguments of a call, and the constraints of a randomize with. When the opening '{,
+( or { ends its line, each element that starts a line is indented **continuation_indent** levels, 1 by default,
+more than the line of the opening bracket, and a closing bracket that starts a line is at the level of that line.
+A list in an element is indented from the line of its own opening bracket. As Verible does, a list in the
+condition of an if is indented one level more, its closing bracket one level, and so are the elements of an
+assignment pattern that is the value of a continuous assign.
 
-A pattern whose first element is on the line of its '{ is left as written.
+A list whose first element is on the line of its opening bracket, such as arguments aligned after the
+parenthesis, is left as written; sv_indent_002 checks it.
 
 **Violation**
 

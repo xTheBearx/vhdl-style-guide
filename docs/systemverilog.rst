@@ -22,8 +22,10 @@ installed with MHSG. The file is kept exactly as written: directives such as :co
 macro uses and the code in inactive :code:`\`ifdef` branches are all kept, and a fix changes only what the rules
 change. The code in inactive branches is checked as it is where its branch is active, from parses of the file with
 the macros of the conditions switched, and the arguments of macro uses as they are where the macro places them; the
-lint rules, which read the syntax tree, do not see either. The bodies of macro definitions are not checked, and
-spaces next to a macro use are not changed.
+lint rules report warnings in both: in the code of an inactive branch from the file linted with the macros switched,
+and in the code a macro argument expands to at the argument. The bodies of macro definitions are checked as they are
+where the first use of the macro in the file places them, but for their indentation, and spaces next to a macro use
+are not changed.
 
 Preprocessor settings
 ---------------------

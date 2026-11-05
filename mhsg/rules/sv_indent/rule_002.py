@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg import language, parser, violation
+from mhsg.rules.sv_indent.rule_004 import expanded_lines
 from mhsg.rules.sv_tree import before_errors
 from mhsg.rules.token_indent import token_indent as Rule
 from mhsg.svFile import tokens
@@ -21,7 +22,8 @@ class rule_002(Rule):
     The fix indents a continuation line like the continuation line before it in the statement, or else by
     **continuation_indent** levels, 1 by default, more than the line that starts its statement: 4 spaces, Verible's
     wrap width; a closing bracket goes to the level of that line.
-    Continuation lines indented more, such as arguments aligned after their opening bracket, are left as they are.
+    Continuation lines indented more, such as arguments aligned after their opening bracket, are left as they are, and
+    the lines of lists whose opening bracket ends its line are sv_indent_004's.
 
     **Violation**
 
@@ -55,10 +57,16 @@ class rule_002(Rule):
             if isinstance(oItem, tokens.token):
                 dPrevious[id(oItem)] = oPrevious
                 oPrevious = oItem
-        for oToi in oFile.get_tokens_at_beginning_of_line_matching(self.lTokens):
+        lLines = oFile.get_tokens_at_beginning_of_line_matching(self.lTokens)
+        # The lines of lists whose opening bracket ends its line are sv_indent_004's
+        setLists = set()
+        if getattr(oFile, "dNodes", None) is not None:
+            dLines = {id(o.get_tokens()[-1]): o for o in lLines if not isinstance(o.get_tokens()[-1], parser.comment)}
+            setLists = set(expanded_lines(oFile, dLines, int(self.continuation_indent) * self.indent_size, self.indent_size))
+        for oToi in lLines:
             lLine = oToi.get_tokens()
             oToken = lLine[-1]
-            if isinstance(oToken, parser.comment):
+            if isinstance(oToken, parser.comment) or id(oToken) in setLists:
                 continue
             if isinstance(oToken, (tokens.preprocessor, tokens.unclassified)):
                 continue

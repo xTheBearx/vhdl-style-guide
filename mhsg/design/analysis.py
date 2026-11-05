@@ -228,7 +228,7 @@ def design_rules(oConfig, lLocalRules):
 def run(commandLineArguments, oConfig):
     """Runs design analysis and prints its report. Returns the exit status: 1 for errors, else 0."""
     oDesign = project.from_configuration(oConfig.dConfig)
-    oTools = tools.find(bGhdl=oDesign.language != "systemverilog")
+    oTools = tools.find(bGhdl=oDesign.language != "systemverilog", dPaths=getattr(oDesign, "tools", None))
     dRecord = provenance.record(commandLineArguments, oConfig, oTools)
     _, lRules = design_rules(oConfig, commandLineArguments.local_rules)
     if oDesign.work_directory:
