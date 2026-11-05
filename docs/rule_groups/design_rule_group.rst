@@ -46,3 +46,7 @@ Rules Enforcing Design Rule Group
 * `design_040 <../design_rules.html#design-040>`_
 * `design_041 <../design_rules.html#design-041>`_
 * `design_042 <../design_rules.html#design-042>`_
+* `design_043 <../design_rules.html#design-043>`_
+* `design_044 <../design_rules.html#design-044>`_
+* `design_045 <../design_rules.html#design-045>`_
+* `design_046 <../design_rules.html#design-046>`_

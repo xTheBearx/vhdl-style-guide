@@ -1063,3 +1063,98 @@ be constant when the test_mode and scan_shift inputs of the design section have 
 **Violation**
 
 The output enable of an inout port driven by a register, with no forcing in scan shift.
+
+design_043
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_hierarchy_id`
+
+This rule checks the hierarchy identification of the modules of the design: each module name begins with an ID,
+matching **id_pattern** and followed by **separator**, such as A_top; the ID of a module instantiated in another
+extends the ID of that module, such as AB_ctrl under A_top; and the output ports of a module begin with its ID and
+the separator, such as A_data.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: a design need not follow
+          it.
+
+With IDs, a name says where in the hierarchy a module is, and an output port where its signal comes from, also in
+the netlist after synthesis. IDs are compared without regard to case; black boxes are not checked.
+
+**Violation**
+
+An entity B_ctrl instantiated in A_top, or an output port data of A_top.
+
+design_044
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_output_net_name`
+
+This rule checks that the net an output port of an instance drives has the name of that port in the module that
+holds the instance.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: a design need not follow
+          it.
+
+A signal that keeps its name from the output that drives it to the inputs that read it can be followed through the
+hierarchy by name, in the code, in simulation and in the netlist. Outputs left open or tied to a constant are not
+checked; black boxes are not checked.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   u_fifo : entity work.fifo port map (empty => fifo_is_empty, ...);
+
+**Fix**
+
+.. code-block:: vhdl
+
+   u_fifo : entity work.fifo port map (empty => empty, ...);
+
+design_045
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_path_blocks`
+
+This rule reports register to register paths whose logic spans more than **maximum_blocks** blocks, 2 by default:
+the instances that hold the source registers, the logic between them and the register at the end.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: it is meant for designs
+          whose blocks are synthesized and timed on their own.
+
+A path through the logic of several blocks is timed only when they are put together, and changing one block
+changes the timing of the others. Registered outputs, or inputs, keep each path within two blocks. The top-level
+module counts as a block when it holds logic; instances that only pass signals through do not count. For
+speed-critical paths, STARC asks for two blocks, or three with speed problems, which **maximum_blocks** sets.
+
+**Violation**
+
+An output of block u_a computed by logic from its registers, read by logic in block u_b before a register of u_c.
+
+design_046
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_logic_between_instances`
+
+This rule reports modules that hold logic between their instances: logic that an output of an instance drives
+and that drives an input of an instance, without a register in between.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: it is meant for the parents
+          of the blocks on speed-critical paths.
+
+A module whose instances are connected only by wires keeps each path inside the blocks, where it is synthesized and
+timed with them; logic in the parent adds to paths that cross from one block to the next.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   u_b : entity work.b port map (d => a_out and enable, ...);

@@ -70,6 +70,7 @@ DESIGNS = [
             "scan_shift": {"scan_en": 1},
         },
     ),
+    ("STARC design items 4", {"top": "A_top", "libraries": [{"name": "work", "files": ["starc_design4.vhd"]}]}),
 ]
 
 

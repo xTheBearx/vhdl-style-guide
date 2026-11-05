@@ -61,3 +61,4 @@ Rules Enforcing Lint Rule Group
 * `sv_lint_013 <../sv_lint_rules.html#sv-lint-013>`_
 * `sv_lint_014 <../sv_lint_rules.html#sv-lint-014>`_
 * `sv_lint_015 <../sv_lint_rules.html#sv-lint-015>`_
+* `sv_lint_016 <../sv_lint_rules.html#sv-lint-016>`_

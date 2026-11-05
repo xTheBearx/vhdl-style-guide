@@ -314,6 +314,10 @@ design_039: design_test_mode_clock
 design_040: design_test_mode_clock_edge
 design_041: design_test_mode_latch
 design_042: design_scan_shift_bidirectional
+design_043: design_hierarchy_id
+design_044: design_output_net_name
+design_045: design_path_blocks
+design_046: design_logic_between_instances
 element_association_100: element_association_space_between_others_and_arrow
 element_association_101: element_association_space_after_arrow
 element_association_102: element_association_space_before_arrow
@@ -1363,6 +1367,7 @@ sv_lint_012: sv_lint_verilator_multiple_drivers
 sv_lint_013: sv_lint_verilator_incomplete_case
 sv_lint_014: sv_lint_partial_parameter_override
 sv_lint_015: sv_lint_reused_parameter_name
+sv_lint_016: sv_lint_global_macro_in_module_file
 sv_alignment_001: sv_alignment_port_declarations
 sv_alignment_002: sv_alignment_named_ports
 sv_alignment_003: sv_alignment_named_parameters

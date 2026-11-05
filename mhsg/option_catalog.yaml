@@ -572,11 +572,24 @@ options:
     item_type: string
     label: Assumptions
     description: "Top inputs held at a value in every cycle, written port=value, such as test_mode=0."
+  separator:
+    type: string
+    label: Separator
+    description: The text between the hierarchy ID and the rest of a module or port name, such as _.
+  maximum_blocks:
+    type: integer
+    minimum: 1
+    label: Most blocks of a path
+    description: The most blocks, instances that hold logic or registers, a register to register path may span.
   maximum_gates:
     type: integer
     minimum: 1
     label: Most gates of a module
     description: The most two-input NAND gate equivalents the logic of one module may have, without the instances in it.
+  id_pattern:
+    type: string
+    label: Hierarchy ID pattern
+    description: The regular expression a hierarchy identification, the beginning of a module name before the separator, must match, such as [A-Z]+.
   method:
     type: enum
     values: [component, entity]

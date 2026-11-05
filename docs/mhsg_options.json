@@ -1971,7 +1971,11 @@
         "design_039",
         "design_040",
         "design_041",
-        "design_042"
+        "design_042",
+        "design_043",
+        "design_044",
+        "design_045",
+        "design_046"
       ]
     },
     {
@@ -2153,7 +2157,8 @@
         "sv_lint_012",
         "sv_lint_013",
         "sv_lint_014",
-        "sv_lint_015"
+        "sv_lint_015",
+        "sv_lint_016"
       ]
     },
     {
@@ -3492,6 +3497,11 @@
       "description": "Regular expressions, matched ignoring case, that the header comment at the start of a file must each match to record its changes.",
       "item_type": "string"
     },
+    "id_pattern": {
+      "type": "string",
+      "label": "Hierarchy ID pattern",
+      "description": "The regular expression a hierarchy identification, the beginning of a module name before the separator, must match, such as [A-Z]+."
+    },
     "if_control_statements_ends_group": {
       "type": "enum",
       "label": "If control statements end group",
@@ -3680,6 +3690,12 @@
       "type": "integer",
       "label": "Longest name",
       "description": "The most characters in a name other than that of a module or instance.",
+      "minimum": 1
+    },
+    "maximum_blocks": {
+      "type": "integer",
+      "label": "Most blocks of a path",
+      "description": "The most blocks, instances that hold logic or registers, a register to register path may span.",
       "minimum": 1
     },
     "maximum_depth": {
@@ -4174,6 +4190,11 @@
         "yes",
         "no"
       ]
+    },
+    "separator": {
+      "type": "string",
+      "label": "Separator",
+      "description": "The text between the hierarchy ID and the rest of a module or port name, such as _."
     },
     "severity": {
       "type": "string",
@@ -21357,6 +21378,209 @@
         "design"
       ],
       "summary": "This rule reports bidirectional top-level ports whose direction is not fixed during the shift of the scan chains.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_043",
+      "alias": "design_hierarchy_id",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule checks the hierarchy identification of the modules of the design: each module name begins with an ID, matching id_pattern and followed by separator, such as A_top; the ID of a module instantiated in another extends the ID of that module, such as AB_ctrl under A_top; and the output ports of a module begin with its ID and the separator, such as A_data.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "id_pattern",
+          "default": "[A-Za-z][A-Za-z0-9]*",
+          "definition": "id_pattern"
+        },
+        {
+          "name": "separator",
+          "default": "_",
+          "definition": "separator"
+        }
+      ]
+    },
+    {
+      "id": "design_044",
+      "alias": "design_output_net_name",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule checks that the net an output port of an instance drives has the name of that port in the module that holds the instance.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_045",
+      "alias": "design_path_blocks",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports register to register paths whose logic spans more than maximum_blocks blocks, 2 by default: the instances that hold the source registers, the logic between them and the register at the end.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "maximum_blocks",
+          "default": 2,
+          "definition": "maximum_blocks"
+        }
+      ]
+    },
+    {
+      "id": "design_046",
+      "alias": "design_logic_between_instances",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports modules that hold logic between their instances: logic that an output of an instance drives and that drives an input of an instance, without a register in between.",
       "documentation": "design_rules.rst",
       "options": [
         {
@@ -67110,6 +67334,53 @@
         "lint"
       ],
       "summary": "This rule checks that the parameters of a module are not named like parameters of another module of the run.",
+      "documentation": "sv_lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_lint_016",
+      "alias": "sv_lint_global_macro_in_module_file",
+      "category": "sv_lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that macros used by several files of a run, the design-wide parameters, are defined in a file of their own, not in the file of a module, an interface or a program.",
       "documentation": "sv_lint_rules.rst",
       "options": [
         {

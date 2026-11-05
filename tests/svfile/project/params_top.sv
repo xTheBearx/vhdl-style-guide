@@ -6,5 +6,5 @@ module params_top #(
 );
     params_sub #(.WIDTH(WIDTH)) u_partial (.clk_i(clk_i));
 
-    params_sub #(.WIDTH(WIDTH), .DEPTH(2)) u_full (.clk_i(clk_i));
+    params_sub #(.WIDTH(WIDTH), .DEPTH(`PARAMS_DEPTH)) u_full (.clk_i(clk_i));
 endmodule

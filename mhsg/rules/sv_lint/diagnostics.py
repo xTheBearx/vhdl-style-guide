@@ -8,6 +8,8 @@ from mhsg.lint.rule import Rule as LintRule
 # sv_lint_015
 PARTIAL_OVERRIDE = "MhsgPartialParameterOverride"
 REUSED_PARAMETER = "MhsgReusedParameterName"
+# A macro used by other files, defined in the file of a module, see sv_lint_016
+GLOBAL_MACRO = "MhsgGlobalMacroInModuleFile"
 
 
 class Rule(LintRule):

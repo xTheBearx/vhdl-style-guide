@@ -427,3 +427,38 @@ that declares a name keeps it.
 
    module fifo #(parameter FIFO_WIDTH = 8) (...);
    module top #(parameter TOP_WIDTH = 16) (...);
+
+sv_lint_016
+###########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`sv_lint_global_macro_in_module_file`
+
+This rule checks that macros used by several files of a run, the design-wide parameters, are defined in a file of
+their own, not in the file of a module, an interface or a program.
+
+.. NOTE:: This is a lint rule. It runs in lint mode, on the SystemVerilog files of a run compiled together. It is
+          disabled by default: a design need not follow it.
+
+A file of global parameters, included where they are used, shows what the whole design depends on, and changes in
+one place. A macro defined in the file of a module depends on the order the files are compiled in, and on that
+module being part of the design.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   // fifo.sv
+   `define BUS_WIDTH 32
+   module fifo (...);
+
+   // top.sv
+   logic [`BUS_WIDTH - 1:0] data;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   // global_parameters.svh
+   `define BUS_WIDTH 32

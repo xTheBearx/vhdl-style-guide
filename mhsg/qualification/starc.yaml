@@ -1072,6 +1072,9 @@ cases:
 - rule: sv_lint_015
   file: examples/svfile/alignment.fixed.sv
   expected: []
+- rule: sv_lint_016
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
 - rule: sv_literal_001
   file: examples/svfile/declarations.sv
   expected:
@@ -1221,10 +1224,10 @@ cases:
   - - 108
     - Name 64 with a parameter
 - rule: sv_literal_010
-  file: examples/svfile/project/params_top.sv
+  file: examples/svfile/starc_more2.sv
   expected:
-  - - 9
-    - Name 2 with a parameter
+  - - 51
+    - Name 2'b11 with a parameter
 - rule: sv_literal_010
   file: examples/svfile/alignment.fixed.sv
   expected: []
@@ -2303,6 +2306,25 @@ design_cases:
   name: clean design
   design: *id001
   expected: []
+- rule: design_043
+  name: clean design
+  design: *id001
+  expected:
+  - - examples/design/clean.vhd
+    - 17
+    - Output port q of clean_top does not begin with clean_
+- rule: design_044
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_045
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_046
+  name: clean design
+  design: *id001
+  expected: []
 - rule: design_003
   name: undeclared signal
   design: &id002
@@ -2433,6 +2455,22 @@ design_cases:
   design: *id002
   expected: []
 - rule: design_042
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_043
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_044
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_045
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_046
   name: undeclared signal
   design: *id002
   expected: []
@@ -2575,6 +2613,25 @@ design_cases:
   name: latch
   design: *id003
   expected: []
+- rule: design_043
+  name: latch
+  design: *id003
+  expected:
+  - - examples/design/latch.vhd
+    - 21
+    - Output ports q, r of latch_top do not begin with latch_
+- rule: design_044
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_045
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_046
+  name: latch
+  design: *id003
+  expected: []
 - rule: design_003
   name: combinational loop
   design: &id004
@@ -2711,6 +2768,34 @@ design_cases:
   design: *id004
   expected: []
 - rule: design_042
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_043
+  name: combinational loop
+  design: *id004
+  expected:
+  - - examples/design/loop.vhd
+    - 14
+    - Hierarchy ID loop of loop_pass does not extend ID loop of loop_top
+  - - examples/design/loop.vhd
+    - 14
+    - Output port y of loop_pass does not begin with loop_
+  - - examples/design/loop.vhd
+    - 40
+    - Output ports q, r of loop_top do not begin with loop_
+- rule: design_044
+  name: combinational loop
+  design: *id004
+  expected:
+  - - examples/design/loop.vhd
+    - 47
+    - 'Outputs of instance u_pass in loop_top drive nets of other names: y drives f'
+- rule: design_045
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_046
   name: combinational loop
   design: *id004
   expected: []
@@ -2853,6 +2938,37 @@ design_cases:
   - - examples/design/multiple_drivers.vhd
     - 52
     - During scan shift, the direction of inout port pin is not fixed
+- rule: design_043
+  name: multiple drivers
+  design: *id005
+  expected:
+  - - examples/design/multiple_drivers.vhd
+    - 37
+    - Hierarchy ID md of md_source does not extend ID md of md_top
+  - - examples/design/multiple_drivers.vhd
+    - 37
+    - Output port y of md_source does not begin with md_
+  - - examples/design/multiple_drivers.vhd
+    - 52
+    - Output port q of md_top does not begin with md_
+- rule: design_044
+  name: multiple drivers
+  design: *id005
+  expected:
+  - - examples/design/multiple_drivers.vhd
+    - 37
+    - 'Outputs of instance u_first in md_top drive nets of other names: y drives shared_net'
+  - - examples/design/multiple_drivers.vhd
+    - 43
+    - 'Outputs of instance u_second in md_top drive nets of other names: y drives shared_net'
+- rule: design_045
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_046
+  name: multiple drivers
+  design: *id005
+  expected: []
 - rule: design_003
   name: registers
   design: &id006
@@ -2992,6 +3108,25 @@ design_cases:
   name: registers
   design: *id006
   expected: []
+- rule: design_043
+  name: registers
+  design: *id006
+  expected:
+  - - examples/design/registers.vhd
+    - 35
+    - Output ports busy, q, ready, u of registers_top do not begin with registers_
+- rule: design_044
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_045
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_046
+  name: registers
+  design: *id006
+  expected: []
 - rule: design_003
   name: logic depth
   design: &id007
@@ -3125,6 +3260,34 @@ design_cases:
   design: *id007
   expected: []
 - rule: design_042
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_043
+  name: logic depth
+  design: *id007
+  expected:
+  - - examples/design/depth.vhd
+    - 16
+    - Hierarchy ID depth of depth_adder does not extend ID depth of depth_top
+  - - examples/design/depth.vhd
+    - 16
+    - Output port y of depth_adder does not begin with depth_
+  - - examples/design/depth.vhd
+    - 50
+    - Output port q of depth_top does not begin with depth_
+- rule: design_044
+  name: logic depth
+  design: *id007
+  expected:
+  - - examples/design/depth.vhd
+    - 41
+    - 'Outputs of instance u_adder in depth_top drive nets of other names: y drives sum'
+- rule: design_045
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_046
   name: logic depth
   design: *id007
   expected: []
@@ -3342,6 +3505,25 @@ design_cases:
   name: clock domain crossings
   design: *id008
   expected: []
+- rule: design_043
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 75
+    - Output port result of cdc_top does not begin with cdc_
+- rule: design_044
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_045
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_046
+  name: clock domain crossings
+  design: *id008
+  expected: []
 - rule: design_003
   name: reconvergence
   design: &id009
@@ -3502,6 +3684,25 @@ design_cases:
   name: reconvergence
   design: *id009
   expected: []
+- rule: design_043
+  name: reconvergence
+  design: *id009
+  expected:
+  - - examples/design/reconvergence.vhd
+    - 55
+    - Output port result of reconvergence_top does not begin with reconvergence_
+- rule: design_044
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_045
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_046
+  name: reconvergence
+  design: *id009
+  expected: []
 - rule: design_003
   name: black box
   design: &id010
@@ -3647,6 +3848,25 @@ design_cases:
   name: black box
   design: *id010
   expected: []
+- rule: design_043
+  name: black box
+  design: *id010
+  expected:
+  - - examples/design/black_box.vhd
+    - 50
+    - Output ports q, s of bb_top do not begin with bb_
+- rule: design_044
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_045
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_046
+  name: black box
+  design: *id010
+  expected: []
 - rule: design_003
   name: deep logic
   design: &id011
@@ -3780,6 +4000,25 @@ design_cases:
   design: *id011
   expected: []
 - rule: design_042
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_043
+  name: deep logic
+  design: *id011
+  expected:
+  - - examples/extra/design_007/deep.vhd
+    - 26
+    - Output port q of deep_top does not begin with deep_
+- rule: design_044
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_045
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_046
   name: deep logic
   design: *id011
   expected: []
@@ -3928,6 +4167,25 @@ design_cases:
   design: *id012
   expected: []
 - rule: design_042
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_043
+  name: reset domain crossing
+  design: *id012
+  expected:
+  - - examples/design/rdc.vhd
+    - 42
+    - Output port q of rdc_top does not begin with rdc_
+- rule: design_044
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_045
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_046
   name: reset domain crossing
   design: *id012
   expected: []
@@ -4085,6 +4343,28 @@ design_cases:
   - - examples/design/starc_design.vhd
     - 15
     - During scan shift, the direction of inout port pins is not fixed
+- rule: design_043
+  name: STARC design items
+  design: *id013
+  expected:
+  - - examples/design/starc_design.vhd
+    - 15
+    - Hierarchy ID starc of starc_driver does not extend ID starc of starc_design_top
+  - - examples/design/starc_design.vhd
+    - 80
+    - Output port q of starc_design_top does not begin with starc_
+- rule: design_044
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_045
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_046
+  name: STARC design items
+  design: *id013
+  expected: []
 - rule: design_003
   name: inout port connections
   design: &id014
@@ -4227,6 +4507,34 @@ design_cases:
   - - examples/design/inout_wire.v
     - 7
     - During scan shift, the direction of inout port pin_pad is not fixed
+- rule: design_043
+  name: inout port connections
+  design: *id014
+  expected:
+  - - examples/design/inout_wire.v
+    - 5
+    - Output port r of inout_pad does not begin with inout_
+  - - examples/design/inout_wire.v
+    - 7
+    - Hierarchy ID inout of inout_pad does not extend ID inout of inout_wire_top
+  - - examples/design/inout_wire.v
+    - 17
+    - Output ports pin_copy, q of inout_wire_top do not begin with inout_
+- rule: design_044
+  name: inout port connections
+  design: *id014
+  expected:
+  - - examples/design/inout_wire.v
+    - 21
+    - 'Outputs of instance u_pad in inout_wire_top drive nets of other names: r drives q'
+- rule: design_045
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_046
+  name: inout port connections
+  design: *id014
+  expected: []
 - rule: design_003
   name: STARC design items 2
   design: &id015
@@ -4405,6 +4713,34 @@ design_cases:
   - - examples/design/starc_design2.vhd
     - 106
     - During scan shift, the direction of inout port pin is not fixed
+- rule: design_043
+  name: STARC design items 2
+  design: *id015
+  expected:
+  - - examples/design/starc_design2.vhd
+    - 91
+    - Output port q of starc2_top does not begin with starc2_
+  - - examples/design/starc_design2.vhd
+    - 116
+    - Hierarchy ID starc2 of starc2_ram does not extend ID starc2 of starc2_top
+  - - examples/design/starc_design2.vhd
+    - 116
+    - Output port dout of starc2_ram does not begin with starc2_
+- rule: design_044
+  name: STARC design items 2
+  design: *id015
+  expected:
+  - - examples/design/starc_design2.vhd
+    - 116
+    - 'Outputs of instance u_ram in starc2_top drive nets of other names: dout drives q'
+- rule: design_045
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_046
+  name: STARC design items 2
+  design: *id015
+  expected: []
 - rule: design_003
   name: STARC design items 3
   design: &id016
@@ -4589,6 +4925,52 @@ design_cases:
   design: *id016
   expected: []
 - rule: design_042
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_043
+  name: STARC design items 3
+  design: *id016
+  expected:
+  - - examples/design/starc_design3.vhd
+    - 22
+    - Hierarchy ID starc3 of starc3_rstgen does not extend ID starc3 of starc3_top
+  - - examples/design/starc_design3.vhd
+    - 22
+    - Output port rst_n_o of starc3_rstgen does not begin with starc3_
+  - - examples/design/starc_design3.vhd
+    - 57
+    - Hierarchy ID starc3 of starc3_io does not extend ID starc3 of starc3_top
+  - - examples/design/starc_design3.vhd
+    - 57
+    - Output port o of starc3_io does not begin with starc3_
+  - - examples/design/starc_design3.vhd
+    - 102
+    - Hierarchy ID starc3 of starc3_core does not extend ID starc3 of starc3_top
+  - - examples/design/starc_design3.vhd
+    - 102
+    - Output port q of starc3_core does not begin with starc3_
+  - - examples/design/starc_design3.vhd
+    - 192
+    - Output ports q_a, q_b, q_core, q_ip and 1 more of starc3_top do not begin with starc3_
+- rule: design_044
+  name: STARC design items 3
+  design: *id016
+  expected:
+  - - examples/design/starc_design3.vhd
+    - 159
+    - 'Outputs of instance u_rst in starc3_top drive nets of other names: rst_n_o drives rst_sync_n'
+  - - examples/design/starc_design3.vhd
+    - 166
+    - 'Outputs of instance u_io in starc3_top drive nets of other names: o drives pad_d'
+  - - examples/design/starc_design3.vhd
+    - 172
+    - 'Outputs of instance u_core in starc3_top drive nets of other names: q drives q_core'
+- rule: design_045
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_046
   name: STARC design items 3
   design: *id016
   expected: []
@@ -4801,3 +5183,186 @@ design_cases:
   - - examples/design/starc_dft.vhd
     - 146
     - During scan shift, the direction of inout port pin2 is not fixed
+- rule: design_043
+  name: STARC design for test
+  design: *id017
+  expected:
+  - - examples/design/starc_dft.vhd
+    - 46
+    - Output port q of starc_dft_top does not begin with starc_
+- rule: design_044
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_045
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_046
+  name: STARC design for test
+  design: *id017
+  expected: []
+- rule: design_003
+  name: STARC design items 4
+  design: &id018
+    top: A_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/starc_design4.vhd
+  expected: []
+- rule: design_004
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_008
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_009
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_010
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_011
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_012
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_013
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_014
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_015
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_020
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_021
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_022
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_023
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_024
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_026
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_027
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_028
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_029
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_030
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_031
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_032
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_033
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_034
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_035
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_036
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_037
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_038
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_039
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_040
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_041
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_042
+  name: STARC design items 4
+  design: *id018
+  expected: []
+- rule: design_043
+  name: STARC design items 4
+  design: *id018
+  expected:
+  - - examples/design/starc_design4.vhd
+    - 51
+    - Hierarchy ID c of c_logic does not extend ID A of A_top
+  - - examples/design/starc_design4.vhd
+    - 90
+    - Output port badout of A_top does not begin with A_
+- rule: design_044
+  name: STARC design items 4
+  design: *id018
+  expected:
+  - - examples/design/starc_design4.vhd
+    - 80
+    - 'Outputs of instance u_ab in A_top drive nets of other names: ab_data drives ab_out'
+- rule: design_045
+  name: STARC design items 4
+  design: *id018
+  expected:
+  - - examples/design/starc_design4.vhd
+    - 51
+    - 'Paths into u_c.c_data span 3 blocks: the top level, u_ab, u_c'
+- rule: design_046
+  name: STARC design items 4
+  design: *id018
+  expected:
+  - - examples/design/starc_design4.vhd
+    - 90
+    - Module A_top holds logic between its instances (1 cell)
