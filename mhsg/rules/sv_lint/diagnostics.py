@@ -4,6 +4,11 @@
 from mhsg import language
 from mhsg.lint.rule import Rule as LintRule
 
+# The warnings of mhsg itself about the parameters of the modules of a run, see svFile/project.py, sv_lint_014 and
+# sv_lint_015
+PARTIAL_OVERRIDE = "MhsgPartialParameterOverride"
+REUSED_PARAMETER = "MhsgReusedParameterName"
+
 
 class Rule(LintRule):
     """Reports the slang warnings whose names the rule accepts, with slang's message."""

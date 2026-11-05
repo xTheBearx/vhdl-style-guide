@@ -35,3 +35,10 @@ Rules Enforcing Design Rule Group
 * `design_029 <../design_rules.html#design-029>`_
 * `design_030 <../design_rules.html#design-030>`_
 * `design_031 <../design_rules.html#design-031>`_
+* `design_032 <../design_rules.html#design-032>`_
+* `design_033 <../design_rules.html#design-033>`_
+* `design_034 <../design_rules.html#design-034>`_
+* `design_035 <../design_rules.html#design-035>`_
+* `design_036 <../design_rules.html#design-036>`_
+* `design_037 <../design_rules.html#design-037>`_
+* `design_038 <../design_rules.html#design-038>`_

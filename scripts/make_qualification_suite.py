@@ -52,6 +52,15 @@ DESIGNS = [
     ("STARC design items", {"top": "starc_design_top", "libraries": [{"name": "work", "files": ["starc_design.vhd"]}]}),
     ("inout port connections", {"top": "inout_wire_top", "libraries": [{"name": "work", "files": ["inout_wire.v"]}]}),
     ("STARC design items 2", {"top": "starc2_top", "libraries": [{"name": "work", "files": ["starc_design2.vhd"]}]}),
+    (
+        "STARC design items 3",
+        {
+            "top": "starc3_top",
+            "libraries": [{"name": "work", "files": ["starc_design3.vhd"]}],
+            "black_box_libraries": ["xilinx"],
+            "black_boxes": {"vendor_ip": {"ports": {"clk_i": "clock", "d_i": {"sync": "clk_i"}, "ready_o": "async"}}},
+        },
+    ),
 ]
 
 

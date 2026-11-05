@@ -83,6 +83,13 @@ Rules Disabled by Default
 * `design_029 <design_rules.html#design-029>`_
 * `design_030 <design_rules.html#design-030>`_
 * `design_031 <design_rules.html#design-031>`_
+* `design_032 <design_rules.html#design-032>`_
+* `design_033 <design_rules.html#design-033>`_
+* `design_034 <design_rules.html#design-034>`_
+* `design_035 <design_rules.html#design-035>`_
+* `design_036 <design_rules.html#design-036>`_
+* `design_037 <design_rules.html#design-037>`_
+* `design_038 <design_rules.html#design-038>`_
 * `expression_001 <expression_rules.html#expression-001>`_
 * `file_100 <file_rules.html#file-100>`_
 * `function_600 <function_rules.html#function-600>`_
@@ -257,6 +264,8 @@ Rules Disabled by Default
 * `sv_lint_011 <sv_lint_rules.html#sv-lint-011>`_
 * `sv_lint_012 <sv_lint_rules.html#sv-lint-012>`_
 * `sv_lint_013 <sv_lint_rules.html#sv-lint-013>`_
+* `sv_lint_014 <sv_lint_rules.html#sv-lint-014>`_
+* `sv_lint_015 <sv_lint_rules.html#sv-lint-015>`_
 * `sv_literal_003 <sv_literal_rules.html#sv-literal-003>`_
 * `sv_literal_004 <sv_literal_rules.html#sv-literal-004>`_
 * `sv_literal_005 <sv_literal_rules.html#sv-literal-005>`_

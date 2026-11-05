@@ -165,7 +165,8 @@ checks:
     title: Do not reuse a parameter name in different modules
     level: Recommendation 3
     severity: Note
-    status: design
+    rules:
+    - sv_lint_015
   1.1.4.4:
     title: Use a `define only inside the module where it is defined
     level: Recommendation 1
@@ -231,7 +232,8 @@ checks:
     title: Use one clock and one active edge wherever possible
     level: Recommendation 1
     severity: Warning
-    status: design
+    rules:
+    - design_035
   1.2.1.2:
     title: Never build RS latches or flip-flops out of gate primitives
     level: Rule
@@ -323,7 +325,8 @@ checks:
     title: Generate clocks in separate modules; group gated/multiplied clocks at top level
     level: Recommendation 1
     severity: Warning
-    status: design
+    rules:
+    - design_034
   1.4.1.2:
     title: Do not run logic synthesis on clock networks
     level: Suggestion
@@ -410,12 +413,15 @@ checks:
     title: Synchronize noisy external chip inputs against metastability
     level: Recommendation 2
     severity: Note
-    status: design
+    rules:
+    - design_008
+    note: 'Inputs declared async under cdc inputs in the design section.'
   1.5.2.1:
     title: Insert an inverted-clock latch at asynchronous interfaces
     level: Recommendation 3
     severity: Note
-    status: design
+    rules:
+    - design_038
   1.5.2.2:
     title: 'Technique: passing data into a faster clock domain'
     level: Suggestion
@@ -494,7 +500,8 @@ checks:
     title: Top level holds only clock/reset generators, RAM, ROM, I/O cells and top glue RTL
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - design_036
     note: 'Limits: allowed top level blocks clock_gen, reset_gen, ram, rom, io_cells, top_rtl.'
   1.6.2.1:
     title: 'Basic blocks: combinational inputs, registered (flip-flop) outputs'
@@ -557,7 +564,8 @@ checks:
     title: Instantiate ASIC I/O cells only at top level or in a dedicated I/O level
     level: Recommendation 3
     severity: Note
-    status: design
+    rules:
+    - design_037
   1.6.6.2:
     title: Very large ASICs cannot be synthesized flat from the top
     level: Suggestion
@@ -1882,7 +1890,8 @@ checks:
     title: When overriding, specify all of the lower module's parameters
     level: Suggestion
     severity: Note
-    status: design
+    rules:
+    - sv_lint_014
     note: Verilog only.
   3.2.4.3:
     title: Do not use defparam
@@ -1944,12 +1953,14 @@ checks:
     title: Do not connect clock, reset or tri-state outputs to black boxes
     level: Recommendation 3
     severity: Note
-    status: design
+    rules:
+    - design_033
   3.3.2.3:
     title: Black-box outputs must not drive clock, reset or tri-state enable pins
     level: Rule
     severity: Error
-    status: design
+    rules:
+    - design_032
   3.3.3.1:
     title: A clock must never feed a flip-flop D input
     level: Rule
@@ -2022,7 +2033,8 @@ checks:
     title: Put clock-generation modules at top level so DFT logic can be added
     level: Recommendation 3
     severity: Note
-    status: design
+    rules:
+    - design_034
   3.3.6.1:
     title: Block random logic driving async set/reset during test
     level: Rule
@@ -2051,7 +2063,8 @@ checks:
     title: Put reset-generation modules at top level so DFT logic can be added
     level: Recommendation 3
     severity: Note
-    status: design
+    rules:
+    - design_034
   3.3.7.1:
     title: Prevent skew between different clocks (during test)
     level: Recommendation 1
@@ -2061,7 +2074,8 @@ checks:
     title: Insert an inverted-clock latch on transfers between asynchronous clocks
     level: Recommendation 3
     severity: Note
-    status: design
+    rules:
+    - design_038
   3.3.8.1:
     title: Tri-state enables must be fixable from a primary input
     level: Recommendation 2
@@ -3104,7 +3118,8 @@ checks:
     title: Create generated clocks inside a clock-generator module
     level: Recommendation 1
     severity: Warning
-    status: design
+    rules:
+    - design_034
   5.2.1.3.3:
     title: Confirm all clocks are defined using derive_clocks
     level: Recommendation 1

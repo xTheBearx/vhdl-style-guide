@@ -303,6 +303,13 @@ design_028: design_tristate_enable_source
 design_029: design_bidirectional_in_one_block
 design_030: design_memory_outside_top
 design_031: design_clock_domains_per_block
+design_032: design_black_box_control_output
+design_033: design_control_into_black_box
+design_034: design_clock_reset_generation_block
+design_035: design_one_clock_one_edge
+design_036: design_top_level_registers
+design_037: design_io_cell_placement
+design_038: design_crossing_without_latch
 element_association_100: element_association_space_between_others_and_arrow
 element_association_101: element_association_space_after_arrow
 element_association_102: element_association_space_before_arrow
@@ -1350,6 +1357,8 @@ sv_lint_010: sv_lint_undriven
 sv_lint_011: sv_lint_verilator
 sv_lint_012: sv_lint_verilator_multiple_drivers
 sv_lint_013: sv_lint_verilator_incomplete_case
+sv_lint_014: sv_lint_partial_parameter_override
+sv_lint_015: sv_lint_reused_parameter_name
 sv_alignment_001: sv_alignment_port_declarations
 sv_alignment_002: sv_alignment_named_ports
 sv_alignment_003: sv_alignment_named_parameters

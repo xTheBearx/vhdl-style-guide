@@ -3055,3 +3055,94 @@ design_cases:
   name: STARC design items 2
   design: *id015
   expected: []
+- rule: design_001
+  name: STARC design items 3
+  design: &id016
+    top: starc3_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/starc_design3.vhd
+    black_box_libraries:
+    - xilinx
+    black_boxes:
+      vendor_ip:
+        ports:
+          clk_i: clock
+          d_i:
+            sync: clk_i
+          ready_o: async
+  expected: []
+- rule: design_002
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_003
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_004
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_005
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_006
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_007
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_008
+  name: STARC design items 3
+  design: *id016
+  expected:
+  - - examples/design/starc_design3.vhd
+    - 203
+    - b_r (clk_b) captures a_r (clk_a) without a synchronizer
+- rule: design_009
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_010
+  name: STARC design items 3
+  design: *id016
+  expected:
+  - - examples/design/starc_design3.vhd
+    - 182
+    - Clock clk_b is used as data
+- rule: design_011
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_012
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_013
+  name: STARC design items 3
+  design: *id016
+  expected:
+  - - examples/design/starc_design3.vhd
+    - 103
+    - Clock u_core.div_q is made by a register from clk_a (1 register)
+- rule: design_014
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_015
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_016
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_017
+  name: STARC design items 3
+  design: *id016
+  expected: []

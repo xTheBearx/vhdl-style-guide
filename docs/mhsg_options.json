@@ -1960,7 +1960,14 @@
         "design_028",
         "design_029",
         "design_030",
-        "design_031"
+        "design_031",
+        "design_032",
+        "design_033",
+        "design_034",
+        "design_035",
+        "design_036",
+        "design_037",
+        "design_038"
       ]
     },
     {
@@ -2140,7 +2147,9 @@
         "sv_lint_010",
         "sv_lint_011",
         "sv_lint_012",
-        "sv_lint_013"
+        "sv_lint_013",
+        "sv_lint_014",
+        "sv_lint_015"
       ]
     },
     {
@@ -3563,6 +3572,12 @@
         "remove_new_line",
         "ignore"
       ]
+    },
+    "io_cells": {
+      "type": "list",
+      "label": "I/O cells",
+      "description": "Black box types, as file-name style patterns, that are I/O cells: the input, output and bidirectional buffers at the pins of the chip.",
+      "item_type": "string"
     },
     "keywords": {
       "type": "list",
@@ -20796,6 +20811,360 @@
         "design"
       ],
       "summary": "This rule reports instances whose own registers are in more than one clock domain.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_032",
+      "alias": "design_black_box_control_output",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports black box outputs that drive a clock, an asynchronous reset or a tri-state enable, directly or through logic.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_033",
+      "alias": "design_control_into_black_box",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports clocks, asynchronous resets and tri-state outputs connected to inputs of black boxes that are not declared to take them.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_034",
+      "alias": "design_clock_reset_generation_block",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports clocks and asynchronous resets made inside the design outside of a clock or reset generation block: in the top-level module itself, or in a block under the top level that also holds registers they clock or reset.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_035",
+      "alias": "design_one_clock_one_edge",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports designs with registers in more than one clock domain, and clocks whose registers take both edges.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_036",
+      "alias": "design_top_level_registers",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports registers and latches in the top-level module itself, other than those that make clocks and resets.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_037",
+      "alias": "design_io_cell_placement",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports I/O cells instantiated below the top level, other than in a block that holds only I/O cells.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "io_cells",
+          "default": [
+            "IBUF*",
+            "OBUF*",
+            "IOBUF*",
+            "alt_inbuf*",
+            "alt_outbuf*",
+            "alt_iobuf*",
+            "INBUF*",
+            "OUTBUF*",
+            "BIBUF*",
+            "TRIBUFF*",
+            "IB",
+            "IBPU",
+            "IBPD",
+            "OB",
+            "OBZ",
+            "OBZPU",
+            "BB",
+            "BBPU",
+            "BBPD"
+          ],
+          "definition": "io_cells"
+        }
+      ]
+    },
+    {
+      "id": "design_038",
+      "alias": "design_crossing_without_latch",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports data from a register of one clock domain that reaches a register of an unrelated clock domain without passing a latch.",
       "documentation": "design_rules.rst",
       "options": [
         {
@@ -66455,6 +66824,100 @@
         "lint"
       ],
       "summary": "This rule reports case statements that do not cover every value of their selector and have no default branch (Verilator's CASEINCOMPLETE). Verilator lints the SystemVerilog files of a run when it is installed, see sv_lint_011.",
+      "documentation": "sv_lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_lint_014",
+      "alias": "sv_lint_partial_parameter_override",
+      "category": "sv_lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that an instance that sets parameters of a module sets all of them.",
+      "documentation": "sv_lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_lint_015",
+      "alias": "sv_lint_reused_parameter_name",
+      "category": "sv_lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that the parameters of a module are not named like parameters of another module of the run.",
       "documentation": "sv_lint_rules.rst",
       "options": [
         {

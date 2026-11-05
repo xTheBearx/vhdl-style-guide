@@ -528,6 +528,11 @@ options:
     type: integer
     label: Inputs of a look-up table
     description: The number of inputs of the look-up tables the design is mapped to, such as 6.
+  io_cells:
+    type: list
+    item_type: string
+    label: I/O cells
+    description: "Black box types, as file-name style patterns, that are I/O cells: the input, output and bidirectional buffers at the pins of the chip."
   maximum_stages:
     type: integer
     minimum: 1

@@ -1377,6 +1377,41 @@ class test_design_analysis(unittest.TestCase):
             sorted(t for t in self.findings("starc2_top", "starc_design2.vhd", dCdc=dCdc, dRules=dRules) if t[2] in ("design_028", "design_030", "design_031")),
         )
 
+    def test_starc_design_items_3(self):
+        # A black box output used as a clock; the rules disabled by default: a clock into a data input of a black box,
+        # a divider next to the registers it clocks, two clocks and both edges, registers in the top level, an I/O cell
+        # in a block with logic, and a crossing without a latch. The reset synchronizer and the IBUF in blocks of their
+        # own are not reported
+        dKeys = {
+            "black_box_libraries": ["xilinx"],
+            "black_boxes": {"vendor_ip": {"ports": {"clk_i": "clock", "d_i": {"sync": "clk_i"}, "ready_o": "async"}}},
+        }
+        lRules = [f"design_0{i}" for i in range(32, 39)]
+        dCdc = {"clocks": {"clk_a": "a", "clk_b": "b"}}
+        self.assertEqual(
+            [("starc_design3.vhd", 218, "design_032", "Black box output u_ip.ready_o drives the clock of ip_r")],
+            sorted(t for t in self.findings("starc3_top", "starc_design3.vhd", dCdc=dCdc, dDesignKeys=dKeys) if t[2] in lRules),
+        )
+        dRules = {s: {"disable": False} for s in lRules}
+        self.assertEqual(
+            [
+                (
+                    "starc_design3.vhd",
+                    94,
+                    "design_037",
+                    "I/O cell u_core.u_ibuf2 (IBUF) is in instance u_core, not in the top level or in a block of I/O cells",
+                ),
+                ("starc_design3.vhd", 103, "design_034", "Clock u_core.div_q is generated in block u_core, which also holds registers it drives"),
+                ("starc_design3.vhd", 182, "design_033", "Clock clk_b is connected to input d_i of black box u_ip"),
+                ("starc_design3.vhd", 193, "design_036", "Registers or latches in the top-level module, outside of blocks: a_r, b_r, ip_r, n_r"),
+                ("starc_design3.vhd", 203, "design_035", "The design has registers in 3 clock domains: clk_a, clk_b, u_ip.ready_o"),
+                ("starc_design3.vhd", 203, "design_038", "b_r (clk_b) takes data from a_r (clk_a) without a latch on the inverted clk_a"),
+                ("starc_design3.vhd", 211, "design_035", "Clock clk_a clocks 5 registers on the rising edge and 1 on the falling edge"),
+                ("starc_design3.vhd", 218, "design_032", "Black box output u_ip.ready_o drives the clock of ip_r"),
+            ],
+            sorted(t for t in self.findings("starc3_top", "starc_design3.vhd", dCdc=dCdc, dDesignKeys=dKeys, dRules=dRules) if t[2] in lRules),
+        )
+
     def test_registers(self):
         # ready_r changes once after reset and q_r has an enable: neither is reported
         self.assertEqual(
@@ -1610,6 +1645,8 @@ class test_design_analysis(unittest.TestCase):
                     "design_015",
                     "Reset locked is released asynchronously: it resets registers clocked by clk_pad without a reset synchronizer",
                 ),
+                # The lock output of the clock generator is an asynchronous output, not a reset of the box
+                ("black_box_cdc.vhd", 181, "design_032", "Black box output u_gen.locked drives the reset of locked_q"),
                 ("black_box_cdc.vhd", 187, "design_017", "Black box mystery has no declaration of its clock domain behaviour"),
             ],
             lFindings,

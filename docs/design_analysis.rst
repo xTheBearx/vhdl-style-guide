@@ -216,6 +216,15 @@ Design rules
 * Disabled by default: :code:`design_028` reports tri-state enables that come from registers rather than top inputs,
   a rule of design for test (STARC 3.3.8.1, 3.3.8.2); :code:`design_030` memories outside the top-level module
   (STARC 1.5.5.3); :code:`design_031` instances whose registers are in more than one clock domain (STARC 1.4.4.1).
+* :code:`design_032` reports black box outputs that drive a clock, an asynchronous reset or a tri-state enable,
+  other than outputs declared as clocks or resets of the box (STARC 3.3.2.3).
+* Disabled by default, for STARC: :code:`design_033` reports clocks, resets and tri-state outputs connected to black
+  box inputs not declared for them (3.3.2.2); :code:`design_034` clocks and resets made outside a block of their own
+  under the top level (1.4.1.1, 3.3.5.8, 3.3.6.5, 5.2.1.3.2); :code:`design_035` designs with more than one clock
+  domain or clocks used on both edges (1.2.1.1); :code:`design_036` registers in the top-level module itself (1.6.1.4);
+  :code:`design_037` I/O cells, the black boxes matching :code:`io_cells`, below the top level outside a block of I/O
+  cells (1.6.6.1); :code:`design_038` data crossing between unrelated clocks without a latch on the inverted source
+  clock (1.5.2.1, 3.3.7.2).
 * :code:`design_025`, disabled by default as it needs SymbiYosys and takes longer, reports branches that can never be
   taken from reset: it searches :code:`depth` cycles from reset for a way to take each branch, then tries to prove
   each branch it did not reach unreachable, within :code:`timeout` seconds each. Branches neither reached nor proven

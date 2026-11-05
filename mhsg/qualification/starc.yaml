@@ -538,7 +538,7 @@ cases:
   - - 1
     - 'Record the changes in the file header: modif|change|history|revision'
 - rule: sv_comment_006
-  file: examples/svfile/project/top.sv
+  file: examples/svfile/project/params_sub.sv
   expected:
   - - 1
     - 'Record the changes in the file header: modif|change|history|revision'
@@ -1066,6 +1066,12 @@ cases:
   expected:
   - - 12
     - Case values incompletely covered (example pattern 0x2) (Verilator CASEINCOMPLETE)
+- rule: sv_lint_014
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_015
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
 - rule: sv_literal_001
   file: examples/svfile/declarations.sv
   expected:
@@ -1215,10 +1221,10 @@ cases:
   - - 108
     - Name 64 with a parameter
 - rule: sv_literal_010
-  file: examples/svfile/starc_more2.sv
+  file: examples/svfile/project/params_top.sv
   expected:
-  - - 51
-    - Name 2'b11 with a parameter
+  - - 9
+    - Name 2 with a parameter
 - rule: sv_literal_010
   file: examples/svfile/alignment.fixed.sv
   expected: []
@@ -2250,6 +2256,37 @@ design_cases:
   name: clean design
   design: *id001
   expected: []
+- rule: design_032
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_033
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_034
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_035
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_036
+  name: clean design
+  design: *id001
+  expected:
+  - - examples/design/clean.vhd
+    - 18
+    - 'Registers or latches in the top-level module, outside of blocks: q'
+- rule: design_037
+  name: clean design
+  design: *id001
+  expected: []
+- rule: design_038
+  name: clean design
+  design: *id001
+  expected: []
 - rule: design_003
   name: undeclared signal
   design: &id002
@@ -2339,6 +2376,34 @@ design_cases:
   name: undeclared signal
   design: *id002
   expected: []
+- rule: design_032
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_033
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_034
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_035
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_036
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_037
+  name: undeclared signal
+  design: *id002
+  expected: []
+- rule: design_038
+  name: undeclared signal
+  design: *id002
+  expected: []
 - rule: design_003
   name: latch
   design: &id003
@@ -2425,6 +2490,37 @@ design_cases:
   design: *id003
   expected: []
 - rule: design_031
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_032
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_033
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_034
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_035
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_036
+  name: latch
+  design: *id003
+  expected:
+  - - examples/design/latch.vhd
+    - 17
+    - 'Registers or latches in the top-level module, outside of blocks: q'
+- rule: design_037
+  name: latch
+  design: *id003
+  expected: []
+- rule: design_038
   name: latch
   design: *id003
   expected: []
@@ -2523,6 +2619,34 @@ design_cases:
   name: combinational loop
   design: *id004
   expected: []
+- rule: design_032
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_033
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_034
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_035
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_036
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_037
+  name: combinational loop
+  design: *id004
+  expected: []
+- rule: design_038
+  name: combinational loop
+  design: *id004
+  expected: []
 - rule: design_003
   name: multiple drivers
   design: &id005
@@ -2612,6 +2736,34 @@ design_cases:
   design: *id005
   expected: []
 - rule: design_031
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_032
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_033
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_034
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_035
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_036
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_037
+  name: multiple drivers
+  design: *id005
+  expected: []
+- rule: design_038
   name: multiple drivers
   design: *id005
   expected: []
@@ -2707,6 +2859,37 @@ design_cases:
   name: registers
   design: *id006
   expected: []
+- rule: design_032
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_033
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_034
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_035
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_036
+  name: registers
+  design: *id006
+  expected:
+  - - examples/design/registers.vhd
+    - 31
+    - 'Registers or latches in the top-level module, outside of blocks: busy_r, q_r, ready_r'
+- rule: design_037
+  name: registers
+  design: *id006
+  expected: []
+- rule: design_038
+  name: registers
+  design: *id006
+  expected: []
 - rule: design_003
   name: logic depth
   design: &id007
@@ -2793,6 +2976,37 @@ design_cases:
   design: *id007
   expected: []
 - rule: design_031
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_032
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_033
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_034
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_035
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_036
+  name: logic depth
+  design: *id007
+  expected:
+  - - examples/design/depth.vhd
+    - 51
+    - 'Registers or latches in the top-level module, outside of blocks: a_r, b_r, q'
+- rule: design_037
+  name: logic depth
+  design: *id007
+  expected: []
+- rule: design_038
   name: logic depth
   design: *id007
   expected: []
@@ -2921,6 +3135,73 @@ design_cases:
   - - examples/design/cdc.vhd
     - 69
     - 'Registers of the top-level module are in 3 clock domains: clk_a, clk_b, clk_c'
+- rule: design_032
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_033
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_034
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 81
+    - Clock div_a is generated in the top-level module, not in a block of its own
+  - - examples/design/cdc.vhd
+    - 114
+    - Reset rst_b is generated in the top-level module, not in a block of its own
+  - - examples/design/cdc.vhd
+    - 162
+    - Reset made by logic of rst_b, soft_a is generated in the top-level module, not in a block of its own
+  - - examples/design/cdc.vhd
+    - 170
+    - Clock clk_gated is generated in the top-level module, not in a block of its own
+- rule: design_035
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 95
+    - 'The design has registers in 3 clock domains: clk_a, clk_b, clk_c'
+- rule: design_036
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 74
+    - 'Registers or latches in the top-level module, outside of blocks: bin_a, bus1_b, bus2_b, bus_a and 28 more'
+- rule: design_037
+  name: clock domain crossings
+  design: *id008
+  expected: []
+- rule: design_038
+  name: clock domain crossings
+  design: *id008
+  expected:
+  - - examples/design/cdc.vhd
+    - 90
+    - unsync_b (clk_b) takes data from flag_a (clk_a) without a latch on the inverted clk_a
+  - - examples/design/cdc.vhd
+    - 91
+    - sync1_b (clk_b) takes data from flag_a (clk_a) without a latch on the inverted clk_a
+  - - examples/design/cdc.vhd
+    - 93
+    - logic1_b (clk_b) takes data from x_a, y_a (clk_a) without a latch on the inverted clk_a
+  - - examples/design/cdc.vhd
+    - 95
+    - bus1_b (clk_b) takes data from bus_a (clk_a) without a latch on the inverted clk_a
+  - - examples/design/cdc.vhd
+    - 97
+    - gray1_b (clk_b) takes data from gray_a (clk_a) without a latch on the inverted clk_a
+  - - examples/design/cdc.vhd
+    - 99
+    - req1_b (clk_b) takes data from req_a (clk_a) without a latch on the inverted clk_a
+  - - examples/design/cdc.vhd
+    - 103
+    - data_b (clk_b) takes data from data_a (clk_a) without a latch on the inverted clk_a
 - rule: design_003
   name: reconvergence
   design: &id009
@@ -3013,6 +3294,58 @@ design_cases:
   - - examples/design/reconvergence.vhd
     - 63
     - 'Registers of the top-level module are in 2 clock domains: clk_a, clk_b'
+- rule: design_032
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_033
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_034
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_035
+  name: reconvergence
+  design: *id009
+  expected:
+  - - examples/design/reconvergence.vhd
+    - 93
+    - 'The design has registers in 2 clock domains: clk_a, clk_b'
+- rule: design_036
+  name: reconvergence
+  design: *id009
+  expected:
+  - - examples/design/reconvergence.vhd
+    - 54
+    - 'Registers or latches in the top-level module, outside of blocks: bin_a, busy_b, count1_b, count2_b and 26 more'
+- rule: design_037
+  name: reconvergence
+  design: *id009
+  expected: []
+- rule: design_038
+  name: reconvergence
+  design: *id009
+  expected:
+  - - examples/design/reconvergence.vhd
+    - 64
+    - start_meta (clk_b) takes data from start_a (clk_a) without a latch on the inverted clk_a
+  - - examples/design/reconvergence.vhd
+    - 66
+    - mode_meta (clk_b) takes data from mode_a (clk_a) without a latch on the inverted clk_a
+  - - examples/design/reconvergence.vhd
+    - 68
+    - gray_meta (clk_b) takes data from gray_a (clk_a) without a latch on the inverted clk_a
+  - - examples/design/reconvergence.vhd
+    - 78
+    - first1_b (clk_b) takes data from flag_a (clk_a) without a latch on the inverted clk_a
+  - - examples/design/reconvergence.vhd
+    - 80
+    - second1_b (clk_b) takes data from flag_a (clk_a) without a latch on the inverted clk_a
+  - - examples/design/reconvergence.vhd
+    - 98
+    - rst_meta (clk_b) takes data from rst_a (clk_a) without a latch on the inverted clk_a
 - rule: design_003
   name: black box
   design: &id010
@@ -3099,6 +3432,43 @@ design_cases:
   design: *id010
   expected: []
 - rule: design_031
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_032
+  name: black box
+  design: *id010
+  expected:
+  - - examples/design/black_box.vhd
+    - 51
+    - Black box output u_buf.O drives the clock of r
+- rule: design_033
+  name: black box
+  design: *id010
+  expected:
+  - - examples/design/black_box.vhd
+    - 57
+    - Clock clk is connected to input src_clk of black box u_sync
+- rule: design_034
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_035
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_036
+  name: black box
+  design: *id010
+  expected:
+  - - examples/design/black_box.vhd
+    - 51
+    - 'Registers or latches in the top-level module, outside of blocks: r'
+- rule: design_037
+  name: black box
+  design: *id010
+  expected: []
+- rule: design_038
   name: black box
   design: *id010
   expected: []
@@ -3191,6 +3561,37 @@ design_cases:
   name: deep logic
   design: *id011
   expected: []
+- rule: design_032
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_033
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_034
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_035
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_036
+  name: deep logic
+  design: *id011
+  expected:
+  - - examples/extra/design_007/deep.vhd
+    - 28
+    - 'Registers or latches in the top-level module, outside of blocks: q'
+- rule: design_037
+  name: deep logic
+  design: *id011
+  expected: []
+- rule: design_038
+  name: deep logic
+  design: *id011
+  expected: []
 - rule: design_003
   name: reset domain crossing
   design: &id012
@@ -3280,6 +3681,46 @@ design_cases:
   design: *id012
   expected: []
 - rule: design_031
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_032
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_033
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_034
+  name: reset domain crossing
+  design: *id012
+  expected:
+  - - examples/design/rdc.vhd
+    - 34
+    - Reset rst_a is generated in the top-level module, not in a block of its own
+  - - examples/design/rdc.vhd
+    - 43
+    - Reset rst_b is generated in the top-level module, not in a block of its own
+  - - examples/design/rdc.vhd
+    - 51
+    - Reset rst_ab is generated in the top-level module, not in a block of its own
+- rule: design_035
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_036
+  name: reset domain crossing
+  design: *id012
+  expected:
+  - - examples/design/rdc.vhd
+    - 56
+    - 'Registers or latches in the top-level module, outside of blocks: a_r, both_r, free_r, other_r and 1 more'
+- rule: design_037
+  name: reset domain crossing
+  design: *id012
+  expected: []
+- rule: design_038
   name: reset domain crossing
   design: *id012
   expected: []
@@ -3384,6 +3825,37 @@ design_cases:
   name: STARC design items
   design: *id013
   expected: []
+- rule: design_032
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_033
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_034
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_035
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_036
+  name: STARC design items
+  design: *id013
+  expected:
+  - - examples/design/starc_design.vhd
+    - 97
+    - 'Registers or latches in the top-level module, outside of blocks: q'
+- rule: design_037
+  name: STARC design items
+  design: *id013
+  expected: []
+- rule: design_038
+  name: STARC design items
+  design: *id013
+  expected: []
 - rule: design_003
   name: inout port connections
   design: &id014
@@ -3476,6 +3948,34 @@ design_cases:
   design: *id014
   expected: []
 - rule: design_031
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_032
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_033
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_034
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_035
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_036
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_037
+  name: inout port connections
+  design: *id014
+  expected: []
+- rule: design_038
   name: inout port connections
   design: *id014
   expected: []
@@ -3589,3 +4089,199 @@ design_cases:
   - - examples/design/starc_design2.vhd
     - 100
     - 'Registers of the top-level module are in 2 clock domains: clk_a, clk_b'
+- rule: design_032
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_033
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_034
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_035
+  name: STARC design items 2
+  design: *id015
+  expected:
+  - - examples/design/starc_design2.vhd
+    - 112
+    - 'The design has registers in 2 clock domains: clk_a, clk_b'
+- rule: design_036
+  name: STARC design items 2
+  design: *id015
+  expected:
+  - - examples/design/starc_design2.vhd
+    - 112
+    - 'Registers or latches in the top-level module, outside of blocks: b_r, l1, l2, l3 and 2 more'
+- rule: design_037
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_038
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_003
+  name: STARC design items 3
+  design: &id016
+    top: starc3_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/starc_design3.vhd
+    black_box_libraries:
+    - xilinx
+    black_boxes:
+      vendor_ip:
+        ports:
+          clk_i: clock
+          d_i:
+            sync: clk_i
+          ready_o: async
+  expected: []
+- rule: design_004
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_008
+  name: STARC design items 3
+  design: *id016
+  expected:
+  - - examples/design/starc_design3.vhd
+    - 203
+    - b_r (clk_b) captures a_r (clk_a) without a synchronizer
+- rule: design_009
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_010
+  name: STARC design items 3
+  design: *id016
+  expected:
+  - - examples/design/starc_design3.vhd
+    - 182
+    - Clock clk_b is used as data
+- rule: design_011
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_012
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_013
+  name: STARC design items 3
+  design: *id016
+  expected:
+  - - examples/design/starc_design3.vhd
+    - 103
+    - Clock u_core.div_q is made by a register from clk_a (1 register)
+- rule: design_014
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_015
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_020
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_021
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_022
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_023
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_024
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_026
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_027
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_028
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_029
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_030
+  name: STARC design items 3
+  design: *id016
+  expected: []
+- rule: design_031
+  name: STARC design items 3
+  design: *id016
+  expected:
+  - - examples/design/starc_design3.vhd
+    - 194
+    - 'Registers of the top-level module are in 3 clock domains: clk_a, clk_b, u_ip.ready_o'
+- rule: design_032
+  name: STARC design items 3
+  design: *id016
+  expected:
+  - - examples/design/starc_design3.vhd
+    - 218
+    - Black box output u_ip.ready_o drives the clock of ip_r
+- rule: design_033
+  name: STARC design items 3
+  design: *id016
+  expected:
+  - - examples/design/starc_design3.vhd
+    - 182
+    - Clock clk_b is connected to input d_i of black box u_ip
+- rule: design_034
+  name: STARC design items 3
+  design: *id016
+  expected:
+  - - examples/design/starc_design3.vhd
+    - 103
+    - Clock u_core.div_q is generated in block u_core, which also holds registers it drives
+- rule: design_035
+  name: STARC design items 3
+  design: *id016
+  expected:
+  - - examples/design/starc_design3.vhd
+    - 203
+    - 'The design has registers in 3 clock domains: clk_a, clk_b, u_ip.ready_o'
+  - - examples/design/starc_design3.vhd
+    - 211
+    - Clock clk_a clocks 5 registers on the rising edge and 1 on the falling edge
+- rule: design_036
+  name: STARC design items 3
+  design: *id016
+  expected:
+  - - examples/design/starc_design3.vhd
+    - 193
+    - 'Registers or latches in the top-level module, outside of blocks: a_r, b_r, ip_r, n_r'
+- rule: design_037
+  name: STARC design items 3
+  design: *id016
+  expected:
+  - - examples/design/starc_design3.vhd
+    - 94
+    - I/O cell u_core.u_ibuf2 (IBUF) is in instance u_core, not in the top level or in a block of I/O cells
+- rule: design_038
+  name: STARC design items 3
+  design: *id016
+  expected:
+  - - examples/design/starc_design3.vhd
+    - 203
+    - b_r (clk_b) takes data from a_r (clk_a) without a latch on the inverted clk_a

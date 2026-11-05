@@ -824,3 +824,156 @@ the outputs of one PLL, are one domain.
 **Violation**
 
 An entity with processes on two unrelated clocks.
+
+design_032
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_black_box_control_output`
+
+This rule reports black box outputs that drive a clock, an asynchronous reset or a tri-state enable, directly or
+through logic.
+
+.. NOTE:: This is a design rule. It runs in design analysis.
+
+The logic of a black box is not seen by design analysis, nor controlled by scan test, so a clock, reset or enable
+it makes is neither checked nor testable. Outputs declared as clocks or resets of the box, see
+:doc:`black boxes <black_boxes>`, such as those of a clock buffer, a PLL or a reset controller, are made for it
+and not reported, nor is the reset of a reset synchronizer, which makes a reset from any signal, such as the lock
+output of a PLL. A path through a box, such as an input buffer, is followed to what drives it.
+
+**Violation**
+
+The ready output of a vendor IP used as the clock of a register.
+
+design_033
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_control_into_black_box`
+
+This rule reports clocks, asynchronous resets and tri-state outputs connected to inputs of black boxes that are not
+declared to take them.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: it needs every black box
+          declared, see :doc:`black boxes <black_boxes>`.
+
+Inside a black box, design analysis cannot follow a clock, a reset or a tri-state bus, and scan test cannot
+control it. An input declared as a clock or a reset of the box, or named by another of its roles, such as the
+input of a buffer, is made for it and not reported.
+
+**Violation**
+
+The clock connected to a data input of a vendor IP.
+
+design_034
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_clock_reset_generation_block`
+
+This rule reports clocks and asynchronous resets made inside the design outside of a clock or reset generation
+block: in the top-level module itself, or in a block under the top level that also holds registers they clock or
+reset.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: a design need not follow
+          it.
+
+Clocks made by a register, such as a divider, by logic, such as a gate or a multiplexer, or by a PLL, and resets
+made by a register or logic, such as a reset synchronizer, belong in blocks of their own, instantiated in the top
+level: their timing is then constrained in one place, and test logic, such as the test-mode selection of a clock,
+is added there without changing the blocks they drive. The block of a clock or reset is the instance under the top
+level that holds the cell making it.
+
+**Violation**
+
+A clock divider in the same block as the registers it clocks.
+
+design_035
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_one_clock_one_edge`
+
+This rule reports designs with registers in more than one clock domain, and clocks whose registers take both edges.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: many designs need more
+          than one clock.
+
+One clock and one active edge keep timing analysis and test simple: no clock domain crossings, no half-cycle
+paths. Related clocks, such as the outputs of one PLL or a divided clock, are one domain. A register clocked
+through an inverter takes the other edge.
+
+**Violation**
+
+Registers clocked by clk_a and by clk_b, or on rising_edge(clk) and on falling_edge(clk).
+
+design_036
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_top_level_registers`
+
+This rule reports registers and latches in the top-level module itself, other than those that make clocks and
+resets.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: a design need not follow
+          it.
+
+The top level holds the blocks of the design, clock and reset generation, memories and I/O cells, and the
+connections between them. Logic with registers in the top level is timed and tested with the whole chip instead of
+in a block. Combinational glue logic is not reported, nor memories, nor the registers that make clocks and resets,
+such as dividers and reset synchronizers.
+
+**Violation**
+
+A process with a register in the architecture of the top-level entity.
+
+design_037
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_io_cell_placement`
+
+This rule reports I/O cells instantiated below the top level, other than in a block that holds only I/O cells.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: a design need not follow
+          it.
+
+I/O cells are black boxes whose type matches one of **io_cells**, file-name style patterns, by default the input,
+output and bidirectional buffers of AMD Xilinx, Altera, Microchip and Lattice, and that connect to a port of the top
+level. Kept in the top level or in a block of their own, they are found and changed in one place, for a new package
+or a new chip, and the blocks stay free of the technology.
+
+**Violation**
+
+An IBUFDS instantiated in a receiver block that also holds its logic.
+
+design_038
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_crossing_without_latch`
+
+This rule reports data from a register of one clock domain that reaches a register of an unrelated clock domain
+without passing a latch.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: a synchronizer is enough
+          for most designs.
+
+A latch enabled by the inverted source clock, between the source register and the register of the other domain,
+holds the data for the second half of the source clock period. It gives hold time to the transfer and, in scan
+test, where all registers shift on one clock, keeps the shift between the two scan chains from racing. Inputs of the
+top level, which have no source clock, are not reported; crossings without a synchronizer are also reported by
+design_008.
+
+**Violation**
+
+A register of clk_a feeding the first stage of a synchronizer clocked by clk_b.

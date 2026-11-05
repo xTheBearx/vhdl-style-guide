@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from mhsg.rules.sv_lint import diagnostics
 from mhsg.rules.sv_lint.diagnostics import Rule
 from mhsg.rules.sv_lint.rule_001 import rule_001
 from mhsg.rules.sv_lint.rule_002 import rule_002
@@ -41,7 +42,9 @@ class rule_009(Rule):
         self.lOthers = [o() for o in (rule_001, rule_002, rule_003, rule_004, rule_005, rule_006, rule_007, rule_010)]
 
     def accepts(self, sName):
-        # Verilator's warnings are sv_lint_011's
+        # Verilator's warnings are sv_lint_011's, and the warnings of mhsg about parameters sv_lint_014's and sv_lint_015's
+        if sName in (diagnostics.PARTIAL_OVERRIDE, diagnostics.REUSED_PARAMETER):
+            return False
         return sName not in COVERED and not sName.startswith("verilator.") and not any(o.accepts(sName) for o in self.lOthers)
 
     def message(self, oDiagnostic):
