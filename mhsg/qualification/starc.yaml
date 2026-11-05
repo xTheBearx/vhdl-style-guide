@@ -4630,23 +4630,26 @@ design_cases:
   design: *id017
   expected:
   - - examples/design/starc_dft.vhd
-    - 51
+    - 53
     - Clock clk is gated by logic into div_clk (1 register)
   - - examples/design/starc_dft.vhd
-    - 68
+    - 70
     - Clock clk is gated by logic into gclk (1 register)
   - - examples/design/starc_dft.vhd
-    - 69
+    - 71
     - Clock clk is gated by logic into gclk2 (1 register)
   - - examples/design/starc_dft.vhd
-    - 86
+    - 88
     - Clock clk is gated by logic into mclk (1 register)
+  - - examples/design/starc_dft.vhd
+    - 135
+    - Clock clk is gated by logic into icg_clk (1 register)
 - rule: design_013
   name: STARC design for test
   design: *id017
   expected:
   - - examples/design/starc_dft.vhd
-    - 42
+    - 44
     - Clock div2_q is made by a register from clk (1 register)
 - rule: design_014
   name: STARC design for test
@@ -4673,10 +4676,10 @@ design_cases:
   design: *id017
   expected:
   - - examples/design/starc_dft.vhd
-    - 126
+    - 145
     - Inout port pin of starc_dft_top is connected directly to output port q
   - - examples/design/starc_dft.vhd
-    - 127
+    - 146
     - Inout port pin2 of starc_dft_top is connected directly to output port q
 - rule: design_024
   name: STARC design for test
@@ -4695,10 +4698,10 @@ design_cases:
   design: *id017
   expected:
   - - examples/design/starc_dft.vhd
-    - 126
+    - 145
     - Tri-state enable comes from oe_r, not from top inputs only
   - - examples/design/starc_dft.vhd
-    - 127
+    - 146
     - Tri-state enable comes from oe_r, not from top inputs only
 - rule: design_029
   name: STARC design for test
@@ -4725,34 +4728,37 @@ design_cases:
   design: *id017
   expected:
   - - examples/design/starc_dft.vhd
-    - 42
+    - 44
     - Clock div2_q is generated in the top-level module, not in a block of its own
   - - examples/design/starc_dft.vhd
-    - 51
+    - 53
     - Clock div_clk is generated in the top-level module, not in a block of its own
   - - examples/design/starc_dft.vhd
-    - 68
+    - 70
     - Clock gclk is generated in the top-level module, not in a block of its own
   - - examples/design/starc_dft.vhd
-    - 69
+    - 71
     - Clock gclk2 is generated in the top-level module, not in a block of its own
   - - examples/design/starc_dft.vhd
-    - 86
+    - 88
     - Clock mclk is generated in the top-level module, not in a block of its own
+  - - examples/design/starc_dft.vhd
+    - 135
+    - Clock icg_clk is generated in the top-level module, not in a block of its own
 - rule: design_035
   name: STARC design for test
   design: *id017
   expected:
   - - examples/design/starc_dft.vhd
-    - 99
-    - Clock clk clocks 11 registers on the rising edge and 1 on the falling edge
+    - 101
+    - Clock clk clocks 12 registers on the rising edge and 1 on the falling edge
 - rule: design_036
   name: STARC design for test
   design: *id017
   expected:
   - - examples/design/starc_dft.vhd
-    - 41
-    - 'Registers or latches in the top-level module, outside of blocks: div_q, en_r, g_r, lb and 5 more'
+    - 43
+    - 'Registers or latches in the top-level module, outside of blocks: div_q, en_r, g_r, icg_en and 6 more'
 - rule: design_037
   name: STARC design for test
   design: *id017
@@ -4766,32 +4772,32 @@ design_cases:
   design: *id017
   expected:
   - - examples/design/starc_dft.vhd
-    - 42
+    - 44
     - In test mode, the clock of r(1) comes from register div2_q, not from a top-level input
   - - examples/design/starc_dft.vhd
-    - 69
+    - 71
     - In test mode, the clock of r(3) passes a gate whose other input, en_r, is not held in test mode
   - - examples/design/starc_dft.vhd
-    - 86
+    - 88
     - In test mode, the clock of r(4) passes a clock multiplexer whose select, sel_r, is not held in test mode
 - rule: design_040
   name: STARC design for test
   design: *id017
   expected:
   - - examples/design/starc_dft.vhd
-    - 99
-    - In test mode, clock clk reaches 8 registers on the rising edge and 1 on the falling edge
+    - 101
+    - In test mode, clock clk reaches 9 registers on the rising edge and 1 on the falling edge
 - rule: design_041
   name: STARC design for test
   design: *id017
   expected:
   - - examples/design/starc_dft.vhd
-    - 121
+    - 123
     - Latch lb is neither transparent in test mode nor enabled by the inverted clock
 - rule: design_042
   name: STARC design for test
   design: *id017
   expected:
   - - examples/design/starc_dft.vhd
-    - 127
+    - 146
     - During scan shift, the direction of inout port pin2 is not fixed

@@ -70,7 +70,8 @@ The design is described in the **design** section of a configuration file:
 * **test_mode** maps the top inputs that select test mode to their values there, such as :code:`scan_mode: 1`, and
   **scan_shift** those that shift the scan chains, such as :code:`scan_enable: 1`, for the design for test rules
   design_039 to design_042. Their values are propagated through the logic: a gate or multiplexer whose other inputs
-  they fix passes the clock in test mode.
+  they fix passes the clock in test mode, and a latch whose data they fix, such as the enable latch of a clock gate,
+  holds that value.
 * **work_directory** keeps the files of GHDL and Yosys, such as the Verilog and the JSON netlist, in a directory,
   for a closer look. Without it they are written to a temporary directory and removed.
 

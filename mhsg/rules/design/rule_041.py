@@ -31,7 +31,8 @@ class rule_041(Rule):
         oTest = oContext.test_mode()
         if oTest is None:
             return []
-        lReturn = []
+        # The bits of a latch, such as those of a memory of latches, are reported together
+        dFound = {}
         for oCell, sPin, iLevel in oTest.clocked_cells():
             if oCell.type not in netlist.LATCH_TYPES:
                 continue
@@ -42,13 +43,19 @@ class rule_041(Rule):
             oSource = oTest.clock_source(oEnable)
             if iValue is None and oSource.problem is None and iLevel ^ oSource.inverted == 0:
                 continue
-            sName = oTest.register_name(oCell)
-            sFile, iLine = oContext.locate_cell(oCell, sName.split(".")[-1])
             if iValue is not None:
-                sMessage = f"Latch {sName} is held closed in test mode"
+                sProblem = "is held closed in test mode"
             elif oSource.problem is None:
-                sMessage = f"Latch {sName} is open while clock {oSource.name} is high, not transparent in test mode"
+                sProblem = f"is open while clock {oSource.name} is high, not transparent in test mode"
             else:
-                sMessage = f"Latch {sName} is neither transparent in test mode nor enabled by the inverted clock"
-            lReturn.append(Finding(sFile, iLine, sMessage))
+                sProblem = "is neither transparent in test mode nor enabled by the inverted clock"
+            dFound.setdefault((oTest.flat.cell_name(oCell), sProblem), []).append(oCell)
+        lReturn = []
+        for (sName, sProblem), lCells in sorted(dFound.items()):
+            lCells.sort(key=oTest.register_name)
+            if len(lCells) == 1:
+                sName = oTest.register_name(lCells[0])
+            sBits = f" ({len(lCells)} bits)" if len(lCells) > 1 else ""
+            sFile, iLine = oContext.locate_cell(lCells[0], sName.split(".")[-1].split("(")[0])
+            lReturn.append(Finding(sFile, iLine, f"Latch {sName}{sBits} {sProblem}"))
         return lReturn

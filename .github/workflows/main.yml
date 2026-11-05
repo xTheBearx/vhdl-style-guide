@@ -202,4 +202,4 @@ jobs:
       - name: real-world SystemVerilog designs
         # The designs that need read_slang; the VHDL designs are checked with the Ubuntu packages
         run: |
-          uv run --locked python scripts/real_world_design_check.py --design ibex_core --design common_cells_cdc_fifo_gray
+          uv run --locked python scripts/real_world_design_check.py --design ibex_core --design ibex_register_file_latch --design common_cells_cdc_fifo_gray

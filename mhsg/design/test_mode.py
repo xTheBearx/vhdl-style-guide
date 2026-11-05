@@ -124,6 +124,8 @@ class TestMode:
                 lInputs = self.analysis.path_inputs(oCell, oRole, iIndex)
                 return self.value(lInputs[0], iDepth) if len(lInputs) == 1 else None
             return None
+        if sType in netlist.LATCH_TYPES:
+            return self.latch_value(oCell, iIndex, iDepth)
         if sType in graph.STATE_TYPES or not sType.startswith("$"):
             return None
         lA = oCell.connections.get("A", [])
@@ -136,11 +138,18 @@ class TestMode:
             return None if iA is None else 1 - iA
         if sType in MUX_TYPES:
             iSelect = self.value(oCell.connections.get("S", [None])[0], iDepth)
+            oA = graph.extend(lA, iIndex, False)
+            oB = graph.extend(lB, iIndex, False)
+            # An input that is x, a value synthesis may choose, takes the value of the other
+            if oA == "x":
+                oA = oB
+            if oB == "x":
+                oB = oA
             if iSelect is None:
-                iA = self.value(graph.extend(lA, iIndex, False), iDepth)
-                iB = self.value(graph.extend(lB, iIndex, False), iDepth)
+                iA = self.value(oA, iDepth)
+                iB = self.value(oB, iDepth)
                 return iA if iA is not None and iA == iB else None
-            return self.value(graph.extend(lB if iSelect else lA, iIndex, False), iDepth)
+            return self.value(oB if iSelect else oA, iDepth)
         if sType in ("$and", "$_AND_", "$or", "$_OR_", "$xor", "$_XOR_", "$xnor", "$_XNOR_", "$_NAND_", "$_NOR_", "$_ANDNOT_", "$_ORNOT_"):
             iA = self.value(graph.extend(lA, iIndex, bSigned), iDepth)
             iB = self.value(graph.extend(lB, iIndex, bool(oCell.parameter("B_SIGNED"))), iDepth)
@@ -163,6 +172,27 @@ class TestMode:
                 return 1 if sType == "$eq" else 0
             return None
         return None
+
+    def latch_value(self, oCell, iIndex, iDepth):
+        """
+        The value a latch settles to in test mode: that of its data, when the data is constant and the latch is not
+        held closed, as the enable latch of a clock gate whose enable test mode forces. A latch with an asynchronous
+        reset that test mode does not hold inactive is not constant.
+        """
+        lData = oCell.connections.get("D", [])
+        if iIndex >= len(lData):
+            return None
+        iData = self.value(lData[iIndex], iDepth)
+        if iData is None:
+            return None
+        iActive = 1 if oCell.parameter("EN_POLARITY", 1) else 0
+        if self.value(oCell.connections.get("EN", [None])[0], iDepth) == 1 - iActive:
+            return None
+        if "ARST" in oCell.connections:
+            iReset = 1 if oCell.parameter("ARST_POLARITY", 1) else 0
+            if self.value(oCell.connections["ARST"][0], iDepth) != 1 - iReset:
+                return None
+        return iData
 
     def reduce(self, lBits, iDepth):
         return [self.value(b, iDepth) for b in lBits]
@@ -203,12 +233,18 @@ class TestMode:
         lB = oCell.connections.get("B", [])
         if sType in BUFFERS:
             return self.clock_source(graph.extend(lA, iIndex, False), iDepth + 1)
-        if sType in ("$not", "$_NOT_"):
+        if sType in ("$not", "$_NOT_") or (sType == "$logic_not" and len(lA) == 1 and iIndex == 0):
             return inverted(self.clock_source(graph.extend(lA, iIndex, False), iDepth + 1))
         if sType in MUX_TYPES:
             oSelect = oCell.connections.get("S", [None])[0]
             iSelect = self.value(oSelect)
             if iSelect is None:
+                # A multiplexer of the constants 0 and 1 is its select, or the inverted select
+                tInputs = (graph.extend(lA, iIndex, False), graph.extend(lB, iIndex, False))
+                if tInputs == ("0", "1"):
+                    return self.clock_source(oSelect, iDepth + 1)
+                if tInputs == ("1", "0"):
+                    return inverted(self.clock_source(oSelect, iDepth + 1))
                 return Source(sProblem=MULTIPLEXER, oCell=oCell, sDetail=self.signal_name(oSelect))
             return self.clock_source(graph.extend(lB if iSelect else lA, iIndex, False), iDepth + 1)
         if sType in AND_TYPES | OR_TYPES | {"$xor", "$_XOR_", "$xnor", "$_XNOR_", "$_NAND_", "$_NOR_", "$_ANDNOT_", "$_ORNOT_"}:
