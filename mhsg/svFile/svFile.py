@@ -163,10 +163,11 @@ STYLE_DIAGNOSTICS = {"EndNameMismatch", "EndNameNotEmpty"}
 
 def error_spans(oTree, iBuffer, lLineOffsets):
     """
-    The (first, last) offsets of the parts of a file slang may have parsed wrongly: in each design unit, such as a
-    module or a package, that holds a syntax error, from the line of its first error to its end; for an error outside
-    the units, from that line to the next unit. slang parses the code before an error as written, and starts again at
-    the next unit. An error in an included file makes the whole file such a part.
+    The (first, last) offsets of the parts of a file slang may have parsed wrongly. slang parses the code before an
+    error as written, and starts again at the next item of a design unit, such as a declaration or an always block, or
+    at the next unit: so for an error in an item, from the line of the error to the end of the item; for an error in
+    a unit outside its items, such as in its header, from that line to the end of the unit; for an error outside the
+    units, from that line to the next unit. An error in an included file makes the whole file such a part.
     """
     lErrors = []
     for oDiagnostic in oTree.diagnostics:
@@ -180,20 +181,30 @@ def error_spans(oTree, iBuffer, lLineOffsets):
         return []
     lUnits = []
     for oMember in getattr(oTree.root, "members", None) or []:
-        oFirst = oMember.getFirstToken()
-        oLast = oMember.getLastToken()
-        if oFirst is None or oLast is None or oFirst.location.buffer.id != iBuffer or oLast.location.buffer.id != iBuffer:
-            continue
-        lUnits.append((oFirst.location.offset, oLast.location.offset + len(oLast.rawText)))
-    lUnits.sort()
-    dSpans = {}
+        tUnit = node_span(oMember, iBuffer)
+        if tUnit is not None:
+            lItems = [t for t in (node_span(o, iBuffer) for o in getattr(oMember, "members", None) or []) if t is not None]
+            lUnits.append((tUnit, lItems))
+    lReturn = []
     for iError in sorted(lErrors):
         iLine = lLineOffsets[bisect.bisect_right(lLineOffsets, iError) - 1] if lLineOffsets else 0
-        tUnit = next(((a, b) for a, b in lUnits if a <= iError <= b), None)
-        iEnd = tUnit[1] if tUnit is not None else min((a for a, b in lUnits if a > iError), default=float("inf"))
-        # The first error of a unit starts its part
-        dSpans.setdefault(iEnd, (iLine, iEnd))
-    return list(dSpans.values())
+        tUnit = next((t for t in lUnits if t[0][0] <= iError <= t[0][1]), None)
+        if tUnit is None:
+            iEnd = min((t[0][0] for t in lUnits if t[0][0] > iError), default=float("inf"))
+        else:
+            tItem = next(((a, b) for a, b in tUnit[1] if a <= iError <= b), None)
+            iEnd = tItem[1] if tItem is not None else tUnit[0][1]
+        lReturn.append((iLine, iEnd))
+    return lReturn
+
+
+def node_span(oNode, iBuffer):
+    """The (first, last) offsets of a syntax node in the file, or None for one not all in it."""
+    oFirst = oNode.getFirstToken()
+    oLast = oNode.getLastToken()
+    if oFirst is None or oLast is None or oFirst.location.buffer.id != iBuffer or oLast.location.buffer.id != iBuffer:
+        return None
+    return oFirst.location.offset, oLast.location.offset + len(oLast.rawText)
 
 
 def mark_error_units(lTokens, lSpans):
