@@ -84,8 +84,7 @@ under way: the entries below.
   the minimum gates of a basic block is not checked. The catalogue the set was made from records each item's limits
   and its Verible equivalent, kept in the notes of the set.
 * **SystemVerilog designs without the yosys-slang plugin**: Yosys' own reader handles Verilog and part of
-  SystemVerilog; ibex and common_cells need the plugin, which is not packaged for Ubuntu. ibex_core and the gray-code
-  CDC FIFO of common_cells are checked with the plugin of the OSS CAD Suite, in the design-oss job of CI.
-* **Generics of VHDL entities under a Verilog top** are passed on when every elaboration of the instance gives it the
-  same values; an instance in a generate loop, or in a module elaborated with several sets of parameters, that gets
-  other values each time would need one copy of its module per set, as Yosys makes for Verilog modules.
+  SystemVerilog, and the plugin is not packaged for Ubuntu; design analysis says so when the reader fails, and the
+  tools of the design section, or MHSG_YOSYS, name a Yosys that has it, such as that of the OSS CAD Suite. ibex_core
+  and the gray-code CDC FIFO of common_cells are checked with it in the design-oss job of CI. Converting the files
+  with sv2v for Yosys' own reader was not tried: sv2v could not be fetched where mhsg was developed.

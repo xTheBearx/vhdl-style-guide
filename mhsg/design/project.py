@@ -65,6 +65,8 @@ class Design:
         # For the Verilog and SystemVerilog files: macros defined on the command line and include directories
         self.defines = {}
         self.include_directories = []
+        # The programs of the tools, {ghdl: path, yosys: path}, for tools that are not first on the path
+        self.tools = {}
         # The top inputs held in test mode and during the shift of the scan chains, with their values, see test_mode.py
         self.test_mode = {}
         self.scan_shift = {}
@@ -129,6 +131,10 @@ def from_configuration(dConfiguration):
     oDesign.test_mode = test_mode.read_values(dDesign.get("test_mode"), "test_mode")
     oDesign.scan_shift = test_mode.read_values(dDesign.get("scan_shift"), "scan_shift")
     oDesign.black_box_libraries = [str(s).lower() for s in black_box.as_list(dDesign.get("black_box_libraries"))]
+    dTools = dDesign.get("tools") or {}
+    if not isinstance(dTools, dict) or any(str(k) not in ("ghdl", "yosys") for k in dTools):
+        raise exceptions.ConfigurationError("ERROR: tools in the design section maps ghdl and yosys to their programs")
+    oDesign.tools = {str(k): str(v) for k, v in dTools.items()}
     if dDesign.get("work_directory"):
         oDesign.work_directory = os.path.expandvars(str(dDesign["work_directory"]))
     return oDesign
