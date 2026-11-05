@@ -1,6 +1,6 @@
 // A Verilog top that sets the generics of VHDL entities: by name, by position, in a generate block, with an
-// expression, in a module with parameters of its own, and in a generate loop, whose instances would need values of
-// their own and are analyzed with the defaults
+// expression, in a module with parameters of its own, and in a generate loop, whose instances each have values of
+// their own
 module vtop_generics (
     input  wire        clk,
     input  wire [7:0]  a,

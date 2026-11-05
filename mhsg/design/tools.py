@@ -39,13 +39,15 @@ class Tools:
         return [] if self.built_in else ["-m", "ghdl"]
 
 
-def find(bGhdl=True):
+def find(bGhdl=True, dPaths=None):
     """
     Returns the Tools, or raises a DesignError when they are missing or the plugin does not load. A design without
-    VHDL, bGhdl False, needs only Yosys.
+    VHDL, bGhdl False, needs only Yosys. The programs are those dPaths names, the tools of the design section, else
+    those of the environment variables MHSG_GHDL and MHSG_YOSYS, else those found on the path: so a Yosys with the
+    yosys-slang plugin, such as that of the OSS CAD Suite, can be used without being first on the path.
     """
-    sGhdl = shutil.which("ghdl")
-    sYosys = shutil.which("yosys")
+    sGhdl = tool_path("ghdl", dPaths)
+    sYosys = tool_path("yosys", dPaths)
     if sYosys is None or (bGhdl and sGhdl is None):
         raise exceptions.DesignError("ERROR: " + (INSTALL_HINT if bGhdl else "Design analysis of Verilog and SystemVerilog needs Yosys."))
     if not bGhdl:
@@ -62,6 +64,17 @@ def find(bGhdl=True):
         if oPlugin.returncode != 0:
             raise exceptions.DesignError("ERROR: Yosys cannot load the GHDL plugin. " + INSTALL_HINT)
     return Tools(sGhdl, sYosys, dEnvironment, first_line([sGhdl, "--version"]), first_line([sYosys, "-V"]), bBuiltIn, has_slang(sYosys))
+
+
+def tool_path(sName, dPaths=None):
+    """The program of a tool: from dPaths, else from MHSG_<NAME>, else found on the path; a DesignError if a path given is not a program."""
+    sGiven = (dPaths or {}).get(sName) or os.environ.get(f"MHSG_{sName.upper()}")
+    if not sGiven:
+        return shutil.which(sName)
+    sPath = shutil.which(os.path.expanduser(os.path.expandvars(str(sGiven))))
+    if sPath is None:
+        raise exceptions.DesignError(f"ERROR: {sName} is set to {sGiven}, which is not a program")
+    return sPath
 
 
 # Yosys -> the options that give it the read_slang command, or None
