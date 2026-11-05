@@ -89,6 +89,17 @@ class test_svfile(unittest.TestCase):
             [(type(o).__name__, o.get_value()) for o in lTokens],
         )
 
+    def test_macro_arguments(self):
+        # The arguments of a macro use are classified where the macro places them, and checked; the body of the
+        # definition is not
+        sText = "`define CHECK(name, cond) assert property (@(posedge clk) cond);\nmodule m (input logic clk, a, b);\n    `CHECK(eq, a==b)\nendmodule\n"
+        lTokens = tokens_of(sText)
+        lEquals = [o for o in lTokens if o.get_value() == "=="]
+        self.assertEqual(1, len(lEquals))
+        self.assertTrue(lEquals[0].macro_argument)
+        self.assertIsInstance(lEquals[0], tokens.of("EqualityExpression", "operatorToken"))
+        self.assertIsInstance([o for o in lTokens if o.get_value() == "assert"][0], tokens.unclassified)
+
     def test_classification(self):
         lTokens = tokens_of(read("sample.sv"))
         dByValue = {}
@@ -106,8 +117,9 @@ class test_svfile(unittest.TestCase):
         # Directives and macro uses are kept as written
         self.assertIsInstance(dByValue["`define"], tokens.preprocessor)
         self.assertIsInstance(dByValue["`WIDTH"], tokens.preprocessor)
-        # The inactive branch is kept, unclassified
-        self.assertIsInstance(dByValue["$display"], tokens.unclassified)
+        # The code of the inactive branch is classified as where the branch is active, and marked inactive
+        self.assertIsInstance(dByValue["$display"], tokens.of("SystemName", "systemIdentifier"))
+        self.assertTrue(dByValue["$display"].inactive)
 
     def test_rules_of_the_language(self):
         oRules = rule_list.rule_list(svFile(["module m;\n", "endmodule\n"], sFilename="m.sv"), None)

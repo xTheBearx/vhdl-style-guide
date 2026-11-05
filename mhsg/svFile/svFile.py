@@ -4,8 +4,10 @@ SystemVerilog and Verilog files, read with slang (pyslang).
 
 The tokens come from slang's lexer run on the text as written, before preprocessing, so the file is kept exactly,
 with its macro uses, directives and inactive `ifdef branches. Each token is then looked up in slang's syntax tree by
-its offset, which tells the syntax node and field it belongs to; tokens the tree does not have, in inactive branches
-or macro arguments, are unclassified.
+its offset, which tells the syntax node and field it belongs to. The code of inactive `ifdef branches is classified
+from parses with the macros of their conditions switched, and marked inactive; the arguments of macro uses where the
+macro places them, marked macro_argument. Tokens no parse places, such as the bodies of macro definitions, are
+unclassified.
 
 svFile shares the methods of vhdlFile that work on the list of tokens, such as get_tokens_matching and get_lines,
 so the fix pipeline and the rules that only look at whitespace, comments and lines work unchanged. Rules declare the
@@ -191,7 +193,7 @@ def build_tokens(sText, sFileName, bTree=False, oOptions=None, sPath=""):
     oFileBuffer = oSourceManager.assignText(sPath or sFileName, sText)
     oTree = SyntaxTree.fromBuffer(oFileBuffer, oSourceManager, oOptions) if oOptions is not None else SyntaxTree.fromBuffer(oFileBuffer, oSourceManager)
     dNodes = {}
-    dClasses = classify(oTree, oFileBuffer.id.id, line_starts(sText), dNodes)
+    dClasses = classify(oTree, oFileBuffer.id.id, line_starts(sText), dNodes, oSourceManager)
     # The code of inactive `ifdef branches is not in the tree: the parses with each macro its conditions test switched
     # give its indent levels
     dInactive = inactive_levels(sText, sPath or sFileName, oOptions, dClasses)
@@ -211,14 +213,18 @@ def build_tokens(sText, sFileName, bTree=False, oOptions=None, sPath=""):
             oNew = oClass(oToken.rawText, sKind)
             oAlternate = dInactive.get(oToken.location.offset)
             if oClass is tokens.unclassified and oAlternate is not None and oAlternate.kind == sKind:
-                # Code of an inactive branch keeps its class, as no rule but indentation looks at it, and gets the
-                # level it has where the branch is active
+                # Code of an inactive branch takes the class and level it has where the branch is active, so the rules
+                # check it as other code; rules that read the syntax tree do not see it, as it is not in the tree
+                oNew = tokens.for_token(sKind, oAlternate.syntax, oAlternate.field)(oToken.rawText, sKind, oAlternate.syntax, oAlternate.field)
                 oNew.set_indent(oAlternate.indent)
                 oNew.closing = oAlternate.closing
+                oNew.inactive = True
         else:
             oNew = tokens.for_token(sKind, oInfo.syntax, oInfo.field)(oToken.rawText, sKind, oInfo.syntax, oInfo.field)
             oNew.set_indent(oInfo.indent)
             oNew.closing = oInfo.closing
+            if oInfo.argument:
+                oNew.macro_argument = True
         # The offset of the token in the text, by which rules find it from the syntax tree
         oNew.offset = oToken.location.offset
         add_text(lReturn, oNew)
@@ -355,9 +361,9 @@ def fields(oNode):
 class token_info:
     """What the syntax tree tells about a token of the file."""
 
-    __slots__ = ("syntax", "field", "kind", "indent", "closing")
+    __slots__ = ("syntax", "field", "kind", "indent", "closing", "argument")
 
-    def __init__(self, tSyntax, sField, sKind, iIndent, bClosing):
+    def __init__(self, tSyntax, sField, sKind, iIndent, bClosing, bArgument=False):
         # The syntax node kinds from the root down to the node holding the token
         self.syntax = tSyntax
         # The field of that node holding the token, or None for an element of a list
@@ -367,6 +373,8 @@ class token_info:
         self.indent = iIndent
         # True for a token that closes a construct, such as end or a closing parenthesis
         self.closing = bClosing
+        # True for a token in the arguments of a macro use, classified where the macro places it
+        self.argument = bArgument
 
 
 def line_starts(sText):
@@ -384,17 +392,19 @@ def line_starts(sText):
     return sReturn
 
 
-def classify(oTree, iBuffer, sLineStarts, dNodes=None):
+def classify(oTree, iBuffer, sLineStarts, dNodes=None, oSourceManager=None):
     """
     Returns {offset: token_info} for the tokens of the file in a syntax tree; sLineStarts are the offsets of the
-    tokens that start a line.
+    tokens that start a line. With the source manager, the tokens of the arguments of macro uses are classified where
+    the macro places them, the first place for an argument placed more than once, without an indent level.
     """
     dReturn = {}
     # The indent levels of the tokens that start an item, such as a statement or a port: {offset: level}
     dItemStarts = {}
     lStack = [(oTree.root, (), 0)]
-    # The offsets of the tokens in the arguments of macro uses
+    # The offsets of the tokens in the arguments of macro uses, and what they are where the macros place them
     sMacroArguments = set()
+    dArguments = {}
     first_offset = _first_offset_function(iBuffer)
     iRoot = first_offset(oTree.root)
     if iRoot is not None:
@@ -427,10 +437,15 @@ def classify(oTree, iBuffer, sLineStarts, dNodes=None):
                     if iIndent is None and iLevel is not None and bHasBody and indent.is_own_line(sChildKind):
                         iIndent = iLevel
                     dReturn[iOffset] = token_info(tPath, sField, sChildKind, iIndent, bClosing)
+                elif oSourceManager is not None and oChild.rawText and oSourceManager.isMacroArgLoc(oChild.location):
+                    oOriginal = oSourceManager.getFullyOriginalLoc(oChild.location)
+                    if oOriginal.buffer.id == iBuffer and oOriginal.offset not in dArguments:
+                        sField, _ = dFields.get(("T", iOffset), (None, False))
+                        dArguments[oOriginal.offset] = token_info(tPath, sField, oChild.kind.name, None, False, True)
                 for oTrivia in oChild.trivia:
                     oSyntax = oTrivia.syntax()
                     if oSyntax is not None and oSyntax.kind.name == "MacroUsage" and oSyntax.args is not None:
-                        # The arguments of a macro use are text the macro places; rules leave them alone
+                        # The arguments of a macro use are text the macro places: classified where it places them
                         sMacroArguments.update(token_offsets(oSyntax.args, iBuffer))
                     if oSyntax is not None:
                         # A directive stands on its own, whichever token it comes before; it is not indented yet
@@ -453,6 +468,8 @@ def classify(oTree, iBuffer, sLineStarts, dNodes=None):
                 lStack.append((oChild, tPath, iChildLevel))
     for iOffset in sMacroArguments:
         dReturn.pop(iOffset, None)
+        if iOffset in dArguments:
+            dReturn[iOffset] = dArguments[iOffset]
     return dReturn
 
 
