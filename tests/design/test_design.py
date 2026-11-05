@@ -1101,7 +1101,7 @@ class test_design_analysis(unittest.TestCase):
     def test_verilog_top_generics(self):
         # Each set of generic values is elaborated on its own, with the values pyslang computes: expressions and
         # parameters of the module holding the instance too. An instance in a generate loop that sets other values in
-        # each iteration is analyzed with the defaults, which design_001 reports
+        # each iteration instantiates a module that selects the variant of each set
         with tempfile.TemporaryDirectory() as sDirectory:
             iStatus, lOutput = self.run_design(
                 "vtop_generics",
@@ -1110,33 +1110,48 @@ class test_design_analysis(unittest.TestCase):
             )
             with open(os.path.join(sDirectory, "design.json"), encoding="utf-8") as oFile:
                 dModules = json.load(oFile)["modules"]
-        sFile = os.path.join(sTestDir, "vtop_generics.v")
-        self.assertEqual(
-            (
-                1,
-                [
-                    f"ERROR: {sFile}(31)design_001 -- Design configuration error: Instance u_loop of vtop_reg is analyzed with the "
-                    "defaults of its generics, as its own values cannot be set: the elaborations of module vtop_generics give it "
-                    "different values",
-                ],
-            ),
-            (iStatus, [s for s in lOutput if "design_001" in s]),
-        )
+        self.assertEqual([], [s for s in lOutput if "design_001" in s])
         # The VHDL registers; read_slang keeps vtop_mid as a module of its own instance
-        dTypes = {c: d["type"] for c, d in dModules["vtop_generics"]["cells"].items() if not d["type"].startswith(("$", "vtop_mid"))}
+        dTypes = {
+            c: d["type"]
+            for c, d in dModules["vtop_generics"]["cells"].items()
+            if not d["type"].startswith(("$and", "$not", "$dff", "$mux", "vtop_mid", "$paramod\\vtop_mid"))
+        }
+        dTypes = {c: t for c, t in dTypes.items() if t in dModules}
         dWidths = {c: len(dModules[t]["ports"]["d"]["bits"]) for c, t in dTypes.items()}
         self.assertEqual(
-            {"u_named": 8, "u_position": 16, "g_reg.u_generate": 4, "u_expression": 8, "g_loop[1].u_loop": 4, "g_loop[2].u_loop": 4},
+            {"u_named": 8, "u_position": 16, "g_reg.u_generate": 4, "u_expression": 8, "g_loop[1].u_loop": 1, "g_loop[2].u_loop": 2},
             dWidths,
         )
         # The instances with values of their own each have a module, elaborated from the entity with those values
-        self.assertEqual("vtop_reg", dTypes["g_loop[1].u_loop"])
         self.assertEqual(4, len({dTypes[s] for s in ("u_named", "u_position", "g_reg.u_generate", "u_expression")}))
         self.assertTrue(all(dTypes[s].startswith("vtop_reg__mhsg") for s in ("u_named", "u_position", "g_reg.u_generate", "u_expression")))
+        # The instances of the loop each instantiate the variant of their values, through the selector module
+        for sLoop, iWidth in (("g_loop[1].u_loop", 1), ("g_loop[2].u_loop", 2)):
+            self.assertIn("vtop_reg__mhsgsel", dTypes[sLoop])
+            lVariants = [d["type"] for d in dModules[dTypes[sLoop]]["cells"].values()]
+            self.assertEqual(1, len(lVariants))
+            self.assertEqual(iWidth, len(dModules[lVariants[0]]["ports"]["d"]["bits"]))
         # The instance in the module with a parameter gets the width that parameter gives it
         sInner = dModules[dModules["vtop_generics"]["cells"]["u_mid"]["type"]]["cells"]["u_inner"]["type"]
         self.assertTrue(sInner.startswith("vtop_reg__mhsg"))
         self.assertEqual(6, len(dModules[sInner]["ports"]["d"]["bits"]))
+
+    def test_systemverilog_without_read_slang(self):
+        # A Yosys without read_slang cannot read the struct: the message says how to use one that can. With read_slang,
+        # the design is read
+        iStatus, lOutput = self.run_design("sv_only", "sv_only.sv")
+        if tools.has_slang(shutil.which("yosys")):
+            self.assertEqual([], [s for s in lOutput if "design_001" in s])
+        else:
+            self.assertTrue(any("yosys-slang plugin" in s and "tools: {yosys: <path>}" in s for s in lOutput), lOutput)
+
+    def test_tool_paths(self):
+        # The tools of the design section name the programs; one that is not a program is an error
+        iStatus, lOutput = self.run_design("sv_only", "sv_only.sv", dDesignKeys={"tools": {"yosys": "/no/such/yosys"}})
+        self.assertEqual((1, ["ERROR: yosys is set to /no/such/yosys, which is not a program"]), (iStatus, lOutput))
+        iStatus, lOutput = self.run_design("sv_only", "sv_only.sv", dDesignKeys={"tools": {"yosys": shutil.which("yosys")}})
+        self.assertFalse([s for s in lOutput if "not a program" in s])
 
     def test_combinational_loops(self):
         self.assertEqual(
