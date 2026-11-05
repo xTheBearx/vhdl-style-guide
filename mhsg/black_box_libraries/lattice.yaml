@@ -3,13 +3,14 @@
 # Include it in the design section with:  black_box_libraries: [lattice]
 #
 # The port names and behaviour are taken from the published documents: the FPGA Libraries Reference Guide, the ECP5
-# and ECP5-5G sysCLOCK PLL/DLL Design and User Guide (TN1263), the ECP5 Memory Usage Guide (TN1264), and the iCE40
-# Technology Library. No vendor file is copied. Check the declarations against the guide of the tool version you
+# and ECP5-5G sysCLOCK PLL/DLL Design and User Guide (TN1263), the ECP5 Memory Usage Guide (TN1264), the ECP5 and
+# ECP5-5G SERDES/PCS Usage Guide (TN1261), and the iCE40 Technology Library. No vendor file is copied. Check the declarations against the guide of the tool version you
 # use: a declaration in your design section takes precedence over this library, port by port.
 #
 # Ports whose behaviour depends on how a primitive is used are left out on purpose, so design analysis asks for
-# them: the registered paths of SB_GB_IO, for example. SERDES, DDR memory interfaces and other IP cores are not
-# included; declare them in the design section.
+# them: the registered paths of SB_GB_IO, for example, and the elastic buffer clock, the test and the inter-DCU ports
+# of DCUA. DDR memory interfaces and other IP cores are not included; declare them in the design section, with the
+# memory_controller or transceiver archetype.
 #
 # Choices to review:
 # - PLL outputs are derived from the reference clock, so they are synchronous to it and to each other. The dynamic
@@ -17,6 +18,9 @@
 # - The output of a dynamic clock select (DCSC) is a clock of its own, asynchronous to both inputs.
 # - The resets of DP16KD and PDPW16KD are synchronous unless RESETMODE is ASYNC.
 # - The on-chip oscillators are clocks of their own, asynchronous to every other clock.
+# - The transmit clocks of DCUA derive from its reference clock; the receive clocks are recovered from the data, a
+#   clock of their own. The FIFO interfaces are timed by FF_TXI_CLK and FF_RXI_CLK; the control (FFC) and status (FFS)
+#   ports and the SCI bus are taken to be asynchronous.
 
 black_boxes:
 
@@ -146,6 +150,61 @@ black_boxes:
       - when: {RESETMODE: ASYNC}
         ports:
           RST: {reset_in: async}
+
+  # ECP5 SERDES and PCS: the dual channel block (DCUA) and its reference clock input (EXTREFB)
+
+  EXTREFB:
+    reference: TN1261, EXTREFB
+    ports:
+      REFCLKP: clock
+      REFCLKN: unused
+      REFCLKO: {clock_out: {from: REFCLKP, relation: same}}
+  DCUA:
+    reference: TN1261, DCUA
+    ports:
+      D_REFCLKI: clock
+      CH0_RX_REFCLK: clock
+      CH0_FF_TXI_CLK: clock
+      CH0_FF_RXI_CLK: clock
+      "CH0_FF_TX_D_*": {sync: CH0_FF_TXI_CLK}
+      "CH0_FF_RX_D_*": {sync: CH0_FF_RXI_CLK}
+      CH0_FF_TX_PCLK: {clock_out: {from: D_REFCLKI, relation: derived}}
+      CH0_FF_TX_F_CLK: {clock_out: {from: D_REFCLKI, relation: derived}}
+      CH0_FF_TX_H_CLK: {clock_out: {from: D_REFCLKI, relation: derived}}
+      CH0_FF_RX_PCLK: {clock_out: {from: CH0_RX_REFCLK, relation: independent}}
+      CH0_FF_RX_F_CLK: {clock_out: {from: CH0_RX_REFCLK, relation: independent}}
+      CH0_FF_RX_H_CLK: {clock_out: {from: CH0_RX_REFCLK, relation: independent}}
+      CH0_FFC_LANE_RX_RST: {reset_in: async}
+      CH0_FFC_LANE_TX_RST: {reset_in: async}
+      CH0_FFC_RRST: {reset_in: async}
+      "CH0_FFC_*": async
+      "CH0_FFS_*": async
+      "CH0_HD*": async
+      "CH0_SCI*": async
+      CH1_RX_REFCLK: clock
+      CH1_FF_TXI_CLK: clock
+      CH1_FF_RXI_CLK: clock
+      "CH1_FF_TX_D_*": {sync: CH1_FF_TXI_CLK}
+      "CH1_FF_RX_D_*": {sync: CH1_FF_RXI_CLK}
+      CH1_FF_TX_PCLK: {clock_out: {from: D_REFCLKI, relation: derived}}
+      CH1_FF_TX_F_CLK: {clock_out: {from: D_REFCLKI, relation: derived}}
+      CH1_FF_TX_H_CLK: {clock_out: {from: D_REFCLKI, relation: derived}}
+      CH1_FF_RX_PCLK: {clock_out: {from: CH1_RX_REFCLK, relation: independent}}
+      CH1_FF_RX_F_CLK: {clock_out: {from: CH1_RX_REFCLK, relation: independent}}
+      CH1_FF_RX_H_CLK: {clock_out: {from: CH1_RX_REFCLK, relation: independent}}
+      CH1_FFC_LANE_RX_RST: {reset_in: async}
+      CH1_FFC_LANE_TX_RST: {reset_in: async}
+      CH1_FFC_RRST: {reset_in: async}
+      "CH1_FFC_*": async
+      "CH1_FFS_*": async
+      "CH1_HD*": async
+      "CH1_SCI*": async
+      D_FFC_MACRO_RST: {reset_in: async}
+      D_FFC_DUAL_RST: {reset_in: async}
+      D_FFC_TRST: {reset_in: async}
+      "D_FFC_*": async
+      D_FFS_PLOL: async
+      "D_SCI*": async
 
   # Global reset
 
