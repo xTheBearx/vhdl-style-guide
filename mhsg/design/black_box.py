@@ -45,7 +45,7 @@ import os
 
 import yaml
 
-from mhsg import exceptions
+from mhsg import exceptions, yaml_files
 from mhsg.design import graph
 
 SIMPLE_ROLES = ("clock", "async", "unused")
@@ -406,7 +406,7 @@ def from_design(dDesign):
         sFile = library_file(sName)
         try:
             with open(sFile, encoding="utf-8") as oFile:
-                dFile = yaml.safe_load(oFile) or {}
+                dFile = yaml_files.safe_load(oFile) or {}
         except (OSError, yaml.YAMLError) as e:
             raise exceptions.ConfigurationError(f"ERROR: could not read black box library {sFile}: {e}") from e
         sSource = f"library {sName.lower()}" if os.path.dirname(sFile) == BUILT_IN_DIRECTORY else sFile
@@ -597,7 +597,7 @@ def describe(sPort, oRole):
 def library_documentation(sName):
     """Returns reStructuredText describing each declaration of a library that comes with mhsg."""
     with open(library_file(sName), encoding="utf-8") as oFile:
-        dFile = yaml.safe_load(oFile)
+        dFile = yaml_files.safe_load(oFile)
     lLines = []
     for sType, dDeclaration in dFile["black_boxes"].items():
         oDeclaration = Declaration(str(sType), dDeclaration, f"library {sName}")

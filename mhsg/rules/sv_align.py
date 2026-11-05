@@ -46,8 +46,8 @@ class Rule(TreeRule, alignment.Rule):
         raise NotImplementedError
 
     def problems(self, oFile):
-        dPlaces, dBefore, setLineStarts, setAfterTab = places(oFile.lAllObjects)
-        setBlankLines = blank_lines(oFile.lAllObjects)
+        dPlaces, dBefore, setLineStarts, setAfterTab = oFile.cached("sv_align.places", lambda: places(oFile.lAllObjects))
+        setBlankLines = oFile.cached("sv_align.blank_lines", lambda: blank_lines(oFile.lAllObjects))
         bBlankEnds = utils.convert_yes_no_option_to_boolean(self.blank_line_ends_group)
         for lGroup in self.alignment_groups(oFile):
             lRows = []

@@ -22,9 +22,7 @@ import subprocess
 import sys
 import tempfile
 
-import yaml
-
-from mhsg import provenance, rule_set
+from mhsg import provenance, rule_set, yaml_files
 from mhsg.rules.sv_lint import verilator_rule
 from mhsg.svFile import verilator
 
@@ -45,7 +43,7 @@ def load(sRuleSet):
         lSets = sorted(os.path.splitext(s)[0] for s in os.listdir(DIRECTORY) if s.endswith(".yaml"))
         raise ValueError(f"ERROR: no qualification suite for rule set {sRuleSet}; there are suites for {', '.join(lSets)}")
     with open(sFile, encoding="utf-8") as oFile:
-        return yaml.safe_load(oFile)
+        return yaml_files.safe_load(oFile)
 
 
 def mhsg_command():

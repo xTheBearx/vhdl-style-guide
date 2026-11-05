@@ -93,6 +93,7 @@ class svFile(vhdl.vhdlFile):
             oOptions=oOptions,
             sPath=sPath,
         )
+        self.iVersion = getattr(self, "iVersion", 0) + 1
         self.dTokenAtOffset = {o.offset: o for o in self.lAllObjects if getattr(o, "offset", None) is not None}
         self.syntax_errors = syntax_errors(self.syntax_tree)
         mark_error_units(self.lAllObjects, error_spans(self.syntax_tree, self.buffer_id, self.line_offsets))
@@ -278,10 +279,11 @@ def build_tokens(sText, sFileName, bTree=False, oOptions=None, sPath=""):
     oFileBuffer = oSourceManager.assignText(sPath or sFileName, sText)
     oTree = SyntaxTree.fromBuffer(oFileBuffer, oSourceManager, oOptions) if oOptions is not None else SyntaxTree.fromBuffer(oFileBuffer, oSourceManager)
     dNodes = {}
-    dClasses = classify(oTree, oFileBuffer.id.id, line_starts(sText), dNodes, oSourceManager)
+    sDisabled = set()
+    dClasses = classify(oTree, oFileBuffer.id.id, line_starts(sText), dNodes, oSourceManager, sDisabled)
     # The code of inactive `ifdef branches is not in the tree: the parses with each macro its conditions test switched
     # give its indent levels
-    dInactive = inactive_levels(sText, sPath or sFileName, oOptions, dClasses)
+    dInactive = inactive_levels(sText, sPath or sFileName, oOptions, dClasses, sDisabled)
     oBuffer = oSourceManager.assignText(sFileName + " (as written)", sText)
     oLexer = Lexer(oBuffer, pyslang.BumpAllocator(), pyslang.Diagnostics(), oSourceManager, LexerOptions())
     lReturn = []
@@ -354,15 +356,19 @@ def switched_trees(sText, sPath, oOptions):
         yield oTree, oBuffer.id.id
 
 
-def inactive_levels(sText, sPath, oOptions, dClasses):
+def inactive_levels(sText, sPath, oOptions, dClasses, sDisabled=None):
     """
     Returns {offset: token_info} for the tokens that only the parses with a macro of the `ifdef conditions of a text
     switched have, see switched_trees; the first parse that has a token gives its level.
     """
     dReturn = {}
+    if sDisabled is not None and not sDisabled:
+        # No inactive branch: nothing for the other parses to classify
+        return dReturn
+    lWanted = sorted(sDisabled) if sDisabled is not None else None
     sStarts = line_starts(sText)
     for oTree, iBuffer in switched_trees(sText, sPath, oOptions):
-        for iOffset, oInfo in classify(oTree, iBuffer, sStarts).items():
+        for iOffset, oInfo in classify(oTree, iBuffer, sStarts, lWanted=lWanted).items():
             if iOffset not in dClasses and iOffset not in dReturn:
                 dReturn[iOffset] = oInfo
     return dReturn
@@ -487,11 +493,13 @@ def line_starts(sText):
     return sReturn
 
 
-def classify(oTree, iBuffer, sLineStarts, dNodes=None, oSourceManager=None):
+def classify(oTree, iBuffer, sLineStarts, dNodes=None, oSourceManager=None, sDisabled=None, lWanted=None):
     """
     Returns {offset: token_info} for the tokens of the file in a syntax tree; sLineStarts are the offsets of the
     tokens that start a line. With the source manager, the tokens of the arguments of macro uses are classified where
     the macro places them, the first place for an argument placed more than once, without an indent level.
+    sDisabled, a set, gets the offsets of the tokens of inactive `ifdef branches. With lWanted, sorted offsets, only
+    the nodes that hold one of them are classified, which saves time in the parses of inactive branches.
     """
     dReturn = {}
     # The indent levels of the tokens that start an item, such as a statement or a port: {offset: level}
@@ -509,6 +517,8 @@ def classify(oTree, iBuffer, sLineStarts, dNodes=None, oSourceManager=None):
     while lStack:
         oNode, tPath, iLevel = lStack.pop()
         sKind = oNode.kind.name
+        if sDisabled is not None and getattr(oNode, "disabledTokens", None):
+            sDisabled.update(o.location.offset for o in oNode.disabledTokens if isinstance(o, Token) and o.location.buffer.id == iBuffer)
         if dNodes is not None and in_buffer(oNode, iBuffer):
             dNodes.setdefault(sKind, []).append(oNode)
         tPath = tPath + (tokens.short_name(sKind),)
@@ -564,6 +574,8 @@ def classify(oTree, iBuffer, sLineStarts, dNodes=None, oSourceManager=None):
                     if indent.is_expression(oChild.kind.name):
                         # Inside an expression, lines are continuations, which are not checked
                         iChildLevel = None
+                if lWanted is not None and not holds_wanted(oChild, iBuffer, lWanted):
+                    continue
                 lStack.append((oChild, tPath, iChildLevel))
     for iOffset in sMacroArguments:
         dReturn.pop(iOffset, None)
@@ -572,6 +584,16 @@ def classify(oTree, iBuffer, sLineStarts, dNodes=None, oSourceManager=None):
     for iOffset, oInfo in dBodies.items():
         dReturn.setdefault(iOffset, oInfo)
     return dReturn
+
+
+def holds_wanted(oNode, iBuffer, lWanted):
+    """Whether a node holds one of the sorted offsets of lWanted, or may: True when its tokens are not all in the file."""
+    oFirst = oNode.getFirstToken()
+    oLast = oNode.getLastToken()
+    if oFirst is None or oLast is None or oFirst.location.buffer.id != iBuffer or oLast.location.buffer.id != iBuffer:
+        return True
+    iIndex = bisect.bisect_left(lWanted, oFirst.location.offset)
+    return iIndex < len(lWanted) and lWanted[iIndex] <= oLast.location.offset
 
 
 def token_offsets(oNode, iBuffer):

@@ -2,12 +2,10 @@
 
 import os
 
-import yaml
-
-from mhsg import exceptions
+from mhsg import exceptions, yaml_files
 
 with open(os.path.join(os.path.dirname(__file__), "rule_aliases.yaml"), encoding="utf-8") as oFile:
-    dAliases = yaml.safe_load(oFile)
+    dAliases = yaml_files.safe_load(oFile)
 
 dRuleIds = {sAlias: sRuleId for sRuleId, sAlias in dAliases.items()}
 

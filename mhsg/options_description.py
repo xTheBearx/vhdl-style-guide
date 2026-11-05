@@ -11,9 +11,7 @@ import json
 import os
 import re
 
-import yaml
-
-from mhsg import rule_list, severity, version, vhdlFile
+from mhsg import rule_list, severity, version, vhdlFile, yaml_files
 from mhsg.design import project
 
 FORMAT_NAME = "mhsg-options"
@@ -30,7 +28,7 @@ DEFINITION_FIELDS = ("type", "label", "description", "values", "item_type", "nul
 
 def read_catalog():
     with open(CATALOG_FILE, encoding="utf-8") as oFile:
-        return yaml.safe_load(oFile)["options"]
+        return yaml_files.safe_load(oFile)["options"]
 
 
 def build(lLocalRules=None):
@@ -184,7 +182,7 @@ def describe_settings():
     Returns the top level keys of a configuration file other than rule.
     """
     with open(INDENT_FILE, encoding="utf-8") as oFile:
-        dIndent = yaml.safe_load(oFile)["indent"]
+        dIndent = yaml_files.safe_load(oFile)["indent"]
     from mhsg import config
 
     return [

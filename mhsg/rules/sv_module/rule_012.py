@@ -3,8 +3,7 @@
 import fnmatch
 from functools import lru_cache
 
-import yaml
-
+from mhsg import yaml_files
 from mhsg.design import black_box
 from mhsg.rule_group import structure
 from mhsg.rules.sv_nodes import text
@@ -49,5 +48,5 @@ def vendor_types():
     lReturn = []
     for sLibrary in black_box.built_in_libraries():
         with open(black_box.library_file(sLibrary), encoding="utf-8") as oFile:
-            lReturn += [str(s).lower() for s in (yaml.safe_load(oFile).get("black_boxes") or {})]
+            lReturn += [str(s).lower() for s in (yaml_files.safe_load(oFile).get("black_boxes") or {})]
     return tuple(lReturn)
