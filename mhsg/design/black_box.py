@@ -192,6 +192,45 @@ def expand_archetype(dDeclaration, sWhere):
         dPorts[str(dDeclaration["output"])] = {
             "synchronized": {"clock": str(dDeclaration["destination_clock"]), "from": str(dDeclaration["input"]), "stages": dDeclaration.get("stages")},
         }
+    elif sArchetype == "memory_controller":
+        need("reference_clock", "user_clock", "user_ports")
+        sUser = str(dDeclaration["user_clock"])
+        dPorts[str(dDeclaration["reference_clock"])] = "clock"
+        dPorts[sUser] = {"clock_out": {"from": str(dDeclaration["reference_clock"]), "relation": "derived"}}
+        for sPort in as_list(dDeclaration["user_ports"]):
+            dPorts[sPort] = {"sync": sUser}
+        for sReset in as_list(dDeclaration.get("user_reset")):
+            dPorts[sReset] = {"reset_out": {"clock": sUser, "release": "sync"}}
+        for sReset in as_list(dDeclaration.get("reset")):
+            dPorts[sReset] = {"reset_in": "async"}
+        for sPort in as_list(dDeclaration.get("status")) + as_list(dDeclaration.get("memory_ports")):
+            dPorts[sPort] = "async"
+    elif sArchetype == "transceiver":
+        need("reference_clock")
+        if not dDeclaration.get("tx_ports") and not dDeclaration.get("rx_ports"):
+            raise exceptions.ConfigurationError(f"ERROR: {sWhere}: archetype transceiver needs tx_ports or rx_ports")
+        sReference = str(dDeclaration["reference_clock"])
+        dPorts[sReference] = "clock"
+        # The transmit clock outputs come from the reference clock; the receive clock outputs are recovered from the
+        # received data, independent of every other clock
+        for sOutput in as_list(dDeclaration.get("tx_clock_outputs")):
+            dPorts[sOutput] = {"clock_out": {"from": sReference, "relation": "derived"}}
+        for sOutput in as_list(dDeclaration.get("rx_clock_outputs")):
+            dPorts[sOutput] = {"clock_out": {"from": sReference, "relation": "independent"}}
+        for sSide in ("tx", "rx"):
+            if not dDeclaration.get(f"{sSide}_ports"):
+                continue
+            if not dDeclaration.get(f"{sSide}_clock"):
+                raise exceptions.ConfigurationError(f"ERROR: {sWhere}: archetype transceiver needs {sSide}_clock with {sSide}_ports")
+            sClock = str(dDeclaration[f"{sSide}_clock"])
+            if sClock not in dPorts:
+                dPorts[sClock] = "clock"
+            for sPort in as_list(dDeclaration[f"{sSide}_ports"]):
+                dPorts[sPort] = {"sync": sClock}
+        for sReset in as_list(dDeclaration.get("reset")):
+            dPorts[sReset] = {"reset_in": "async"}
+        for sPort in as_list(dDeclaration.get("status")) + as_list(dDeclaration.get("serial_ports")):
+            dPorts[sPort] = "async"
     elif sArchetype == "async_input":
         for sOutput in as_list(dDeclaration.get("outputs") or "*"):
             dPorts[sOutput] = "async"
@@ -212,6 +251,8 @@ ARCHETYPES = {
     "memory": "sides: {clock pin: [ports]}",
     "dual_clock_fifo": "sides: {clock pin: [ports]}",
     "synchronizer": "source_clock, destination_clock, input, output, stages, reset",
+    "memory_controller": "reference_clock, user_clock, user_ports, user_reset, reset, status, memory_ports",
+    "transceiver": "reference_clock, tx_clock, tx_ports, rx_clock, rx_ports, tx_clock_outputs, rx_clock_outputs, reset, status, serial_ports",
     "async_input": "outputs (all)",
     "static": "justification, reviewed_by",
 }
@@ -229,6 +270,19 @@ ARCHETYPE_KEYS = (
     "source_clock",
     "destination_clock",
     "stages",
+    "reference_clock",
+    "user_clock",
+    "user_ports",
+    "user_reset",
+    "status",
+    "memory_ports",
+    "tx_clock",
+    "tx_ports",
+    "rx_clock",
+    "rx_ports",
+    "tx_clock_outputs",
+    "rx_clock_outputs",
+    "serial_ports",
 )
 
 

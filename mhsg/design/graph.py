@@ -445,8 +445,8 @@ class ModuleGraph:
 
     def live_bits(self):
         """
-        Returns the bits whose value matters: those that reach an output of the module, an input a black box or an
-        instance uses, a memory that is read, or an assertion.
+        Returns the bits whose value matters: those that reach an output of the module, an input an instance uses, an
+        input of a black box with an output that matters or with no output, a memory that is read, or an assertion.
         """
         lWork = []
         for sPort, dPort in self.ports.items():
@@ -461,11 +461,17 @@ class ModuleGraph:
                 lWork.extend(self.input_bits(sCell))
             elif self.is_instance(sCell):
                 oChild = self.child(sCell)
+                if oChild is None:
+                    # A black box uses its inputs when one of its outputs is used, see below, or when it has none,
+                    # as a debug core that only watches signals
+                    if not self.output_bits(sCell):
+                        lWork.extend(self.input_bits(sCell))
+                    continue
                 for sPort, lBits in dCell.get("connections", {}).items():
                     if self.direction(dCell, sPort) not in ("input", "inout"):
                         continue
                     for iIndex, oBit in enumerate(lBits):
-                        if is_variable(oBit) and (oChild is None or (sPort, iIndex) in oChild.used_inputs):
+                        if is_variable(oBit) and (sPort, iIndex) in oChild.used_inputs:
                             lWork.append(oBit)
         setLive = set()
         setCells = set()
@@ -480,7 +486,10 @@ class ModuleGraph:
                 setCells.add(sCell)
                 dCell = self.cells[sCell]
                 if self.is_instance(sCell):
-                    # The outputs of an instance are live; its inputs were added if the instance uses them
+                    # The outputs of an instance are live; its inputs were added if the instance uses them, and
+                    # those of a black box are live with its output
+                    if self.child(sCell) is None:
+                        lWork.extend(self.input_bits(sCell))
                     continue
                 lWork.extend(self.input_bits(sCell))
                 if dCell.get("type") in ("$memrd", "$memrd_v2"):

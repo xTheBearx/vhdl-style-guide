@@ -1301,6 +1301,58 @@ class test_design_analysis(unittest.TestCase):
             self.findings("md_top", "multiple_drivers.vhd"),
         )
 
+    def test_black_box_inputs_used_with_an_output(self):
+        # a_r feeds a black box whose output nothing reads; b_r feeds one with no output, as a debug core
+        dBoxes = {
+            "black_boxes": {
+                "BOX_FILTER": {"archetype": "single_clock", "clock": "CLK"},
+                "BOX_PROBE": {"archetype": "single_clock", "clock": "CLK"},
+            },
+        }
+        self.assertEqual(
+            [("box_unused.vhd", 41, "design_006", "Register a_r in box_unused_top is never used")],
+            [t for t in self.findings("box_unused_top", "box_unused.vhd", dDesignKeys=dBoxes) if t[2] == "design_006"],
+        )
+
+    def test_memory_controller_and_transceiver(self):
+        # Data read in the user clock of the controller and the recovered clock of the transceiver is in their
+        # domains; data from the system clock into either, and from the transceiver into the system clock, crosses
+        dBoxes = {
+            "black_boxes": {
+                "ddr_ctrl": {
+                    "archetype": "memory_controller",
+                    "reference_clock": "sys_clk_i",
+                    "user_clock": "ui_clk",
+                    "user_ports": "app_*",
+                    "user_reset": "ui_clk_sync_rst",
+                    "reset": "sys_rst",
+                    "status": "init_done",
+                    "memory_ports": "ddr3_*",
+                },
+                "serdes_phy": {
+                    "archetype": "transceiver",
+                    "reference_clock": "pll_refclk",
+                    "tx_clock": "tx_coreclkin",
+                    "tx_ports": "tx_parallel_data",
+                    "rx_clock": "rx_clkout",
+                    "rx_ports": "rx_parallel_data",
+                    "tx_clock_outputs": "tx_clkout",
+                    "rx_clock_outputs": "rx_clkout",
+                    "status": "rx_is_lockedto*",
+                    "serial_ports": ["rx_serial_data", "tx_serial_data"],
+                },
+            },
+        }
+        dCdc = {"clocks": {"sys_clk": "sys", "ref_clk": "ref", "mem_clk": "mem"}}
+        self.assertEqual(
+            [
+                ("box_ip.vhd", 70, "design_008", "u_ddr.app_wdf_data (u_ddr.ui_clk) captures sys_d (sys_clk) without a synchronizer"),
+                ("box_ip.vhd", 93, "design_008", "u_phy.tx_parallel_data (u_phy.tx_clkout) captures sys_d (sys_clk) without a synchronizer"),
+                ("box_ip.vhd", 116, "design_008", "rx_bad (sys_clk) captures u_phy.rx_parallel_data (u_phy.rx_clkout) without a synchronizer"),
+            ],
+            self.findings("box_ip_top", "box_ip.vhd", dCdc=dCdc, dDesignKeys=dBoxes),
+        )
+
     def test_registers(self):
         # ready_r changes once after reset and q_r has an enable: neither is reported
         self.assertEqual(

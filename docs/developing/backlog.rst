@@ -29,15 +29,17 @@ Design analysis
   through the branches that enter them. Cover checks of states as such, properties that something always happens
   again (liveness), and proofs of more branches in parallel are not done. SymbiYosys is not packaged for Ubuntu; it
   needs the YosysHQ OSS CAD Suite, so CI runs design_025 only to the message that it is missing.
-* **Black box libraries for more primitives.** Memory interface cores have no declarations, nor have the transceivers
-  of Intel, Lattice and Microchip; the Intel and Lattice libraries cover the common primitives only. The timing of
-  the ports of the Xilinx transceivers and PCI Express blocks was taken from the user guides without a vendor
-  installation to check it against. The names of the Intel megafunctions could not be
+* **Black box libraries for more primitives.** The transceivers of Intel and Microchip, and memory controllers, are
+  IP cores whose names the vendor tools choose: they are declared with the transceiver and memory_controller
+  archetypes, not in libraries. The Intel and Lattice libraries cover the common primitives and the ECP5 SERDES. The
+  timing of the ports of the Xilinx transceivers and PCI Express blocks, and of the ECP5 SERDES, was taken from the
+  user guides without a vendor installation to check it against. The names of the Intel megafunctions could not be
   checked against cell models, as Yosys has none for them.
 * **Stand-in models and pragmas for black boxes** (options 4 and 5 of the black box plan): an analysis-only VHDL
   architecture for complex IP, and comment pragmas in component declarations. Not planned unless asked for.
-* **Inputs of black boxes counted as used**: design_006 counts every black box input as used, since the roles describe
-  clock domains, not which inputs matter.
+* **Inputs of black boxes counted as used**: design_006 counts the inputs of a black box as used when one of its
+  outputs is, or when it has none, such as a debug core. Which inputs an output depends on is not declared, so all
+  inputs of a box with a used output count as used.
 * **Clears found without a declaration.** A synchronous clear is followed by design_016 when the cdc section lists it
   under clears. Telling clears from resets by structure was tried and dropped: the reset crossing circuits of
   open-logic compute their resets with logic, and were taken for clears.

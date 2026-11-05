@@ -13,6 +13,7 @@ class rule_006(Rule):
 
     A register is unused when its value reaches no output of the entity, no instance that uses it, and no memory that is read,
     so the register and the logic that feeds only it are unused.
+    A black box uses its inputs when one of its outputs is used, or when it has no outputs, such as a debug core.
     Each entity is checked on its own, so an output that the instantiating entity leaves unconnected does not make the logic behind it unused;
     lint_004 reports such outputs.
     Unused combinational signals are not reported, since synthesis rewrites them; the registers they feed are.

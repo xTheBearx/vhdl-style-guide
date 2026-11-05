@@ -557,6 +557,59 @@ override them:
 +------------------------+---------------------------------------------------+------------------------------------------+
 | ``static``             | justification, reviewed_by                        | every port static                        |
 +------------------------+---------------------------------------------------+------------------------------------------+
+| ``memory_controller``  | reference_clock, user_clock, user_ports,          | the user clock derived from the          |
+|                        | user_reset, reset, status, memory_ports           | reference, user ports timed by it, a     |
+|                        |                                                   | reset released with it, asynchronous     |
+|                        |                                                   | status and memory pins                   |
++------------------------+---------------------------------------------------+------------------------------------------+
+| ``transceiver``        | reference_clock, tx_clock, tx_ports, rx_clock,    | transmit and receive ports timed by      |
+|                        | rx_ports, tx_clock_outputs, rx_clock_outputs,     | their clocks; transmit clock outputs     |
+|                        | reset, status, serial_ports                       | derived from the reference, receive      |
+|                        |                                                   | clock outputs independent (recovered)    |
++------------------------+---------------------------------------------------+------------------------------------------+
+
+Memory controllers and transceivers are IP cores whose module names the vendor tools choose from the name the user
+gives, so no library can declare them; the two archetypes declare them in a few lines. Ports and patterns are those
+of the core's user interface, for example:
+
+.. code-block:: yaml
+
+   black_boxes:
+     # Xilinx MIG 7 series, named mig_ddr3 in the IP catalog
+     mig_ddr3:
+       archetype: memory_controller
+       reference_clock: sys_clk_i
+       user_clock: ui_clk
+       user_ports: ["app_*"]
+       user_reset: ui_clk_sync_rst
+       reset: sys_rst
+       status: init_calib_complete
+       memory_ports: ["ddr3_*"]
+     # Intel EMIF with an Avalon interface
+     emif_ddr4:
+       archetype: memory_controller
+       reference_clock: pll_ref_clk
+       user_clock: emif_usr_clk
+       user_ports: ["amm_*"]
+       user_reset: emif_usr_reset_n
+       reset: global_reset_n
+       status: ["local_cal_*"]
+       memory_ports: ["mem_*", oct_rzqin]
+     # Intel Transceiver Native PHY
+     xcvr_native:
+       archetype: transceiver
+       reference_clock: rx_cdr_refclk0
+       tx_clock: tx_coreclkin
+       tx_ports: ["tx_parallel_data*", "tx_control*"]
+       rx_clock: rx_coreclkin
+       rx_ports: ["rx_parallel_data*", "rx_control*"]
+       tx_clock_outputs: tx_clkout
+       rx_clock_outputs: rx_clkout
+       reset: ["tx_analogreset*", "tx_digitalreset*", "rx_analogreset*", "rx_digitalreset*"]
+       status: ["rx_is_locked*", "tx_cal_busy*", "rx_cal_busy*"]
+       serial_ports: ["tx_serial_data*", "rx_serial_data*"]
+
+Check the port names against the core you generate: they depend on its options and version.
 
 **Variants.** Roles that depend on generics, whose values GHDL keeps, go under **variants**:
 
@@ -606,7 +659,8 @@ tool versions. The port names of the primitives Yosys has cell models for were c
 * **intel**: the GLOBAL buffer, altpll, altsyncram, dcfifo, scfifo, altddio_in and altddio_out. The side B ports of
   altsyncram follow the clock its ADDRESS_REG_B and OUTDATA_REG_B parameters select.
 * **lattice**: for ECP5, the DCCA and DCSC clock primitives, EHXPLLL, OSCG, IB, OB, OBZ and BB buffers, IDDRX1F and
-  ODDRX1F, the FD1S3 and FD1P3 registers, DP16KD and PDPW16KD block RAM and GSR; for iCE40, SB_GB, SB_GB_IO, the
+  ODDRX1F, the FD1S3 and FD1P3 registers, DP16KD and PDPW16KD block RAM, the DCUA SERDES with its EXTREFB reference
+  clock input, and GSR; for iCE40, SB_GB, SB_GB_IO, the
   SB_PLL40 PLLs, the oscillators, SB_RAM40_4K and the SB_DFF registers.
 
 xilinx
