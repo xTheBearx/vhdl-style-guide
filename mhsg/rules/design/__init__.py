@@ -46,3 +46,5 @@ from .rule_043 import rule_043
 from .rule_044 import rule_044
 from .rule_045 import rule_045
 from .rule_046 import rule_046
+from .rule_047 import rule_047
+from .rule_048 import rule_048

@@ -1975,7 +1975,9 @@
         "design_043",
         "design_044",
         "design_045",
-        "design_046"
+        "design_046",
+        "design_047",
+        "design_048"
       ]
     },
     {
@@ -21618,6 +21620,160 @@
           "name": "user_error_message",
           "default": "",
           "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_047",
+      "alias": "design_unreachable_state",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports states of state machines that can never be entered from reset, proven with SymbiYosys.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "depth",
+          "default": 20,
+          "definition": "depth"
+        },
+        {
+          "name": "timeout",
+          "default": 60,
+          "definition": "timeout"
+        },
+        {
+          "name": "cover_timeout",
+          "default": 300,
+          "definition": "cover_timeout"
+        },
+        {
+          "name": "maximum_proofs",
+          "default": 20,
+          "definition": "maximum_proofs"
+        },
+        {
+          "name": "report_undecided",
+          "default": false,
+          "definition": "report_undecided"
+        },
+        {
+          "name": "assumptions",
+          "default": [],
+          "definition": "assumptions"
+        }
+      ]
+    },
+    {
+      "id": "design_048",
+      "alias": "design_state_lockup",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports state machines that lock up: states after which the machine never returns to its reset state, whatever its inputs do, proven with SymbiYosys.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "depth",
+          "default": 20,
+          "definition": "depth"
+        },
+        {
+          "name": "timeout",
+          "default": 60,
+          "definition": "timeout"
+        },
+        {
+          "name": "cover_timeout",
+          "default": 300,
+          "definition": "cover_timeout"
+        },
+        {
+          "name": "maximum_proofs",
+          "default": 20,
+          "definition": "maximum_proofs"
+        },
+        {
+          "name": "report_undecided",
+          "default": false,
+          "definition": "report_undecided"
+        },
+        {
+          "name": "assumptions",
+          "default": [],
+          "definition": "assumptions"
         }
       ]
     },

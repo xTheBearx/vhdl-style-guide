@@ -1158,3 +1158,81 @@ timed with them; logic in the parent adds to paths that cross from one block to 
 .. code-block:: vhdl
 
    u_b : entity work.b port map (d => a_out and enable, ...);
+
+design_047
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_unreachable_state`
+
+This rule reports states of state machines that can never be entered from reset, proven with SymbiYosys.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: it needs SymbiYosys, as in
+          the YosysHQ OSS CAD Suite, and formal checks take longer than the other checks.
+
+A state machine is a register of two or more bits whose next value is only ever one of three or more constants,
+its states, or its own value, such as a signal of an enumerated type assigned in a case statement. The states are
+named after the values of the type, else numbered as the netlist encodes them. A state machine is checked when it
+starts from its reset state: an asynchronous reset, or a synchronous one, from a top input or a reset synchronizer.
+
+Each state is first looked for in a search of **depth** clock cycles from reset, 20 by default, which takes at
+most **cover_timeout** seconds, 300 by default. A state the search does not enter gets a proof of its own, which
+takes at most **timeout** seconds, 60 by default, for at most **maximum_proofs** checks, 20 by default, with
+those of design_048. A state proven never entered is reported; one neither entered nor proven is undecided, and
+reported when **report_undecided** is set. **assumptions** hold top inputs at a value in every cycle, as in
+:code:`[test_mode=0]`. Black boxes are taken out, and their outputs can take any value.
+
+This rule checks the states of the netlist through all of its logic, where lint_037 checks the assignments of a
+file: a state that an assignment enters, under a condition that is never true, is reported here.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   when RUN =>
+     count <= count + 1;
+     if count = 5 then
+       state <= DONE;
+     elsif count = 7 then    -- count never gets past 5 in RUN
+       state <= ERROR;       -- ERROR is never entered
+     end if;
+
+design_048
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_state_lockup`
+
+This rule reports state machines that lock up: states after which the machine never returns to its reset state,
+whatever its inputs do, proven with SymbiYosys.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: it needs SymbiYosys, as in
+          the YosysHQ OSS CAD Suite, and formal checks take longer than the other checks.
+
+The state machines are those of design_047. For each state the machine enters, a search of **depth** clock cycles
+from reset, 20 by default, which takes at most **cover_timeout** seconds, 300 by default, looks for a return to
+the reset state after it. A state the search finds no return from gets a proof that the machine never returns
+after it, which takes at most **timeout** seconds, 60 by default, for at most **maximum_proofs** checks, 20 by
+default, after those of the states of design_047. The states proven without a return are reported in one finding
+per state machine: a state that is never left, or states the machine only moves between. A state neither shown to
+return nor proven not to is undecided, and reported when **report_undecided** is set. **assumptions** hold top
+inputs at a value in every cycle, as in :code:`[test_mode=0]`.
+
+A state machine that some inputs keep from returning, such as one waiting for an acknowledge that never comes, is
+not reported: the check is that no inputs at all bring it back. A state machine whose reset state no state returns
+to is not checked either: its reset state is a start-up state, left once, such as a transmitter that waits in
+Reset_s after reset and then moves between Idle_s and Data_s. Only a machine with a state shown to return to the
+reset state, so that the reset state is part of its cycle, is reported.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   when WAIT_ACK =>
+     if ack = '1' then
+       state <= HOLD;
+     end if;
+   when HOLD =>
+     state <= WAIT_ACK;     -- WAIT_ACK and HOLD never return to IDLE

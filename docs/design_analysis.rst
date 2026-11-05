@@ -253,6 +253,11 @@ Design rules
   each branch it did not reach unreachable, within :code:`timeout` seconds each. Branches neither reached nor proven
   are undecided, and reported with :code:`report_undecided`. :code:`assumptions` hold top inputs at a value, such as
   :code:`[test_mode=0]`.
+* :code:`design_047` and :code:`design_048`, disabled by default for the same reasons, check the state machines:
+  registers, or fields of record registers, whose next value is only ever one of their states or their own value.
+  :code:`design_047` reports states never entered from reset, and :code:`design_048` states after which the machine
+  never returns to its reset state, whatever its inputs do. They search and prove like :code:`design_025`, with the
+  resets released after the first cycle.
 
 See :doc:`design_rules`. Design rules are configured like other rules, for example with a different severity:
 
@@ -746,6 +751,15 @@ Limitations
 * What a black box does with its inputs is known only from its declaration: reconvergence follows its paths and
   takes the inputs timed by one clock pin together; other inputs count one bit at a time.
 * Formal reachability (design_025) checks the branches of the netlist: the conditions of if statements and the choices
-  of case statements, also those synthesis adds, such as the decoding of state encodings no state uses. A state that
-  is never entered shows as the branches that would enter it. Its results hold for the generics of the run, from
-  reset, with free black box outputs: a branch that only a black box output can take is reachable.
+  of case statements, also those synthesis adds, such as the decoding of state encodings no state uses. Its results
+  hold for the generics of the run, from reset, with free black box outputs: a branch that only a black box output
+  can take is reachable. Released tri-state pins read any value.
+* The state machine checks (design_047, design_048) find the state machines in the netlist: a register, or the bits of
+  one that are compared with constants, such as a field of a record, whose next value only ever is one of three or
+  more constants or its own value. Machines that compute their next state, such as with arithmetic, are not found, nor
+  are machines without a reset from a top input or a reset synchronizer. The states are named after the enumerated
+  type of the VHDL, or the enum of SystemVerilog, when the source tells which; otherwise by their encoding. A state
+  reached only after more cycles than **depth**, such as one that waits for a clock divider, is usually undecided: a
+  proof within the time limit is rare for counters of hundreds of cycles. design_048 checks that some inputs bring the
+  machine back, not that every input does: a machine that waits forever for an acknowledge is not reported, as
+  liveness under fair inputs needs assumptions only the designer can give.

@@ -318,6 +318,8 @@ design_043: design_hierarchy_id
 design_044: design_output_net_name
 design_045: design_path_blocks
 design_046: design_logic_between_instances
+design_047: design_unreachable_state
+design_048: design_state_lockup
 element_association_100: element_association_space_between_others_and_arrow
 element_association_101: element_association_space_after_arrow
 element_association_102: element_association_space_before_arrow

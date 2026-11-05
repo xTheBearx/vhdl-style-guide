@@ -141,8 +141,9 @@ jobs:
           done
 
   # The same with the YosysHQ OSS CAD Suite, which has what the Ubuntu packages lack: GHDL 7, the yosys-slang plugin
-  # for SystemVerilog designs, and SymbiYosys for design_025. The suite is pinned to a dated release and cached, so a
-  # new release does not change the results on its own; update the date to move to a newer one.
+  # for SystemVerilog designs, and SymbiYosys for the formal rules design_025, design_047 and design_048. The suite is
+  # pinned to a dated release and cached, so a new release does not change the results on its own; update the date to
+  # move to a newer one.
   design-oss:
     runs-on: ubuntu-24.04
     env:

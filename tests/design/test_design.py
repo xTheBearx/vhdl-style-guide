@@ -20,6 +20,7 @@ from mhsg.design import (
     cdc,
     flat,
     formal,
+    fsm,
     graph,
     netlist,
     project,
@@ -293,6 +294,53 @@ class test_formal(unittest.TestCase):
         # The original is unchanged
         self.assertIn("u_box", self.modules["top"]["cells"])
 
+    def test_empty_ports_and_released_pins(self):
+        # A port of no bits is removed, as SymbiYosys cannot name it; a released tri-state pin reads any value
+        dModules = {
+            "top": {
+                "ports": {"e": {"direction": "input", "bits": []}, "pin": {"direction": "inout", "bits": [2]}},
+                "netnames": {"e": {"bits": []}, "pin": {"bits": [2]}},
+                "cells": {
+                    "t": {
+                        "type": "$mux",
+                        "port_directions": {"A": "input", "B": "input", "S": "input", "Y": "output"},
+                        "connections": {"A": ["0"], "B": ["z"], "S": [3], "Y": [2]},
+                    },
+                    "u": {"type": "sub", "connections": {"e": [], "a": [2]}},
+                },
+            },
+        }
+        dCells = formal.formal_netlist({"modules": dModules}, "top", [], "$cover", {}, {}, set())["modules"]["top"]
+        self.assertNotIn("e", dCells["ports"])
+        self.assertNotIn("e", dCells["netnames"])
+        self.assertEqual({"a": [2]}, dCells["cells"]["u"]["connections"])
+        self.assertEqual("0", dCells["cells"]["t"]["connections"]["A"][0])
+        self.assertTrue(graph.is_variable(dCells["cells"]["t"]["connections"]["B"][0]))
+
+    def test_latches_and_tri_state_buffers(self):
+        # A multiplexer looped on itself is a latch, enabled by the select that does not keep the value; a tri-state
+        # buffer is a multiplexer whose disabled output is free
+        dModules = {
+            "top": {
+                "ports": {"d": {"direction": "input", "bits": [2, 3]}, "en": {"direction": "input", "bits": [4]}},
+                "netnames": {},
+                "cells": {
+                    "l": {"type": "$mux", "parameters": {"WIDTH": 2}, "connections": {"A": [5, 2], "B": [2, 7], "S": [4], "Y": [5, 7]}},
+                    "t": {"type": "$tribuf", "parameters": {"WIDTH": 1}, "connections": {"A": [3], "EN": [4], "Y": [8]}},
+                },
+            },
+        }
+        self.assertTrue(formal.has_looped_multiplexers({"modules": dModules}))
+        dCells = formal.formal_netlist({"modules": dModules}, "top", [], "$cover", {}, {}, set())["modules"]["top"]["cells"]
+        self.assertNotIn("l", dCells)
+        self.assertEqual(
+            [({"EN": [4], "D": [2], "Q": [5]}, 1), ({"EN": [4], "D": [2], "Q": [7]}, 0)],
+            [(d["connections"], d["parameters"]["EN_POLARITY"]) for s, d in sorted(dCells.items()) if d["type"] == "$dlatch"],
+        )
+        self.assertEqual("$mux", dCells["t"]["type"])
+        self.assertEqual(([3], [4], [8]), (dCells["t"]["connections"]["B"], dCells["t"]["connections"]["S"], dCells["t"]["connections"]["Y"]))
+        self.assertTrue(graph.is_variable(dCells["t"]["connections"]["A"][0]))
+
     def test_results(self):
         sLog = (
             "SBY 16:34:58 [cover] engine_0: ##   0:00:00  Reached cover statement in step 0 at top: mhsg_check_1\n"
@@ -320,6 +368,181 @@ class test_formal(unittest.TestCase):
         )
 
         self.assertEqual({"test_mode": 0, "mode": 31}, assumption_values(["test_mode=0", "mode = 0x1f"]))
+
+
+def fsm_module(sRegister="$adff", dExtra=None):
+    """
+    A module with a state register st of 2 bits, with the states 0 to 3, and a counter cnt. The state register loads
+    1 when go, 2 from 1 when done, and 3 from 2, else keeps its value; rst resets it asynchronously, or synchronously
+    through the multiplexer s nearest the register with $dff.
+    """
+    dCells = {
+        # go ? 1 : st
+        "m1": {"type": "$mux", "connections": {"A": [10, 11], "B": ["1", "0"], "S": [3], "Y": [20, 21]}},
+        # done ? 2 : m1
+        "m2": {"type": "$mux", "connections": {"A": [20, 21], "B": ["0", "1"], "S": [4], "Y": [22, 23]}},
+        # A case statement: 3 when the first select, m2 when the second, x otherwise
+        "p": {"type": "$pmux", "connections": {"A": ["x", "x"], "B": ["1", "1", 22, 23], "S": [5, 6], "Y": [24, 25]}},
+        "c": {"type": "$add", "connections": {"A": [30, 31], "B": ["1"], "Y": [32, 33]}},
+        "cnt": {"type": "$adff", "parameters": {"ARST_VALUE": "00"}, "connections": {"CLK": [2], "ARST": [7], "D": [32, 33], "Q": [30, 31]}},
+        # A flag of 2 bits that loads one constant or keeps its value: two states
+        "f": {"type": "$mux", "connections": {"A": [40, 41], "B": ["1", "1"], "S": [3], "Y": [42, 43]}},
+        "flag": {"type": "$dff", "connections": {"CLK": [2], "D": [42, 43], "Q": [40, 41]}},
+    }
+    if sRegister == "$adff":
+        dCells["st"] = {
+            "type": "$adff",
+            "parameters": {"ARST_VALUE": "00", "CLK_POLARITY": 1},
+            "connections": {"CLK": [2], "ARST": [7], "D": [24, 25], "Q": [10, 11]},
+        }
+    else:
+        dCells["s"] = {"type": "$mux", "connections": {"A": [24, 25], "B": ["0", "0"], "S": [7], "Y": [26, 27]}}
+        dCells["st"] = {"type": "$dff", "parameters": {"CLK_POLARITY": 1}, "connections": {"CLK": [2], "D": [26, 27], "Q": [10, 11]}}
+    dCells.update(dExtra or {})
+    return {
+        "ports": {
+            "clk": {"direction": "input", "bits": [2]},
+            "go": {"direction": "input", "bits": [3]},
+            "done": {"direction": "input", "bits": [4]},
+            "sel": {"direction": "input", "bits": [5, 6]},
+            "rst": {"direction": "input", "bits": [7]},
+        },
+        "netnames": {"st": {"bits": [10, 11]}, "$st_next": {"bits": [24, 25]}, "cnt": {"bits": [30, 31]}},
+        "cells": dCells,
+    }
+
+
+class test_state_machines(unittest.TestCase):
+    """The state machines of a netlist, and their formal checks, without running SymbiYosys."""
+
+    def test_state_machines(self):
+        # The counter computes its next value and the flag has two states: neither is a state machine
+        lMachines = fsm.state_machines({"top": fsm_module()})
+        self.assertEqual(["st"], [o.name for o in lMachines])
+        oMachine = lMachines[0]
+        # 0 is only loaded by the reset
+        self.assertEqual({0: [], 1: ["m1"], 2: ["m2"], 3: ["p"]}, oMachine.states)
+        self.assertEqual((0, True, [10, 11], 2), (oMachine.reset, oMachine.asynchronous, oMachine.bits, oMachine.clock))
+        self.assertEqual([1, 2, 3], oMachine.other_states())
+        self.assertEqual("3", oMachine.state_name(3))
+
+    def test_slice(self):
+        # Bits 1 and 2 of a register r are compared with constants, as a case statement on a field of a record is: they
+        # are a state machine, loaded through slices of wider multiplexers. Bit 0 is a counter and bit 3 a flag
+        dModule = {
+            "ports": {"clk": {"direction": "input", "bits": [2]}, "rst": {"direction": "input", "bits": [3]}, "go": {"direction": "input", "bits": [4]}},
+            "netnames": {"r": {"bits": [10, 11, 12, 13]}},
+            "cells": {
+                "e": {"type": "$eq", "connections": {"A": [11, 12], "B": ["1", "0"], "Y": [20]}},
+                "inc": {"type": "$not", "connections": {"A": [10], "Y": [21]}},
+                # go ? {flag, 1, 1, inc} : {flag, 0, 1, inc}, then rst ? {0, 0, 0, 0} : that
+                "m": {"type": "$mux", "connections": {"A": [21, "0", "1", 13], "B": [21, "1", "1", 13], "S": [4], "Y": [30, 31, 32, 33]}},
+                "s": {"type": "$mux", "connections": {"A": [30, 31, 32, 33], "B": ["0", "0", "0", "0"], "S": [3], "Y": [40, 41, 42, 43]}},
+                "r": {"type": "$dff", "connections": {"CLK": [2], "D": [40, 41, 42, 43], "Q": [10, 11, 12, 13]}},
+            },
+        }
+        lMachines = fsm.state_machines({"top": dModule})
+        self.assertEqual([("r[2:1]", [1, 2], [11, 12])], [(o.name, o.indexes, o.bits) for o in lMachines])
+        self.assertEqual({0: ["s"], 2: ["m"], 3: ["m"]}, lMachines[0].states)
+        self.assertEqual(("s", 1, 0), lMachines[0].reset_select)
+
+    def test_record_names(self):
+        # The field of the record whose enumerated type fits the slice names the machine and its states
+        with tempfile.TemporaryDirectory() as sDirectory:
+            sFile = os.path.join(sDirectory, "a.vhd")
+            with open(sFile, "w", encoding="utf-8") as oFile:
+                oFile.write(
+                    "type fsm_t is (Idle_s, Run_s, Done_s, Err_s);\ntype big_t is (A, B, C, D, E);\n"
+                    "type two_process_r is record\n  Count : integer;\n  Fsm : fsm_t;\n  Big : big_t;\nend record;\nsignal r, r_next : two_process_r;\n",
+                )
+            oMachine = fsm.state_machines({"top": fsm_module()})[0]
+            oMachine.signal = "r"
+            fsm.vhdl_names(oMachine, [sFile])
+            self.assertEqual(("r.Fsm", {0: "Idle_s", 1: "Run_s", 2: "Done_s", 3: "Err_s"}), (oMachine.name, oMachine.names))
+
+    def test_synchronous_reset(self):
+        # The multiplexer nearest the register loads 0 when rst is 1: a synchronous reset, if rst comes from a top input
+        oMachine = fsm.state_machines({"top": fsm_module("$dff")})[0]
+        self.assertEqual((None, False, ("s", 1, 0)), (oMachine.reset, oMachine.asynchronous, oMachine.reset_select))
+        oFlat = flat.FlatDesign(netlist.Netlist({"modules": {"top": fsm_module("$dff")}}, {}))
+        lStarted, dSync = formal.started_machines(oFlat, [oMachine], {})
+        self.assertEqual(([oMachine], {("rst", 0): 1}), (lStarted, dSync))
+        self.assertEqual(0, oMachine.reset)
+
+    def test_started_machines(self):
+        # An asynchronous reset from a top input that is active in the first cycle starts the machine; without it, the
+        # machine is not checked
+        oFlat = flat.FlatDesign(netlist.Netlist({"modules": {"top": fsm_module()}}, {}))
+        oMachine = fsm.state_machines({"top": fsm_module()})[0]
+        self.assertEqual(([oMachine], {}), formal.started_machines(oFlat, [oMachine], {("rst", 0): 1}))
+        self.assertEqual(([], {}), formal.started_machines(oFlat, [oMachine], {}))
+
+    def test_reset_synchronizer(self):
+        # The synchronous reset comes from a register that the asynchronous reset sets: a reset synchronizer
+        dModule = fsm_module(
+            "$dff",
+            {"sync": {"type": "$adff", "parameters": {"ARST_VALUE": "1", "ARST_POLARITY": 1}, "connections": {"CLK": [2], "ARST": [8], "D": ["0"], "Q": [7]}}},
+        )
+        dModule["ports"]["arst"] = {"direction": "input", "bits": [8]}
+        del dModule["ports"]["rst"]
+        oFlat = flat.FlatDesign(netlist.Netlist({"modules": {"top": dModule}}, {}))
+        oMachine = fsm.state_machines({"top": dModule})[0]
+        self.assertEqual(([oMachine], {}), formal.started_machines(oFlat, [oMachine], {("arst", 0): 1}))
+
+    def test_netlist(self):
+        # A check that a state is entered compares the register with the state after the first cycle; a check that the
+        # machine returns adds a flag set by the state and cleared in the first cycle, on the clock of the register
+        oMachine = fsm.state_machines({"top": fsm_module()})[0]
+        lChecks = [formal.StateCheck(0, oMachine, 3, formal.ENTERED), formal.StateCheck(1, oMachine, 3, formal.RETURNS)]
+        dNetlist = formal.formal_netlist({"modules": {"top": fsm_module()}}, "top", lChecks, "$cover", {("rst", 0): 1}, {}, set(), True)
+        dCells = dNetlist["modules"]["top"]["cells"]
+        self.assertEqual(1, sum(1 for d in dCells.values() if d["type"] == "$initstate"))
+        # The flag of the check, reset by the first cycle
+        lFlags = [d for s, d in dCells.items() if d["type"] == "$adff" and s.startswith("\\mhsg_formal_")]
+        self.assertEqual(1, len(lFlags))
+        self.assertEqual([2], lFlags[0]["connections"]["CLK"])
+        self.assertEqual([["1", "1"], ["1", "1"], ["0", "0"]], [d["connections"]["B"] for d in dCells.values() if d["type"] == "$eq"])
+        self.assertEqual(["\\mhsg_check_0", "\\mhsg_check_1"], sorted(s for s, d in dCells.items() if d["type"] == "$cover"))
+        # The reset is active in the first cycle, and released in the others
+        self.assertEqual(2, sum(1 for d in dCells.values() if d["type"] == "$assume"))
+
+    def test_vhdl_names(self):
+        with tempfile.TemporaryDirectory() as sDirectory:
+            sFile = os.path.join(sDirectory, "a.vhd")
+            with open(sFile, "w", encoding="utf-8") as oFile:
+                oFile.write("type state_t is (IDLE, -- waiting\n RUN, DONE, ERR);\nsignal st, other : state_t;\n")
+            oMachine = fsm.state_machines({"top": fsm_module()})[0]
+            fsm.vhdl_names(oMachine, [sFile])
+            self.assertEqual({0: "IDLE", 1: "RUN", 2: "DONE", 3: "ERR"}, oMachine.names)
+            # A type with more values than the bits hold is not the type of the register
+            with open(sFile, "w", encoding="utf-8") as oFile:
+                oFile.write("type state_t is (A, B, C, D, E);\nsignal st : state_t;\n")
+            oMachine = fsm.state_machines({"top": fsm_module()})[0]
+            fsm.vhdl_names(oMachine, [sFile])
+            self.assertEqual({}, oMachine.names)
+
+    def test_sv_names(self):
+        self.assertEqual((3, 3, 31, 5, None), (fsm.sv_value("3"), fsm.sv_value("2'd3"), fsm.sv_value("'h1f"), fsm.sv_value("3'b1_01"), fsm.sv_value("WIDTH")))
+        with tempfile.TemporaryDirectory() as sDirectory:
+            sFile = os.path.join(sDirectory, "a.sv")
+            with open(sFile, "w", encoding="utf-8") as oFile:
+                oFile.write("typedef enum logic [1:0] {IDLE, /* first */ RUN = 2'd2, DONE} state_t;\nstate_t st;\n")
+            dModule = fsm_module()
+            # 1 is not a value of the enumeration: not the type of the register
+            oMachine = fsm.state_machines({"top": dModule})[0]
+            fsm.sv_names(oMachine, [sFile])
+            self.assertEqual({}, oMachine.names)
+            with open(sFile, "w", encoding="utf-8") as oFile:
+                oFile.write("typedef enum logic [1:0] {IDLE, // first\n GO, RUN = 2'd2, DONE} state_t;\nstate_t st;\n")
+            fsm.sv_names(oMachine, [sFile])
+            self.assertEqual({0: "IDLE", 1: "GO", 2: "RUN", 3: "DONE"}, oMachine.names)
+
+    def test_attribute_names(self):
+        dModule = fsm_module()
+        dModule["netnames"]["st"]["attributes"] = {"enum_value_00": "\\IDLE", "enum_value_01": "\\RUN", "enum_value_11": "\\pkg::DONE"}
+        oMachine = fsm.state_machines({"top": dModule})[0]
+        fsm.attribute_names(oMachine, dModule)
+        self.assertEqual({0: "IDLE", 1: "RUN", 3: "DONE"}, oMachine.names)
 
 
 class test_slang_netlists(unittest.TestCase):
@@ -1308,6 +1531,34 @@ class test_design_analysis(unittest.TestCase):
             self.assertEqual("SymbiYosys (sby) is not installed: reachability is not checked", lFindings[0][3])
         else:
             self.assertEqual([("reach.vhd", 33, "design_025", "Branch in reach_top proven unreachable: this condition is never true")], lFindings)
+
+    def test_state_machines(self):
+        # Disabled by default, also in design analysis. Enabled, design_047 proves that ERROR is never entered, as count
+        # never gets past 5 in RUN, and design_048 that HOLD and SPIN never return to IDLE; without SymbiYosys they say
+        # they cannot check
+        lRules = ("design_047", "design_048")
+        self.assertEqual([], [t for t in self.findings("fsm_top", "fsm.vhd") if t[2] in lRules])
+        dRules = {"design_047": {"disable": False}, "design_048": {"disable": False}}
+        lFindings = [t for t in self.findings("fsm_top", "fsm.vhd", dRules=dRules) if t[2] in lRules]
+        if formal.find_sby() is None:
+            self.assertEqual(["SymbiYosys (sby) is not installed: state machines are not checked"] * 2, [t[3] for t in lFindings])
+            return
+        self.assertEqual(
+            [
+                ("fsm.vhd", 38, "design_047", "State ERROR of state in fsm_top proven never entered from reset"),
+                ("fsm.vhd", 47, "design_048", "State machine state in fsm_top never returns to its reset state IDLE after states HOLD, SPIN"),
+            ],
+            lFindings,
+        )
+        # A synchronous reset from a top input starts the machine; the states are named after the enum of SystemVerilog
+        if tools.has_slang(shutil.which("yosys")):
+            self.assertEqual(
+                [
+                    ("fsm_sv.sv", 23, "design_048", "State machine state in fsm_sv never returns to its reset state S_IDLE after state S_STUCK"),
+                    ("fsm_sv.sv", 29, "design_047", "State S_NEVER of state in fsm_sv proven never entered from reset"),
+                ],
+                [t for t in self.findings("fsm_sv", "fsm_sv.sv", dRules=dRules) if t[2] in lRules],
+            )
 
     def test_multiple_drivers(self):
         # The bidirectional pin is not reported

@@ -98,6 +98,8 @@ Rules Disabled by Default
 * `design_044 <design_rules.html#design-044>`_
 * `design_045 <design_rules.html#design-045>`_
 * `design_046 <design_rules.html#design-046>`_
+* `design_047 <design_rules.html#design-047>`_
+* `design_048 <design_rules.html#design-048>`_
 * `expression_001 <expression_rules.html#expression-001>`_
 * `file_100 <file_rules.html#file-100>`_
 * `function_600 <function_rules.html#function-600>`_
