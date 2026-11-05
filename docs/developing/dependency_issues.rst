@@ -153,13 +153,26 @@ declaration of the signal it drives, and names files as the design does (:code:`
 **Quirk: read_slang adds** :code:`Design elaboration failed; see full log for details` **to its errors.** MHSG leaves it
 out when there are errors with a location.
 
+**Limitation: write_smt2 does not support tri-state buffers or combinational loops.** SymbiYosys stops with
+:code:`Unsupported cell type $tribuf` on Open Logic's olo_intf_spi_slave, and with :code:`Found logic loop in module`
+on the latches the GHDL plugin builds as multiplexers looped on themselves (neorv32 with its latch register file).
+MHSG replaces each tri-state buffer with a multiplexer whose disabled output is free, and each looped bit with a
+:code:`$dlatch`, checked in multiclock mode (:code:`free_released` and :code:`latch_looped_multiplexers` in
+:code:`mhsg/design/formal.py`).
+
+**Bug: write_smt2 names a port of no bits that it never declares.** A generic can leave a port empty, such as
+:code:`Cmd_ClkDiv` of Open Logic's olo_intf_i2c_master; from a JSON netlist with a port whose :code:`bits` are empty,
+SymbiYosys stops with :code:`Solver Error: (error "at line 23, column 25: undefined term: |top_n e|")` (Yosys
+0.70+309). MHSG removes the ports, nets and connections of no bits from the formal netlist (:code:`remove_empty` in
+:code:`mhsg/design/formal.py`).
+
 **Quirk: opt removes logic and turns registers that are never enabled into latches.** MHSG writes the netlist before
 :code:`opt` runs.
 
 SymbiYosys
 ----------
 
-**Limitation: SymbiYosys is not packaged for Ubuntu.** design_025 needs the YosysHQ OSS CAD Suite (sby of 2026-11,
+**Limitation: SymbiYosys is not packaged for Ubuntu.** design_025, design_047 and design_048 need the YosysHQ OSS CAD Suite (sby of 2026-11,
 with yices and abc pdr), and runs the tools beside :code:`sby`, as it calls :code:`yosys`, :code:`yosys-smtbmc` and the
 solvers by name (:code:`mhsg/design/formal.py`).
 
@@ -169,6 +182,12 @@ the limit count.
 
 **Quirk: in cover mode, assertions of the design are checked too**, and a failing one ends the run. MHSG leaves the
 assertions and covers of the design out of the formal netlist and keeps its assumptions.
+
+**Quirk: a tri-state driver that releases a pin does not let it take other values.** Open Logic's olo_intf_i2c_master
+drives its open-drain I2C pins with :code:`'0'` or :code:`'Z'` and reads them back; in the formal model the released
+pin never reads 1, the bus never looks idle, and every state of the state machine after the second was proven never
+entered. MHSG replaces the high impedance bits that cells select with free bits, which can take any value
+(:code:`free_released` in :code:`mhsg/design/formal.py`).
 
 Verilator
 ---------

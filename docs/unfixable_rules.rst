@@ -149,6 +149,8 @@ With multiple options available, the user is required to make the decision.
 * `design_044 <design_rules.html#design-044>`_
 * `design_045 <design_rules.html#design-045>`_
 * `design_046 <design_rules.html#design-046>`_
+* `design_047 <design_rules.html#design-047>`_
+* `design_048 <design_rules.html#design-048>`_
 * `function_600 <function_rules.html#function-600>`_
 * `function_601 <function_rules.html#function-601>`_
 * `generate_017 <generate_rules.html#generate-017>`_

@@ -25,10 +25,13 @@ Deferred for now: these need Vivado and Libero installed.
 Design analysis
 ---------------
 
-* **Formal reachability of states and liveness.** design_025 checks branches with SymbiYosys, its proofs in
-  parallel; states are covered through the branches that enter them. Cover checks of states as such, and properties
-  that something always happens again (liveness), are not done. SymbiYosys is not packaged for Ubuntu: CI runs
-  design_025 in the design-oss job, with the OSS CAD Suite.
+* **Liveness under fair inputs.** design_025 checks branches, design_047 the states of state machines and design_048
+  that each state machine can return to its reset state, with SymbiYosys. That a machine always returns, whatever its
+  inputs do once they are fair, such as an acknowledge that eventually comes, needs fairness assumptions of the design;
+  SymbiYosys checks such properties in live mode, with suprove. States reached only after a clock divider or a long
+  counter are undecided within the time limits: the checks could start from states found by simulation, or abstract
+  counters. SymbiYosys is not packaged for Ubuntu: CI runs the formal rules in the design-oss job, with the OSS CAD
+  Suite.
 * **Black box libraries for more primitives.** The transceivers of Intel and Microchip, and memory controllers, are
   IP cores whose names the vendor tools choose: they are declared with the transceiver and memory_controller
   archetypes, not in libraries. The Intel and Lattice libraries cover the common primitives and the ECP5 SERDES. The
