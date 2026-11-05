@@ -2279,3 +2279,88 @@ design_cases:
   name: inout port connections
   design: *id014
   expected: []
+- rule: design_001
+  name: STARC design items 2
+  design: &id015
+    top: starc2_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/starc_design2.vhd
+  expected: []
+- rule: design_002
+  name: STARC design items 2
+  design: *id015
+  expected:
+  - - examples/design/starc_design2.vhd
+    - 69
+    - Synthesis infers a latch for l1 in starc2_top
+  - - examples/design/starc_design2.vhd
+    - 76
+    - Synthesis infers a latch for l2 in starc2_top
+  - - examples/design/starc_design2.vhd
+    - 83
+    - Synthesis infers a latch for l3 in starc2_top
+  - - examples/design/starc_design2.vhd
+    - 91
+    - Synthesis infers a latch for la in starc2_top
+- rule: design_003
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_004
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_005
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_006
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_007
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_008
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_009
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_010
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_011
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_012
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_013
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_014
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_015
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_016
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_017
+  name: STARC design items 2
+  design: *id015
+  expected: []

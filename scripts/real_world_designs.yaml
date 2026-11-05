@@ -915,7 +915,10 @@ designs:
     - -Wno-shared
     generics:
       ClkFrequency_g: 100000000.0
-  known: []
+  known:
+  # Real by STARC 2.5.2.1: the open-drain SCL and SDA are driven and read back in the same entity
+  - 'src/base/vhdl/olo_base_pkg_logic.vhd(236)design_029 -- Bidirectional net I2c_Scl is driven and read in olo_intf_i2c_master'
+  - 'src/base/vhdl/olo_base_pkg_logic.vhd(236)design_029 -- Bidirectional net I2c_Sda is driven and read in olo_intf_i2c_master'
 - name: olo_intf_spi_master
   project: open-logic
   design:

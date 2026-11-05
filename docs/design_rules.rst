@@ -692,3 +692,135 @@ every instance of its entity only when no instance takes it.
    if count = 7 then
      alarm <= '1';
    end if;
+
+design_026
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_latch_loop`
+
+This rule reports loops through latches: logic that feeds a latch its own output, through other logic and latches.
+
+.. NOTE:: This is a design rule. It runs in design analysis.
+
+A latch is transparent while it is enabled, so a loop through it behaves as a combinational loop for as long as
+the enable is active, see design_003, which reports the loops without a latch. A latch that holds its own value,
+its enable off, is not a loop.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   process (en, b) is
+   begin
+     if en = '1' then
+       a <= not b;
+     end if;
+   end process;
+
+   b <= a;
+
+design_027
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_latch_stages`
+
+This rule reports chains of more than **maximum_stages** latches, 2 by default, enabled by the same signal with
+the same polarity: on the same clock phase.
+
+.. NOTE:: This is a design rule. It runs in design analysis.
+
+Latches open on the same phase let data race through every stage of the chain while the enable is active, so the
+timing of the chain is that of the logic through all of them. The chain is followed through logic, not through
+flip-flops or latches of another phase.
+
+**Violation**
+
+Three latches in a row, each enabled while clk is high.
+
+design_028
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_tristate_enable_source`
+
+This rule reports tri-state enables that do not come from top inputs only: through logic from a register, a
+latch, a memory or a black box.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: it is a rule of design for
+          test, for the scan tests of ASICs.
+
+During a scan test the registers hold test patterns, so an enable that a register drives can turn on two drivers
+of a bus at once. An enable that comes from top inputs, directly or through a decoder of them, is fixed by the
+tester.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   bus_data <= data when oe_r = '1' else 'Z';  -- oe_r is a register
+
+design_029
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_bidirectional_in_one_block`
+
+This rule reports bidirectional nets whose tri-state driver and the logic that reads them are in the same module.
+
+.. NOTE:: This is a design rule. It runs in design analysis.
+
+Keeping the tri-state driver and the input cell of a bidirectional bus in separate blocks keeps the paths through
+the pad apart for synthesis and timing analysis, and leaves no combinational path from the driver back into the
+block that drives it.
+
+**Violation**
+
+.. code-block:: vhdl
+
+   pin      <= data when oe = '1' else 'Z';
+   received <= pin and enable;
+
+design_030
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_memory_outside_top`
+
+This rule reports memories that are not in the top-level module of the design.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: it is a rule of the floor
+          plan of ASICs.
+
+A memory at the top level is placed, tested and replaced by a memory macro more easily than one inside a block.
+Each module with memories is reported once.
+
+**Violation**
+
+A RAM inferred in a submodule.
+
+design_031
+##########
+
+|phase_7| |disabled| |error| |unfixable| |design|
+
+Alias: :code:`design_clock_domains_per_block`
+
+This rule reports instances whose own registers are in more than one clock domain.
+
+.. NOTE:: This is a design rule. It runs in design analysis. It is disabled by default: a design need not follow
+          it, and synchronizers and clock domain crossing blocks have two domains by design.
+
+A block in one clock domain is constrained, synthesized and verified on its own, and its crossings are at its
+ports. The registers of the instance itself are counted, not those of the instances in it. Related clocks, such as
+the outputs of one PLL, are one domain.
+
+**Violation**
+
+An entity with processes on two unrelated clocks.

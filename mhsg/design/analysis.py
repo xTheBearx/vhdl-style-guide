@@ -165,10 +165,13 @@ class Context:
                         iLine = assignment_line(oProcess, lParts, bLast)
                         if iLine is not None:
                             return oLocation.file, iLine
-            if all(declaration_line(o, oLocation.line) for o in lArchitectures):
-                # Later versions of GHDL locate some cells, such as latches, at the declaration of the signal or port
-                # they drive instead of the process: use the first process that assigns the signal
-                for oArchitecture in lArchitectures:
+            # Later versions of GHDL locate some cells, such as latches, at the declaration of the signal or port they
+            # drive instead of the process: use the first process that assigns the signal in the architecture whose
+            # statements follow the declaration, the one it belongs to when a file holds several
+            lFollowing = [o for o in lArchitectures if o.first_statement is not None and declaration_line(o, oLocation.line)]
+            if lFollowing or all(declaration_line(o, oLocation.line) for o in lArchitectures):
+                lSearched = [min(lFollowing, key=lambda o: o.first_statement)] if lFollowing else lArchitectures
+                for oArchitecture in lSearched:
                     for oProcess in oArchitecture.processes:
                         iLine = assignment_line(oProcess, lParts, bLast)
                         if iLine is not None:

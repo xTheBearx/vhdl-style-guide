@@ -1954,7 +1954,13 @@
         "design_022",
         "design_023",
         "design_024",
-        "design_025"
+        "design_025",
+        "design_026",
+        "design_027",
+        "design_028",
+        "design_029",
+        "design_030",
+        "design_031"
       ]
     },
     {
@@ -3751,6 +3757,12 @@
       "label": "Most proofs",
       "description": "The most branches not reached by the search that get a proof.",
       "minimum": 0
+    },
+    "maximum_stages": {
+      "type": "integer",
+      "label": "Most latch stages",
+      "description": "The most latches in a row that are open on the same clock phase.",
+      "minimum": 1
     },
     "maximum_states": {
       "type": "integer",
@@ -20533,6 +20545,293 @@
           "name": "assumptions",
           "default": [],
           "definition": "assumptions"
+        }
+      ]
+    },
+    {
+      "id": "design_026",
+      "alias": "design_latch_loop",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports loops through latches: logic that feeds a latch its own output, through other logic and latches.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_027",
+      "alias": "design_latch_stages",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports chains of more than maximum_stages latches, 2 by default, enabled by the same signal with the same polarity: on the same clock phase.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "maximum_stages",
+          "default": 2,
+          "definition": "maximum_stages"
+        }
+      ]
+    },
+    {
+      "id": "design_028",
+      "alias": "design_tristate_enable_source",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports tri-state enables that do not come from top inputs only: through logic from a register, a latch, a memory or a black box.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_029",
+      "alias": "design_bidirectional_in_one_block",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports bidirectional nets whose tri-state driver and the logic that reads them are in the same module.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_030",
+      "alias": "design_memory_outside_top",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports memories that are not in the top-level module of the design.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "design_031",
+      "alias": "design_clock_domains_per_block",
+      "category": "design",
+      "groups": [
+        "design"
+      ],
+      "summary": "This rule reports instances whose own registers are in more than one clock domain.",
+      "documentation": "design_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
         }
       ]
     },

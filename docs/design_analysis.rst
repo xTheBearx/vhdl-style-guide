@@ -209,6 +209,13 @@ Design rules
 * :code:`design_023` reports inout ports wired directly to an input or output port of the same module (STARC 2.5.1.6).
 * :code:`design_024`, disabled by default as it takes longer, maps the design to gates and reports modules whose own
   logic has more than :code:`maximum_gates` NAND gate equivalents, 40000 by default (STARC 1.6.1.1).
+* :code:`design_026` reports loops through latches, and :code:`design_027` chains of more than
+  :code:`maximum_stages` latches open on the same phase, 2 by default (STARC 2.4.1.4, 2.4.1.5, 3.3.4.1).
+* :code:`design_029` reports bidirectional nets whose tri-state driver and the logic that reads them are in one module
+  (STARC 2.5.2.1).
+* Disabled by default: :code:`design_028` reports tri-state enables that come from registers rather than top inputs,
+  a rule of design for test (STARC 3.3.8.1, 3.3.8.2); :code:`design_030` memories outside the top-level module
+  (STARC 1.5.5.3); :code:`design_031` instances whose registers are in more than one clock domain (STARC 1.4.4.1).
 * :code:`design_025`, disabled by default as it needs SymbiYosys and takes longer, reports branches that can never be
   taken from reset: it searches :code:`depth` cycles from reset for a way to take each branch, then tries to prove
   each branch it did not reach unreachable, within :code:`timeout` seconds each. Branches neither reached nor proven

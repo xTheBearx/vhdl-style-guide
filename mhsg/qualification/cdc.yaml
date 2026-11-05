@@ -753,3 +753,52 @@ design_cases:
   name: inout port connections
   design: *id014
   expected: []
+- rule: design_008
+  name: STARC design items 2
+  design: &id015
+    top: starc2_top
+    libraries:
+    - name: work
+      files:
+      - examples/design/starc_design2.vhd
+  expected: []
+- rule: design_009
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_010
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_011
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_012
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_013
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_014
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_015
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_016
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_017
+  name: STARC design items 2
+  design: *id015
+  expected: []
+- rule: design_018
+  name: STARC design items 2
+  design: *id015
+  expected: []

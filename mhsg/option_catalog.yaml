@@ -528,6 +528,11 @@ options:
     type: integer
     label: Inputs of a look-up table
     description: The number of inputs of the look-up tables the design is mapped to, such as 6.
+  maximum_stages:
+    type: integer
+    minimum: 1
+    label: Most latch stages
+    description: The most latches in a row that are open on the same clock phase.
   maximum_drivers:
     type: integer
     minimum: 1
