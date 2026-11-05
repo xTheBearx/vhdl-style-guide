@@ -59,8 +59,6 @@ The plan, with the tools evaluated, is in the "Verilog and SystemVerilog" tab of
 (reading files, style rules, lint and design analysis) are done; see :doc:`../systemverilog`. Step 5, breadth, is
 under way: the entries below.
 
-* **Alignment inside packed dimensions**: sv_alignment_011 aligns the colons of the first packed dimension of each
-  declaration, by spaces after the bracket; the least significant bounds, and further dimensions, are not aligned.
 * **Indentation not checked yet**: continuation lines are checked to be indented more than their statement, and fixed
   by **continuation_indent** levels; continuation lines indented more, such as arguments aligned after their bracket,
   are not checked. Assignment patterns over several lines are checked by sv_indent_004; the contents of other
@@ -71,10 +69,9 @@ under way: the entries below.
   them, so rules check both; rules that read the syntax tree, such as the lint rules, do not see them, and macro
   arguments are not indented by sv_indent_001. The bodies of macro definitions, which are text until a macro is used,
   are not checked.
-* **Files with syntax errors** are checked by the SystemVerilog rules up to the first error only, and not fixed.
-  Checking the code after it would need slang's recovery to be trusted, or each module parsed on its own. The
-  defines and include directories of the systemverilog section let fewer files fall in this case; the real-world
-  check runs without them.
+* **Files with syntax errors** are checked and fixed but for the part of each design unit with an error, from the
+  line of its first error to the end of the unit, where slang's syntax tree may be wrong. Checking that part too would
+  need slang's recovery inside a unit to be trusted, or each item of the unit parsed on its own.
 * **STARC items with judgement**: resource sharing, Gray encoding of states and the like are left to review; the rules
   on loop bounds and common expressions compare the code as written, so loop bounds given by parameters, and
   expressions written differently, are not checked.

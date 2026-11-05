@@ -202,10 +202,10 @@ Syntax errors
 #############
 
 Each file is parsed on its own, so macros defined in other files and include files that are not found are not
-errors. Other syntax errors are reported by :code:`sv_syntax_001`. slang parses the code before the first error as
-written, so the SystemVerilog style rules check it; after the error the syntax tree may have constructs missing or
-misplaced, and tokens classified wrongly, so the rules leave the rest of the file alone, and nothing in the file is
-fixed. The lint rules skip the file. The rules for every language, on trailing spaces, tabs and lengths, and
+errors. Other syntax errors are reported by :code:`sv_syntax_001`. slang parses the code before an error as written,
+and starts again at the next design unit, such as a module; in between, the syntax tree may have constructs missing
+or misplaced, and tokens classified wrongly. The SystemVerilog style rules leave that part, from the line of the first
+error in a unit to the end of the unit, alone, and check and fix the rest of the file. The lint rules skip the file. The rules for every language, on trailing spaces, tabs and lengths, and
 :code:`sv_blank_line_001` check the whole file.
 
 After a fix that changes the structure of the code, such as replacing always @* with always_comb or removing a
@@ -265,8 +265,8 @@ on other projects, with these differences:
 * Verible indents continuation lines by its wrap width, 4 spaces; MHSG accepts any indent past the start of the
   statement, and its fix indents by 4 spaces too.
 * Verible's placement of the line after a comment inside a statement varies; MHSG treats it as any continuation line.
-* Verible leaves a file with a syntax error unchanged; MHSG checks the lines before the first error, see
-  :code:`sv_syntax_001`.
+* Verible leaves a file with a syntax error unchanged; MHSG checks and fixes the file but for the design unit with the
+  error, from the error on, see :code:`sv_syntax_001`.
 
 Code tags
 ---------

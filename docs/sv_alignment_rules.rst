@@ -266,21 +266,26 @@ sv_alignment_011
 
 Alias: :code:`sv_alignment_dimension_colons`
 
-This rule aligns the colons of the packed dimensions that sv_alignment_010 aligns, by spaces after the opening
-bracket, as Verible's formatter does: [ 4:0] under [31:0]. Only the first packed dimension of a declaration is
-aligned, when it is a range such as [7:0]. By default it infers whether the author meant them aligned, as for the
-other alignment rules; **policy** set to align or flush_left forces one.
+This rule aligns the packed dimensions of the declarations that sv_alignment_010 aligns, as Verible's formatter
+does: the text inside the brackets of each dimension is aligned right, by spaces after the opening bracket, so
+[ 4:0] goes under [31:0], and the brackets of the next dimension line up. Declarations without a dimension leave its
+column alone. By default it infers whether the author meant them aligned, as for the other alignment rules;
+**policy** set to align or flush_left forces one.
 
 **Violation**
 
 .. code-block:: systemverilog
 
-   logic [31:0] data;
-   logic [4:0]  count;
+   logic [31:0]       data;
+   logic [4:0]        count;
+   logic [7:0][3:0]   bytes;
+   logic [15:0][31:0] words;
 
 **Fix**
 
 .. code-block:: systemverilog
 
-   logic [31:0] data;
-   logic [ 4:0] count;
+   logic [31:0]       data;
+   logic [ 4:0]       count;
+   logic [ 7:0][ 3:0] bytes;
+   logic [15:0][31:0] words;

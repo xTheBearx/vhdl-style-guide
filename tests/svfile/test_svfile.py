@@ -389,16 +389,19 @@ class test_rules(unittest.TestCase):
         )
 
     def test_alignment_inside_dimensions(self):
-        # The colons of the packed dimensions aligned in a column are aligned too, by spaces after the bracket; a
-        # dimension much wider than the others leaves them flush left
+        # The packed dimensions aligned in a column are aligned too, each aligned right inside its brackets by spaces
+        # after the bracket, as Verible does; a dimension much wider than the others leaves them flush left
         _, lOutput, sAfter = self.run_mhsg(["--fix"], "dimensions.sv")
         self.assertEqual(read("dimensions.fixed.sv"), sAfter)
         _, lOutput, _ = self.run_mhsg(["-ap"], "dimensions.sv")
         self.assertEqual(
             [
-                "ERROR: dimensions.sv(3)sv_alignment_011 -- Use 1 space(s) after [ to align the colon",
-                "ERROR: dimensions.sv(7)sv_alignment_011 -- Use 1 space(s) after [ to align the colon",
-                "ERROR: dimensions.sv(9)sv_alignment_011 -- Use 1 space(s) after [ to align the colon",
+                "ERROR: dimensions.sv(3)sv_alignment_011 -- Use 1 space(s) after [ to align the dimension",
+                "ERROR: dimensions.sv(7)sv_alignment_011 -- Use 1 space(s) after [ to align the dimension",
+                "ERROR: dimensions.sv(9)sv_alignment_011 -- Use 1 space(s) after [ to align the dimension",
+                "ERROR: dimensions.sv(14)sv_alignment_011 -- Use 2 space(s) after [ to align the dimension",
+                "ERROR: dimensions.sv(14)sv_alignment_011 -- Use 1 space(s) after [ to align the dimension",
+                "ERROR: dimensions.sv(15)sv_alignment_011 -- Use 1 space(s) after [ to align the dimension",
             ],
             only(lOutput, "sv_alignment"),
         )
@@ -584,7 +587,8 @@ class test_rules(unittest.TestCase):
         self.assertEqual([f"ERROR: {sCopy}(2)sv_syntax_001 -- Syntax error: expected expression"], oResult.stdout.splitlines())
 
     def test_code_before_a_syntax_error(self):
-        # The code before the first syntax error is checked, the code after it is not, and nothing is fixed
+        # The code before the first syntax error is checked and fixed, the code after it, to the end of its module,
+        # is not
         sText = "module e;\nlogic  x ;\n    always_comb begin\n    x=a;\n    end\n    assign y = a +;\n  logic   z ;\nendmodule\n"
         with tempfile.TemporaryDirectory() as sTemporary:
             sCopy = os.path.join(sTemporary, "e.sv")
@@ -611,7 +615,30 @@ class test_rules(unittest.TestCase):
             ],
             oResult.stdout.splitlines(),
         )
-        self.assertEqual(sText, sAfter)
+        self.assertEqual("module e;\n    logic  x;\n    always_comb begin\n        x = a;\n    end\n    assign y = a +;\n  logic   z ;\nendmodule\n", sAfter)
+
+    def test_units_after_a_syntax_error(self):
+        # A syntax error leaves its module alone, from its line on; the modules before and after it are checked
+        sText = "module a;\nlogic x;\nendmodule\n\nmodule b;\n    logic y;\n    wire w = ;\n  logic v;\nendmodule\n\nmodule c;\nlogic z;\nendmodule\n"
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sCopy = os.path.join(sTemporary, "u.sv")
+            with open(sCopy, "w", encoding="utf-8") as oFile:
+                oFile.write(sText)
+            oResult = subprocess.run(
+                [sys.executable, "bin/mhsg", "-f", sCopy, "-ap", "-of", "syntastic"],
+                cwd=sRoot,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+        self.assertEqual(
+            [
+                f"ERROR: {sCopy}(2)sv_indent_001 -- Use 4 spaces for indent",
+                f"ERROR: {sCopy}(7)sv_syntax_001 -- Syntax error: expected expression",
+                f"ERROR: {sCopy}(12)sv_indent_001 -- Use 4 spaces for indent",
+            ],
+            [s for s in oResult.stdout.splitlines() if "sv_comment" not in s and "sv_file" not in s],
+        )
 
     def test_lint(self):
         _, lOutput, _ = self.run_mhsg(["--lint_only", "--rule_set", "none"], "lint.sv")
@@ -1056,7 +1083,7 @@ class test_rules(unittest.TestCase):
                 "ERROR: alignment.sv(7)sv_alignment_006 -- Use 1 space(s) before =",
                 "ERROR: alignment.sv(8)sv_alignment_004 -- Align valid in column 18",
                 "ERROR: alignment.sv(9)sv_alignment_004 -- Align data in column 18",
-                "ERROR: alignment.sv(9)sv_alignment_011 -- Use 1 space(s) after [ to align the colon",
+                "ERROR: alignment.sv(9)sv_alignment_011 -- Use 1 space(s) after [ to align the dimension",
                 "ERROR: alignment.sv(10)sv_alignment_004 -- Align wide in column 18",
                 "ERROR: alignment.sv(16)sv_alignment_002 -- Align ( in column 19",
             ],
