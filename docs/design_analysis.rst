@@ -72,6 +72,10 @@ The design is described in the **design** section of a configuration file:
   design_039 to design_042. Their values are propagated through the logic: a gate or multiplexer whose other inputs
   they fix passes the clock in test mode, and a latch whose data they fix, such as the enable latch of a clock gate,
   holds that value.
+* **tools** names the programs of :code:`ghdl` and :code:`yosys`, such as
+  :code:`{yosys: ~/oss-cad-suite/bin/yosys}`, when they are not the first on the path; the environment variables
+  :code:`MHSG_GHDL` and :code:`MHSG_YOSYS` do the same. A Yosys with the yosys-slang plugin, such as that of the OSS
+  CAD Suite, reads all of SystemVerilog; Yosys' own reader, :code:`read_verilog -sv`, only part of it.
 * **work_directory** keeps the files of GHDL and Yosys, such as the Verilog and the JSON netlist, in a directory,
   for a closer look. Without it they are written to a temporary directory and removed.
 
@@ -125,9 +129,11 @@ under **generics**. With :code:`order: auto`, the VHDL files are those these ent
   expressions of parameters, also of the module that holds the instance. Yosys then reads a copy of each file with
   such instances, in which each names the module elaborated with its values; findings and messages name the original
   file. An instance whose values differ between the times the elaboration meets it, as in a generate loop that gives
-  each iteration other values, or in a module elaborated with several sets of parameters, is reported by design_001
-  and analyzed with the defaults of the generics; so is one whose values cannot be computed, and a string generic
-  set from an expression;
+  each iteration other values, or in a module elaborated with several sets of parameters, names a module that mhsg
+  adds to the copy: it has the parameters of the entity, and instantiates the module elaborated with the values it is
+  given, so each iteration gets its own; this needs numbers or booleans as values. An instance whose values cannot be
+  computed, or differ and are not all numbers, is reported by design_001 and analyzed with the defaults of the
+  generics, and so is a string generic set from an expression;
 * GHDL names the module after the entity in lower case; the Verilog may write the name in any case, as long as all its
   instances write it the same way;
 * with read_slang, each set of values is elaborated in the same way, as read_slang does not set the parameters of the

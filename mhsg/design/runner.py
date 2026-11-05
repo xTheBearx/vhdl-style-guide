@@ -220,10 +220,19 @@ def run_verilog(oDesign, oTools, sWorkDirectory):
         if not any(o.severity in (None, "error") for o in oResult.messages):
             sText = (oProcess.stderr.strip() or "Yosys failed").splitlines()[-1]
             oResult.messages.append(Message(None, 0, 0, "error", sText, "verilog"))
+        if not getattr(oTools, "slang", False) and any(s.lower().endswith((".sv", ".svh")) for s in oDesign.verilog_files()):
+            oResult.messages.append(Message(None, 0, 0, "error", SLANG_HINT, "verilog"))
         return oResult
     with open(sNetlist, encoding="utf-8") as oFile:
         oResult.netlist = json.load(oFile)
     return oResult
+
+
+SLANG_HINT = (
+    "This Yosys reads SystemVerilog with read_verilog -sv, which handles part of SystemVerilog; a Yosys with the "
+    "yosys-slang plugin, such as that of the YosysHQ OSS CAD Suite, reads all of it: set tools: {yosys: <path>} in the "
+    "design section, or MHSG_YOSYS, to use it"
+)
 
 
 reEntity = re.compile(r"^\s*entity\s+([a-z]\w*)\s+is\b", re.IGNORECASE | re.MULTILINE)
@@ -334,6 +343,7 @@ def entity_variants(oDesign, oTools, sWorkDirectory, oResult, dUsed):
     dElaborated = verilog_black_boxes.elaborated_parameters(oDesign, {s: list(d.values()) for s, d in dSpellings.items()}) if oDesign.top else {}
     dVariants = {}
     lEdits = []
+    lSelectors = []
     for oInstance in lInstances:
         lNames = list(dTypes[oInstance.type])
         lSet = []
@@ -350,18 +360,29 @@ def entity_variants(oDesign, oTools, sWorkDirectory, oResult, dUsed):
         if not oInstance.problem and not setValues:
             # Not met by the elaboration, as in a module the top does not use: only literals can be passed on
             setValues.add(tuple(generic_value(None, sValue, dTypes[oInstance.type][s], s) for s, sValue in lSet))
-        if len(setValues) > 1:
-            oInstance.problem = f"the elaborations of module {oInstance.module} give it different values"
-        elif setValues and any(t[1] is None for t in next(iter(setValues))):
+        if any(t[1] is None for tSet in setValues for t in tSet):
             oInstance.problem = "the value of a parameter could not be computed"
+        elif len(setValues) > 1 and not all(isinstance(t[1], (bool, int)) for tSet in setValues for t in tSet):
+            oInstance.problem = f"the elaborations of module {oInstance.module} give it different values, not all numbers"
         if oInstance.problem:
             sText = f"Instance {oInstance.name} of {oInstance.type} is analyzed with the defaults of its generics, as its own values cannot be set: {oInstance.problem}"
             oResult.messages.append(Message(oInstance.file, oInstance.line, 0, "error", sText, "configuration"))
             lEdits.append((oInstance.file, *oInstance.span, oInstance.type))
             continue
+        if len(setValues) > 1:
+            # An instance whose elaborations give it several sets of values, such as in a generate loop, instantiates a
+            # module that selects the variant of each set, see selector_module
+            lSets = []
+            for tSet in sorted(setValues, key=repr):
+                tKey = (oInstance.type, tuple(sorted((s, value_text(o, dTypes[oInstance.type][s])) for s, o in tSet)))
+                dVariants.setdefault(tKey, [])
+                lSets.append((tSet, tKey))
+            lSelectors.append((oInstance, lSets))
+            continue
         lGenerics = [(s, value_text(o, dTypes[oInstance.type][s])) for s, o in next(iter(setValues))]
         dVariants.setdefault((oInstance.type, tuple(sorted(lGenerics))), []).append(oInstance)
     lJson = []
+    dModules = {}
     for iVariant, ((sType, tGenerics), lVariantInstances) in enumerate(sorted(dVariants.items()), start=1):
         sSuffix = f"__mhsg{iVariant}"
         sJson = os.path.join(sWorkDirectory, f"{sType.lower()}{sSuffix}.json")
@@ -378,8 +399,66 @@ def entity_variants(oDesign, oTools, sWorkDirectory, oResult, dUsed):
             return None
         rename_modules(sJson, sSuffix)
         lJson.append(sJson)
+        with open(sJson, encoding="utf-8") as oFile:
+            dModules[(sType, tGenerics)] = (sType.lower() + sSuffix, json.load(oFile)["modules"].get(sType.lower() + sSuffix, {}))
         lEdits += [(o.file, *o.span, sType.lower() + sSuffix) for o in lVariantInstances]
+    dEnds = {}
+    for iSelector, (oInstance, lSets) in enumerate(lSelectors, start=1):
+        sName = f"{oInstance.type.lower()}__mhsgsel{iSelector}"
+        lNames = [dSpellings[oInstance.type][s] for s in dTypes[oInstance.type]]
+        lVariants = [([(dSpellings[oInstance.type][s], o) for s, o in tSet], dModules[tKey]) for tSet, tKey in lSets]
+        with open(oInstance.file, encoding="utf-8", errors="replace", newline="") as oFile:
+            sSource = oFile.read()
+        iStart, iEnd = oInstance.span
+        # The instance keeps its parameters and names the selector instead of the entity
+        sWritten = sSource[iStart:iEnd]
+        lEdits.append((oInstance.file, iStart, iEnd, sName + sWritten[len(oInstance.type) :].replace("\n", " ")))
+        dEnds.setdefault(oInstance.file, (len(sSource), []))[1].append(selector_module(sName, lNames, lVariants))
+    for sFile, (iLength, lTexts) in dEnds.items():
+        lEdits.append((sFile, iLength, iLength, "\n" + "\n".join(lTexts)))
     return lJson, lEdits
+
+
+def selector_module(sName, lParameters, lVariants):
+    """
+    The Verilog of a module that stands in for a VHDL entity whose instance has several sets of generic values: it
+    has the parameters of the entity, and instantiates the variant elaborated with the values it is given, in a
+    generate if; its ports are as wide as those of that variant. lVariants is [([(parameter, value)], (module name,
+    module of the netlist))].
+    """
+    dPorts = {}
+    for _, (_, dModule) in lVariants:
+        for sPort, dPort in dModule.get("ports", {}).items():
+            dPorts.setdefault(sPort, dPort.get("direction", "input"))
+    lLines = [f"// Made by mhsg: the variant of {sName.split('__')[0]} for each set of values its instance is given"]
+    # The width of each port, a parameter computed from those of the entity, which the instance does not set
+    lWidths = []
+    for sPort in dPorts:
+        lChoices = []
+        for lValues, (_, dModule) in lVariants:
+            iWidth = len(dModule.get("ports", {}).get(sPort, {}).get("bits", [0]))
+            lChoices.append(f"({condition(lValues)}) ? {iWidth} :")
+        lWidths.append(f"    parameter integer W_{sPort} = {' '.join(lChoices)} 1")
+    lLines.append(f"module {sName} #(")
+    lLines.append(",\n".join([f"    parameter {s} = 0" for s in lParameters] + lWidths))
+    lLines.append(") (")
+    lLines.append(",\n".join(f"    {d} wire [W_{p}-1:0] {p}" for p, d in dPorts.items()))
+    lLines.append(");")
+    lLines.append("    generate")
+    for iVariant, (lValues, (sModule, _)) in enumerate(lVariants, start=1):
+        sElse = "" if iVariant == 1 else "else "
+        sConnections = ", ".join(f".{p}({p})" for p in dPorts)
+        lLines.append(f"        {sElse}if ({condition(lValues)}) begin : g_variant{iVariant}")
+        lLines.append(f"            {sModule} u_variant ({sConnections});")
+        lLines.append("        end")
+    lLines.append("    endgenerate")
+    lLines.append("endmodule")
+    return "\n".join(lLines) + "\n"
+
+
+def condition(lValues):
+    """The Verilog condition that the parameters have the values of a set: N == 4 && FAST == 1."""
+    return " && ".join(f"{s} == {int(o)}" for s, o in lValues) or "1"
 
 
 def generic_value(oElaborated, sWritten, sType, sGeneric):
