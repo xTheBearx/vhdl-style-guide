@@ -13,4 +13,4 @@ Total Violations:    2
   whitespace_200   | Error      |          1 | Remove 1 blank line(s) below
   architecture_024 | Warning    |          7 | Add architecture simple name
 -------------------+------------+------------+--------------------------------------
-NOTE: Refer to online documentation at https://vhdl-style-guide.readthedocs.io/en/latest/index.html for more information.
+NOTE: Refer to the documentation at https://github.com/xTheBearx/vhdl-style-guide/tree/master/docs for more information.

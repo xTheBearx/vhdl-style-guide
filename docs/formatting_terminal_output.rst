@@ -55,7 +55,7 @@ Sample output using MHSG option:
      process_012               | Error      |        376 | Add *is* keyword
      if_002                    | Error      |        455 | Enclose condition in ()'s.
    ----------------------------+------------+------------+--------------------------------------
-   NOTE: Refer to online documentation at https://vhdl-style-guide.readthedocs.io/en/latest/index.html for more information.
+   NOTE: Refer to the documentation at https://github.com/xTheBearx/vhdl-style-guide/tree/master/docs for more information.
 
 Syntastic
 #########

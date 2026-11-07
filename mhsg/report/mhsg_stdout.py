@@ -108,7 +108,7 @@ def print_violations(dRunInfo):
                 sOutputString += "None"
             sOutputString += "\n"
         sOutputString += print_divider(iMaxRuleNameLength + 3)
-        sOutputString += "NOTE: Refer to online documentation at https://vhdl-style-guide.readthedocs.io/en/latest/index.html for more information."
+        sOutputString += "NOTE: Refer to the documentation at https://github.com/xTheBearx/vhdl-style-guide/tree/master/docs for more information."
         return sOutputString
     else:
         return ""

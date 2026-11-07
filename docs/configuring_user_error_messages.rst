@@ -41,7 +41,7 @@ The following error report is generated:
      entity_008 | Error      |          2 | Format FIFO to match defined regex
      entity_012 | Error      |          3 | Format FIFO to match defined regex
    -------------+------------+------------+--------------------------------------
-   NOTE: Refer to online documentation at https://vhdl-style-guide.readthedocs.io/en/latest/index.html for more information.
+   NOTE: Refer to the documentation at https://github.com/xTheBearx/vhdl-style-guide/tree/master/docs for more information.
 
 Example with :code:`user_error_message` defined
 ###############################################
@@ -76,4 +76,4 @@ The following error report is generated:
      entity_008 | Error      |          2 | Format FIFO to match defined regex [user_error_message: UPPERCASE and single letter prefix/suffix not allowed]
      entity_012 | Error      |          3 | Format FIFO to match defined regex [user_error_message: UPPERCASE and single letter prefix/suffix not allowed]
    -------------+------------+------------+--------------------------------------
-   NOTE: Refer to online documentation at https://vhdl-style-guide.readthedocs.io/en/latest/index.html for more information.
+   NOTE: Refer to the documentation at https://github.com/xTheBearx/vhdl-style-guide/tree/master/docs for more information.
