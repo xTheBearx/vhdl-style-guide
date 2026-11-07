@@ -48,6 +48,11 @@ Design analysis
   open-logic compute their resets with logic, and were taken for clears.
 * **Reset domain crossings into registers without a reset** are not reported by design_018, as their data during a
   reset is not used; a design that relies on such a register right after a reset would need them.
+* **Reset domain crossings through black boxes**: the outputs of a black box with a declared reset are not sources of
+  reset domain crossings, and its inputs are not destinations.
+* **Isolation checked in time**: design_018 checks that a declared isolation keeps the destination from capturing, not
+  that it takes its value before the source reset is asserted; for a reset that the design asserts itself, such as
+  from a reset controller, SymbiYosys could prove the order.
 * **More real-world designs** in :code:`scripts/real_world_designs.yaml`: surf's designs with SimpleDualPortRam wait
   for GHDL, see :doc:`dependency_issues`, and its transceiver wrappers need the Xilinx IP cores they instantiate.
 
