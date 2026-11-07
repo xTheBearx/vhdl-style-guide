@@ -212,7 +212,8 @@ Design rules
 * :code:`design_008` to :code:`design_016` check clock domain crossings, clocks and resets, see below.
 * :code:`design_017` reports black boxes whose clock domain behaviour is not declared, see below.
 * :code:`design_018` reports reset domain crossings: data from a register with one asynchronous reset into a register
-  of the same clock that another asynchronous reset clears, unless that reset also comes from the first.
+  of the same clock that another asynchronous reset clears, unless that reset also comes from the first, or an
+  isolation of the cdc section keeps the destination from capturing, see below.
 * :code:`design_020` reports memory outputs that decide an if condition or a case selector (STARC 2.10.1.7, 2.10.1.8).
 * :code:`design_021` reports buses with more than :code:`maximum_drivers` tri-state drivers, 5 by default, counted
   across the hierarchy (STARC 2.5.1.4).
@@ -358,12 +359,24 @@ clock is too (design_015), and a reset made by logic or by another register is i
        clears:
          # Synchronous clears computed by logic, followed like data by design_016
          - u_ctrl.clear_r
+       isolation:
+         # Reset domain crossings from registers reset by rst_a, kept from capturing by iso_n at 0 (design_018)
+         - reset: rst_a
+           signal: u_ctrl.iso_n
+           value: 0
+           justification: The reset controller clears iso_n two cycles before it asserts rst_a
 
 A waiver names the destination register of a crossing, as the report names it, or a pattern such as ``u_status.*``.
 **clears** names registers, or patterns, that load a constant into other registers as a clear rather than a reset.
 design_016 does not follow a synchronous reset of two or more registers, unless :code:`follow_resets` is set; a clear
 it lists is followed like data. Structure cannot tell the two apart: reset crossing circuits compute their resets
 with logic too.
+**isolation** declares the signals that isolate reset domain crossings: a signal that is at its **value** before the
+source **reset** is asserted and until it is released. Design analysis checks that, at that value, the signal keeps
+each destination from capturing the source: it stops the destination's clock, or leaves its data without the source.
+design_018 does not report the crossings it isolates, which the report lists with the justification, and reports
+those it does not. Resets and signals are named as the report names them, or by patterns; a signal names all its
+bits, and one bit is named with its position, such as :code:`u_ctrl.iso[2]`, as design_018 names it.
 A waiver without a justification is reported by design_008. Other findings of design analysis are waived with the
 waivers of the configuration, see :ref:`waivers`.
 

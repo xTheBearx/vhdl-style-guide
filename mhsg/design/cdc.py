@@ -126,8 +126,11 @@ class Analysis:
         self.cell_clock = {}
         self.crossings = []
         self.resets = []
-        # (destination registers, destination reset, source reset, a source register) of reset domain crossings
+        # (destination registers, destination reset, source reset, a source register, a note or None) of reset domain
+        # crossings, and (destination registers, destination reset, source reset, a source register, the isolation) of
+        # those an isolation of the cdc section keeps from capturing
         self.reset_crossings = []
+        self.reset_isolations = []
         self.clock_as_data = []
         self.shared = []
         # (registers, signals) where separately synchronized signals meet again
@@ -1312,11 +1315,14 @@ class Analysis:
         reset clears: asserting the first changes the data at any time, so the second can capture it metastable. Safe
         when the destination is reset whenever the source is: when its reset has every source of the other's. Registers
         without an asynchronous reset are left out, as their data during a reset is not used; so are reset
-        synchronizers, which take a reset from anywhere.
+        synchronizers, which take a reset from anywhere. A crossing is isolated when an isolation of the cdc section
+        for the source reset keeps the destination from capturing the source: held at its value, the signal stops the
+        clock of the destination, or leaves its data without the source, as an enable that holds it or a gate does.
         """
         self._dChain = {}
         dMemo = {}
         dFindings = {}
+        dIsolated = {}
         for oCell in self.flat.cells:
             if not is_register(oCell):
                 continue
@@ -1339,13 +1345,186 @@ class Analysis:
                         oSourceRoot = self.reset_root(tSourceReset[1])
                         if oSourceRoot == oRoot or self.assertion_sources(oSourceRoot, dMemo) <= setDestination:
                             continue
+                        lIsolations = self.isolations_of(self.reset_name(oSourceRoot))
+                        dIsolation = next((d for d in lIsolations if self.isolates(oCell, iIndex, oSource, d["nets"], d["value"])), None)
+                        if dIsolation is not None:
+                            dEntry = dIsolated.setdefault((oRoot, oSourceRoot, dIsolation["signal"]), {"cells": [], "source": oSource, "isolation": dIsolation})
+                            if oCell not in dEntry["cells"]:
+                                dEntry["cells"].append(oCell)
+                            continue
                         tKey = (oRoot, oSourceRoot)
-                        dFinding = dFindings.setdefault(tKey, {"cells": [], "source": oSource})
+                        dFinding = dFindings.setdefault(tKey, {"cells": [], "source": oSource, "indexes": {}, "isolations": lIsolations})
                         if oCell not in dFinding["cells"]:
                             dFinding["cells"].append(oCell)
+                            dFinding["indexes"][id(oCell)] = iIndex
         for (oRoot, oSourceRoot), dFinding in dFindings.items():
-            self.reset_crossings.append((dFinding["cells"], self.reset_name(oRoot), self.reset_name(oSourceRoot), dFinding["source"]))
+            sNote = self.isolation_note(dFinding["cells"], dFinding["indexes"], dFinding["source"], dFinding["isolations"], self.reset_name(oSourceRoot))
+            self.reset_crossings.append((dFinding["cells"], self.reset_name(oRoot), self.reset_name(oSourceRoot), dFinding["source"], sNote))
         self.reset_crossings.sort(key=lambda t: (t[1], t[2]))
+        for (oRoot, oSourceRoot, _), dEntry in dIsolated.items():
+            self.reset_isolations.append((dEntry["cells"], self.reset_name(oRoot), self.reset_name(oSourceRoot), dEntry["source"], dEntry["isolation"]))
+        self.reset_isolations.sort(key=lambda t: (t[1], t[2], t[4]["signal"]))
+
+    # Isolation of reset domain crossings
+
+    def isolations_of(self, sReset):
+        """
+        The isolations of the cdc section for a source reset, with the nets of their signals: dicts of signal, value,
+        justification and nets. A reset or signal is named as the report names it, or by a pattern.
+        """
+        lReturn = []
+        for dIsolation in self.constraints.get("isolation") or []:
+            sPattern = str(dIsolation.get("reset", ""))
+            if not names_match(sReset, sPattern):
+                continue
+            sSignal = str(dIsolation.get("signal", ""))
+            lNets = [o for o, s in self.named_nets() if names_match(s, sSignal)]
+            lReturn.append(
+                {
+                    "reset": sPattern,
+                    "signal": sSignal,
+                    "value": int(dIsolation.get("value", 0)),
+                    "justification": str(dIsolation.get("justification") or "").strip(),
+                    "nets": lNets,
+                },
+            )
+        return lReturn
+
+    def named_nets(self):
+        """(net, name) of the nets of the flat design, once each."""
+        if getattr(self, "_lNamedNets", None) is None:
+            setNets = set(self.flat.origin)
+            for _, lNets in self.flat.top_ports.values():
+                setNets.update(b for b in lNets if graph.is_variable(b))
+            self._lNamedNets = sorted((o, self.bit_label(o)) for o in setNets)
+        return self._lNamedNets
+
+    def bit_label(self, oNet):
+        """The name of a net with its bit, such as u_ctrl.mode[2], for a bit of a signal or port of more than one."""
+        sName = self.flat.net_name(oNet)
+        if self.flat.input_port(oNet) is not None:
+            # A top input is named with its bit already, such as mode(2)
+            return sName
+        tOrigin = self.flat.origin.get(oNet)
+        if tOrigin is None:
+            return sName
+        _, sModule, iBit = tOrigin
+        sSignal = self.flat.netlist.bit_name(sModule, iBit)
+        lBits = self.flat.netlist.modules.get(sModule, {}).get("netnames", {}).get(sSignal, {}).get("bits", [])
+        if not lBits:
+            lBits = self.flat.netlist.modules.get(sModule, {}).get("ports", {}).get(sSignal, {}).get("bits", [])
+        return f"{sName}[{lBits.index(iBit)}]" if len(lBits) > 1 and iBit in lBits else sName
+
+    def isolates(self, oCell, iIndex, oSource, lNets, iValue):
+        """
+        Whether holding the nets at a value keeps a bit of a register from capturing a source register: its clock is
+        constant, or its data does not depend on the source.
+        """
+        if not lNets:
+            return False
+        from mhsg.design import (
+            test_mode,  # pylint: disable=import-outside-toplevel,cyclic-import  # test_mode builds on this module
+        )
+
+        oConstants = test_mode.Constants(self, dNets={o: iValue for o in lNets})
+        lClock = oCell.connections.get("CLK", [])
+        if lClock and oConstants.value(lClock[0]) is not None:
+            return True
+        lD = oCell.connections.get("D", [])
+        if iIndex >= len(lD):
+            return False
+        setSource = {b for b in oSource.connections.get("Q", []) if graph.is_variable(b)}
+        return not self.depends_on(lD[iIndex], setSource, oConstants, {})
+
+    def depends_on(self, oNet, setSource, oConstants, dMemo):
+        """Whether a net depends on the source nets through logic, with the constant nets of oConstants as they are."""
+        lStack = [oNet]
+        while lStack:
+            oCurrent = lStack.pop()
+            if not graph.is_variable(oCurrent) or oCurrent in dMemo:
+                continue
+            dMemo[oCurrent] = True
+            if oCurrent in setSource:
+                return True
+            if oConstants.value(oCurrent) is not None:
+                continue
+            tDriver = self.flat.driver(oCurrent)
+            if tDriver is None or tDriver[0] is None:
+                continue
+            oDriver, sPort, iIndex = tDriver
+            if oDriver.is_black_box() or is_clocked(oDriver) or oDriver.type in MEMORY_READ_TYPES or oDriver.type in graph.STATE_TYPES:
+                continue
+            if oDriver.type == "$mux":
+                iSelect = oConstants.value(oDriver.connections.get("S", [None])[0])
+                if iSelect is not None:
+                    lStack.append(graph.extend(oDriver.connections.get("B" if iSelect else "A", []), iIndex, False))
+                    continue
+            lStack.extend(self.comb_inputs(oDriver, sPort, iIndex))
+        return False
+
+    def isolation_candidates(self, oCell, iIndex, oSource):
+        """
+        The nets, of registers or top inputs, in the logic before the data or the clock of a register bit that would
+        isolate it from the source at a value: [(name, value)], the first few.
+        """
+        lStart = []
+        lD = oCell.connections.get("D", [])
+        if iIndex < len(lD):
+            lStart.append(lD[iIndex])
+        lStart += oCell.connections.get("CLK", [])
+        setSource = {b for b in oSource.connections.get("Q", []) if graph.is_variable(b)}
+        setOwn = {b for b in oCell.connections.get("Q", []) if graph.is_variable(b)}
+        lCandidates = []
+        setSeen = set()
+        lStack = list(lStart)
+        while lStack and len(setSeen) < 2000:
+            oCurrent = lStack.pop()
+            if not graph.is_variable(oCurrent) or oCurrent in setSeen:
+                continue
+            setSeen.add(oCurrent)
+            tDriver = self.flat.driver(oCurrent)
+            if tDriver is None or tDriver[0] is None or tDriver[0].is_black_box() or is_clocked(tDriver[0]) or tDriver[0].type in graph.STATE_TYPES:
+                if oCurrent not in setSource and oCurrent not in setOwn and oCurrent not in lStart:
+                    lCandidates.append(oCurrent)
+                continue
+            if tDriver[0].type in MEMORY_READ_TYPES:
+                continue
+            lStack.extend(self.comb_inputs(*tDriver))
+        lReturn = []
+        for oNet in sorted(lCandidates, key=self.bit_label)[:64]:
+            for iValue in (0, 1):
+                if self.isolates(oCell, iIndex, oSource, [oNet], iValue):
+                    lReturn.append((self.bit_label(oNet), iValue))
+                    break
+            if len(lReturn) >= 2:
+                break
+        return lReturn
+
+    def isolation_note(self, lCells, dIndexes, oSource, lIsolations, sSourceReset):
+        """
+        What design_018 adds to a crossing: that the isolations declared for the source reset do not keep it from
+        capturing, or the signals that would isolate which of its registers, from the first few.
+        """
+        if lIsolations:
+            sDeclared = ", ".join(f"{d['signal']} = {d['value']}" for d in lIsolations)
+            return f"the isolation {sDeclared} declared for {sSourceReset} does not keep it from capturing"
+        dIsolated = {}
+        for oCell in lCells[:8]:
+            for tCandidate in self.isolation_candidates(oCell, dIndexes[id(oCell)], oSource):
+                dIsolated.setdefault(tCandidate, []).append(oCell)
+        if not dIsolated:
+            return None
+        lParts = []
+        for (sSignal, iValue), lIsolated in sorted(dIsolated.items(), key=lambda t: (-len(t[1]), t[0]))[:2]:
+            if len(lIsolated) == len(lCells):
+                sWhich = "it" if len(lCells) == 1 else "them"
+            elif len(lIsolated) <= 3:
+                sWhich = " and ".join(self.flat.cell_name(o) for o in lIsolated)
+            else:
+                sWhich = f"{len(lIsolated)} of them"
+            lParts.append(f"{sSignal} = {iValue} would isolate {sWhich}")
+        sWhich = "it" if len(lParts) == 1 else "each"
+        return "; ".join(lParts) + f": declare {sWhich} under isolation in the cdc section if it holds while {sSourceReset} is asserted"
 
     def reset_name(self, oNet):
         sName = self.flat.net_name(oNet)
@@ -1565,7 +1744,7 @@ class Analysis:
         for oReset in self.resets:
             dReturn["resets"].append({"reset": oReset.reset, "kind": oReset.kind, "detail": oReset.detail, "registers": len(oReset.cells)})
         dReturn["reset_crossings"] = []
-        for lCells, sReset, sSourceReset, oSource in self.reset_crossings:
+        for lCells, sReset, sSourceReset, oSource, sNote in self.reset_crossings:
             sFile, iLine = self.locate(lCells[0], self.flat.cell_name(lCells[0]).split(".")[-1])
             dReturn["reset_crossings"].append(
                 {
@@ -1574,9 +1753,36 @@ class Analysis:
                     "registers": [self.flat.cell_name(o) for o in lCells],
                     "source": self.flat.cell_name(oSource),
                     "location": f"{sFile}:{iLine}" if sFile else None,
+                    "note": sNote,
+                },
+            )
+        dReturn["reset_isolations"] = []
+        for lCells, sReset, sSourceReset, oSource, dIsolation in self.reset_isolations:
+            dReturn["reset_isolations"].append(
+                {
+                    "reset": sReset,
+                    "source_reset": sSourceReset,
+                    "registers": [self.flat.cell_name(o) for o in lCells],
+                    "source": self.flat.cell_name(oSource),
+                    "signal": dIsolation["signal"],
+                    "value": dIsolation["value"],
+                    "justification": dIsolation["justification"],
                 },
             )
         return dReturn
+
+
+def names_match(sName, sPattern):
+    """
+    Whether a name of the report, such as u_ctrl.iso_r[2], is named by a pattern: the name, without its bit index, or
+    its last part, in any case, written out or matched with wildcards.
+    """
+    if not sPattern:
+        return False
+    sPattern = sPattern.lower()
+    sName = sName.lower()
+    lNames = {sName, sName.split("[")[0], sName.split(".")[-1], sName.split(".")[-1].split("[")[0]}
+    return any(s == sPattern or fnmatch.fnmatchcase(s, sPattern) for s in lNames)
 
 
 def new_meetings(lSets, lTags):
@@ -1682,6 +1888,13 @@ def report_text(dReport):
         lLines.append("  none")
     for dCrossing in dReport.get("reset_crossings") or []:
         lLines.append(f"  {dCrossing['source']} (reset {dCrossing['source_reset']}) into {len(dCrossing['registers'])} registers reset by {dCrossing['reset']}")
+    if dReport.get("reset_isolations"):
+        lLines += ["", "Reset domain crossings isolated"]
+        for dIsolation in dReport["reset_isolations"]:
+            lLines.append(
+                f"  {dIsolation['source']} (reset {dIsolation['source_reset']}) into {len(dIsolation['registers'])} registers reset by "
+                f"{dIsolation['reset']}: isolated by {dIsolation['signal']} = {dIsolation['value']} ({dIsolation['justification']})",
+            )
     lCounts = {}
     for dCrossing in dReport["crossings"]:
         lCounts[dCrossing["status"]] = lCounts.get(dCrossing["status"], 0) + 1

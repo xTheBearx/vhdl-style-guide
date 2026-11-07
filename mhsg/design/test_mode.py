@@ -360,3 +360,19 @@ def any_of(lValues):
     if any(v == 1 for v in lValues):
         return 1
     return 0 if all(v == 0 for v in lValues) else None
+
+
+class Constants(TestMode):
+    """
+    The constant nets of the flat design with some nets held at a value: top inputs by name, as in test mode, and nets
+    of the flat design by number, such as the output of an isolation register.
+    """
+
+    def __init__(self, oAnalysis, dValues=None, dNets=None):
+        super().__init__(oAnalysis, dValues or {})
+        self.nets = dict(dNets or {})
+
+    def port_value(self, oNet):
+        if oNet in self.nets:
+            return self.nets[oNet]
+        return super().port_value(oNet)
