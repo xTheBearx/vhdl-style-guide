@@ -1,206 +1,208 @@
 Multiple HDL Style Guide (MHSG)
 ===============================
 
-**Coding style enforcement for VHDL.**
+**Style checks, lint and design analysis for VHDL, Verilog and SystemVerilog.**
 
 .. image:: https://img.shields.io/github/tag/xTheBearx/vhdl-style-guide.svg?style=flat-square
    :target: https://github.com/xTheBearx/vhdl-style-guide
    :alt: Github Release
 
-About this project
-------------------
-
-MHSG is a fork of `VHDL Style Guide (VSG) <https://github.com/jeremiah-c-leary/vhdl-style-guide>`_,
-created by Jeremiah C. Leary, and has been maintained as a separate project since 2026.
-It is distributed under the same GNU General Public License v3; see ``LICENSE``.
-
-Compared with VSG, the Python package and command are named ``mhsg`` instead of ``vsg``.
-The ``-- vsg_off``, ``-- vsg_on`` and ``-- vsg_disable_next_line`` code tags in existing source files are still recognized,
-alongside the new ``mhsg_`` versions.
-
-.. image:: https://github.com/xTheBearx/vhdl-style-guide/blob/master/docs/img/vim_macro.gif
+MHSG checks and fixes the coding style of hardware description files, lints them against coding standards such as
+DO-254 and STARC, and analyzes whole designs with GHDL and Yosys for latches, loops, clock and reset domain crossings,
+and logic that can never be reached.
 
 Table of Contents
 -----------------
 
-*   `Overview`_
-*   `Key Benefits`_
-*   `Key Features`_
-*   `Known Limitations`_
+*   `Credits`_
+*   `Features`_
 *   `Installation`_
 *   `Usage`_
+*   `Configuration`_
+*   `Integration`_
+*   `Known Limitations`_
 *   `Documentation`_
 *   `Contributing`_
 
-Overview
+Credits
+-------
+
+MHSG is a fork of `VHDL Style Guide (VSG) <https://github.com/jeremiah-c-leary/vhdl-style-guide>`_, created by
+**Jeremiah C. Leary**. It started from VSG 3.35.0 and has been maintained as a separate project since 2026.
+
+Everything MHSG does for VHDL style rests on VSG's work: its VHDL parser, its rules and how they are configured, its
+fixing in phases, its output formats and its documentation. Thanks to Jeremiah C. Leary and to everyone who has
+contributed to VSG over the years. If you only need style checks for VHDL, VSG remains the original and is actively
+developed.
+
+MHSG is distributed under the same GNU General Public License v3 as VSG; see ``LICENSE``. The Python package and the
+command are named ``mhsg`` instead of ``vsg``; the ``-- vsg_off``, ``-- vsg_on`` and ``-- vsg_disable_next_line``
+code tags of existing files are still recognized, alongside the ``mhsg_`` ones.
+
+Features
 --------
 
-MHSG was created after participating in a code review where a real issue in the code was masked by a coding style issue.
-A finding was created for the style issue, while the real issue was missed.
-When the code was re-reviewed, the real issue was discovered.
+**Style checks for VHDL.** More than 1,100 rules for whitespace, blank lines, indentation, alignment, case, naming,
+structure and line length, from VSG and new ones, such as the blank lines of generic and port maps, the order of
+generics, commented-out code, a second line length limit and descriptive rule aliases. Violations are reported, and
+most are fixed with ``--fix``.
 
-Depending on your process, style issues can take a lot of time to resolve.
+**Style checks for Verilog and SystemVerilog.** More than 200 rules, read with `pyslang
+<https://github.com/MikePopoloski/pyslang>`_: indentation, whitespace, blank lines, alignment, the structure of always
+blocks, case statements, begin and end, generate blocks and labels, naming, literals, declarations and comments. Code
+in inactive ``ifdef`` branches and macro bodies is checked too. Files ending in ``.sv``, ``.svh``, ``.v`` and ``.vh``
+are SystemVerilog; VHDL and SystemVerilog files can be checked in one run.
 
-#. Create finding/ticket/issue
-#. Disposition finding/ticket/issue
-#. Fix
-#. Verify fix
+**Lint mode.** ``--lint`` and ``--lint_only`` report design problems that a single file shows, such as latches,
+incomplete sensitivity lists, unreachable case choices and states never entered. Findings are labelled with the
+checks of a rule set and have the severities Error, Warning and Note:
 
-Spending less time on style issues leaves more time to analyze the substance of the code.
-This ultimately reduces the amount of time performing code reviews.
-It also allows reviewers to focus on the substance of the code.
-This will result in a higher quality code base.
+=============== ==========================================================================================
+Rule set        Covers
+=============== ==========================================================================================
+``do254``       The DO-254 Users Group coding standards (DO254-UG-001), the default
+``do254_plus``  ``do254`` and further good practice for state machines, numeric types and synthesis
+``starc``       The STARC RTL Design Style Guide: 273 of its 613 items have rules, the rest are listed for review
+``cdc``         Clock and reset domain crossing checks, CDC-001 to CDC-011
+=============== ==========================================================================================
 
-Key Benefits
-------------
+SystemVerilog files are linted with slang semantics, and optionally with Verilator, all the files of a run compiled
+together. A rule set can also be a YAML file of your own.
 
-* Define VHDL coding standards
-* Makes coding standards visible to everyone
-* Improve code reviews
-* Quickly bring code up to current standards
+**Design analysis.** ``--design`` elaborates the whole design with GHDL and Yosys and reports what no single file
+shows, at the lines of the source files, with 48 design rules:
 
-MHSG allows the style of the code to be defined and enforced over part or the entire code base.
-Configurations allow for multiple coding standards.
+* latches, combinational loops, multiple drivers, constant and unused registers, logic depth and tri-state buses;
+* clock domain crossings: unsynchronized signals, logic before synchronizers, buses without a safe scheme,
+  reconvergence of separately synchronized signals, generated and gated clocks, and a full crossing report;
+* resets: asynchronous release, internally generated resets and reset domain crossings, with isolation signals
+  declared and checked;
+* black boxes, declared by role or archetype, with libraries for AMD Xilinx, Microchip, Altera and Lattice primitives;
+* design for test, with the test mode and scan shift inputs held;
+* with SymbiYosys, branches that can never be taken from reset, states of state machines never entered, and state
+  machines that can never return to their reset state.
 
-Key Features
-------------
+VHDL, Verilog, SystemVerilog and mixed designs are read; SystemVerilog designs need the yosys-slang plugin.
 
-* Command line tool
-
-  * integrate into continuous integration flow with JUnit output
-
-* Reports and fixes issues found
-
-  * whitespace
-
-    * horizontal
-    * vertical
-
-  * upper and lower case
-  * keyword alignments
-  * etc...
-
-* Fully configurable rules via JSON or YAML configuration file
-
-  * Disable rules
-  * Alter behavior of existing rules
-
-* Localize rule sets
-
-  * Create your own rules using python
-  * Use existing rules as a template
-  * Fully integrates into base rule set
-
-* Built in styles
-
-  * Use existing style or create your own
-
-Known Limitations
------------------
-
-MHSG is a continual work in progress.
-As such, this version has the following known limitations:
-
-* Parser will not process embedded PSL
-* Parser will not process VHDL 2019
+**Waivers and reports.** Any finding can be waived with a justification, and waivers are listed in the reports.
+Reports record the versions of the tools and the configuration used. ``--qualify`` runs the qualification suite of a
+rule set and writes a tool qualification report, expected against actual, for certification.
 
 Installation
 ------------
 
-Once released on PyPI, MHSG can be installed with **uv** or **pip**.
+MHSG needs Python 3.12 or later. Once it is released on PyPI, it can be installed with **uv** or **pip**:
 
 .. code-block:: bash
 
     uv tool install mhsg
     pip install mhsg
 
-Until then, install the latest development version directly from GitHub.
+Until then, install the latest development version from GitHub:
 
 .. code-block:: bash
 
     uv tool install git+https://github.com/xTheBearx/vhdl-style-guide
     pip install git+https://github.com/xTheBearx/vhdl-style-guide
 
-The latest development version can be cloned...
+Style checks and lint mode need nothing else. Design analysis needs further tools on the path:
 
-.. code-block:: bash
+================================== ========================================================================
+Tool                               Needed for
+================================== ========================================================================
+GHDL, Yosys and the GHDL plugin    ``--design``, for example the Ubuntu packages ``ghdl yosys yosys-plugin-ghdl``
+yosys-slang plugin                 Design analysis of SystemVerilog designs
+SymbiYosys                         The formal rules design_025, design_047 and design_048
+Verilator                          Optional SystemVerilog lint, sv_lint_011
+================================== ========================================================================
 
-    git clone https://github.com/xTheBearx/vhdl-style-guide.git
-
-The project is managed with `uv <https://docs.astral.sh/uv/>`_.
-Install the locked development dependencies, then run the tests, the style checks and the build:
-
-.. code-block:: bash
-
-    uv sync
-    uv run pytest
-    uv run pre-commit run --all-files
-    uv build
-
-Design analysis (**--design**) also needs GHDL, Yosys and the GHDL plugin for Yosys, which are system packages,
-for example ``ghdl yosys yosys-plugin-ghdl`` on Ubuntu.
+The `OSS CAD Suite <https://github.com/YosysHQ/oss-cad-suite-build>`_ has all of them.
 
 Usage
 -----
 
-MHSG is a both a command line tool and a python package.
-The command line tool can be invoked with:
+Check files, and fix what can be fixed:
 
 .. code-block:: bash
 
-   $ mhsg
-   usage: Multiple HDL Style Guide (MHSG) [-h] [-f FILENAME [FILENAME ...]] [-lr LOCAL_RULES [LOCAL_RULES ...]] [-c CONFIGURATION [CONFIGURATION ...]] [--fix]
-                                 [-fp FIX_PHASE] [-j JUNIT] [-js JSON] [-of {mhsg,syntastic,summary}] [-b] [-oc OUTPUT_CONFIGURATION]
-                                 [-rc RULE_CONFIGURATION] [--style {indent_only,jcl}] [-v] [-ap] [--fix_only FIX_ONLY] [--stdin]
-                                 [--quality_report QUALITY_REPORT] [-p JOBS] [--debug]
-                                 [FILENAME ...]
+    mhsg -f src/*.vhd rtl/*.sv
+    mhsg -f src/*.vhd rtl/*.sv --fix
 
-   Analyzes VHDL files for style guide violations. Reference documentation is located at: http://vhdl-style-guide.readthedocs.io/en/latest/index.html
+Lint, with the default DO-254 rule set or another one:
 
-   positional arguments:
-     FILENAME              File to analyze
+.. code-block:: bash
 
-   options:
-     -h, --help            show this help message and exit
-     -f FILENAME [FILENAME ...], --filename FILENAME [FILENAME ...]
-                           File to analyze
-     -lr LOCAL_RULES [LOCAL_RULES ...], --local_rules LOCAL_RULES [LOCAL_RULES ...]
-                           Path(s) to local rule directories
-     -c CONFIGURATION [CONFIGURATION ...], --configuration CONFIGURATION [CONFIGURATION ...]
-                           JSON or YAML configuration file(s)
-     --fix                 Fix issues found
-     -fp FIX_PHASE, --fix_phase FIX_PHASE
-                           Fix issues up to and including this phase
-     -j JUNIT, --junit JUNIT
-                           Extract Junit file
-     -js JSON, --json JSON
-                           Extract JSON file
-     -of {mhsg,syntastic,summary}, --output_format {mhsg,syntastic,summary}
-                           Sets the output format.
-     -b, --backup          Creates a copy of input file for comparison with fixed version.
-     -oc OUTPUT_CONFIGURATION, --output_configuration OUTPUT_CONFIGURATION
-                           Write configuration to file name.
-     -rc RULE_CONFIGURATION, --rule_configuration RULE_CONFIGURATION
-                           Display configuration of a rule
-     --style {indent_only,jcl}
-                           Use predefined style
-     -v, --version         Displays version information
-     -ap, --all_phases     Do not stop when a violation is detected.
-     --fix_only FIX_ONLY   Restrict fixing via JSON file.
-     --stdin               Read VHDL input from stdin, disables all other file selections, disables multiprocessing
-     --quality_report QUALITY_REPORT
-                           Create code quality report for GitLab
-     -p JOBS, --jobs JOBS  number of parallel jobs to use, default is the number of cpu cores
-     --debug               Displays verbose debug information
+    mhsg -f src/fifo.vhd --lint_only
+    mhsg -f rtl/*.sv --lint_only --rule_set starc
 
-Here is an example output running against a test file:
+The report shows each finding with the check of the rule set, the rule and the solution:
+
+.. code-block:: text
+
+    Total Rules Checked: 178
+    Total Violations:    16
+      Error   :     0
+      Warning :     3
+      Note    :    13
+    -----------------------------+------------+------------+--------------------------------------
+      Rule                       |  severity  |  line(s)   | Solution
+    -----------------------------+------------+------------+--------------------------------------
+      DO254-DR10 (lint_041)      | Warning    |          1 | Start the file with a header comment
+      DO254-DR6 (port_004)       | Note       |          6 | Use 8 spaces for indent
+
+Analyze a whole design, described in the ``design`` section of a configuration file, and write the clock domain
+crossing report:
+
+.. code-block:: bash
+
+    mhsg --design -c design.yaml
+    mhsg --design -c design.yaml --cdc_report cdc.txt
+
+Run the qualification suite of a rule set:
+
+.. code-block:: bash
+
+    mhsg --qualify do254 --qualify_report qualification.txt
+
+Other options give the output format (``-of mhsg|syntastic|summary``), JUnit, JSON and GitLab code quality reports
+(``-j``, ``-js``, ``--quality_report``), the configuration of a rule (``-rc``), predefined styles (``--style``) and
+parallel jobs (``-p``). ``mhsg --help`` lists them all.
 
 .. image:: https://github.com/xTheBearx/vhdl-style-guide/blob/master/docs/img/fixing_single_file.gif
 
-pre-commit Integration
-----------------------
+Configuration
+-------------
 
-Here is an example of ``.pre-commit-config.yaml`` file:
+Rules are configured in JSON or YAML files given with ``-c``; later files take precedence. A configuration can
+disable rules, change their options and severity, list the files to check, waive findings and describe the design:
+
+.. code-block:: yaml
+
+    rule:
+      global:
+        indent_size: 4
+      length_001:
+        length: 120
+    design:
+      top: fifo_top
+      libraries:
+        - name: work
+          files: [src/fifo_pkg.vhd, src/*.vhd]
+      generics:
+        DEPTH: 16
+      cdc:
+        clocks:
+          sys_clk: u_pll.clk_out1
+
+The default indent is 4 spaces and the default line length 80. Local rules written in Python can be added with
+``-lr``, using the existing rules as templates.
+
+Integration
+-----------
+
+MHSG runs in continuous integration with its JUnit and JSON outputs, and in editors through the syntastic output
+format. Here is an example of a ``.pre-commit-config.yaml`` file; the hook checks VHDL files, and ``files`` adds
+Verilog and SystemVerilog ones:
 
 .. code-block:: yaml
 
@@ -209,26 +211,51 @@ Here is an example of ``.pre-commit-config.yaml`` file:
       rev: <release tag>
       hooks:
         - id: mhsg
+          files: \.(vhd|vhdl|sv|svh|v|vh)$
+
+Known Limitations
+-----------------
+
+* The VHDL parser does not process embedded PSL or VHDL-2019.
+* Design analysis checks what GHDL and Yosys synthesize: logic synthesis removes, such as delay chains, is checked in
+  lint mode instead.
+* The formal rules can leave branches and states undecided within their time limits, such as states reached only
+  after a long counter.
+* Vendor libraries for black boxes were written from the vendors' guides; their port names have not been checked
+  against a vendor installation.
+
+The backlog of known gaps is in ``docs/developing/backlog.rst``, and the bugs found in the tools MHSG uses are in
+``docs/developing/dependency_issues.rst``.
 
 Documentation
 -------------
 
-The documentation is in the ``docs`` directory of this repository.
-The upstream VSG documentation hosted at `read-the-docs <http://vhdl-style-guide.readthedocs.io/en/latest/index.html>`_ also applies, with ``vsg`` replaced by ``mhsg``.
+The documentation is in the ``docs`` directory: every rule, the configuration, lint mode, design analysis, black
+boxes, the rule sets and their coverage, and the qualification suites. Build it with:
+
+.. code-block:: bash
+
+    uv run --group docs sphinx-build docs build/docs/html
+
+The `VSG documentation <http://vhdl-style-guide.readthedocs.io/en/latest/index.html>`_ also applies to the VHDL style
+rules, with ``vsg`` read as ``mhsg``.
 
 Contributing
 ------------
 
-I welcome any contributions to this project.
-No matter how small or large.
+Contributions of any size are welcome: bug reports, feature requests, improvements and pull requests. Please open an
+issue or pull request at https://github.com/xTheBearx/vhdl-style-guide; see ``docs/contributing.rst`` for details.
+AI-assisted contributions are welcome when they are disclosed, understood by the submitter and backed by tests; see
+the AI-Assisted Contributions section there.
 
-There are several ways to contribute:
+The project is managed with `uv <https://docs.astral.sh/uv/>`_. Install the locked development dependencies, then run
+the tests, the style checks and the build:
 
-* Bug reports
-* Code base improvements
-* Feature requests
-* Pull requests
+.. code-block:: bash
 
-Please open an issue or pull request at https://github.com/xTheBearx/vhdl-style-guide.
-See ``docs/contributing.rst`` for more details on contributing.
-AI-assisted contributions are welcome when they are disclosed, understood by the submitter and backed by tests; see the AI-Assisted Contributions section there.
+    git clone https://github.com/xTheBearx/vhdl-style-guide.git
+    cd vhdl-style-guide
+    uv sync
+    uv run pytest
+    uv run pre-commit run --all-files
+    uv build
