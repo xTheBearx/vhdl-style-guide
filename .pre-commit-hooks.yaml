@@ -1,8 +1,8 @@
 - id: mhsg
-  name: fix VHDL style
-  description: Multiple HDL Style Guide
+  name: fix HDL style
+  description: Multiple HDL Style Guide, for VHDL, Verilog and SystemVerilog files
   entry: mhsg --fix --jobs=1
   language: python
   types:
     - file
-  files: \.(vhd|vhdl)$
+  files: \.(vhd|vhdl|sv|svh|v|vh)$

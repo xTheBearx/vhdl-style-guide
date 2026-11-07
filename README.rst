@@ -201,8 +201,8 @@ Integration
 -----------
 
 MHSG runs in continuous integration with its JUnit and JSON outputs, and in editors through the syntastic output
-format. Here is an example of a ``.pre-commit-config.yaml`` file; the hook checks VHDL files, and ``files`` adds
-Verilog and SystemVerilog ones:
+format. Here is an example of a ``.pre-commit-config.yaml`` file; the hook fixes the VHDL, Verilog and SystemVerilog
+files of a commit (``.vhd``, ``.vhdl``, ``.sv``, ``.svh``, ``.v`` and ``.vh``):
 
 .. code-block:: yaml
 
@@ -211,7 +211,6 @@ Verilog and SystemVerilog ones:
       rev: <release tag>
       hooks:
         - id: mhsg
-          files: \.(vhd|vhdl|sv|svh|v|vh)$
 
 Known Limitations
 -----------------
