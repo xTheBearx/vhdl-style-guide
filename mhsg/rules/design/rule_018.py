@@ -16,6 +16,14 @@ class rule_018(Rule):
     Registers without an asynchronous reset are not reported, as their data during a reset is not used, and neither
     are the registers of reset synchronizers.
 
+    The crossing is also safe when it is isolated: a signal is at a value before the source reset is asserted and
+    until it is released, and at that value it keeps the destination from capturing the source. It stops the clock
+    of the destination, or leaves its data without the source, as an enable that holds the destination or a gate on
+    the data does. Only the designer knows when the signal takes its value, so isolations are declared under
+    **isolation** in the cdc section of the design, with a justification; design analysis checks that the signal
+    keeps each destination from capturing. The isolated crossings are listed in the crossing report. A crossing that
+    no isolation keeps from capturing is reported, with the signals of the logic before it that would isolate it.
+
     **Violation**
 
     .. code-block:: vhdl
@@ -41,6 +49,17 @@ class rule_018(Rule):
     **Fix**
 
     Reset b_r with rst_a too, for example with a reset that combines both, or keep a_r stable while rst_a is asserted.
+    Or isolate b_r: hold it with an enable that is 0 before rst_a is asserted and until it is released, and declare it:
+
+    .. code-block:: yaml
+
+       design:
+         cdc:
+           isolation:
+             - reset: rst_a
+               signal: iso_n
+               value: 0
+               justification: The reset controller clears iso_n two cycles before it asserts rst_a
     """
 
     def __init__(self):
@@ -52,7 +71,7 @@ class rule_018(Rule):
         if oAnalysis is None:
             return []
         lReturn = []
-        for lCells, sReset, sSourceReset, oSource in oAnalysis.reset_crossings:
+        for lCells, sReset, sSourceReset, oSource, sNote in oAnalysis.reset_crossings:
             oFirst = lCells[0]
             sFile, iLine = oAnalysis.locate(oFirst, oAnalysis.flat.cell_name(oFirst).split(".")[-1])
             if len(lCells) > 1:
@@ -64,5 +83,7 @@ class rule_018(Rule):
             sMessage = (
                 f"{sDestination} {oAnalysis.flat.cell_name(oSource)}, reset by {sSourceReset}: asserting {sSourceReset} alone can make {sThem} metastable"
             )
+            if sNote:
+                sMessage += f"; {sNote}"
             lReturn.append(Finding(sFile, iLine, sMessage))
         return lReturn

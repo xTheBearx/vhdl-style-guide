@@ -140,7 +140,7 @@ def from_configuration(dConfiguration):
     return oDesign
 
 
-CDC_KEYS = ("clocks", "clock_groups", "inputs", "waivers", "clears")
+CDC_KEYS = ("clocks", "clock_groups", "inputs", "waivers", "clears", "isolation")
 
 
 def read_cdc(dCdc):
@@ -160,6 +160,18 @@ def read_cdc(dCdc):
         raise exceptions.ConfigurationError("ERROR: each waiver in the cdc section needs a signal and a justification")
     if not isinstance(dCdc.get("clears") or [], list):
         raise exceptions.ConfigurationError("ERROR: clears in the cdc section is a list of signal names or patterns")
+    for dIsolation in dCdc.get("isolation") or []:
+        if not isinstance(dIsolation, dict) or not dIsolation.get("reset") or not dIsolation.get("signal"):
+            raise exceptions.ConfigurationError("ERROR: each isolation in the cdc section needs a reset, a signal, its value and a justification")
+        oValue = dIsolation.get("value")
+        if isinstance(oValue, bool) or oValue not in (0, 1, "0", "1"):
+            raise exceptions.ConfigurationError(
+                f"ERROR: the isolation by {dIsolation['signal']} in the cdc section needs a value of 0 or 1, the value that isolates",
+            )
+        if not str(dIsolation.get("justification") or "").strip():
+            raise exceptions.ConfigurationError(
+                f"ERROR: the isolation by {dIsolation['signal']} in the cdc section needs a justification: why it holds while {dIsolation['reset']} is asserted",
+            )
     return dict(dCdc)
 
 

@@ -808,6 +808,28 @@ class test_cdc_configuration(unittest.TestCase):
             with self.subTest(dCdc), self.assertRaises(exceptions.ConfigurationError):
                 self.design(dCdc)
 
+    def test_isolation(self):
+        # An isolation names the source reset, the signal and the value that isolates, with a justification
+        dIsolation = {"reset": "rst_a", "signal": "iso_n", "value": 0, "justification": "Set before rst_a is asserted"}
+        self.assertEqual({"isolation": [dIsolation]}, self.design({"isolation": [dIsolation]}).cdc)
+        for sKey, oValue, sMessage in (
+            ("signal", None, "needs a reset, a signal"),
+            ("value", 2, "needs a value of 0 or 1"),
+            ("value", True, "needs a value of 0 or 1"),
+            ("justification", " ", "needs a justification"),
+        ):
+            dWrong = dict(dIsolation, **{sKey: oValue})
+            with self.subTest(sKey), self.assertRaises(exceptions.ConfigurationError) as oContext:
+                self.design({"isolation": [dWrong]})
+            self.assertIn(sMessage, str(oContext.exception))
+
+    def test_names_match(self):
+        self.assertTrue(cdc.names_match("u_ctrl.iso_r[2]", "iso_r"))
+        self.assertTrue(cdc.names_match("u_ctrl.iso_r[2]", "u_ctrl.iso_r"))
+        self.assertTrue(cdc.names_match("U_CTRL.Iso_R", "u_*.iso_*"))
+        self.assertFalse(cdc.names_match("u_ctrl.iso_r", "iso"))
+        self.assertFalse(cdc.names_match("u_ctrl.iso_r", ""))
+
 
 class FakeCell:
     """A black box cell of the flat netlist, for testing declarations."""
@@ -1398,6 +1420,50 @@ class test_design_analysis(unittest.TestCase):
                 ),
             ],
             [t for t in self.findings("rdc_top", "rdc.vhd") if t[2] == "design_018"],
+        )
+
+    def test_reset_domain_crossing_isolation(self):
+        # Without an isolation, the finding names the signals that would isolate which registers
+        sMessage = "en_r and 2 more, reset by rst_b, capture a_r, reset by rst_a: asserting rst_a alone can make them metastable"
+        self.assertEqual(
+            [
+                (
+                    "rdc_isolation.vhd",
+                    65,
+                    "design_018",
+                    f"{sMessage}; iso_n = 0 would isolate en_r and gate_r; sel = 0 would isolate plain_r: declare each under isolation in "
+                    "the cdc section if it holds while rst_a is asserted",
+                ),
+            ],
+            [t for t in self.findings("rdc_isolation_top", "rdc_isolation.vhd") if t[2] == "design_018"],
+        )
+        # Declared, iso_n isolates the register it enables and the one it gates, which the report lists; not plain_r
+        dCdc = {"isolation": [{"reset": "rst_a", "signal": "iso_n", "value": 0, "justification": "Set before rst_a is asserted"}]}
+        with tempfile.TemporaryDirectory() as sDirectory:
+            sJson = os.path.join(sDirectory, "cdc.json")
+            _, lOutput = self.run_design("rdc_isolation_top", "rdc_isolation.vhd", ["--cdc_report", sJson], dCdc=dCdc)
+            with open(sJson, encoding="utf-8") as oFile:
+                dReport = json.load(oFile)
+        self.assertEqual(
+            [
+                "plain_r, reset by rst_b, captures a_r, reset by rst_a: asserting rst_a alone can make it metastable; the isolation iso_n = 0 "
+                "declared for rst_a does not keep it from capturing",
+            ],
+            [s.split(" -- ", 1)[1] for s in lOutput if "design_018" in s],
+        )
+        self.assertEqual(
+            [
+                {
+                    "reset": "rst_b",
+                    "source_reset": "rst_a",
+                    "registers": ["en_r", "gate_r"],
+                    "source": "a_r",
+                    "signal": "iso_n",
+                    "value": 0,
+                    "justification": "Set before rst_a is asserted",
+                },
+            ],
+            dReport["reset_isolations"],
         )
 
     def test_vector_synchronizer(self):
