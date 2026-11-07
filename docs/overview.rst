@@ -1,35 +1,34 @@
 Overview
 --------
 
-Multiple HDL Style Guide (MHSG) provides coding style guide enforcement for VHDL code.
-Support for SystemVerilog and Verilog is being added, see :doc:`systemverilog`.
+Multiple HDL Style Guide (MHSG) checks and fixes the coding style of VHDL, Verilog and SystemVerilog files, lints them
+against coding standards such as DO-254 and STARC, and analyzes whole designs with GHDL and Yosys, see
+:doc:`systemverilog`, :doc:`lint` and :doc:`design_analysis`.
 
 Why MHSG?
 #########
 
-MHSG was created after participating in a code review in which a real issue was masked by a coding style issue.
-A finding was created for the style issue, while the real issue was missed.
-When the code was re-reviewed, the real issue was discovered.
-The coding style issue seemed to blind me to the real issue.
+MHSG exists to improve `VHDL Style Guide (VSG) <https://github.com/jeremiah-c-leary/vhdl-style-guide>`_ rapidly using
+AI. It is a fork of VSG 3.35.0, created by Jeremiah C. Leary: its changes are developed with AI assistance, each backed
+by tests and checked against real-world projects. They fix bugs and add rules for open issues of
+VSG, and add Verilog and SystemVerilog, lint mode with coding standards, and design analysis.
 
-Depending on your process, style issues can take a lot of time to resolve.
-
-1. Create finding/ticket/issue
-2. Disposition finding/ticket/issue
-3. Fix the problem
-4. Verify the problem was fixed
-
-Spending less time on style issues leaves more time to analyze code structure.
-Eliminating style issues reduces the amount of time performing code reviews.
-This results in a higher quality code base.
+The style checks keep VSG's reason for being. VSG was created after a code review in which a real issue was masked by
+a coding style issue: a finding was created for the style issue, while the real issue was missed until the code was
+reviewed again. Depending on the process, a style issue takes a finding to create, disposition, fix and verify.
+Spending less time on style leaves more time to review the substance of the code.
 
 Key Benefits
 ############
 
-* Explicitly define VHDL coding standards
+* Explicitly define coding standards for VHDL, Verilog and SystemVerilog
 * Make coding standards visible to everyone
 * Improve code reviews
 * Quickly bring code up to current standards
+* Find design problems before simulation or synthesis does: latches, loops, clock and reset domain crossings, and
+  logic that can never be reached
+* Keep the evidence a certification needs: findings labelled with the checks of DO-254 and STARC, waivers with
+  justifications, and qualification reports
 
 MHSG allows the style of the code to be defined and enforced over portions or the entire code base.
 
@@ -38,15 +37,19 @@ Key Features
 
 * Command line tool
 
-  * Integrates into continuous integration flow tools
+  * Integrates into continuous integration flow tools and pre-commit
 
-* Reports and fixes issues found
+* Reports and fixes style issues in VHDL, Verilog and SystemVerilog
 
   * Horizontal whitespace
   * Vertical whitespace
   * Upper and lower case
-  * Keyword alignments
-  * etc...
+  * Indentation and alignment
+  * Structure and naming
+
+* Lint mode, with the rule sets do254, do254_plus, starc and cdc
+
+* Design analysis of the whole design, with GHDL and Yosys, and formal checks with SymbiYosys
 
 * Fully configurable rules via JSON/YAML configuration file
 
@@ -65,5 +68,7 @@ Known Limitations
 MHSG is a continual work in progress.
 As such, this version has the following known limitations:
 
-* Minumal support for embedded PSL
+* Minimal support for embedded PSL
 * Parser will not process VHDL 2019
+
+The known gaps are listed in :doc:`developing/backlog`.

@@ -8,27 +8,32 @@ The command line tool can be invoked with:
 
    $ mhsg
    usage: Multiple HDL Style Guide (MHSG) [-h] [-f FILENAME [FILENAME ...]]
-                                 [--index_files INDEX_FILES [INDEX_FILES ...]]
-                                 [-lr LOCAL_RULES [LOCAL_RULES ...]]
-                                 [-c CONFIGURATION [CONFIGURATION ...]] [--fix]
-                                 [-fp FIX_PHASE] [-j JUNIT] [-js JSON]
-                                 [-of {mhsg,syntastic,summary}] [-b]
-                                 [-oc OUTPUT_CONFIGURATION]
-                                 [-rc RULE_CONFIGURATION]
-                                 [--lint] [--lint_only] [--design]
-                                 [--cdc_report FILE]
-                                 [--black_box_template FILE]
-                                 [--qualify RULE_SET] [--qualify_report FILE]
-                                 [--rule_set RULE_SET]
-                                 [--output_options OUTPUT_OPTIONS]
-                                 [--style {indent_only,jcl}] [-v] [-ap]
-                                 [--fix_only FIX_ONLY] [--stdin] [--stdout]
-                                 [--quality_report QUALITY_REPORT] [-p JOBS]
-                                 [--debug]
-                                 [FILENAME ...]
+                                          [--index_files INDEX_FILES [INDEX_FILES ...]]
+                                          [-lr LOCAL_RULES [LOCAL_RULES ...]]
+                                          [-c CONFIGURATION [CONFIGURATION ...]]
+                                          [--fix] [-fp FIX_PHASE] [-j JUNIT]
+                                          [-js JSON]
+                                          [-of {mhsg,syntastic,summary}] [-b]
+                                          [-oc OUTPUT_CONFIGURATION]
+                                          [-rc RULE_CONFIGURATION] [--lint]
+                                          [--lint_only] [--design]
+                                          [--cdc_report FILE]
+                                          [--black_box_template FILE]
+                                          [--qualify RULE_SET]
+                                          [--qualify_report FILE]
+                                          [--rule_set RULE_SET]
+                                          [--output_options OUTPUT_OPTIONS]
+                                          [--style {indent_only,jcl}] [-v] [-ap]
+                                          [--fix_only FIX_ONLY] [--stdin]
+                                          [--force_fix] [--stdout]
+                                          [--quality_report QUALITY_REPORT]
+                                          [-p JOBS] [--debug]
+                                          [FILENAME ...]
 
-   Analyzes VHDL files for style guide violations. Reference documentation is
-   located at: http://vhdl-style-guide.readthedocs.io/en/latest/index.html
+   Checks VHDL, Verilog and SystemVerilog files for style violations and fixes
+   them, lints them against coding standards, and analyzes whole designs.
+   Documentation is located at:
+   https://github.com/xTheBearx/vhdl-style-guide/tree/master/docs
 
    positional arguments:
      FILENAME              File to analyze
@@ -44,7 +49,8 @@ The command line tool can be invoked with:
      -lr LOCAL_RULES [LOCAL_RULES ...], --local_rules LOCAL_RULES [LOCAL_RULES ...]
                            Path(s) to local rule directories
      -c CONFIGURATION [CONFIGURATION ...], --configuration CONFIGURATION [CONFIGURATION ...]
-                           JSON or YAML configuration file(s)
+                           JSON or YAML configuration file(s); the option can be
+                           repeated, and later files take precedence
      --fix                 Fix issues found
      -fp FIX_PHASE, --fix_phase FIX_PHASE
                            Fix issues up to and including this phase
@@ -85,14 +91,14 @@ The command line tool can be invoked with:
                            allowed values and default, to file name (JSON), for
                            building an options dialog.
      --style {indent_only,jcl}
-                           Use predefined style: indent_only (Only applies
-                           indent rules), jcl (Coding style preferred by
-                           Jeremiah Leary)
+                           Use predefined style: indent_only (Only applies indent
+                           rules), jcl (Coding style preferred by Jeremiah Leary)
      -v, --version         Displays version information
      -ap, --all_phases     Do not stop when a violation is detected.
      --fix_only FIX_ONLY   Restrict fixing via JSON file.
      --stdin               Read VHDL input from stdin, disables all other file
                            selections, disables multiprocessing
+     --force_fix           ALPHA: Apply fixes if syntax errors are detected.
      --stdout              With --fix, write the fixed code to stdout instead of
                            the file and the report to stderr. Requires a single
                            input.
@@ -241,7 +247,7 @@ Here is an example output running against a test file:
      instantiation_034         | Error      |        169 | Change to component instantiation
      generic_map_003           | Error      |        170 | Move the ( to the same line as the "generic map" keyword.
    ----------------------------+------------+--------------------------------------
-   NOTE: Refer to online documentation at https://vhdl-style-guide.readthedocs.io/en/latest/index.html for more information.
+   NOTE: Refer to the documentation at https://github.com/xTheBearx/vhdl-style-guide/tree/master/docs for more information.
 
 MHSG will report the rule which is violated and the line number or group of lines where the violation occurred.
 It also gives a suggestion on how to fix the violation.
@@ -280,7 +286,7 @@ If rule violations can not be fixed, they will be reported after fixing everythi
    ----------------------------+------------+------------+--------------------------------------
      instantiation_034         | Error      |        169 | Change to component instantiation
    ----------------------------+------------+--------------------------------------
-   NOTE: Refer to online documentation at https://vhdl-style-guide.readthedocs.io/en/latest/index.html for more information.
+   NOTE: Refer to the documentation at https://github.com/xTheBearx/vhdl-style-guide/tree/master/docs for more information.
 
 Use Cases
 #########

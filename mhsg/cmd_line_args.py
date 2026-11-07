@@ -37,9 +37,14 @@ def parse_command_line_arguments():
 
     parser = CustomArgumentParser(
         prog="Multiple HDL Style Guide (MHSG)",
-        description="""Analyzes VHDL files for style guide violations.
-                   Reference documentation is located at:
-                   http://vhdl-style-guide.readthedocs.io/en/latest/index.html""",
+        # The description keeps its lines, so the address of the documentation is not broken at a hyphen
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=(
+            "Checks VHDL, Verilog and SystemVerilog files for style violations and fixes\n"
+            "them, lints them against coding standards, and analyzes whole designs.\n"
+            "Documentation is located at:\n"
+            "https://github.com/xTheBearx/vhdl-style-guide/tree/master/docs"
+        ),
     )
 
     parser.add_argument("-f", "--filename", type=__is_valid_file, nargs="+", default=[], help="File to analyze")

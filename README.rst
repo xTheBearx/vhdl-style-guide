@@ -28,7 +28,9 @@ Credits
 -------
 
 MHSG is a fork of `VHDL Style Guide (VSG) <https://github.com/jeremiah-c-leary/vhdl-style-guide>`_, created by
-**Jeremiah C. Leary**. It started from VSG 3.35.0 and has been maintained as a separate project since 2026.
+**Jeremiah C. Leary**. It started from VSG 3.35.0 and has been maintained as a separate project since 2026. It exists
+to improve VSG rapidly using AI: its changes are developed with AI assistance, each backed by tests and checked
+against real-world projects.
 
 Everything MHSG does for VHDL style rests on VSG's work: its VHDL parser, its rules and how they are configured, its
 fixing in phases, its output formats and its documentation. Thanks to Jeremiah C. Leary and to everyone who has
