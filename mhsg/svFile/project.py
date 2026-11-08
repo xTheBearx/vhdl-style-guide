@@ -113,7 +113,9 @@ def collect(lFiles, dConfig, bVerilator=False):
     oAnalysis.analyze(oCompilation)
     lDiagnostics.extend(oAnalysis.getDiagnostics())
     oEngine = pyslang.DiagnosticEngine(oCompilation.sourceManager)
-    dReturn = {sPath: {"hash": sHash, "diagnostics": [], "incomplete": False} for sPath, sHash in dBuffers.values()}
+    # The enum types of the run, shared by the entries of all files, see enum_types
+    dEnums = enum_types(lTrees)
+    dReturn = {sPath: {"hash": sHash, "diagnostics": [], "incomplete": False, "enums": dEnums} for sPath, sHash in dBuffers.values()}
     for oTree in lTrees:
         lDiagnostics.extend(oTree.diagnostics)
     for oDiagnostic in lDiagnostics:
@@ -142,6 +144,38 @@ def collect(lFiles, dConfig, bVerilator=False):
             if tDiagnostic not in dReturn[sPath]["diagnostics"]:
                 dReturn[sPath]["diagnostics"].append(tDiagnostic)
     return dReturn
+
+
+def enum_types(lTrees):
+    """
+    The enum types the files of a run declare with typedef, for rules that look at a variable of a type declared in
+    another file, such as the state of a state machine typed in a package: {"qualified": {name: values}, "bare":
+    {name: (qualified name, values)}}. A type in a package is qualified with the package, pkg::state_e, and also found
+    by its bare name when no other package of the run declares that name; a type outside packages has its bare name.
+    """
+    dQualified = {}
+    dBare = {}
+    for oTree in lTrees:
+        for oTypedef in walk(oTree.root, "TypedefDeclaration"):
+            if oTypedef.type is None or oTypedef.type.kind.name != "EnumType":
+                continue
+            sName = oTypedef.name.rawText
+            lValues = [o.name.rawText for o in oTypedef.type.members if isinstance(o, SyntaxNode)]
+            oPackage = next((o for o in ancestors(oTypedef) if o.kind.name == "PackageDeclaration"), None)
+            sQualified = f"{oPackage.header.name.rawText}::{sName}" if oPackage is not None else sName
+            dQualified[sQualified] = lValues
+            if sName in dBare and dBare[sName] is not None and dBare[sName][0] != sQualified:
+                dBare[sName] = None
+            elif sName not in dBare:
+                dBare[sName] = (sQualified, lValues)
+    return {"qualified": dQualified, "bare": {s: t for s, t in dBare.items() if t is not None}}
+
+
+def ancestors(oNode):
+    oParent = oNode.parent
+    while oParent is not None:
+        yield oParent
+        oParent = oParent.parent
 
 
 def syntax_nodes(oNode):

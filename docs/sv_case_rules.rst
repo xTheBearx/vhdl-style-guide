@@ -313,8 +313,9 @@ Alias: :code:`sv_case_state_reachability`
 This rule checks that every state of a state machine can be entered and left. It is disabled by default; the
 do254 rule set enables it (CP6).
 
-A state machine is a case statement on a variable of an enum type declared in the file, whose items assign the
-variable or another variable of its type, such as the next state. A state that no assignment of the module gives
+A state machine is a case statement on a variable of an enum type, whose items assign the variable or another
+variable of its type, such as the next state. The type is declared in the file or, in lint mode, in another file
+of the run, such as a package; a state can be written with its package, as pkg::Idle. A state that no assignment of the module gives
 those variables, other than the first value of the type, can never be entered, other than by reset; a state
 whose case item assigns no other state can never be left. Both are usually mistakes, and a state that cannot be
 left hangs the machine. A default assignment of a state before the case statement leaves every state. Design
