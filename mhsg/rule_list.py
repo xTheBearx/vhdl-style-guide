@@ -371,7 +371,8 @@ class rule_list:
 
     def _validate_configuration_rule_exists(self, configurationFile):
         """
-        Validates rules called out in the configuration files exist in the rule set.
+        Validates rules called out in the configuration files exist in the rule set. Rules of the other languages are
+        left out: one configuration can cover the VHDL, Verilog and SystemVerilog files of a project.
 
         If a rule does not exist then:
 
@@ -386,6 +387,10 @@ class rule_list:
         """
         lRuleNames = self.get_list_of_rule_names()
         for sRule in configurationFile["rule"]:
+            # A rule of another language, such as entity_001 in the configuration of a project with VHDL and
+            # Verilog files, or a SystemVerilog rule for a file read as Verilog-2005, does not apply to this file
+            if sRule in self.other_language_rules:
+                continue
             if rule_does_not_exist_in_list(sRule, lRuleNames):
                 sErrorMessage = "ERROR: Rule " + sRule + " referenced in configuration could not be found"
                 raise exceptions.ConfigurationError(sErrorMessage)

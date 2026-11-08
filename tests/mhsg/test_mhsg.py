@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import io
+import json
 import os
 import pathlib
 import subprocess
@@ -121,6 +122,36 @@ class testMhsg(unittest.TestCase):
         )
         lActual = str(lActual.decode("utf-8")).splitlines()
         self.assertEqual(lActual, lExpected)
+
+    def test_configuration_of_several_languages(self):
+        # One configuration covers the VHDL, Verilog and SystemVerilog files of a project: the rules of the other
+        # languages, and the SystemVerilog only rules for a Verilog file, do not apply (issue 89); a name that is no
+        # rule of any language is still an error
+        dRules = {"entity_001": {"disable": True}, "sv_case_001": {"disable": True}, "sv_always_025": {"disable": True}}
+        dFiles = {
+            "e.vhd": "entity e is\nend entity e;\n",
+            "m.v": "module m (input a, output y);\n    assign y = a;\nendmodule\n",
+            "m.sv": "module m (input logic a, output logic y);\n    assign y = a;\nendmodule\n",
+        }
+        for sFile, sText in dFiles.items():
+            sPath = os.path.join(self._tmpdir.name, sFile)
+            with open(sPath, "w", encoding="utf-8") as oFile:
+                oFile.write(sText)
+            for dConfiguration, sError in (({"rule": dRules}, None), ({"rule": dict(dRules, no_such_rule={"disable": True})}, "no_such_rule")):
+                sConfiguration = os.path.join(self._tmpdir.name, "mixed.json")
+                with open(sConfiguration, "w", encoding="utf-8") as oFile:
+                    json.dump(dConfiguration, oFile)
+                oResult = subprocess.run(
+                    [*utils.mhsg_exec(), "-c", sConfiguration, "-f", sPath, "-of", "syntastic"],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                with self.subTest(sFile, error=sError):
+                    if sError is None:
+                        self.assertNotIn("could not be found", oResult.stdout + oResult.stderr)
+                    else:
+                        self.assertIn(f"ERROR: Rule {sError} referenced in configuration could not be found", oResult.stdout + oResult.stderr)
 
     def test_invalid_configuration(self):
         lExpected = []

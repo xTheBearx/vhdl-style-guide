@@ -58,6 +58,9 @@ def targets(oLeft):
         return [Target(text(oLeft.identifier), oLeft, True)]
     if sKind == "IdentifierSelectName":
         return [Target(text(oLeft.identifier), oLeft, False)]
+    if sKind == "ScopedName" and first_name(oLeft) is not None:
+        oFirst = first_name(oLeft)
+        return [Target(text(oFirst.identifier), oFirst, False)]
     if sKind in ("ElementSelectExpression", "MemberAccessExpression"):
         return [Target(o.name, o.node, False) for o in targets(oLeft.left)]
     if sKind in ("ConcatenationExpression", "AssignmentPatternExpression"):
@@ -65,10 +68,21 @@ def targets(oLeft):
     return []
 
 
+def first_name(oScoped):
+    """The first name of a hierarchical name or member written with dots, such as s in s.valid; None for pkg::name."""
+    oNode = oScoped
+    while oNode.kind.name == "ScopedName":
+        if text(oNode.separator) != ".":
+            return None
+        oNode = oNode.left
+    return oNode if oNode.kind.name in NAMES else None
+
+
 def reads(oNode):
     """
-    The name nodes an expression reads: names and selects of names, but not the names of called functions, the
-    members after a dot or names in a package or class scope.
+    The name nodes an expression reads: names and selects of names, and the first name of a name with dots, such as
+    s of s.valid, but not the names of called functions, the members after a dot or names in a package or class
+    scope.
     """
     if oNode is None:
         return []
@@ -80,6 +94,10 @@ def reads(oNode):
         if sKind in NAMES:
             lReturn.append(oItem)
         if sKind == "ScopedName":
+            # A hierarchical name or a member, such as s.valid, reads its first name; pkg::name reads a package
+            oFirst = first_name(oItem)
+            if oFirst is not None:
+                lReturn.append(oFirst)
             continue
         if sKind == "InvocationExpression":
             lStack.extend(o for o in (oItem.arguments,) if o is not None)
