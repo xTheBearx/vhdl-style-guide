@@ -120,6 +120,38 @@ class test_verilog_designs(unittest.TestCase):
             sScript,
         )
 
+    def test_read_verilog_2005(self):
+        # Verilog files are read as Verilog-2005, without -sv, and SystemVerilog files with -sv, in the order listed
+        oTools = tools.Tools(None, "yosys", {}, "", "")
+        oDesign = self.design(["vtop.v", "cdc_sv.sv", "mixed_sync.v", "inout_wire.v"], {"defines": {"SIM": None}})
+        sScript, _ = runner.verilog_read(oDesign, oTools, None)
+        lPath = [os.path.join(sTestDir, s) for s in ("vtop.v", "cdc_sv.sv", "mixed_sync.v", "inout_wire.v")]
+        self.assertEqual(f"read_verilog -DSIM {lPath[0]}; read_verilog -sv -DSIM {lPath[1]}; read_verilog -DSIM {lPath[2]} {lPath[3]}", sScript)
+        sScript, _ = runner.verilog_read(self.design(["vtop.v"]), oTools, "top")
+        self.assertEqual(f"read_verilog {lPath[0]}; hierarchy -check -top top", sScript)
+        # With v_files: systemverilog, .v files are read as SystemVerilog, as before
+        oDesign = project.from_configuration(
+            {"design": {"top": "top", "libraries": [{"name": "work", "files": lPath[:2]}]}, "systemverilog": {"v_files": "systemverilog"}},
+        )
+        self.assertEqual(f"read_verilog -sv {lPath[0]} {lPath[1]}", runner.verilog_read(oDesign, oTools, None)[0])
+
+    def test_read_slang_verilog_2005(self):
+        # read_slang reads the Verilog files as Verilog-2005 when its slang maps keyword versions to files
+        lPath = [os.path.join(sTestDir, s) for s in ("vtop.v", "cdc_sv.sv")]
+        oDesign = self.design(["vtop.v", "cdc_sv.sv"])
+        oTools = tools.Tools(None, "mhsg-test-yosys", {}, "", "", bSlang=True)
+        try:
+            tools.dSlang["mhsg-test-yosys"] = []
+            tools.dSlangHelp["mhsg-test-yosys"] = "    --map-keyword-version <keyword-version>+<file-pattern>[,...]\n"
+            sScript, _ = runner.verilog_read(oDesign, oTools, None)
+            self.assertEqual(f"read_slang {runner.KEEP_HIERARCHY} --map-keyword-version 1364-2005+{lPath[0]} {lPath[0]} {lPath[1]}", sScript)
+            # An older slang reads them as SystemVerilog, a superset of Verilog-2005 but for its keywords
+            tools.dSlangHelp["mhsg-test-yosys"] = ""
+            self.assertEqual(f"read_slang {runner.KEEP_HIERARCHY} {lPath[0]} {lPath[1]}", runner.verilog_read(oDesign, oTools, None)[0])
+        finally:
+            tools.dSlang.pop("mhsg-test-yosys", None)
+            tools.dSlangHelp.pop("mhsg-test-yosys", None)
+
     def test_messages(self):
         lMessages = runner.parse_verilog_messages(
             "/x/bad.v:2: ERROR: syntax error, unexpected ';'\nERROR: Module `\\sub' referenced in module `\\top' in cell `\\u_sub' is not part of the design.\n",

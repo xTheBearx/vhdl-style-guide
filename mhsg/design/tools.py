@@ -79,6 +79,8 @@ def tool_path(sName, dPaths=None):
 
 # Yosys -> the options that give it the read_slang command, or None
 dSlang = {}
+# Yosys -> the help of its read_slang command, or ""
+dSlangHelp = {}
 
 
 def has_slang(sYosys):
@@ -90,12 +92,22 @@ def slang_options(sYosys):
     """The options that give Yosys the read_slang command: none when it is built in, -m slang for the plugin."""
     if sYosys not in dSlang:
         dSlang[sYosys] = None
+        dSlangHelp[sYosys] = ""
         for lOptions in ([], ["-m", "slang"]):
             oHelp = subprocess.run([sYosys, *lOptions, "-Q", "-T", "-p", "help read_slang"], capture_output=True, text=True, check=False)
             if oHelp.returncode == 0 and "No such command" not in oHelp.stdout + oHelp.stderr:
                 dSlang[sYosys] = lOptions
+                dSlangHelp[sYosys] = oHelp.stdout + oHelp.stderr
                 break
     return dSlang[sYosys]
+
+
+def slang_maps_keywords(sYosys):
+    """
+    Whether the read_slang command of Yosys reads chosen files with the keywords of another version of the language,
+    with the --map-keyword-version option of slang 12: design analysis reads Verilog files as Verilog-2005 with it.
+    """
+    return slang_options(sYosys) is not None and "--map-keyword-version" in dSlangHelp.get(sYosys, "")
 
 
 def built_in(sYosys, dEnvironment):

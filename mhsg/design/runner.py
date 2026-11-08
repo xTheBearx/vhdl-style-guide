@@ -220,7 +220,7 @@ def run_verilog(oDesign, oTools, sWorkDirectory):
         if not any(o.severity in (None, "error") for o in oResult.messages):
             sText = (oProcess.stderr.strip() or "Yosys failed").splitlines()[-1]
             oResult.messages.append(Message(None, 0, 0, "error", sText, "verilog"))
-        if not getattr(oTools, "slang", False) and any(s.lower().endswith((".sv", ".svh")) for s in oDesign.verilog_files()):
+        if not getattr(oTools, "slang", False) and not all(is_verilog_2005(oDesign, s) for s in oDesign.verilog_files()):
             oResult.messages.append(Message(None, 0, 0, "error", SLANG_HINT, "verilog"))
         return oResult
     with open(sNetlist, encoding="utf-8") as oFile:
@@ -531,8 +531,9 @@ def rename_modules(sJson, sSuffix):
 def verilog_read(oDesign, oTools, sTop, sWorkDirectory=None):
     """
     Returns (Yosys commands, Yosys options) that read the Verilog and SystemVerilog files of a design: read_slang when
-    Yosys has it, else read_verilog -sv. With sTop, the commands also elaborate that top module with the parameters
-    set under generics. With a work directory, the black boxes are read first, see verilog_black_boxes.py.
+    Yosys has it, else read_verilog, with -sv for SystemVerilog files. With sTop, the commands also elaborate that top
+    module with the parameters set under generics. With a work directory, the black boxes are read first, see
+    verilog_black_boxes.py.
     """
     sBlackBoxes, tStubs = black_box_reads(oDesign, oTools, sWorkDirectory) if sWorkDirectory else ("", None)
     sScript, lOptions = verilog_read_files(oDesign, oTools, sTop, tStubs=tStubs)
@@ -575,10 +576,14 @@ def verilog_read_files(oDesign, oTools, sTop, dCopies=None, tStubs=None):
     """
     Returns (Yosys command, Yosys options) that read the Verilog files of a design, or the copies of dCopies. With
     read_slang, tStubs is (file, modules) of the stubs of black boxes, read with the design and kept as black boxes.
+    Verilog files, .v and .vh, are read as Verilog-2005 unless v_files says systemverilog: by read_verilog without -sv,
+    or by read_slang with slang's --map-keyword-version when it has it; SystemVerilog files by read_verilog -sv.
     """
     lDefines = [f"-D{sName}" if oValue is None else f"-D{sName}={verilog_value(oValue)}" for sName, oValue in oDesign.defines.items()]
     lIncludes = [f"-I{quote(s)}" for s in oDesign.include_directories]
-    lFiles = [quote((dCopies or {}).get(s, s)) for s in oDesign.verilog_files()]
+    lDesignFiles = [(dCopies or {}).get(s, s) for s in oDesign.verilog_files()]
+    lFiles = [quote(s) for s in lDesignFiles]
+    lVerilog = [bool(is_verilog_2005(oDesign, s)) for s in oDesign.verilog_files()]
     lSlang = tools.slang_options(oTools.yosys) if getattr(oTools, "slang", False) else None
     if lSlang is not None:
         lTop = [f"--top {sTop}"] + [f"-G {sName}={verilog_value(oValue)}" for sName, oValue in oDesign.generics.items()] if sTop else []
@@ -586,12 +591,29 @@ def verilog_read_files(oDesign, oTools, sTop, dCopies=None, tStubs=None):
         if tStubs is not None:
             lBlackBoxes = [f"--blackboxed-module {s}" for s in tStubs[1]]
             lFiles = [quote(tStubs[0]), *lFiles]
-        return " ".join(["read_slang", KEEP_HIERARCHY, *lDefines, *lIncludes, *lTop, *lBlackBoxes, *lFiles]), lSlang
-    sScript = " ".join(["read_verilog -sv", *lDefines, *lIncludes, *lFiles])
+        lKeywords = []
+        lVerilogFiles = [os.path.abspath(s) for s, b in zip(lDesignFiles, lVerilog) if b and "," not in s]
+        if lVerilogFiles and tools.slang_maps_keywords(oTools.yosys):
+            lKeywords = ["--map-keyword-version", quote("1364-2005+" + ",".join(lVerilogFiles))]
+        return " ".join(["read_slang", KEEP_HIERARCHY, *lDefines, *lIncludes, *lKeywords, *lTop, *lBlackBoxes, *lFiles]), lSlang
+    # Consecutive files of one language are read by one command, so the files keep their order
+    lGroups = []
+    for sFile, bVerilog in zip(lFiles, lVerilog):
+        if lGroups and lGroups[-1][0] == bVerilog:
+            lGroups[-1][1].append(sFile)
+        else:
+            lGroups.append((bVerilog, [sFile]))
+    sScript = "; ".join(" ".join(["read_verilog" if bVerilog else "read_verilog -sv", *lDefines, *lIncludes, *lGroup]) for bVerilog, lGroup in lGroups)
     if sTop:
         lParameters = [f"-chparam {sName} {verilog_value(oValue)}" for sName, oValue in oDesign.generics.items()]
         sScript += "; " + " ".join(["hierarchy -check -top", sTop, *lParameters])
     return sScript, []
+
+
+def is_verilog_2005(oDesign, sFile):
+    """True for a Verilog file of a design read as Verilog-2005: a .v or .vh file, unless v_files says systemverilog."""
+    fLanguage = getattr(oDesign, "file_language", None)
+    return (fLanguage(sFile) if fLanguage is not None else language.of_file(sFile)) == language.VERILOG
 
 
 def verilog_value(oValue):
