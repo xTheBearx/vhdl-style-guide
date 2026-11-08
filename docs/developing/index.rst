@@ -13,3 +13,4 @@ Before developing for MHSG, familiarize yourself with the **Theory of Operation*
    real_world_check
    backlog
    dependency_issues
+   gpu_simulation
