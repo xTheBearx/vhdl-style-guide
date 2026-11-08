@@ -653,10 +653,14 @@ cases:
   expected:
   - - 12
     - Move the module to a file of its own
+  - - 19
+    - Move the module to a file of its own
 - rule: sv_file_003
   file: examples/svfile/dimensions.sv
   expected:
   - - 12
+    - Move the module to a file of its own
+  - - 19
     - Move the module to a file of its own
 - rule: sv_file_003
   file: examples/svfile/alignment.fixed.sv
@@ -704,11 +708,15 @@ cases:
   file: examples/svfile/dimensions.fixed.sv
   expected:
   - - 12
+    - Name the file of the testbench dimensions_columns like *_tb.v, *_tb.sv, *_test.v, *_test.sv, *.vt
+  - - 19
     - Name the file of the testbench dimensions_flush like *_tb.v, *_tb.sv, *_test.v, *_test.sv, *.vt
 - rule: sv_file_007
   file: examples/svfile/dimensions.sv
   expected:
   - - 12
+    - Name the file of the testbench dimensions_columns like *_tb.v, *_tb.sv, *_test.v, *_test.sv, *.vt
+  - - 19
     - Name the file of the testbench dimensions_flush like *_tb.v, *_tb.sv, *_test.v, *_test.sv, *.vt
 - rule: sv_file_007
   file: examples/svfile/alignment.fixed.sv
