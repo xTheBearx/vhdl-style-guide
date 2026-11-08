@@ -5,8 +5,8 @@ The releases of MHSG, with their packages, are on `GitHub <https://github.com/xT
 The releases of VSG, from which MHSG was forked, are listed `with VSG
 <https://github.com/jeremiah-c-leary/vhdl-style-guide/tags>`_.
 
-Unreleased
-----------
+4.0.1
+-----
 
 **Verilog and SystemVerilog**
 
