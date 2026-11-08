@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 from mhsg.rule_group import structure
 from mhsg.rules.sv_nodes import text
 from mhsg.rules.sv_tree import Problem, TreeRule, elements
+from mhsg.svFile import project
 
 
 class rule_018(TreeRule, structure.Rule):
@@ -13,8 +16,15 @@ class rule_018(TreeRule, structure.Rule):
 
     A signal renamed at each level of the hierarchy is hard to follow from the top to the bottom of the design. The
     **strip_prefixes** and **strip_suffixes** options list the parts that are ignored, such as i\\_ and _o, which mark
-    direction or kind; names are compared ignoring case. Only named connections of a signal by name are checked, not
+    direction or kind; one prefix and one suffix, the longest that fits, are removed and the names compared ignoring
+    case, as lint_040 does for VHDL. The default suffixes include those of port names written by direction, the
+    names sv_naming_016 asks for: _i, _o and _io, with _n or n before them for active low ports, so tick_o matches
+    tick and tick_i, and rst_n_i or rst_ni matches rst_n. Only named connections of a signal by name are checked, not
     selects, expressions, .name or .* connections.
+
+    The ports of a module instantiated more than once are not checked: each instance connects its own signals, which
+    cannot all have the names of the ports. In lint mode the instances of all the files of the run are counted,
+    otherwise those of the file; an instance array or an instance in a loop generate counts as more than one.
 
     **Violation**
 
@@ -39,11 +49,14 @@ class rule_018(TreeRule, structure.Rule):
         self.solution = "Name the signal after the port"
         self.strip_prefixes = ["i_", "o_", "io_", "s_", "r_", "w_"]
         self.configuration.append("strip_prefixes")
-        self.strip_suffixes = ["_i", "_o", "_io", "_ni", "_no", "_s", "_r", "_n", "_d", "_q", "_reg", "_sig"]
+        self.strip_suffixes = ["_i", "_o", "_io", "_ni", "_no", "_nio", "_n_i", "_n_o", "_n_io", "_s", "_r", "_n", "_d", "_q", "_reg", "_sig"]
         self.configuration.append("strip_suffixes")
 
     def problems(self, oFile):
+        dInstances = instances(oFile)
         for oInstance in oFile.nodes("HierarchicalInstance"):
+            if oInstance.parent is not None and dInstances.get(text(oInstance.parent.type), 0) > 1:
+                continue
             sInstance = text(oInstance.decl.name) if getattr(oInstance, "decl", None) is not None else ""
             for oConnection in elements(oInstance.connections):
                 if oConnection.kind.name != "NamedPortConnection" or oConnection.expr is None:
@@ -69,6 +82,21 @@ class rule_018(TreeRule, structure.Rule):
                 sName = sName[: -len(sSuffix)]
                 break
         return sName
+
+
+def instances(oFile):
+    """
+    {module name: number of instances}: of the files of the run when lint mode compiled the run, see
+    svFile/project.py, and of the file, whichever is more.
+    """
+    dReturn = project.instance_counts(oFile.nodes("HierarchicalInstance"))
+    dProject = getattr(getattr(oFile, "configuration", None), "sv_lint_project", None) or {}
+    dEntry = dProject.get(os.path.abspath(oFile.filename)) if getattr(oFile, "filename", None) else None
+    if dEntry is None and dProject:
+        dEntry = next(iter(dProject.values()))
+    for sModule, iCount in ((dEntry or {}).get("instances") or {}).items():
+        dReturn[sModule] = max(iCount, dReturn.get(sModule, 0))
+    return dReturn
 
 
 def connected_name(oExpression):

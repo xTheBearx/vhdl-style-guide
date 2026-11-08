@@ -989,7 +989,8 @@ class test_rules(unittest.TestCase):
         )
 
     def test_do254_checks_more(self):
-        # The DO-254 checks of SystemVerilog files that follow paths through the code, instances, states and comments
+        # The DO-254 checks of SystemVerilog files that follow paths through the code, instances, states and comments;
+        # sv_module_018 does not check the instances of leaf, which is instantiated twice, see names_across_hierarchy.sv
         _, lOutput, _ = self.run_mhsg(["--rule_set", "do254_plus", "--lint_only", "-ap"], "do254_more.sv")
         lRules = (
             "sv_always_030",
@@ -1012,10 +1013,8 @@ class test_rules(unittest.TestCase):
                 "WARNING: do254_more.sv(9)DO254PLUS-GENERIC (sv_module_019) -- Check the parameters of leaf with an assertion",
                 "WARNING: do254_more.sv(20)DO254PLUS-REQ (sv_comment_010) -- Add a requirement tag matching \\bREQ\\s*:\\s*\\S+ to the module",
                 "WARNING: do254_more.sv(25)DO254PLUS-PORT (sv_module_020) -- Use inout ports only on the top level, for device pins",
-                "WARNING: do254_more.sv(38)DO254-DR9 (sv_module_018) -- Signal payload connected to port data_i of u_leaf has another name",
                 "WARNING: do254_more.sv(40)DO254-CP12 (sv_lint_018) -- Output port 'valid_o' is explicitly connected to nothing",
                 "ERROR: do254_more.sv(43)DO254-CP11 (sv_lint_017) -- Input port 'data_i' has no connection",
-                "WARNING: do254_more.sv(45)DO254-DR9 (sv_module_018) -- Signal data_o2 connected to port data_o of u_leaf_open has another name",
                 "ERROR: do254_more.sv(49)DO254-SS3 (sv_statement_052) -- hold is assigned from itself, a combinational loop",
                 "WARNING: do254_more.sv(52)DO254PLUS-PRAGMA (sv_comment_009) -- Code from here is hidden from synthesis; justify the region",
                 "WARNING: do254_more.sv(56)DO254PLUS-REQ (sv_comment_010) -- Add a requirement tag matching \\bREQ\\s*:\\s*\\S+ to the always block",
@@ -1034,6 +1033,15 @@ class test_rules(unittest.TestCase):
         # The same design written to pass: defaults, tags, an assertion and every state entered and left
         _, lOutput, _ = self.run_mhsg(["--rule_set", "do254_plus", "--lint_only", "-ap"], "do254_more_clean.sv")
         self.assertEqual([], [s for s in lOutput if any(f"({r})" in s for r in lRules)])
+
+    def test_names_across_hierarchy(self):
+        # sv_module_018 (DR9) compares names without the suffixes of ports named by direction, _n_i and _ni too, and
+        # skips the ports of a module instantiated more than once, or in a loop generate; data_i (foo) is a rename
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "do254", "--lint_only"], "names_across_hierarchy.sv")
+        self.assertEqual(
+            ["WARNING: names_across_hierarchy.sv(44)DO254-DR9 (sv_module_018) -- Signal foo connected to port data_i of u_leaf has another name"],
+            [s for s in lOutput if "(sv_module_018)" in s],
+        )
 
     def test_sensitivity_list_branches(self):
         # t is written in both branches before it is read; u only in one, so its old value is read
@@ -1190,6 +1198,19 @@ class test_rules(unittest.TestCase):
         )
         # Without the package in the run the types are unknown, and the machines are not checked
         self.assertEqual([], [s for s in self.run_project(["fsm_user.sv"], lArguments) if "(sv_case_013)" in s])
+
+    def test_names_across_hierarchy_of_the_run(self):
+        # sv_module_018 counts the instances of all the files of the run: hier_a.sv and hier_b.sv each instantiate
+        # hier_sync once, so together their connections are not checked, and alone those of hier_a.sv are
+        lArguments = ["--lint_only", "--rule_set", "do254"]
+        self.assertEqual([], [s for s in self.run_project(["hier_a.sv", "hier_b.sv", "hier_sync.sv"], lArguments) if "(sv_module_018)" in s])
+        self.assertEqual(
+            [
+                "WARNING: hier_a.sv(9)DO254-DR9 (sv_module_018) -- Signal a_i connected to port d_i of u_sync has another name",
+                "WARNING: hier_a.sv(10)DO254-DR9 (sv_module_018) -- Signal a_o connected to port q_o of u_sync has another name",
+            ],
+            [s for s in self.run_project(["hier_a.sv", "hier_sync.sv"], lArguments) if "(sv_module_018)" in s],
+        )
 
     def test_parameters_of_the_run(self):
         # sv_lint_014 and sv_lint_015 check the parameters of the modules of the run against each other, sv_lint_016
