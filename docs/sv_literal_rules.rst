@@ -214,8 +214,10 @@ sv_literal_010
 Alias: :code:`sv_literal_named_numbers`
 
 This rule checks for numbers other than 0 and 1 in the code, as the STARC guide recommends (3.2.2.1, 4.1.2.1):
-name them with parameters. Parameter declarations, dimensions, indexes, delays, replication counts, loop headers
-and case items are not checked. It is disabled by default; the starc rule set enables it.
+name them with parameters. Parameter declarations, parameter values given to an instance, as in #(.WIDTH(12)) or
+#(12), dimensions, indexes, delays, replication counts, loop headers and the values of case items, as in 3'd5:,
+are not checked. The statements of the case items are checked like any other, default included. It is disabled
+by default; the starc and do254 rule sets enable it.
 
 **Violation**
 

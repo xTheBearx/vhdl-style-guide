@@ -988,6 +988,19 @@ class test_rules(unittest.TestCase):
             [s for s in lOutput if "(sv_statement_008)" in s],
         )
 
+    def test_do254_numbers(self):
+        # CP3, as lint_034 for VHDL: the numbers in the statements of every case item, default included, and in
+        # ordinary statements; not the values of the case items, nor the parameter values given to an instance
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "do254", "--lint_only", "-ap"], "do254_numbers.sv")
+        self.assertEqual(
+            [
+                "WARNING: do254_numbers.sv(18)DO254-CP3 (sv_literal_010) -- Name 8'h0d with a parameter",
+                "WARNING: do254_numbers.sv(19)DO254-CP3 (sv_literal_010) -- Name 8'h0a with a parameter",
+                "WARNING: do254_numbers.sv(24)DO254-CP3 (sv_literal_010) -- Name 8'd3 with a parameter",
+            ],
+            [s for s in lOutput if "(sv_literal_010)" in s],
+        )
+
     def test_do254_checks_more(self):
         # The DO-254 checks of SystemVerilog files that follow paths through the code, instances, states and comments;
         # sv_module_018 does not check the instances of leaf, which is instantiated twice, see names_across_hierarchy.sv

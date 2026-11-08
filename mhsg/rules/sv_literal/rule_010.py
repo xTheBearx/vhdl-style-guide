@@ -6,10 +6,10 @@ from mhsg.rules.sv_tree import Problem, TreeRule
 
 SKIP = (
     "ParameterDeclaration",
+    "ParameterValueAssignment",
     "VariableDimension",
     "ElementSelect",
     "DelayControl",
-    "StandardCaseItem",
     "TypedefDeclaration",
     "AttributeSpec",
     "CastExpression",
@@ -19,8 +19,10 @@ SKIP = (
 class rule_010(TreeRule, structure.Rule):
     """
     This rule checks for numbers other than 0 and 1 in the code, as the STARC guide recommends (3.2.2.1, 4.1.2.1):
-    name them with parameters. Parameter declarations, dimensions, indexes, delays, replication counts, loop headers
-    and case items are not checked. It is disabled by default; the starc rule set enables it.
+    name them with parameters. Parameter declarations, parameter values given to an instance, as in #(.WIDTH(12)) or
+    #(12), dimensions, indexes, delays, replication counts, loop headers and the values of case items, as in 3'd5:,
+    are not checked. The statements of the case items are checked like any other, default included. It is disabled
+    by default; the starc and do254 rule sets enable it.
 
     **Violation**
 
@@ -56,6 +58,9 @@ def checked(oNode):
     oChild, oParent = oNode, oNode.parent
     while oParent is not None:
         if oParent.kind.name in SKIP or (oParent.kind.name == "MultipleConcatenationExpression" and oChild is oParent.expression):
+            return False
+        if oParent.kind.name == "StandardCaseItem" and oChild is not oParent.clause:
+            # The values of the item, not its statement
             return False
         if oParent.kind.name == "ForLoopStatement":
             # The header of the loop, not its body
