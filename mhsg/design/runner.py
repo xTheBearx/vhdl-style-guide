@@ -96,7 +96,7 @@ def analysis_groups(oDesign, oTools, sWorkDirectory, oResult, lTops=None):
     the top entity needs, in the order GHDL gives (--elab-order) after importing every file into a directory of its
     own; consecutive files of one library are analyzed together. Files the top does not need are left out.
     """
-    lListed = [(o.name, [s for s in o.files if language.of_file(s) == language.VHDL]) for o in oDesign.libraries]
+    lListed = [(o.name, [s for s in o.files if not language.is_verilog(s)]) for o in oDesign.libraries]
     lListed = [(sLibrary, lFiles) for sLibrary, lFiles in lListed if lFiles]
     if oDesign.order != "auto":
         return lListed
@@ -243,7 +243,7 @@ def vhdl_entities(oDesign):
     dReturn = {}
     for oLibrary in oDesign.libraries:
         for sFile in oLibrary.files:
-            if language.of_file(sFile) != language.VHDL:
+            if language.is_verilog(sFile):
                 continue
             try:
                 with open(sFile, encoding="utf-8", errors="replace") as oFile:

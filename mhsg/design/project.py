@@ -20,6 +20,7 @@ The description of a design, read from the design section of a configuration fil
 
 A design of Verilog or SystemVerilog files, or of both languages, lists them the same way; defines and
 include_directories are passed to the reader of the Verilog files, and generics set the parameters of the top module.
+Verilog files, .v and .vh, are read as Verilog-2005 unless v_files in the systemverilog section says systemverilog.
 """
 
 import fnmatch
@@ -67,6 +68,8 @@ class Design:
         self.include_directories = []
         # The programs of the tools, {ghdl: path, yosys: path}, for tools that are not first on the path
         self.tools = {}
+        # The language of .v and .vh files, verilog or systemverilog, from v_files of the systemverilog section
+        self.v_files = language.VERILOG
         # The top inputs held in test mode and during the shift of the scan chains, with their values, see test_mode.py
         self.test_mode = {}
         self.scan_shift = {}
@@ -75,10 +78,14 @@ class Design:
         return [sFile for oLibrary in self.libraries for sFile in oLibrary.files]
 
     def vhdl_files(self):
-        return [s for s in self.all_files() if language.of_file(s) == language.VHDL]
+        return [s for s in self.all_files() if not language.is_verilog(s)]
 
     def verilog_files(self):
-        return [s for s in self.all_files() if language.of_file(s) == language.SYSTEMVERILOG]
+        return [s for s in self.all_files() if language.is_verilog(s)]
+
+    def file_language(self, sFile):
+        """The language of a file of the design: vhdl, verilog or systemverilog, see language.py."""
+        return language.of_file(sFile, {"systemverilog": {"v_files": self.v_files}})
 
     @property
     def language(self):
@@ -96,6 +103,7 @@ def from_configuration(dConfiguration):
     if not isinstance(dDesign, dict):
         raise exceptions.ConfigurationError("ERROR: design analysis needs a design section in the configuration, see the design analysis documentation")
     oDesign = Design()
+    oDesign.v_files = language.v_files(dConfiguration)
     oDesign.top = dDesign.get("top")
     if not oDesign.top:
         raise exceptions.ConfigurationError("ERROR: the design section needs a top entity, with the key top")

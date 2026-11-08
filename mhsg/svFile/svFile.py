@@ -31,13 +31,13 @@ from pyslang.parsing import (  # pylint: disable=import-error
 )
 from pyslang.syntax import SyntaxNode, SyntaxTree  # pylint: disable=import-error
 
-from mhsg import parser, token_map
+from mhsg import language, parser, token_map
 from mhsg.svFile import indent, lint, preprocessor, project, tokens
 
 # mhsg.vhdlFile exports the class vhdlFile under the name of its module
 vhdl = importlib.import_module("mhsg.vhdlFile.vhdlFile")
 
-LANGUAGE = "systemverilog"
+LANGUAGE = language.SYSTEMVERILOG
 
 # Trivia that are kept as comments and whitespace
 COMMENT_TRIVIA = ("LineComment", "BlockComment")
@@ -65,14 +65,24 @@ NOT_FIELDS = {
 
 
 class svFile(vhdl.vhdlFile):
-    """A SystemVerilog or Verilog file: its tokens, with the methods of vhdlFile that work on any token list."""
+    """
+    A SystemVerilog or Verilog file: its tokens, with the methods of vhdlFile that work on any token list. Its language
+    is verilog for a .v or .vh file, unless v_files in the configuration says systemverilog, and systemverilog
+    otherwise, see language.py.
+    """
 
     language = LANGUAGE
 
     def _processFile(self):
+        sLanguage = language.of_file(self.filename, getattr(self.configuration, "dConfig", None))
+        self.language = sLanguage if sLanguage in language.VERILOG_LANGUAGES else LANGUAGE
         # Lines come without their line ends from the command line, and with them from tests and the API
         lLines = [sLine.rstrip("\r\n") for sLine in self.filecontent]
         self.parse("\n".join(lLines) + "\n" if lLines else "")
+
+    def preprocessor_options(self):
+        """The pyslang options the file is parsed with: the preprocessor settings and the version of its language."""
+        return preprocessor.options(getattr(self.configuration, "dConfig", None), self.language)
 
     def parse(self, sText):
         """Builds the tokens of a text, with its syntax tree and the syntax nodes by kind."""
@@ -82,8 +92,7 @@ class svFile(vhdl.vhdlFile):
             if iByte == 10:
                 self.line_offsets.append(iIndex + 1)
         # The source manager is kept with the tree, which refers to its buffers
-        dConfig = getattr(self.configuration, "dConfig", None)
-        oOptions = preprocessor.options(dConfig)
+        oOptions = self.preprocessor_options()
         sPath = os.path.abspath(self.filename) if self.filename and self.filename != "stdin" else ""
         self.text = sText
         self.lAllObjects, (self.syntax_tree, self.source_manager, self.buffer_id), self.dNodes = build_tokens(
@@ -156,11 +165,10 @@ class svFile(vhdl.vhdlFile):
         setInactive = {o.offset for o in self.lAllObjects if getattr(o, "inactive", False) and getattr(o, "offset", None) is not None}
         if not setInactive:
             return
-        dConfig = getattr(self.configuration, "dConfig", None)
         sPath = os.path.abspath(self.filename) if self.filename and self.filename != "stdin" else ""
         sText = "\n".join(self.get_lines()[1:]) + "\n"
         setSeen = {(o.offset, o.name) for o in oModel.diagnostics}
-        for oTree, iBuffer in switched_trees(sText, sPath or self.filename or "source.sv", preprocessor.options(dConfig)):
+        for oTree, iBuffer in switched_trees(sText, sPath or self.filename or "source.sv", self.preprocessor_options()):
             for oDiagnostic in lint.LintModel(oTree, iBuffer).diagnostics:
                 tKey = (oDiagnostic.offset, oDiagnostic.name)
                 # The first token at or after the offset of a warning is the one it is reported at
@@ -269,7 +277,7 @@ def syntax_errors(oTree):
 
 def build_tokens(sText, sFileName, bTree=False, oOptions=None, sPath=""):
     """
-    Returns the mhsg tokens of a SystemVerilog text: lexed as written, classified from the syntax tree. With bTree,
+    Returns the mhsg tokens of a SystemVerilog or Verilog text: lexed as written, classified from the syntax tree. With bTree,
     returns (tokens, (syntax tree, its source manager, the id of the file's buffer), {kind: syntax nodes}), where the
     nodes are those of the file, not of the files it includes.
     """
@@ -285,7 +293,11 @@ def build_tokens(sText, sFileName, bTree=False, oOptions=None, sPath=""):
     # give its indent levels
     dInactive = inactive_levels(sText, sPath or sFileName, oOptions, dClasses, sDisabled)
     oBuffer = oSourceManager.assignText(sFileName + " (as written)", sText)
-    oLexer = Lexer(oBuffer, pyslang.BumpAllocator(), pyslang.Diagnostics(), oSourceManager, LexerOptions())
+    # The lexer reads the keywords of the language of the file, as the parser does: logic is a name in Verilog
+    oLexerOptions = LexerOptions()
+    if preprocessor.language_version(oOptions) is not None:
+        oLexerOptions.languageVersion = preprocessor.language_version(oOptions)
+    oLexer = Lexer(oBuffer, pyslang.BumpAllocator(), pyslang.Diagnostics(), oSourceManager, oLexerOptions)
     lReturn = []
     while True:
         oToken = oLexer.lex()
@@ -347,6 +359,8 @@ def switched_trees(sText, sPath, oOptions):
         oSwitched.predefines = [s for s in lDefines if s.split("=")[0] != sMacro] + ([] if bDefined else [sMacro])
         oSwitched.undefines = [sMacro] if bDefined else []
         oSwitched.additionalIncludePaths = lIncludes
+        if oBase is not None:
+            oSwitched.languageVersion = oBase.languageVersion
         oManager = pyslang.SourceManager()
         oBuffer = oManager.assignText(sPath, sText)
         try:
