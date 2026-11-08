@@ -70,3 +70,33 @@ its own comment. It is disabled by default; the starc rule set enables it.
 
    logic valid;  // the data is valid
    logic ready;  // the sink takes the data
+
+sv_declaration_004
+##################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_declaration_no_initial_value`
+
+This rule checks for initial values on signals and output ports: the declaration of a variable of a module, or of
+an output or inout port, with an initial value, such as logic q = 1'b0. Synthesis may ignore the value or turn it
+into a power-on value of the target, so simulation and hardware can start differently; reset the register instead.
+Constants, nets, whose initial value is a continuous assignment, the variables of functions, tasks, classes and
+procedural blocks, and the default values of input ports are not reported; initial blocks are reported by
+sv_statement_004. It is disabled by default; the do254 rule set enables it (SS16).
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   logic busy = 1'b0;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   logic busy;
+
+   always_ff @(posedge clk_i or negedge rst_ni)
+       if (!rst_ni) busy <= 1'b0;
+       else busy <= start_i;

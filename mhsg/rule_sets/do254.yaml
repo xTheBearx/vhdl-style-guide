@@ -30,19 +30,20 @@ checks:
   CP2:
     title: Avoid duplicate signal assignments
     severity: Warning
-    rules: [lint_001]
+    rules: [lint_001, sv_always_017]
   CP3:
     title: Avoid hard-coded numeric values
     severity: Warning
-    rules: [lint_034]
+    rules: [lint_034, sv_literal_010]
   CP4:
     title: Avoid hard-coded vector assignment
     severity: Note
     rules: [lint_035]
+    note: 'SystemVerilog writes vector values as numbers: sv_literal_010 reports them under CP3.'
   CP5:
     title: Ensure consistent FSM state encoding style
     severity: Error
-    rules: [lint_027]
+    rules: [lint_027, sv_case_008]
   CP6:
     title: Ensure safe FSM transitions
     severity: Error
@@ -59,7 +60,7 @@ checks:
   CP9:
     title: Ensure proper sub-program body
     severity: Warning
-    rules: [lint_036]
+    rules: [lint_036, sv_function_009, sv_function_008]
   CP10:
     title: Assign value before using
     severity: Warning
@@ -94,7 +95,7 @@ checks:
   SS1:
     title: Avoid implied logic
     severity: Warning
-    rules: [lint_038]
+    rules: [lint_038, sv_statement_051]
     note: 'Per file: chains of inverters. GHDL removes such chains before the netlist.'
   SS2:
     title: Ensure proper case statement specification
@@ -112,6 +113,7 @@ checks:
     title: Avoid multiple waveforms
     severity: Error
     rules: [lint_029]
+    note: 'VHDL only: SystemVerilog has no waveforms of several elements.'
   SS6:
     title: Avoid multiple drivers
     severity: Error
@@ -120,6 +122,7 @@ checks:
     title: Avoid uninitialized VHDL deferred constants
     severity: Warning
     rules: [lint_032]
+    note: 'VHDL only: SystemVerilog has no deferred constants.'
   SS8:
     title: Avoid clock used as data
     severity: Error
@@ -143,11 +146,11 @@ checks:
   SS13:
     title: Avoid mixed polarity reset
     severity: Warning
-    rules: [lint_011]
+    rules: [lint_011, sv_always_028]
   SS14:
     title: Avoid unresettable registers
     severity: Warning
-    rules: [lint_012]
+    rules: [lint_012, sv_always_027, sv_always_016]
   SS15:
     title: Avoid asynchronous reset release
     severity: Error
@@ -155,7 +158,7 @@ checks:
   SS16:
     title: Avoid initialization assignments
     severity: Error
-    rules: [lint_013]
+    rules: [lint_013, sv_declaration_004, sv_statement_004]
   SS17:
     title: Avoid undriven and unused logic
     severity: Error
@@ -172,18 +175,21 @@ checks:
   SS20:
     title: Ensure nesting limits
     severity: Warning
-    rules: [lint_030]
+    rules: [lint_030, sv_statement_008]
+    configuration:
+      # The limit of lint_030; sv_statement_008 counts if statements, an else if continuing its if
+      sv_statement_008: {maximum_depth: 4}
   SS21:
     title: Ensure consistent vector order
     severity: Warning
-    rules: [lint_031]
+    rules: [lint_031, sv_dimension_001]
 
   # Design reviews
 
   DR1:
     title: Use statement labels
     severity: Note
-    rules: [process_016, process_018, concurrent_013, case_022, case_023, loop_statement_006, loop_statement_007, generate_011, block_007]
+    rules: [process_016, process_018, concurrent_013, case_022, case_023, loop_statement_006, loop_statement_007, generate_011, block_007, sv_always_029, sv_generate_001]
     configuration:
       # These remove labels, the opposite of DR1
       concurrent_005: {disable: true}
@@ -201,7 +207,7 @@ checks:
   DR4:
     title: Use separate declaration style
     severity: Note
-    rules: [signal_015, variable_015]
+    rules: [signal_015, variable_015, sv_declaration_003]
   DR5:
     title: Use separate statement style
     severity: Note
@@ -225,11 +231,14 @@ checks:
   DR10:
     title: Ensure consistent file header
     severity: Warning
-    rules: [lint_041]
+    rules: [lint_041, sv_comment_003]
   DR11:
     title: Ensure sufficient comment density
     severity: Warning
-    rules: [lint_042]
+    rules: [lint_042, sv_comment_007]
+    configuration:
+      # The share of lint_042
+      sv_comment_007: {minimum_comment_percent: 20}
   DR12:
     title: Ensure proper placement of comments
     severity: Note

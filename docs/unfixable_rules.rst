@@ -273,6 +273,9 @@ Rules on the design of SystemVerilog and Verilog code that only the designer can
 * `sv_always_024 <sv_always_rules.html#sv-always-024>`_
 * `sv_always_025 <sv_always_rules.html#sv-always-025>`_
 * `sv_always_026 <sv_always_rules.html#sv-always-026>`_
+* `sv_always_027 <sv_always_rules.html#sv-always-027>`_
+* `sv_always_028 <sv_always_rules.html#sv-always-028>`_
+* `sv_always_029 <sv_always_rules.html#sv-always-029>`_
 * `sv_case_001 <sv_case_rules.html#sv-case-001>`_
 * `sv_case_002 <sv_case_rules.html#sv-case-002>`_
 * `sv_case_003 <sv_case_rules.html#sv-case-003>`_
@@ -292,9 +295,11 @@ Rules on the design of SystemVerilog and Verilog code that only the designer can
 * `sv_comment_005 <sv_comment_rules.html#sv-comment-005>`_
 * `sv_comment_006 <sv_comment_rules.html#sv-comment-006>`_
 * `sv_comment_007 <sv_comment_rules.html#sv-comment-007>`_
+* `sv_comment_008 <sv_comment_rules.html#sv-comment-008>`_
 * `sv_declaration_001 <sv_declaration_rules.html#sv-declaration-001>`_
 * `sv_declaration_002 <sv_declaration_rules.html#sv-declaration-002>`_
 * `sv_declaration_003 <sv_declaration_rules.html#sv-declaration-003>`_
+* `sv_declaration_004 <sv_declaration_rules.html#sv-declaration-004>`_
 * `sv_dimension_001 <sv_dimension_rules.html#sv-dimension-001>`_
 * `sv_dimension_002 <sv_dimension_rules.html#sv-dimension-002>`_
 * `sv_dimension_003 <sv_dimension_rules.html#sv-dimension-003>`_
@@ -429,6 +434,7 @@ Rules on the design of SystemVerilog and Verilog code that only the designer can
 * `sv_statement_048 <sv_statement_rules.html#sv-statement-048>`_
 * `sv_statement_049 <sv_statement_rules.html#sv-statement-049>`_
 * `sv_statement_050 <sv_statement_rules.html#sv-statement-050>`_
+* `sv_statement_051 <sv_statement_rules.html#sv-statement-051>`_
 * `sv_syntax_001 <sv_syntax_rules.html#sv-syntax-001>`_
 * `sv_typedef_001 <sv_typedef_rules.html#sv-typedef-001>`_
 * `sv_typedef_002 <sv_typedef_rules.html#sv-typedef-002>`_

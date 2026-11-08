@@ -951,6 +951,43 @@ class test_rules(unittest.TestCase):
             [s for s in lOutput if any(f"({r})" in s for r in lRules)],
         )
 
+    def test_do254_checks(self):
+        # The DO-254 checks of SystemVerilog files: the rules that map to them for VHDL files, written for SystemVerilog
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "do254_plus", "--lint_only", "-ap"], "do254.sv")
+        lRules = (
+            "sv_always_027",
+            "sv_always_028",
+            "sv_always_029",
+            "sv_comment_008",
+            "sv_declaration_004",
+            "sv_statement_051",
+            "sv_literal_010",
+            "sv_comment_007",
+        )
+        self.assertEqual(
+            [
+                "WARNING: do254.sv(5)DO254-DR11 (sv_comment_007) -- Comment the module more: 6 of its 45 lines have a comment",
+                "ERROR: do254.sv(10)DO254-SS16 (sv_declaration_004) -- Remove the initial value of q_o, and reset it instead",
+                "ERROR: do254.sv(15)DO254-SS16 (sv_declaration_004) -- Remove the initial value of busy, and reset it instead",
+                "WARNING: do254.sv(23)DO254-SS1 (sv_statement_051) -- a_d inverts a_n, which inverts a signal too: remove the chain of inverters",
+                "WARNING: do254.sv(26)DO254-DR1 (sv_always_029) -- Label the always block, with begin : name",
+                "WARNING: do254.sv(27)DO254-SS14 (sv_always_027) -- The register busy has no reset: give it a reset, or justify it without one",
+                "WARNING: do254.sv(34)DO254-CP3 (sv_literal_010) -- Name 4'd5 with a parameter",
+                "WARNING: do254.sv(39)DO254-SS13 (sv_always_028) -- Use rst_ni as on line 32, active low and asynchronous, not active high and synchronous",
+                "WARNING: do254.sv(43)DO254PLUS-DEAD (sv_comment_008) -- Remove commented-out code",
+            ],
+            [s for s in lOutput if any(f"({r})" in s for r in lRules)],
+        )
+        # The same code written to pass: the memory needs no reset, and the comments describe it
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "do254_plus", "--lint_only", "-ap"], "do254_clean.sv")
+        self.assertEqual([], [s for s in lOutput if any(f"({r})" in s for r in lRules)])
+        # SS20 limits the nesting to four levels, which sv_statement_008 is set to under do254
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "do254", "--lint_only", "-ap"], "do254_nesting.sv")
+        self.assertEqual(
+            ["WARNING: do254_nesting.sv(17)DO254-SS20 (sv_statement_008) -- Nest if statements at most 4 deep"],
+            [s for s in lOutput if "(sv_statement_008)" in s],
+        )
+
     def test_sensitivity_list_branches(self):
         # t is written in both branches before it is read; u only in one, so its old value is read
         _, lOutput, _ = self.run_mhsg(["--lint_only", "--rule_set", "none"], "sensitivity_branches.sv")

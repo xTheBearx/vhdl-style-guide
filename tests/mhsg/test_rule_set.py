@@ -312,8 +312,13 @@ class test_starc(unittest.TestCase):
 
 class test_rule_sets_and_languages(unittest.TestCase):
     def test_do254_on_systemverilog(self):
-        # The VHDL rules of the default rule set are left out for a SystemVerilog file
-        self.assertEqual((0, []), run_on_text("module counter;\nendmodule\n", "counter.sv", ["--lint"]))
+        # The VHDL rules of the default rule set are left out for a SystemVerilog file; its own rules ask for a header
+        sHeader = "// Module: counter\n// Function: counts\n// Author: mhsg tests\n// Date: 2026-11-08\n"
+        self.assertEqual((0, []), run_on_text(sHeader + "module counter;\nendmodule\n", "counter.sv", ["--lint"]))
+        self.assertEqual(
+            (0, ["WARNING: counter.sv(1)DO254-DR10 (sv_comment_003) -- Start the file with a header comment"]),
+            run_on_text("module counter;\nendmodule\n", "counter.sv", ["--lint"]),
+        )
 
     def test_unknown_rule_still_fails(self):
         oRules = rule_list.rule_list(vhdlFile.vhdlFile([""]), None)

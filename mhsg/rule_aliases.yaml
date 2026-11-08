@@ -1251,6 +1251,7 @@ sv_literal_010: sv_literal_named_numbers
 sv_declaration_001: sv_declaration_explicit_parameter_storage_type
 sv_declaration_002: sv_declaration_parameter_default
 sv_declaration_003: sv_declaration_one_per_line
+sv_declaration_004: sv_declaration_no_initial_value
 sv_function_001: sv_function_explicit_function_lifetime
 sv_function_002: sv_function_explicit_task_lifetime
 sv_function_003: sv_function_explicit_function_task_parameter_type
@@ -1315,6 +1316,7 @@ sv_statement_047: sv_statement_one_operation_per_line
 sv_statement_048: sv_statement_common_expressions
 sv_statement_049: sv_statement_stimulus_offset
 sv_statement_050: sv_statement_shared_expressions
+sv_statement_051: sv_statement_inverter_chain
 sv_case_003: sv_case_constant_selector
 sv_case_004: sv_case_items
 sv_case_005: sv_case_no_casex_casez
@@ -1347,6 +1349,9 @@ sv_always_023: sv_always_no_reset_logic
 sv_always_024: sv_always_no_calls_in_reset
 sv_always_025: sv_always_no_latch_reset
 sv_always_026: sv_always_unit_delay
+sv_always_027: sv_always_register_reset
+sv_always_028: sv_always_consistent_reset
+sv_always_029: sv_always_label
 sv_comment_001: sv_comment_tool_directives
 sv_comment_002: sv_comment_line_comments
 sv_comment_003: sv_comment_file_header
@@ -1354,6 +1359,7 @@ sv_comment_004: sv_comment_declarations
 sv_comment_005: sv_comment_ascii
 sv_comment_006: sv_comment_header_history
 sv_comment_007: sv_comment_density
+sv_comment_008: sv_comment_commented_out_code
 sv_syntax_001: sv_syntax_error
 sv_lint_001: sv_lint_widths
 sv_lint_002: sv_lint_latches
