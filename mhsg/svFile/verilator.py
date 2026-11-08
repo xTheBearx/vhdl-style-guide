@@ -24,6 +24,7 @@ import subprocess
 import sys
 import tempfile
 
+from pyslang.parsing import TokenKind  # pylint: disable=import-error
 from pyslang.syntax import SyntaxKind  # pylint: disable=import-error
 
 from mhsg import language
@@ -99,7 +100,8 @@ def packages(oTree):
             setDefines.add(name_of(oNode.header.name))
         elif oNode.kind == SyntaxKind.PackageImportItem:
             setUses.add(name_of(oNode.package))
-        elif oNode.kind == SyntaxKind.ScopedName and oNode.left.kind == SyntaxKind.IdentifierName:
+        elif oNode.kind == SyntaxKind.ScopedName and oNode.left.kind == SyntaxKind.IdentifierName and oNode.separator.kind == TokenKind.DoubleColon:
+            # A name with a dot, such as u_report.check, is a hierarchical reference, not a use of a package
             setUses.add(name_of(oNode.left.identifier))
     return setDefines, setUses - setDefines
 

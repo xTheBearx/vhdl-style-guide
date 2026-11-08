@@ -49,3 +49,8 @@ class test_sv_flow(unittest.TestCase):
 
     def test_function_name_is_not_read(self):
         self.assertEqual({}, first_reads("y = f(a); f = 1;", "f"))
+
+    def test_member_reads_its_variable(self):
+        # s.valid reads s, a hierarchical name with dots, unlike a name in a package (issue 88)
+        self.assertEqual({"s": "s"}, first_reads("y = s.valid; s = '0;", "s"))
+        self.assertEqual({}, first_reads("y = p_pkg::s; s = '0;", "s"))
