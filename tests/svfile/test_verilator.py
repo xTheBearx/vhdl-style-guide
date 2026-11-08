@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Verilator's lint of the SystemVerilog files of a run, see mhsg/svFile/verilator.py and sv_lint_011."""
+"""Verilator's lint of the Verilog and SystemVerilog files of a run, see mhsg/svFile/verilator.py and sv_lint_011."""
 
 import json
 import os
@@ -43,6 +43,27 @@ class test_verilator(unittest.TestCase):
         sText = "// é\nlogic a;\n"
         self.assertEqual(len("// é\n".encode("utf-8")) + 6, verilator.offset(sText, verilator.line_starts(sText), 2, 7))
         self.assertIsNone(verilator.offset(sText, verilator.line_starts(sText), 9, 1))
+
+    def test_timing_option(self):
+        # Verilator 5 lints the timing controls of testbenches with --timing; Verilator 4 knows neither option
+        for sVersion in ("Verilator 5.020 2024-01-01 rev (Debian 5.020-1)", "Verilator 5.032 2025-01-01 rev v5.032", "Verilator 6.000"):
+            lCommand = verilator.command("verilator", ["/rtl/a.sv"], {}, None, sVersion)
+            self.assertIn("--timing", lCommand)
+            self.assertNotIn("--no-timing", lCommand)
+        for sVersion in ("Verilator 4.038 2020-07-11 rev v4.036-114-g0cd4a57ad", None, "something else"):
+            lCommand = verilator.command("verilator", ["/rtl/a.sv"], {}, None, sVersion)
+            self.assertNotIn("--timing", lCommand)
+            self.assertNotIn("--no-timing", lCommand)
+
+    def test_verilog_files_as_verilog_2005(self):
+        lPaths = ["/rtl/a.v", "/rtl/b.sv", "/rtl/c.vh", "/rtl/d.v"]
+        lCommand = verilator.command("verilator", lPaths, {}, "/tmp/mhsg_stubs.sv", "Verilator 5.020")
+        self.assertEqual(["+1364-2005ext+v", "+1364-2005ext+vh"], [s for s in lCommand if s.startswith("+1364")])
+        self.assertEqual(lPaths, lCommand[-len(lPaths) :])
+        # A project writing SystemVerilog in .v files
+        lCommand = verilator.command("verilator", lPaths, {"systemverilog": {"v_files": "systemverilog"}}, None, "Verilator 5.020")
+        self.assertEqual([], [s for s in lCommand if s.startswith("+1364")])
+        self.assertEqual([], [s for s in verilator.command("verilator", ["/rtl/b.sv"], {}, None, "Verilator 5.020") if s.startswith("+1364")])
 
     def test_turned_off(self):
         self.assertIsNone(verilator.find({"systemverilog": {"verilator": False}}))
@@ -96,6 +117,13 @@ class test_verilator_lint(unittest.TestCase):
         # The option is sv_lint_011's; sv_lint_013 still reports CASEINCOMPLETE
         self.assertEqual(["vl_top.sv(21)"], [s.split(" ")[1].split("sv_lint")[0] for s in lFindings if "sv_lint_011" in s])
         self.assertEqual([], self.run_mhsg(["--lint_only", "--rule_set", "none"], {"systemverilog": {"verilator": False}})[0])
+
+    def test_verilog_testbench(self):
+        # Verilator 5 lints the timing controls of a Verilog testbench with --timing, and reads the file as
+        # Verilog-2005, where logic is a name: the file is not left out
+        lFindings, sErrors = self.run_mhsg(["--lint_only", "--rule_set", "none"], lExtra=["vl_tb.v"])
+        self.assertEqual("", sErrors)
+        self.assertIn("ERROR: vl_tb.v(10)sv_lint_011 -- Non-blocking assignment '<=' in initial/final block (Verilator INITIALDLY)", lFindings)
 
     def test_files_left_out(self):
         # A file importing a package the run does not define would stop Verilator; it is left out, the others linted
