@@ -5,6 +5,39 @@ The releases of MHSG, with their packages, are on `GitHub <https://github.com/xT
 The releases of VSG, from which MHSG was forked, are listed `with VSG
 <https://github.com/jeremiah-c-leary/vhdl-style-guide/tags>`_.
 
+4.0.2
+-----
+
+**DO-254 checks for SystemVerilog**
+
+* The do254 and do254_plus rule sets name SystemVerilog rules for every per-file check they can test, and say which
+  checks are VHDL only. Nineteen new rules cover the checks no rule tested, among them registers without a reset
+  (sv_always_027), unlabelled always blocks (sv_always_029), reads before assignment (sv_always_030, sv_always_031),
+  states never entered or never left (sv_case_013), unconnected instance ports (sv_lint_017, sv_lint_018), signals
+  renamed at a port (sv_module_018) and requirement tags (sv_comment_010). The coverage pages and qualification suites
+  are regenerated with SystemVerilog examples.
+* sv_case_013 finds the state machines whose enum type another file of the run declares, such as a package.
+
+**DO-254 rule sets and style**
+
+* The do254 and do254_plus rule sets set the style rules their checks need, so fixing the style no longer undoes a
+  check: labels are kept (DR1), the comments that count towards the share are kept (DR11), generic maps are upper case
+  (NAMES), instantiations name the entity (ENTITY), and a requirement tag may sit directly above its entity (REQ). An
+  option of your own that contradicts a check still wins and is reported once at the start of the run. lint_042 rounds
+  the comment share down. (`#90 <https://github.com/xTheBearx/vhdl-style-guide/issues/90>`_)
+
+**Fixes**
+
+* One configuration serves VHDL, Verilog and SystemVerilog files: rules of another language, and the SystemVerilog
+  only rules for a file read as Verilog-2005, are left out for that file; a name that is no rule of any language is
+  still an error. (`#89 <https://github.com/xTheBearx/vhdl-style-guide/issues/89>`_)
+* design_009 accepts a synchronizer fed straight from an input port declared async; a port through a gate is still
+  logic before the synchronizer. (`#91 <https://github.com/xTheBearx/vhdl-style-guide/issues/91>`_)
+* A hierarchical call such as u_report.check() is no longer taken for a package, which left the file out of
+  Verilator's lint. (`#88 <https://github.com/xTheBearx/vhdl-style-guide/issues/88>`_)
+* An install from a git tag with uv reports the tag as its version, such as 4.0.2, instead of
+  4.0.1.post0+git.<sha>.dirty: the marker file uv leaves in its checkout is ignored.
+
 4.0.1
 -----
 
