@@ -9,7 +9,15 @@ import sys
 import tempfile
 import unittest
 
-from mhsg import config, exceptions, rule_list, rule_set, severity, vhdlFile
+from mhsg import (
+    config,
+    exceptions,
+    project_index,
+    rule_list,
+    rule_set,
+    severity,
+    vhdlFile,
+)
 from tests import utils
 
 sRoot = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -203,6 +211,50 @@ sFixInput = "\n".join(
         "",
     ],
 )
+
+
+class test_state_types_in_packages(unittest.TestCase):
+    def test_state_machine_typed_in_a_package(self):
+        # In lint mode the enumerated types of the other files of the run are known: the machine typed in a package is
+        # checked for states never entered or left (lint_037) and for recovery (lint_017), and lint_027 no longer
+        # asks for an enumerated type it has
+        sDirectory = os.path.join(sRoot, "tests", "lint", "package_fsm")
+        lFiles = [os.path.join(sDirectory, s) for s in ("fsm_user.vhd", "fsm_pkg.vhd")]
+        oResult = subprocess.run(
+            [*utils.mhsg_exec(), "-f", *lFiles, "--rule_set", "do254_plus", "--lint_only", "-of", "syntastic"],
+            cwd=sRoot,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        lFindings = [
+            s.replace(sDirectory + os.sep, "") for s in oResult.stdout.splitlines() if any(f"({r})" in s for r in ("lint_017", "lint_027", "lint_037"))
+        ]
+        self.assertEqual(
+            [
+                "ERROR: fsm_user.vhd(28)DO254-CP6 (lint_037) -- State FAULT of state_r is never assigned, so the machine never enters it",
+                "ERROR: fsm_user.vhd(42)DO254-CP6 (lint_037) -- State DONE of state_r assigns no other state, so the machine never leaves it",
+                "ERROR: fsm_user.vhd(46)DO254PLUS-FSMSAFE (lint_017) -- Assign a defined state in the when others choice of the state machine on state_r",
+            ],
+            lFindings,
+        )
+
+    def test_enumerated_types_of_the_run(self):
+        # Two files declaring a name with other values leave it out
+        self.assertEqual(
+            {"state_t": ["IDLE", "RUN"], "bit_t": ["'0'", "'1'"]},
+            project_index.get_enumerated_types("type state_t is (IDLE, RUN); type bit_t is ('0', '1'); type a_t is array (0 to 1) of bit;"),
+        )
+        with tempfile.TemporaryDirectory() as sTemporary:
+            lFiles = []
+            for sName, sText in (
+                ("a.vhd", "type state_t is (IDLE, RUN); type mode_t is (A, B);"),
+                ("b.vhd", "type state_t is (OFF, ON); type mode_t is (a, b);"),
+            ):
+                lFiles.append(os.path.join(sTemporary, sName))
+                with open(lFiles[-1], "w", encoding="utf-8") as oFile:
+                    oFile.write(sText)
+            self.assertEqual({"mode_t": ["A", "B"]}, project_index.collect_enumerated_types(lFiles))
 
 
 class test_lint_fix(unittest.TestCase):

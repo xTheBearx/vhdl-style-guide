@@ -2,7 +2,7 @@
 
 from mhsg.lint import model
 from mhsg.lint.rule import Rule
-from mhsg.rules.lint.rule_017 import declared_type, state_signal
+from mhsg.rules.lint.rule_017 import declared_type, run_enumerated_types, state_signal
 
 
 class rule_037(Rule):
@@ -11,7 +11,8 @@ class rule_037(Rule):
 
     .. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254 rule set (CP6).
 
-    A state machine is a case statement on a signal of an enumerated type declared in the file. A state that no
+    A state machine is a case statement on a signal of an enumerated type declared in the file or, in lint mode, in
+    another file of the run, such as a package. A state that no
     assignment of the file gives the state signal, or its next state, can never be entered, other than by reset; a
     state whose branch of the case statement assigns no other state can never be left. Both are usually mistakes,
     and a state that cannot be left hangs the machine.
@@ -56,7 +57,7 @@ class rule_037(Rule):
                 lStatements.extend(model.assignments(oProcess.statements, "signal"))
                 lStatements.extend(model.assignments(oProcess.statements, "variable"))
                 for oCase in [o for o in model.walk(oProcess.statements) if isinstance(o, model.Case)]:
-                    sState = state_signal(oCase, oDeclarations, lTokens)
+                    sState = state_signal(oCase, oDeclarations, lTokens, oFile)
                     if sState is not None:
                         lMachines.append((sState, oCase, oProcess))
             lAssigned.extend(lStatements)
@@ -64,7 +65,11 @@ class rule_037(Rule):
         lAssigned.extend(subprogram_assignments(oModel, lTokens))
         for sState, oCase, oProcess in lMachines:
             lFound = [o for o in oDeclarations.find(sState, oCase.index) if o.kind in ("signal", "variable")]
-            lSpelled = enumeration_values(lTokens, oDeclarations, declared_type(lTokens, lFound[0].index))
+            sType = declared_type(lTokens, lFound[0].index)
+            # The values of a type declared in the file, else of one another file of the run declares, such as a package
+            lSpelled = enumeration_values(lTokens, oDeclarations, sType) or (
+                [] if declares_type(oDeclarations, sType) else run_enumerated_types(oFile).get(sType, [])
+            )
             if not lSpelled:
                 continue
             dSpelling = {s.lower(): s for s in lSpelled}
@@ -98,6 +103,10 @@ def same_type_names(oDeclarations, lTokens, iIndex):
     """The lower case names of the signals and variables declared with the type of the object declared at iIndex."""
     sType = declared_type(lTokens, iIndex)
     return {o.lower_name for o in oDeclarations.declarations if o.kind in ("signal", "variable") and declared_type(lTokens, o.index) == sType}
+
+
+def declares_type(oDeclarations, sType):
+    return any(o.kind == "type" and o.lower_name == sType for o in oDeclarations.declarations)
 
 
 def enumeration_values(lTokens, oDeclarations, sType):

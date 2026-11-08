@@ -39,7 +39,8 @@ class rule_027(Rule):
 
     def check(self, oModel, oFile):
         oDeclarations = oFile.get_declarations()
-        setEnumerated = enumerated_types(oDeclarations, oFile.lAllObjects)
+        # Enumerated types of the file and of the other files of the run, such as a state type of a package
+        setEnumerated = enumerated_types(oDeclarations, oFile.lAllObjects, oFile)
         lReported = []
         for oArchitecture in oModel.architectures:
             for oProcess in oArchitecture.processes:
