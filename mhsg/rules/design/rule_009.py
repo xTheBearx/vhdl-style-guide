@@ -15,6 +15,9 @@ class rule_009(Rule):
     * logic between the clock domains before the first synchronizer stage, which can glitch and be captured;
     * the bits of a bus synchronized one by one, which can arrive in different clock cycles, unless the bus is gray coded.
 
+    The bits of an input port declared independent in the cdc section of the design, such as
+    :code:`d_i: {domain: async, bits: independent}`, are signals of their own and not a bus.
+
     **Violation**
 
     .. code-block:: vhdl

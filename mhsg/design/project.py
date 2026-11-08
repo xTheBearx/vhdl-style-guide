@@ -28,7 +28,7 @@ import glob
 import os
 
 from mhsg import exceptions, language
-from mhsg.design import black_box, test_mode, vendors
+from mhsg.design import black_box, cdc, test_mode, vendors
 
 STANDARDS = ("87", "93", "93c", "00", "02", "08", "19")
 ORDERS = ("listed", "auto")
@@ -162,6 +162,8 @@ def read_cdc(dCdc):
         raise exceptions.ConfigurationError(f"ERROR: unknown keys in the cdc section of the design: {', '.join(lUnknown)}; expected {', '.join(CDC_KEYS)}")
     if not isinstance(dCdc.get("clocks") or {}, dict) or not isinstance(dCdc.get("inputs") or {}, dict):
         raise exceptions.ConfigurationError("ERROR: clocks and inputs in the cdc section map names to clocks")
+    for sPort, oValue in (dCdc.get("inputs") or {}).items():
+        cdc.input_value(sPort, oValue)
     if any(not isinstance(l, list) for l in dCdc.get("clock_groups") or []):
         raise exceptions.ConfigurationError("ERROR: clock_groups in the cdc section is a list of lists of clock names")
     if any(not isinstance(d, dict) or "signal" not in d for d in dCdc.get("waivers") or []):

@@ -18,6 +18,7 @@ class rule_016(Rule):
     The inputs a black box declares synchronous to one of its clock pins count as one place, and a declared path through a black box is followed.
     Synchronize one signal and derive the others from it in the destination domain, use a handshake, or gray code a counter.
     The bits of one bus count as one signal: a gray-coded bus is meant to be combined, and design_009 reports other buses.
+    The bits of an input port declared independent in the cdc section, :code:`bits: independent`, are signals of their own, each with its own tag.
     A synchronous reset, an input that loads a constant into two or more registers, is a reset path rather than data
     and is not followed, unless :code:`follow_resets` is true; the crossing report lists the meetings through resets either way.
     A synchronous clear that logic computes, such as a state machine, is data: list it under :code:`clears` in the cdc

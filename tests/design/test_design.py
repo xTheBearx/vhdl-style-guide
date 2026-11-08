@@ -840,6 +840,23 @@ class test_cdc_configuration(unittest.TestCase):
             with self.subTest(dCdc), self.assertRaises(exceptions.ConfigurationError):
                 self.design(dCdc)
 
+    def test_input_bits(self):
+        # An input is declared with its domain, or with its domain and whether its bits are independent signals
+        dCdc = {"inputs": {"d_i": {"domain": "async", "bits": "independent"}, "e_i": {"domain": "clk_a"}, "f_i": "async"}}
+        self.assertEqual(dCdc, self.design(dCdc).cdc)
+        self.assertEqual(
+            {"d_i": ("async", True), "e_i": ("clk_a", False), "f_i": ("async", False)},
+            cdc.input_constraints(dCdc),
+        )
+        for oValue, sMessage in (
+            ({"bits": "independent"}, "needs a domain"),
+            ({"domain": "async", "bits": "separate"}, "bits is independent or bus"),
+            ({"domain": "async", "width": 4}, "unknown keys"),
+            (["async"], "a domain, or a map"),
+        ):
+            with self.subTest(oValue), self.assertRaisesRegex(exceptions.ConfigurationError, sMessage):
+                self.design({"inputs": {"d_i": oValue}})
+
     def test_isolation(self):
         # An isolation names the source reset, the signal and the value that isolates, with a justification
         dIsolation = {"reset": "rst_a", "signal": "iso_n", "value": 0, "justification": "Set before rst_a is asserted"}
@@ -1378,6 +1395,48 @@ class test_design_analysis(unittest.TestCase):
                 ),
             ],
             self.findings("async_in_top", "async_in.vhd", dCdc=dCdc),
+        )
+
+    def test_independent_bits(self):
+        # The bits of a vector input declared independent are signals of their own: synchronized bit by bit, they are
+        # not a bus. Declared async alone, the port is a bus, as before (issue 92)
+        dIndependent = {"inputs": {"d_i": {"domain": "async", "bits": "independent"}}}
+        self.assertEqual([], self.findings("independent_bits_top", "independent_bits.vhd", dCdc=dIndependent))
+        sSources = ", ".join(f"d_i({i}) (async)" for i in range(4))
+        self.assertEqual(
+            [("independent_bits.vhd", 25, "design_009", f"{sSources} is synchronized bit by bit into d_meta (clk); the bits can arrive in different cycles")],
+            self.findings("independent_bits_top", "independent_bits.vhd", dCdc={"inputs": {"d_i": "async"}}),
+        )
+        self.assertEqual(
+            [("independent_bits.vhd", 25, "design_009", f"{sSources} is synchronized bit by bit into d_meta (clk); the bits can arrive in different cycles")],
+            self.findings("independent_bits_top", "independent_bits.vhd", dCdc={"inputs": {"d_i": {"domain": "async", "bits": "bus"}}}),
+        )
+
+    def test_independent_bits_reconvergence(self):
+        # Each independent bit has a synchronizer of its own: combined after them, they reconverge
+        dIndependent = {"inputs": {"d_i": {"domain": "async", "bits": "independent"}}}
+        lFindings = self.findings("independent_bits_and_top", "independent_bits.vhd", dCdc=dIndependent)
+        self.assertEqual([("independent_bits.vhd", 58, "design_016")], [t[:3] for t in lFindings])
+        self.assertIn("d_i(0) (by d_meta(0)) and d_i(1) (by d_meta(1))", lFindings[0][3])
+
+    def test_independent_bits_report(self):
+        # The crossing report shows the declaration
+        dIndependent = {"inputs": {"d_i": {"domain": "async", "bits": "independent"}}}
+        with tempfile.TemporaryDirectory() as sDirectory:
+            sJson = os.path.join(sDirectory, "cdc.json")
+            sText = os.path.join(sDirectory, "cdc.txt")
+            self.run_design("independent_bits_top", "independent_bits.vhd", ["--cdc_report", sJson], dCdc=dIndependent)
+            self.run_design("independent_bits_top", "independent_bits.vhd", ["--cdc_report", sText], dCdc=dIndependent)
+            with open(sJson, encoding="utf-8") as oFile:
+                dReport = json.load(oFile)
+            with open(sText, encoding="utf-8") as oFile:
+                sReport = oFile.read()
+        self.assertEqual([{"port": "d_i", "domain": "async", "bits": "independent"}], dReport["inputs"])
+        self.assertEqual([(cdc.SYNCHRONIZED, "2 stages, the bits of d_i are independent")], [(d["status"], d["detail"]) for d in dReport["crossings"]])
+        self.assertIn("\nInputs\n  d_i: async, bits independent\n", sReport)
+        self.assertIn(
+            "  d_meta (clk) <- d_i(0) (async), d_i(1) (async), d_i(2) (async), d_i(3) (async)\n    synchronized: 2 stages, the bits of d_i are independent\n",
+            sReport,
         )
 
     def test_verilog_top(self):
