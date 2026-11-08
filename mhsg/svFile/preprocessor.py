@@ -10,12 +10,20 @@ The preprocessor settings for SystemVerilog files, from the systemverilog sectio
 
 Without that section, the defines and include directories of the design section are used. With them, macros defined
 in included files expand and `ifdef branches follow the defines, so fewer files have code slang cannot parse.
+
+Verilog files are read as Verilog-2005, see language.py: names that are keywords only in SystemVerilog, such as logic
+and bit, are names there.
 """
 
 import os
 
 import pyslang
 from pyslang.parsing import PreprocessorOptions  # pylint: disable=import-error
+
+from mhsg import language
+
+# The version of the language slang reads Verilog files as
+VERILOG_VERSION = pyslang.LanguageVersion.v1364_2005
 
 
 def settings(dConfig):
@@ -29,12 +37,24 @@ def settings(dConfig):
     return lDefines, lIncludes
 
 
-def options(dConfig):
-    """Returns the pyslang options bag for the preprocessor settings of a configuration, or None for none."""
+def options(dConfig, sLanguageName=None):
+    """
+    Returns the pyslang options bag for the preprocessor settings of a configuration, and for a Verilog file the
+    version of the language, or None for none.
+    """
     lDefines, lIncludes = settings(dConfig)
-    if not lDefines and not lIncludes:
+    bVerilog = sLanguageName == language.VERILOG
+    if not lDefines and not lIncludes and not bVerilog:
         return None
     oOptions = PreprocessorOptions()
     oOptions.predefines = lDefines
     oOptions.additionalIncludePaths = lIncludes
+    if bVerilog:
+        oOptions.languageVersion = VERILOG_VERSION
     return pyslang.Bag([oOptions])
+
+
+def language_version(oOptions):
+    """The language version of an options bag, or None for none, which is SystemVerilog."""
+    oPreprocessor = getattr(oOptions, "preprocessorOptions", None) if oOptions is not None else None
+    return oPreprocessor.languageVersion if oPreprocessor is not None else None

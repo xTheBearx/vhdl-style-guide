@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Verilator's lint of the SystemVerilog files of a run, an optional check besides slang's, see sv_lint_011.
+Verilator's lint of the Verilog and SystemVerilog files of a run, an optional check besides slang's, see sv_lint_011.
 
 In lint mode, when Verilator is installed, it lints the files of the run together once (verilator --lint-only -Wall),
-with the defines and include directories of the systemverilog section. Its warnings become diagnostics of the files,
+with the defines and include directories of the systemverilog section. Verilog files are linted as Verilog-2005, as
+slang reads them, unless v_files says systemverilog, see language.py. Verilator 5 lints the timing controls of
+testbenches, such as an event control in an initial block, with --timing; Verilator 4 knows neither --timing nor
+--no-timing. Its warnings become diagnostics of the files,
 named verilator.CODE, such as verilator.BLKSEQ. The systemverilog section turns it off with verilator: false, or names
 the program with verilator: /path/to/verilator.
 
@@ -13,6 +16,7 @@ ports and parameters its instances name. When Verilator stops at an error in som
 without them, and the error is reported once.
 """
 
+import functools
 import os
 import re
 import shutil
@@ -22,6 +26,7 @@ import tempfile
 
 from pyslang.syntax import SyntaxKind  # pylint: disable=import-error
 
+from mhsg import language
 from mhsg.rules.sv_tree import descendants, elements, name_of
 from mhsg.svFile import preprocessor
 
@@ -47,6 +52,7 @@ def find(dConfig):
     return shutil.which("verilator")
 
 
+@functools.lru_cache(maxsize=8)
 def version(sVerilator):
     """Returns the first line of verilator --version, or None."""
     try:
@@ -54,6 +60,34 @@ def version(sVerilator):
     except (OSError, subprocess.SubprocessError):
         return None
     return (oProcess.stdout.strip().splitlines() or [None])[0]
+
+
+def major_version(sVersion):
+    """The major version of Verilator from the first line of verilator --version, such as 5, or None."""
+    oMatch = re.match(r"\s*Verilator\s+(\d+)\.", sVersion or "")
+    return int(oMatch.group(1)) if oMatch else None
+
+
+def timing_options(sVersion):
+    """
+    The option for the timing controls of testbenches: --timing for Verilator 5 or later, which otherwise stops at an
+    event control in an initial block; none for an older Verilator, which knows neither --timing nor --no-timing.
+    """
+    iMajor = major_version(sVersion)
+    return ["--timing"] if iMajor is not None and iMajor >= 5 else []
+
+
+def language_options(lPaths, dConfig):
+    """
+    The options that make Verilator read the Verilog files of the run as Verilog-2005, one for each of their extensions,
+    such as +1364-2005ext+v; none when v_files says systemverilog.
+    """
+    lExtensions = []
+    for sPath in lPaths:
+        sExtension = os.path.splitext(sPath)[1][1:]
+        if language.of_file(sPath, dConfig) == language.VERILOG and sExtension not in lExtensions:
+            lExtensions.append(sExtension)
+    return [f"+1364-2005ext+{s}" for s in lExtensions]
 
 
 def packages(oTree):
@@ -167,9 +201,11 @@ def stubs(lTrees):
     return "".join(lText)
 
 
-def command(sVerilator, lPaths, dConfig, sStubFile):
+def command(sVerilator, lPaths, dConfig, sStubFile, sVersion=None):
+    """The command that lints the files; sVersion is the first line of verilator --version, see version."""
     lDefines, lIncludes = preprocessor.settings(dConfig)
-    lCommand = [sVerilator, "--lint-only", "-Wall", "-Wno-fatal", "--no-timing", "-Wno-MULTITOP", "-Wno-DECLFILENAME"]
+    lCommand = [sVerilator, "--lint-only", "-Wall", "-Wno-fatal", *timing_options(sVersion), "-Wno-MULTITOP", "-Wno-DECLFILENAME"]
+    lCommand += language_options(lPaths, dConfig)
     # As slang does, an included file is also looked for in the directory of the file including it
     lDirectories = list(dict.fromkeys(list(lIncludes) + [os.path.dirname(s) for s in lPaths]))
     lCommand += [f"+incdir+{s}" for s in lDirectories]
@@ -244,7 +280,7 @@ def run(sVerilator, lFiles, dConfig):
             sStubFile = os.path.join(sDirectory, "mhsg_stubs.sv")
             with open(sStubFile, "w", encoding="utf-8") as oFile:
                 oFile.write("// verilator lint_off UNUSEDSIGNAL\n// verilator lint_off UNUSEDPARAM\n" + sStubs)
-        lCommand = command(sVerilator, [sPath for sPath, _ in lOrdered], dConfig, sStubFile)
+        lCommand = command(sVerilator, [sPath for sPath, _ in lOrdered], dConfig, sStubFile, version(sVerilator))
         try:
             oProcess = subprocess.run(lCommand, capture_output=True, text=True, check=False, cwd=sDirectory)
         except OSError as e:

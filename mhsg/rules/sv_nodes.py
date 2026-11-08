@@ -3,7 +3,7 @@
 
 import os
 
-from mhsg import parser
+from mhsg import language, parser
 from mhsg.rules.sv_tree import Problem, descendants, elements
 from mhsg.svFile import tokens
 
@@ -22,6 +22,38 @@ def ancestors(oNode):
 def inside(oNode, *lKinds):
     """True if a syntax node is under a node of one of the kinds."""
     return any(o.kind.name in lKinds for o in ancestors(oNode))
+
+
+def is_verilog(oFile):
+    """True for a Verilog file, read as Verilog-2005: the rules give it advice without SystemVerilog constructs."""
+    return getattr(oFile, "language", None) == language.VERILOG
+
+
+def is_combinational(oBlock):
+    """
+    True for an always block of combinational logic as Verilog writes it: always @* or @(*), or an event control
+    whose events have no edge, such as always @(a or b).
+    """
+    oStatement = oBlock.statement
+    if oBlock.kind.name != "AlwaysBlock" or oStatement is None or oStatement.kind.name != "TimingControlStatement":
+        return False
+    oControl = oStatement.timingControl
+    if oControl.kind.name == "ImplicitEventControl":
+        return True
+    if oControl.kind.name != "EventControlWithExpression":
+        return False
+    lEvents = [o for o in descendants(oControl) if o.kind.name == "SignalEventExpression"]
+    return bool(lEvents) and not any(text(o.edge) for o in lEvents)
+
+
+def combinational_blocks(oFile):
+    """
+    The always_comb blocks of a file; in a Verilog file, which has none, its combinational always blocks, see
+    is_combinational.
+    """
+    if is_verilog(oFile):
+        return [o for o in oFile.nodes("AlwaysBlock") if is_combinational(o)]
+    return oFile.nodes("AlwaysCombBlock")
 
 
 def text(oToken):

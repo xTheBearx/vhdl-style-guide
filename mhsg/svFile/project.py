@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Lint of the SystemVerilog files of a run as one design.
+Lint of the Verilog and SystemVerilog files of a run as one design.
 
-In lint mode, the SystemVerilog files of a run, those given with --index_files and those listed under files in the
+In lint mode, the Verilog and SystemVerilog files of a run, those given with --index_files and those listed under files in the
 systemverilog section of the configuration are compiled together once, before the files are checked. Each file then
 gets the warnings slang found in it, with the modules, packages and macros of the other files known: unused,
 undriven and implicit signals are checked wherever everything a file uses is in the run, and the connections of
@@ -36,7 +36,10 @@ def file_text(sFileName):
 
 
 def files_of_run(lFiles, dConfig):
-    """The SystemVerilog files among the files of a run, then those listed under files in the systemverilog section."""
+    """
+    The Verilog and SystemVerilog files among the files of a run, then those listed under files in the systemverilog
+    section.
+    """
     lReturn = []
     dSection = (dConfig or {}).get("systemverilog") or {}
     lExtra = []
@@ -45,7 +48,7 @@ def files_of_run(lFiles, dConfig):
         lExtra.extend(config.glob_filenames(sPattern) or [sPattern])
     for sFile in list(lFiles) + lExtra:
         sPath = os.path.abspath(sFile)
-        if language.of_file(sFile) == language.SYSTEMVERILOG and os.path.isfile(sPath) and sPath not in lReturn:
+        if language.is_verilog(sFile) and os.path.isfile(sPath) and sPath not in lReturn:
             lReturn.append(sPath)
     return lReturn
 
@@ -72,14 +75,13 @@ def rule_enabled(oConfig, sRule):
 
 def collect(lFiles, dConfig, bVerilator=False):
     """
-    Compiles the SystemVerilog files of a run together and returns {absolute file name: entry}, where an entry holds
+    Compiles the Verilog and SystemVerilog files of a run together and returns {absolute file name: entry}, where an entry holds
     the hash of the text compiled, the warnings as (offset, name, message), and whether the file uses something
     unknown to the run.
     """
     lPaths = files_of_run(lFiles, dConfig)
     if not lPaths:
         return {}
-    oOptions = preprocessor.options(dConfig)
     oSourceManager = pyslang.SourceManager()
     oCompilation = ast.Compilation()
     dBuffers = {}
@@ -97,6 +99,8 @@ def collect(lFiles, dConfig, bVerilator=False):
         dTexts[sPath] = sText
     lFiles = []
     for oBuffer in lBuffers:
+        # Each file is parsed in its language: Verilog files as Verilog-2005, see language.py
+        oOptions = preprocessor.options(dConfig, language.of_file(dBuffers[oBuffer.id.id][0], dConfig))
         oTree = SyntaxTree.fromBuffer(oBuffer, oSourceManager, oOptions) if oOptions is not None else SyntaxTree.fromBuffer(oBuffer, oSourceManager)
         oCompilation.addSyntaxTree(oTree)
         lTrees.append(oTree)

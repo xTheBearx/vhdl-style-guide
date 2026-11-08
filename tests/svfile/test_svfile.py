@@ -12,7 +12,7 @@ import unittest
 
 import pytest
 
-from mhsg import language, parser, rule_list
+from mhsg import exceptions, language, parser, rule_list
 from mhsg.svFile import svFile, tokens
 from mhsg.vhdlFile import vhdlFile
 
@@ -50,12 +50,45 @@ def tokens_of(sText):
 
 class test_language(unittest.TestCase):
     def test_of_file(self):
-        for sName in ("a.sv", "a.SVH", "dir/a.v", "a.vh"):
+        for sName in ("a.sv", "a.SVH"):
             self.assertEqual(language.SYSTEMVERILOG, language.of_file(sName))
+        for sName in ("dir/a.v", "a.vh", "a.V"):
+            self.assertEqual(language.VERILOG, language.of_file(sName))
+            # A project writing SystemVerilog in .v files reads them so
+            self.assertEqual(language.SYSTEMVERILOG, language.of_file(sName, {"systemverilog": {"v_files": "systemverilog"}}))
+            self.assertTrue(language.is_verilog(sName))
         for sName in ("a.vhd", "a.vhdl", "a.txt", None):
             self.assertEqual(language.VHDL, language.of_file(sName))
+            self.assertFalse(language.is_verilog(sName))
         self.assertIs(svFile, language.file_class(language.SYSTEMVERILOG))
+        self.assertIs(svFile, language.file_class(language.VERILOG))
         self.assertIs(vhdlFile, language.file_class(language.VHDL))
+
+    def test_verilog_2005_names(self):
+        # logic and bit are names in Verilog-2005, keywords only in SystemVerilog
+        lText = ["module m (input wire clk);", "    reg logic;", "    wire bit;", "    always @(posedge clk) logic <= bit;", "endmodule"]
+        oFile = svFile(lText, sFilename="names.v")
+        self.assertEqual(language.VERILOG, oFile.language)
+        self.assertEqual([], oFile.syntax_errors)
+        self.assertEqual([], [o for o in oFile.lAllObjects if isinstance(o, tokens.unclassified)])
+        self.assertIsInstance([o for o in oFile.lAllObjects if o.get_value() == "logic"][0], tokens.of("Declarator", "name"))
+        # The same text in a .sv file, or in a .v file read as SystemVerilog, is not SystemVerilog
+        oFile = svFile(lText, sFilename="names.sv")
+        self.assertEqual(language.SYSTEMVERILOG, oFile.language)
+        self.assertIn("ExpectedDeclarator", [s for _, s in oFile.syntax_errors])
+        oFile = svFile(lText, sFilename="names.v", configuration=Configuration({"systemverilog": {"v_files": "systemverilog"}}))
+        self.assertEqual(language.SYSTEMVERILOG, oFile.language)
+        self.assertIn("ExpectedDeclarator", [s for _, s in oFile.syntax_errors])
+        # With defines, a Verilog file is still read as Verilog-2005
+        oFile = svFile(lText, sFilename="names.v", configuration=Configuration({"systemverilog": {"defines": {"SYNTHESIS": None}}}))
+        self.assertEqual([], oFile.syntax_errors)
+
+    def test_v_files_setting(self):
+        self.assertEqual(language.VERILOG, language.v_files({}))
+        self.assertEqual(language.VERILOG, language.v_files({"systemverilog": {"defines": {"A": None}}}))
+        self.assertEqual(language.SYSTEMVERILOG, language.v_files({"systemverilog": {"v_files": "SystemVerilog"}}))
+        with self.assertRaises(exceptions.ConfigurationError):
+            language.v_files({"systemverilog": {"v_files": "vhdl"}})
 
 
 class test_svfile(unittest.TestCase):

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mhsg.rule_group import structure
-from mhsg.rules.sv_nodes import inside, text
+from mhsg.rules.sv_nodes import ancestors, combinational_blocks, inside, text
 from mhsg.rules.sv_tree import Problem, TreeRule
 
 
@@ -36,6 +36,8 @@ class rule_017(TreeRule, structure.Rule):
             if oPort.header is not None and text(getattr(oPort.header, "direction", None)) == "output" and oPort.declarator is not None:
                 setOutputs.add(text(oPort.declarator.name))
         setDone = set()
+        # The blocks of combinational logic, by the offset of their first token, as pyslang makes new node objects
+        setCombinational = {o.getFirstToken().location.offset for o in combinational_blocks(oFile)}
         for oNode in oFile.nodes("AssignmentExpression", "NonblockingAssignmentExpression"):
             if oNode.left is None or oNode.right is None:
                 continue
@@ -43,7 +45,10 @@ class rule_017(TreeRule, structure.Rule):
             if sName not in setOutputs or sName in setDone:
                 continue
             bAssign = inside(oNode, "ContinuousAssign") and oNode.right.kind.name not in ("IdentifierName", "IdentifierSelectName")
-            if bAssign or inside(oNode, "AlwaysCombBlock"):
+            bCombinational = any(
+                o.kind.name in ("AlwaysCombBlock", "AlwaysBlock") and o.getFirstToken().location.offset in setCombinational for o in ancestors(oNode)
+            )
+            if bAssign or bCombinational:
                 setDone.add(sName)
                 oToken = oFile.token_at(oNode.left.getFirstToken())
                 if oToken is not None:

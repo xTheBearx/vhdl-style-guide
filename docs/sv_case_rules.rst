@@ -1,7 +1,7 @@
 .. include:: includes.rst
 
-SystemVerilog Case Rules
-------------------------
+Verilog and SystemVerilog Case Rules
+------------------------------------
 
 sv_case_001
 ###########

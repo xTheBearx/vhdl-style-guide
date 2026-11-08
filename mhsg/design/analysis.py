@@ -11,6 +11,7 @@ import sys
 import tempfile
 
 from mhsg import (
+    config,
     language,
     provenance,
     report,
@@ -121,22 +122,28 @@ class Context:
         Returns the processes of a VHDL file by architecture, see source_summary.py, or None if it cannot be read or
         parsed, or is not a VHDL file.
         """
-        if language.of_file(sFileName) != language.VHDL:
+        if language.is_verilog(sFileName):
             return None
         if sFileName not in self._dFiles:
             self._dFiles[sFileName] = source_summary.load(sFileName)
         return self._dFiles[sFileName]
 
     def sv_file(self, sFileName):
-        """The parsed SystemVerilog file, or None if it cannot be read."""
+        """The parsed Verilog or SystemVerilog file, or None if it cannot be read."""
         dFiles = self.__dict__.setdefault("_dSvFiles", {})
         if sFileName not in dFiles:
             try:
                 lLines, eError = vhdlFile.utils.read_vhdlfile(sFileName)
-                dFiles[sFileName] = None if eError else svFile.svFile(lLines, sFilename=sFileName)
+                dFiles[sFileName] = None if eError else svFile.svFile(lLines, sFilename=sFileName, configuration=self.sv_configuration())
             except Exception:  # pylint: disable=broad-except
                 dFiles[sFileName] = None
         return dFiles[sFileName]
+
+    def sv_configuration(self):
+        """The configuration the Verilog files of the design are read with: their language, from v_files."""
+        oConfig = config.config()
+        oConfig.dConfig = {"systemverilog": {"v_files": getattr(self.design, "v_files", language.VERILOG)}}
+        return oConfig
 
     def refine_verilog(self, oLocation, lParts, bLast):
         """
@@ -169,10 +176,10 @@ class Context:
         if oLocation is None:
             return None, 0
         # Only VHDL files are refined to the assignment; Yosys locates the cells of Verilog at the assignment itself
-        if sSignal and language.of_file(oLocation.file) == language.SYSTEMVERILOG:
+        if sSignal and language.is_verilog(oLocation.file):
             iLine = self.refine_verilog(oLocation, list(reversed(sSignal.lower().split("[")[0].split("."))), bLast)
             return oLocation.file, iLine if iLine is not None else oLocation.line
-        lArchitectures = self.vhdl_summary(oLocation.file) if sSignal and language.of_file(oLocation.file) == language.VHDL else None
+        lArchitectures = self.vhdl_summary(oLocation.file) if sSignal and not language.is_verilog(oLocation.file) else None
         if lArchitectures is not None:
             # Names carry generate labels before the signal, such as gen_fifo.memory, and record fields after it,
             # such as ctrl_o.cpu_priv: try the parts from the last

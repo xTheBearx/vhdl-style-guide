@@ -9,13 +9,16 @@ works now.
 Files
 -----
 
-A file is read as SystemVerilog when its name ends in :code:`.sv`, :code:`.svh`, :code:`.v` or :code:`.vh`, in any
-case. Verilog files are read as SystemVerilog, which is a superset of Verilog. Other files are read as VHDL.
-Both kinds can be given in one run:
+A file is read as SystemVerilog when its name ends in :code:`.sv` or :code:`.svh`, and as Verilog-2005 when it ends
+in :code:`.v` or :code:`.vh`, in any case. Other files are read as VHDL. In a Verilog file, names that are keywords only
+in SystemVerilog, such as :code:`logic` and :code:`bit`, are names, and the rules that need SystemVerilog, such as the
+one asking for always_comb, are not applied; :doc:`verilog_2005` lists what each rule does with Verilog files. A
+project that writes SystemVerilog in :code:`.v` files reads them as SystemVerilog with **v_files**, see below. All
+the languages can be given in one run:
 
 .. code-block:: bash
 
-  mhsg -f rtl/*.vhd rtl/*.sv --fix
+  mhsg -f rtl/*.vhd rtl/*.v rtl/*.sv --fix
 
 Files are read with `slang <https://github.com/MikePopoloski/slang>`_, through its Python package pyslang, which is
 installed with MHSG. The file is kept exactly as written: directives such as :code:`\`define` and :code:`\`ifdef`,
@@ -46,10 +49,20 @@ A macro with no value is just defined. Without this section, the defines and inc
 section are used, see :doc:`design_analysis`. **files** are compiled with the files of a run in lint mode, such as
 packages the checked files use, without being checked themselves; files given with :code:`--index_files` are too.
 
+**v_files** sets the language of :code:`.v` and :code:`.vh` files: :code:`verilog`, the default, reads them as
+Verilog-2005; :code:`systemverilog` reads them as SystemVerilog, with all the rules for SystemVerilog, for a project
+that writes SystemVerilog in them. It applies to the style rules, lint, Verilator and design analysis alike:
+
+.. code-block:: yaml
+
+   systemverilog:
+     v_files: systemverilog
+
 Rules
 -----
 
-The rules for SystemVerilog are in groups whose names start with :code:`sv_`, see :doc:`rules`. They follow the
+The rules for Verilog and SystemVerilog are in groups whose names start with :code:`sv_`, see :doc:`rules`; Verilog
+files get those that do not need SystemVerilog, see :doc:`verilog_2005`. They follow the
 `lowRISC Verilog coding style <https://github.com/lowRISC/style-guides/blob/master/VerilogCodingStyle.md>`_ that
 Verible checks, except that indentation is 4 spaces and lines are 80 characters, as for VHDL. Where a rule checks
 what a Verible lint rule checks, its alias is the Verible rule's name.
@@ -164,15 +177,17 @@ they implement:
    $ mhsg -f rtl/fifo.sv --lint_only
    WARNING: rtl/fifo.sv(16)DO254-SS4 (sv_lint_002) -- Latch inferred for 'l_o' because it is not assigned on all control paths
 
-The SystemVerilog files of a run are compiled together, once, with the files of the systemverilog section and of
-:code:`--index_files`, so each file is checked against the others: an instance against the ports of its module, a
-package against the files that use it. A file that still uses a module, package or macro the run does not know is not
+The Verilog and SystemVerilog files of a run are compiled together, once, each in its language, with the files of
+the systemverilog section and of :code:`--index_files`, so each file is checked against the others: an instance
+against the ports of its module, a package against the files that use it. A file that still uses a module, package or macro the run does not know is not
 checked for unused, undriven and implicit signals, as a signal driven or read there would look undriven or unused.
 With :code:`--fix`, the files are fixed first and compiled together again, so the files the fixes changed are still
 checked against the others.
 
 **Verilator.** When Verilator is installed, it lints the files of the run too (:code:`verilator --lint-only -Wall`),
-and three rules report the warnings of the checks slang does not make: :code:`sv_lint_012` signals assigned in
+Verilog files as Verilog-2005 (:code:`+1364-2005ext+v`) unless **v_files** says otherwise, and testbench timing, such
+as an event control in an initial block, with :code:`--timing` for Verilator 5 or later (an older Verilator gets
+neither :code:`--timing` nor :code:`--no-timing`, which it does not know). Three rules report the warnings of the checks slang does not make: :code:`sv_lint_012` signals assigned in
 always blocks of different clocks (MULTIDRIVEN), :code:`sv_lint_013` case statements that do not cover every value (CASEINCOMPLETE),
 and :code:`sv_lint_011` the others, such as blocking assignments in clocked processes (BLKSEQ) and non-blocking ones
 in combinational processes (COMBDLY); its **verilator_warnings** option lists them. The **do254** rule set labels
@@ -206,15 +221,15 @@ Syntax errors
 Each file is parsed on its own, so macros defined in other files and include files that are not found are not
 errors. Other syntax errors are reported by :code:`sv_syntax_001`. slang parses the code before an error as written,
 and starts again at the next item of a design unit, such as a declaration or an always block, or at the next unit; in
-between, the syntax tree may have constructs missing or misplaced, and tokens classified wrongly. The SystemVerilog
-style rules leave that part, from the line of the error to the end of its item, or of its unit for an error outside
+between, the syntax tree may have constructs missing or misplaced, and tokens classified wrongly. The Verilog and
+SystemVerilog style rules leave that part, from the line of the error to the end of its item, or of its unit for an error outside
 the items, alone, and check and fix the rest of the file. The lint rules skip the file. The rules for every language, on trailing spaces, tabs and lengths, and
 :code:`sv_blank_line_001` check the whole file.
 
 After a fix that changes the structure of the code, such as replacing always @* with always_comb or removing a
 generate region, the file is parsed again, so the rules that follow, such as the indentation, see the fixed code.
 
-The rules that apply to every language check SystemVerilog files as well:
+The rules that apply to every language check Verilog and SystemVerilog files as well:
 
 * :code:`whitespace_001`: trailing whitespace
 * :code:`whitespace_002`: tabs inside a line
@@ -222,7 +237,7 @@ The rules that apply to every language check SystemVerilog files as well:
 * :code:`length_002`: file length
 * :code:`length_004`: length of the second line of a statement split over lines
 
-The other rules are VHDL rules and are skipped for SystemVerilog files.
+The other rules are VHDL rules and are skipped for Verilog and SystemVerilog files.
 
 Profiles
 ########

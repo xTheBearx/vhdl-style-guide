@@ -1,7 +1,7 @@
 .. include:: includes.rst
 
-SystemVerilog Generate Rules
-----------------------------
+Verilog and SystemVerilog Generate Rules
+----------------------------------------
 
 sv_generate_001
 ###############
@@ -108,6 +108,8 @@ sv_generate_005
 |phase_1| |error| |unfixable| |structure|
 
 Alias: :code:`sv_generate_legacy_genvar`
+
+SystemVerilog only: this rule is not applied to Verilog files, see :ref:`verilog_2005`.
 
 This rule checks for genvar declarations outside of a for loop; declare the genvar in the loop instead.
 

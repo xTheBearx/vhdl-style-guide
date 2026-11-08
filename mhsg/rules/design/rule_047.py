@@ -140,7 +140,7 @@ def state_location(oRule, oContext, oMachine, iValue):
     """
     lCells = oMachine.states.get(iValue, []) + [oMachine.cell]
     sFile, iLine = oRule.locate(oContext, oMachine.module, lCells)
-    if sFile is None or language.of_file(sFile) != language.VHDL:
+    if sFile is None or language.is_verilog(sFile):
         # Yosys locates the logic of Verilog at the assignment itself
         return (sFile, iLine) if sFile is not None else oRule.locate(oContext, oMachine.module, lCells, oMachine.signal)
     sName = oMachine.names.get(iValue)

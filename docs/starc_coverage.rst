@@ -297,11 +297,11 @@
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.3.6.2    | Asynchronous resets: single bit, active low, coded with negedge                           | Note     | Implemented                  | :code:`sv_always_013`                          |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.4.1.1    | Keep latch inference clearly separate from combinational logic                            | Warning  | Implemented                  | :code:`sv_module_010`                          |
+| STARC-2.4.1.1    | Keep latch inference clearly separate from combinational logic                            | Warning  | Implemented                  | :code:`sv_module_010` (SystemVerilog only)     |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.4.1.2    | Infer latches only inside dedicated latch-only modules                                    | Note     | Implemented                  | :code:`sv_module_010`                          |
+| STARC-2.4.1.2    | Infer latches only inside dedicated latch-only modules                                    | Note     | Implemented                  | :code:`sv_module_010` (SystemVerilog only)     |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
-| STARC-2.4.1.3    | No latches with asynchronous set or reset                                                 | Warning  | Implemented                  | :code:`sv_always_025`                          |
+| STARC-2.4.1.3    | No latches with asynchronous set or reset                                                 | Warning  | Implemented                  | :code:`sv_always_025` (SystemVerilog only)     |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+
 | STARC-2.4.1.4    | No combinational feedback loops through latches                                           | Error    | Implemented, design analysis | :code:`design_026`                             |
 +------------------+-------------------------------------------------------------------------------------------+----------+------------------------------+------------------------------------------------+

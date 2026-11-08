@@ -1,7 +1,7 @@
 .. include:: includes.rst
 
-SystemVerilog Lint Rules
-------------------------
+Verilog and SystemVerilog Lint Rules
+------------------------------------
 
 sv_lint_001
 ###########
@@ -194,6 +194,8 @@ This rule checks that the sensitivity list of a combinational always block names
 file that the block reads. A missing signal makes simulation differ from synthesis; always_comb or always @*
 avoids the list altogether.
 
+The finding of a Verilog file, which has no always_comb, names always @* instead of always_comb.
+
 The signals a function or task of the file reads count as read by the blocks that call it. A hierarchical name,
 such as u_sub.valid, must be listed as written; a member of a signal, such as cfg.mode, needs the signal. A
 variable the block declares, or writes on every path before reading it, needs no entry: a write in both branches
@@ -280,8 +282,9 @@ assignments in clocked processes (BLKSEQ), non-blocking assignments in combinati
 The verilator_warnings option lists the warnings reported, by Verilator's names; by default those whose checks
 slang does not make, but for MULTIDRIVEN and CASEINCOMPLETE, which sv_lint_012 and sv_lint_013 report.
 
-Verilator lints the SystemVerilog files of a run together; the systemverilog section of the configuration turns
-it off with :code:`verilator: false`, or names the program with :code:`verilator: /path/to/verilator`.
+Verilator lints the Verilog and SystemVerilog files of a run together; the systemverilog section of the
+configuration turns it off with :code:`verilator: false`, or names the program with
+:code:`verilator: /path/to/verilator`.
 
 .. NOTE:: This is a lint rule. It runs in lint mode and reports what Verilator finds; without Verilator it
    reports nothing.
@@ -310,8 +313,8 @@ sv_lint_012
 Alias: :code:`sv_lint_verilator_multiple_drivers`
 
 This rule reports signals assigned in always blocks of different clocks (Verilator's MULTIDRIVEN), which
-synthesis cannot build as one register. Verilator lints the SystemVerilog files of a run when it is installed, see
-sv_lint_011.
+synthesis cannot build as one register. Verilator lints the Verilog and SystemVerilog files of a run when it is
+installed, see sv_lint_011.
 
 .. NOTE:: This is a lint rule. It runs in lint mode and reports what Verilator finds; without Verilator it
    reports nothing.
@@ -340,8 +343,8 @@ sv_lint_013
 Alias: :code:`sv_lint_verilator_incomplete_case`
 
 This rule reports case statements that do not cover every value of their selector and have no default
-branch (Verilator's CASEINCOMPLETE). Verilator lints the SystemVerilog files of a run when it is installed, see
-sv_lint_011.
+branch (Verilator's CASEINCOMPLETE). Verilator lints the Verilog and SystemVerilog files of a run when it is
+installed, see sv_lint_011.
 
 .. NOTE:: This is a lint rule. It runs in lint mode and reports what Verilator finds; without Verilator it
    reports nothing.
@@ -378,9 +381,9 @@ Alias: :code:`sv_lint_partial_parameter_override`
 
 This rule checks that an instance that sets parameters of a module sets all of them.
 
-.. NOTE:: This is a lint rule. It runs in lint mode, on the SystemVerilog files of a run compiled together, and
-          checks the instances of modules defined in the run. It is disabled by default: a design need not follow
-          it.
+.. NOTE:: This is a lint rule. It runs in lint mode, on the Verilog and SystemVerilog files of a run compiled
+          together, and checks the instances of modules defined in the run. It is disabled by default: a design
+          need not follow it.
 
 Each parameter the instance leaves out takes the default of the module, which can change with the module without
 the instance showing it. Parameters of the module that are local, localparam declarations and parameters of the
@@ -407,8 +410,8 @@ Alias: :code:`sv_lint_reused_parameter_name`
 
 This rule checks that the parameters of a module are not named like parameters of another module of the run.
 
-.. NOTE:: This is a lint rule. It runs in lint mode, on the SystemVerilog files of a run compiled together. It is
-          disabled by default: a design need not follow it.
+.. NOTE:: This is a lint rule. It runs in lint mode, on the Verilog and SystemVerilog files of a run compiled
+          together. It is disabled by default: a design need not follow it.
 
 A name used for parameters of several modules is easily set in the wrong module, and a defparam or a search for
 the name finds them all. Parameters and localparam declarations are both checked; the first module of the run
@@ -438,8 +441,8 @@ Alias: :code:`sv_lint_global_macro_in_module_file`
 This rule checks that macros used by several files of a run, the design-wide parameters, are defined in a file of
 their own, not in the file of a module, an interface or a program.
 
-.. NOTE:: This is a lint rule. It runs in lint mode, on the SystemVerilog files of a run compiled together. It is
-          disabled by default: a design need not follow it.
+.. NOTE:: This is a lint rule. It runs in lint mode, on the Verilog and SystemVerilog files of a run compiled
+          together. It is disabled by default: a design need not follow it.
 
 A file of global parameters, included where they are used, shows what the whole design depends on, and changes in
 one place. A macro defined in the file of a module depends on the order the files are compiled in, and on that

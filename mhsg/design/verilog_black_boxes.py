@@ -47,11 +47,17 @@ def trees(oDesign):
     return [oTree for _, oTree in file_trees(oDesign)]
 
 
+def file_options(oDesign, sFile):
+    """The pyslang options a file of a design is parsed with: its defines and include directories, and its language."""
+    dSection = {"defines": oDesign.defines, "include_directories": oDesign.include_directories}
+    return preprocessor.options({"systemverilog": dSection}, oDesign.file_language(sFile) if hasattr(oDesign, "file_language") else None)
+
+
 def file_trees(oDesign):
     """(file name, pyslang syntax tree) of each Verilog and SystemVerilog file of a design, with its defines."""
-    oOptions = preprocessor.options({"systemverilog": {"defines": oDesign.defines, "include_directories": oDesign.include_directories}})
     lReturn = []
     for sFile in oDesign.verilog_files():
+        oOptions = file_options(oDesign, sFile)
         try:
             if oOptions is None:
                 lReturn.append((sFile, SyntaxTree.fromFile(sFile)))
@@ -131,7 +137,6 @@ def elaborated_parameters(oDesign, dStandIns):
     time the elaboration meets the instance, as a module with parameters can be elaborated several times. A value is
     an integer, a real as text, or None if it has x or z bits; a string comes as the integer of its characters.
     """
-    oOptions = preprocessor.options({"systemverilog": {"defines": oDesign.defines, "include_directories": oDesign.include_directories}})
     oCompilationOptions = ast.CompilationOptions()
     oCompilationOptions.topModules = {oDesign.top}
     oCompilationOptions.paramOverrides = [f"{k}={verilog_text(v)}" for k, v in oDesign.generics.items()]
@@ -145,6 +150,7 @@ def elaborated_parameters(oDesign, dStandIns):
         except OSError:
             continue
         dFiles[oBuffer.id.id] = sFile
+        oOptions = file_options(oDesign, sFile)
         oCompilation.addSyntaxTree(
             SyntaxTree.fromBuffer(oBuffer, oSourceManager, oOptions) if oOptions is not None else SyntaxTree.fromBuffer(oBuffer, oSourceManager),
         )

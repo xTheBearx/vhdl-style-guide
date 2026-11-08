@@ -1,7 +1,7 @@
 .. include:: includes.rst
 
-SystemVerilog Indent Rules
---------------------------
+Verilog and SystemVerilog Indent Rules
+--------------------------------------
 
 sv_indent_001
 #############

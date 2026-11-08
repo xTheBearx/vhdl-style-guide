@@ -46,7 +46,7 @@ class rule_003(Rule):
 
     def __init__(self):
         super().__init__(lTokens)
-        self.languages = (language.SYSTEMVERILOG,)
+        self.languages = language.VERILOG_LANGUAGES
         self.conditional_indent = "zero"
         self.configuration.append("conditional_indent")
 

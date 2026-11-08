@@ -61,7 +61,7 @@ class rule_001(Rule):
 
     def __init__(self):
         super().__init__(lTokens)
-        self.languages = (language.SYSTEMVERILOG,)
+        self.languages = language.VERILOG_LANGUAGES
         self.list_indent = 1
         self.configuration.append("list_indent")
         self.begin_style = "aligned"

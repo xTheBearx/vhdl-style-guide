@@ -1,7 +1,7 @@
 .. include:: includes.rst
 
-SystemVerilog Function Rules
-----------------------------
+Verilog and SystemVerilog Function Rules
+----------------------------------------
 
 sv_function_001
 ###############
@@ -9,6 +9,8 @@ sv_function_001
 |phase_1| |error| |structure|
 
 Alias: :code:`sv_function_explicit_function_lifetime`
+
+SystemVerilog only: this rule is not applied to Verilog files, see :ref:`verilog_2005`.
 
 This rule checks that functions outside classes are declared automatic or static, as Verible's
 explicit-function-lifetime rule does; the fix adds automatic.
@@ -31,6 +33,8 @@ sv_function_002
 |phase_1| |error| |structure|
 
 Alias: :code:`sv_function_explicit_task_lifetime`
+
+SystemVerilog only: this rule is not applied to Verilog files, see :ref:`verilog_2005`.
 
 This rule checks that tasks outside classes are declared automatic or static, as Verible's
 explicit-task-lifetime rule does; the fix adds automatic.

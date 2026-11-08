@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from mhsg import language
 from mhsg.rule_group import structure
 from mhsg.rules.sv_nodes import file_stem, text
 from mhsg.rules.sv_tree import Problem, TreeRule
@@ -27,6 +28,8 @@ class rule_002(TreeRule, structure.Rule):
 
     def __init__(self):
         super().__init__()
+        # SystemVerilog only: it checks packages, which Verilog-2005 does not have
+        self.languages = (language.SYSTEMVERILOG,)
         self.solution = "See the rule documentation"
 
     def problems(self, oFile):

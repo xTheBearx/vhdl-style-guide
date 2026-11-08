@@ -1,7 +1,7 @@
 .. include:: includes.rst
 
-SystemVerilog Statement Rules
------------------------------
+Verilog and SystemVerilog Statement Rules
+-----------------------------------------
 
 sv_statement_001
 ################
@@ -1083,8 +1083,8 @@ sv_statement_046
 Alias: :code:`sv_statement_signedness`
 
 This rule checks for operations that mix signed and unsigned operands, as the STARC guide asks (2.10.6.3):
-SystemVerilog then treats both as unsigned. The types come from slang's elaboration of the file; numbers without
-a width are not checked. It is disabled by default; the starc rule set enables it.
+Verilog and SystemVerilog then treat both as unsigned. The types come from slang's elaboration of the file;
+numbers without a width are not checked. It is disabled by default; the starc rule set enables it.
 
 **Violation**
 

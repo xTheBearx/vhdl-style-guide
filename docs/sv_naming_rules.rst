@@ -1,7 +1,7 @@
 .. include:: includes.rst
 
-SystemVerilog Naming Rules
---------------------------
+Verilog and SystemVerilog Naming Rules
+--------------------------------------
 
 sv_naming_001
 #############
@@ -33,6 +33,8 @@ sv_naming_002
 
 Alias: :code:`sv_naming_enum_name_style`
 
+SystemVerilog only: this rule is not applied to Verilog files, see :ref:`verilog_2005`.
+
 This rule checks that the names of enum types match **pattern**, a regular expression, by default
 [a-z_0-9]+(_t|_e), as Verible's enum-name-style rule does.
 
@@ -55,6 +57,8 @@ sv_naming_003
 
 Alias: :code:`sv_naming_struct_union_name_style`
 
+SystemVerilog only: this rule is not applied to Verilog files, see :ref:`verilog_2005`.
+
 This rule checks that the names of struct and union types match **pattern**, a regular expression, by
 default [a-z_0-9]+_t, as Verible's struct-union-name-style rule does.
 
@@ -76,6 +80,8 @@ sv_naming_004
 |phase_7| |error| |unfixable| |naming|
 
 Alias: :code:`sv_naming_interface_name_style`
+
+SystemVerilog only: this rule is not applied to Verilog files, see :ref:`verilog_2005`.
 
 This rule checks that interface names match **pattern**, a regular expression, by default [a-z_0-9]+_if, as
 Verible's interface-name-style rule does.
@@ -121,6 +127,8 @@ sv_naming_006
 |phase_7| |error| |unfixable| |naming|
 
 Alias: :code:`sv_naming_constraint_name_style`
+
+SystemVerilog only: this rule is not applied to Verilog files, see :ref:`verilog_2005`.
 
 This rule checks that constraint names match **pattern**, a regular expression, by default ([a-z0-9]+_)+c,
 as Verible's constraint-name-style rule does.
@@ -213,8 +221,8 @@ sv_naming_010
 Alias: :code:`sv_naming_vhdl_keywords`
 
 This rule checks that no name is a VHDL keyword, in any case, as the STARC guide asks (1.1.1.3), so the
-design can be translated or mixed with VHDL. SystemVerilog keywords cannot be names. It is disabled by
-default; the starc rule set enables it.
+design can be translated or mixed with VHDL. The keywords of the language of the file cannot be names. It is
+disabled by default; the starc rule set enables it.
 
 **Violation**
 

@@ -15,6 +15,7 @@ from . import (
     config,
     exceptions,
     junit,
+    language,
     options_description,
     project_index,
     provenance,
@@ -173,6 +174,8 @@ def main():
     try:
         rule_set.configure_lint_mode(oConfig, commandLineArguments)
         oConfig.waivers = waivers.from_configuration(oConfig.dConfig)
+        # The language of .v files, checked once before the files are read
+        language.v_files(oConfig.dConfig)
     except exceptions.ConfigurationError as e:
         print(e.message)
         sys.exit(1)
@@ -190,7 +193,7 @@ def main():
         oConfig.project_port_orders = project_index.collect_port_orders(lIndexFiles)
         if oConfig.lint_mode is not None:
             oConfig.project_port_modes = project_index.collect_port_modes(lIndexFiles)
-            # The SystemVerilog files of the run are compiled together once, see svFile/project.py
+            # The Verilog and SystemVerilog files of the run are compiled together once, see svFile/project.py
             oConfig.sv_lint_project = sv_project.collect(lIndexFiles, oConfig.dConfig, sv_project.verilator_enabled(oConfig))
         oConfig.project_positional_generic_entities = project_index.collect_positional_entity_instantiations(lIndexFiles, "generic")
 
@@ -215,8 +218,8 @@ def main():
         dJson["run"] = provenance.record(commandLineArguments, oConfig)
 
     if fix_before_lint(commandLineArguments, oConfig):
-        # The files are fixed first and the SystemVerilog files of the run compiled again, so a file the fixes changed
-        # is linted with the others; the check that reports then runs without fixing
+        # The files are fixed first and the Verilog and SystemVerilog files of the run compiled again, so a file the
+        # fixes changed is linted with the others; the check that reports then runs without fixing
         fix_files(commandLineArguments, oConfig)
         oConfig.sv_lint_project = sv_project.collect(lIndexFiles, oConfig.dConfig, sv_project.verilator_enabled(oConfig))
         commandLineArguments = copy.copy(commandLineArguments)
@@ -291,7 +294,10 @@ def main():
 
 
 def fix_before_lint(commandLineArguments, oConfig):
-    """Whether --fix runs as a pass of its own: in lint mode, when the run has SystemVerilog files compiled together."""
+    """
+    Whether --fix runs as a pass of its own: in lint mode, when the run has Verilog or SystemVerilog files compiled
+    together.
+    """
     if not commandLineArguments.fix or commandLineArguments.stdin or commandLineArguments.stdout:
         return False
     return oConfig.lint_mode is not None and bool(getattr(oConfig, "sv_lint_project", None))

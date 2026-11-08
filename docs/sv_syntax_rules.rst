@@ -1,7 +1,7 @@
 .. include:: includes.rst
 
-SystemVerilog Syntax Rules
---------------------------
+Verilog and SystemVerilog Syntax Rules
+--------------------------------------
 
 sv_syntax_001
 #############

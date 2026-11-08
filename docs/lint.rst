@@ -3,12 +3,16 @@
 Lint Mode
 =========
 
-Besides style, MHSG can check VHDL and SystemVerilog for design problems such as latches, multiple drivers or incomplete case statements.
+Besides style, MHSG can check VHDL, Verilog and SystemVerilog for design problems such as latches, multiple drivers or incomplete case statements.
 These lint checks only report; they never change the code.
 For SystemVerilog and Verilog files the lint rules are :code:`sv_lint_001` to :code:`sv_lint_010`, which report
 what slang finds when it elaborates the file, and :code:`sv_lint_011` to :code:`sv_lint_013`, which report
 Verilator's warnings when Verilator is installed, see :doc:`systemverilog`. The **do254** rule set labels them with
 its checks too.
+
+Verilog files, :code:`.v` and :code:`.vh`, are read as Verilog-2005: a check whose rules all need SystemVerilog, such
+as one asking for always_latch, does not apply to them, and the coverage tables below mark those rules
+"(SystemVerilog only)", see :doc:`verilog_2005`.
 
 The checks are grouped in rule sets, which map the checks of a coding standard to the MHSG rules that implement them.
 There are four built in rule sets:
@@ -272,7 +276,7 @@ Choose it for Verilog and SystemVerilog files:
 
 .. code-block:: text
 
-   $ mhsg -f rtl/*.sv --rule_set starc
+   $ mhsg -f rtl/*.v rtl/*.sv --rule_set starc
 
 The severity follows the level of the item in the guide: a Rule is an error, Recommendation 1 a warning,
 Recommendation 2 and 3 and Suggestions notes. The set uses the guide's own limits where a rule implements them:

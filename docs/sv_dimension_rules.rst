@@ -1,7 +1,7 @@
 .. include:: includes.rst
 
-SystemVerilog Dimension Rules
------------------------------
+Verilog and SystemVerilog Dimension Rules
+-----------------------------------------
 
 sv_dimension_001
 ################
@@ -33,7 +33,7 @@ sv_dimension_002
 Alias: :code:`sv_dimension_unpacked_range_ordering`
 
 This rule checks that unpacked dimensions are written as [0:N-1] or [N], as Verible's
-unpacked-dimensions-range-ordering rule does.
+unpacked-dimensions-range-ordering rule does. Verilog files, which cannot write [N], are asked for [0:N-1].
 
 **Violation**
 

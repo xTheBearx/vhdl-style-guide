@@ -8,11 +8,12 @@ with the check identifier in reports, for example "DO254-CP2 (lint_001)". The se
 --fix fixes a rule still follows the rule's own severity.
 """
 
+import functools
 import os
 
 import yaml
 
-from mhsg import exceptions, severity, yaml_files
+from mhsg import exceptions, language, severity, yaml_files
 
 RULE_SET_DIRECTORY = os.path.join(os.path.dirname(__file__), "rule_sets")
 
@@ -230,11 +231,27 @@ def escape(sText):
     return sText
 
 
+@functools.lru_cache(maxsize=1)
+def systemverilog_only_rules():
+    """
+    The identifiers of the rules that check SystemVerilog files and not Verilog files, as they need SystemVerilog
+    constructs: a check of a rule set that names them does not apply to Verilog files.
+    """
+    from mhsg import rule_list  # pylint: disable=import-outside-toplevel
+
+    return frozenset(o.unique_id for o in rule_list.load_rules() if language.SYSTEMVERILOG in o.languages and language.VERILOG not in o.languages)
+
+
 def coverage_table(oRuleSet):
-    """Returns a reStructuredText table of the checks of a rule set: severity, status and the rules that implement them."""
+    """
+    Returns a reStructuredText table of the checks of a rule set: severity, status and the rules that implement them.
+    A rule that checks SystemVerilog files only, not Verilog files, is marked so.
+    """
     lRows = [("Check", "Title", "Severity", "Status", "Rules")]
+    setSystemVerilog = systemverilog_only_rules()
     for oCheck in oRuleSet.checks:
-        lRules = [f":code:`{s}`" for s in oCheck.rules] + [f"group :code:`{s}`" for s in oCheck.groups]
+        lRules = [f":code:`{s}`" + (" (SystemVerilog only)" if s in setSystemVerilog else "") for s in oCheck.rules]
+        lRules += [f"group :code:`{s}`" for s in oCheck.groups]
         sStatus = STATUS_TEXT.get(oCheck.status, oCheck.status)
         if oCheck.status == "implemented" and not oCheck.enable:
             sStatus = "Implemented, enable after configuring"

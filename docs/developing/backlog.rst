@@ -95,6 +95,21 @@ under way: the entries below.
   management and judgement. Items on speed-critical paths are checked on all paths, as design analysis has no timing;
   the minimum gates of a basic block is not checked. The catalogue the set was made from records each item's limits
   and its Verible equivalent, kept in the notes of the set.
+* **Latches in Verilog files**: sv_always_025 and sv_module_010, and with them STARC 2.4.1.1 to 2.4.1.3, check
+  always_latch blocks, which Verilog-2005 does not have, so they do not apply to Verilog files, see
+  :doc:`../verilog_2005`. A Verilog latch is an always @* block that does not assign a variable on every path, which
+  slang reports (InferredLatch, sv_lint_002); the two rules could take the blocks with such warnings for latches.
+* **Combinational always blocks of SystemVerilog files**: sv_always_002, sv_always_023 and sv_module_017 check the
+  always @* blocks of Verilog files, and only the always_comb blocks of SystemVerilog files, where sv_always_001 asks
+  for always_comb instead.
+* **Verilog-2001 and older**: Verilog files are read as Verilog-2005; nothing tells a Verilog-2001 file apart. The fix
+  of sv_generate_004 removes generate and endgenerate, which Verilog-2005 makes optional and Verilog-2001 needs.
+* **Include files of the other language**: a file included with :code:`\`include` is read in the language of the file
+  that includes it, as slang's preprocessor reads it in place, whatever its own extension.
+* **Verilog files with read_slang**: design analysis reads Verilog files as Verilog-2005 with read_slang only when its
+  slang has :code:`--map-keyword-version`, as slang 12 has, found in the help of read_slang; an older plugin reads them
+  as SystemVerilog, where names such as logic are keywords. The option was checked with pyslang 12, not with a Yosys
+  and its plugin, which were not installed where it was written.
 * **SystemVerilog designs without the yosys-slang plugin**: Yosys' own reader handles Verilog and part of
   SystemVerilog, and the plugin is not packaged for Ubuntu; design analysis says so when the reader fails, and the
   tools of the design section, or MHSG_YOSYS, name a Yosys that has it, such as that of the OSS CAD Suite. ibex_core

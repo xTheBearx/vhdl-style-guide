@@ -3,7 +3,7 @@ import argparse
 import os
 import sys
 
-from . import config, rule_list, vhdlFile
+from . import config, language, rule_list, vhdlFile
 
 
 def parse_command_line_arguments():
@@ -51,8 +51,8 @@ def build_rule_class_doc(path, sRuleName, dRules):
     elif sRuleName == "exit_statement":
         sTitle = "Exit Rules"
     elif sRuleName.startswith("sv_"):
-        # The rules of SystemVerilog and Verilog files
-        sTitle = ("SystemVerilog " + sRuleName[len("sv_") :].title() + " Rules").replace("_", " ")
+        # The rules of Verilog and SystemVerilog files
+        sTitle = ("Verilog and SystemVerilog " + sRuleName[len("sv_") :].title() + " Rules").replace("_", " ")
     else:
         sTitle = (sRuleName.title() + " Rules").replace("_", " ")
     lRuleClassDoc.append(sTitle)
@@ -113,8 +113,21 @@ def do_something(lRules):
             if oRule.alias is not None:
                 lRuleDoc.append(f"Alias: :code:`{oRule.alias}`")
                 lRuleDoc.extend(blank_line())
+            if systemverilog_only(oRule):
+                lRuleDoc.append(SYSTEMVERILOG_ONLY)
+                lRuleDoc.extend(blank_line())
         lRuleDoc.extend(add_doc_string(oRule))
     return lRuleDoc
+
+
+# The note of the rules that check SystemVerilog files only, see docs/verilog_2005.rst
+SYSTEMVERILOG_ONLY = "SystemVerilog only: this rule is not applied to Verilog files, see :ref:`verilog_2005`."
+
+
+def systemverilog_only(oRule):
+    """True for a rule of SystemVerilog files that Verilog files do not get, as it needs SystemVerilog constructs."""
+    lLanguages = getattr(oRule, "languages", ())
+    return language.SYSTEMVERILOG in lLanguages and language.VERILOG not in lLanguages
 
 
 def add_doc_string(oRule):

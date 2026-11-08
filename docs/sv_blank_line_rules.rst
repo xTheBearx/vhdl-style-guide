@@ -1,7 +1,7 @@
 .. include:: includes.rst
 
-SystemVerilog Blank Line Rules
-------------------------------
+Verilog and SystemVerilog Blank Line Rules
+------------------------------------------
 
 sv_blank_line_001
 #################

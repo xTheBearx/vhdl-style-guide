@@ -1,7 +1,7 @@
 .. include:: includes.rst
 
-SystemVerilog Module Rules
---------------------------
+Verilog and SystemVerilog Module Rules
+--------------------------------------
 
 sv_module_001
 #############
@@ -210,6 +210,8 @@ sv_module_010
 |phase_1| |disabled| |error| |unfixable| |structure|
 
 Alias: :code:`sv_module_latch_modules`
+
+SystemVerilog only: this rule is not applied to Verilog files, see :ref:`verilog_2005`.
 
 This rule checks that a module with latches, always_latch blocks, holds no other logic, as the STARC guide
 recommends (2.4.1.1, 2.4.1.2): put latches in modules of their own. It is disabled by default; the starc rule set

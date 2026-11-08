@@ -1,7 +1,7 @@
 .. include:: includes.rst
 
-SystemVerilog Alignment Rules
------------------------------
+Verilog and SystemVerilog Alignment Rules
+-----------------------------------------
 
 sv_alignment_001
 ################
@@ -184,6 +184,8 @@ sv_alignment_008
 |phase_5| |error| |alignment|
 
 Alias: :code:`sv_alignment_struct_members`
+
+SystemVerilog only: this rule is not applied to Verilog files, see :ref:`verilog_2005`.
 
 This rule aligns the names of the members of a struct or union in a column, as Verible's formatter does. By
 default it infers whether the author meant them aligned or flush left; **policy** set to align or flush_left

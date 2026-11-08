@@ -8,9 +8,9 @@ class rule_014(Rule):
     """
     This rule checks that an instance that sets parameters of a module sets all of them.
 
-    .. NOTE:: This is a lint rule. It runs in lint mode, on the SystemVerilog files of a run compiled together, and
-              checks the instances of modules defined in the run. It is disabled by default: a design need not follow
-              it.
+    .. NOTE:: This is a lint rule. It runs in lint mode, on the Verilog and SystemVerilog files of a run compiled
+              together, and checks the instances of modules defined in the run. It is disabled by default: a design
+              need not follow it.
 
     Each parameter the instance leaves out takes the default of the module, which can change with the module without
     the instance showing it. Parameters of the module that are local, localparam declarations and parameters of the

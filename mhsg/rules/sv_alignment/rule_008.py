@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from mhsg import language
 from mhsg.rules.sv_align import Rule
 from mhsg.rules.sv_alignment.items import declared_name, row
 
@@ -27,6 +28,8 @@ class rule_008(Rule):
 
     def __init__(self):
         super().__init__()
+        # SystemVerilog only: it aligns the members of structs and unions, which Verilog-2005 does not have
+        self.languages = (language.SYSTEMVERILOG,)
         self.minimum_spaces = 1
         self.solution = "Align the column"
 
