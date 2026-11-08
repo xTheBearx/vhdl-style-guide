@@ -231,6 +231,9 @@ Rules Disabled by Default
 * `sv_always_027 <sv_always_rules.html#sv-always-027>`_
 * `sv_always_028 <sv_always_rules.html#sv-always-028>`_
 * `sv_always_029 <sv_always_rules.html#sv-always-029>`_
+* `sv_always_030 <sv_always_rules.html#sv-always-030>`_
+* `sv_always_031 <sv_always_rules.html#sv-always-031>`_
+* `sv_always_032 <sv_always_rules.html#sv-always-032>`_
 * `sv_case_003 <sv_case_rules.html#sv-case-003>`_
 * `sv_case_004 <sv_case_rules.html#sv-case-004>`_
 * `sv_case_005 <sv_case_rules.html#sv-case-005>`_
@@ -241,6 +244,7 @@ Rules Disabled by Default
 * `sv_case_010 <sv_case_rules.html#sv-case-010>`_
 * `sv_case_011 <sv_case_rules.html#sv-case-011>`_
 * `sv_case_012 <sv_case_rules.html#sv-case-012>`_
+* `sv_case_013 <sv_case_rules.html#sv-case-013>`_
 * `sv_comment_001 <sv_comment_rules.html#sv-comment-001>`_
 * `sv_comment_002 <sv_comment_rules.html#sv-comment-002>`_
 * `sv_comment_003 <sv_comment_rules.html#sv-comment-003>`_
@@ -249,9 +253,12 @@ Rules Disabled by Default
 * `sv_comment_006 <sv_comment_rules.html#sv-comment-006>`_
 * `sv_comment_007 <sv_comment_rules.html#sv-comment-007>`_
 * `sv_comment_008 <sv_comment_rules.html#sv-comment-008>`_
+* `sv_comment_009 <sv_comment_rules.html#sv-comment-009>`_
+* `sv_comment_010 <sv_comment_rules.html#sv-comment-010>`_
 * `sv_declaration_002 <sv_declaration_rules.html#sv-declaration-002>`_
 * `sv_declaration_003 <sv_declaration_rules.html#sv-declaration-003>`_
 * `sv_declaration_004 <sv_declaration_rules.html#sv-declaration-004>`_
+* `sv_declaration_005 <sv_declaration_rules.html#sv-declaration-005>`_
 * `sv_dimension_003 <sv_dimension_rules.html#sv-dimension-003>`_
 * `sv_dimension_004 <sv_dimension_rules.html#sv-dimension-004>`_
 * `sv_file_003 <sv_file_rules.html#sv-file-003>`_
@@ -282,6 +289,8 @@ Rules Disabled by Default
 * `sv_lint_014 <sv_lint_rules.html#sv-lint-014>`_
 * `sv_lint_015 <sv_lint_rules.html#sv-lint-015>`_
 * `sv_lint_016 <sv_lint_rules.html#sv-lint-016>`_
+* `sv_lint_017 <sv_lint_rules.html#sv-lint-017>`_
+* `sv_lint_018 <sv_lint_rules.html#sv-lint-018>`_
 * `sv_literal_003 <sv_literal_rules.html#sv-literal-003>`_
 * `sv_literal_004 <sv_literal_rules.html#sv-literal-004>`_
 * `sv_literal_005 <sv_literal_rules.html#sv-literal-005>`_
@@ -305,6 +314,9 @@ Rules Disabled by Default
 * `sv_module_015 <sv_module_rules.html#sv-module-015>`_
 * `sv_module_016 <sv_module_rules.html#sv-module-016>`_
 * `sv_module_017 <sv_module_rules.html#sv-module-017>`_
+* `sv_module_018 <sv_module_rules.html#sv-module-018>`_
+* `sv_module_019 <sv_module_rules.html#sv-module-019>`_
+* `sv_module_020 <sv_module_rules.html#sv-module-020>`_
 * `sv_naming_008 <sv_naming_rules.html#sv-naming-008>`_
 * `sv_naming_009 <sv_naming_rules.html#sv-naming-009>`_
 * `sv_naming_010 <sv_naming_rules.html#sv-naming-010>`_
@@ -367,6 +379,7 @@ Rules Disabled by Default
 * `sv_statement_049 <sv_statement_rules.html#sv-statement-049>`_
 * `sv_statement_050 <sv_statement_rules.html#sv-statement-050>`_
 * `sv_statement_051 <sv_statement_rules.html#sv-statement-051>`_
+* `sv_statement_052 <sv_statement_rules.html#sv-statement-052>`_
 * `type_015 <type_rules.html#type-015>`_
 * `type_100 <type_rules.html#type-100>`_
 * `type_200 <type_rules.html#type-200>`_

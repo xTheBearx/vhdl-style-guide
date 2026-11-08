@@ -2161,7 +2161,9 @@
         "sv_lint_013",
         "sv_lint_014",
         "sv_lint_015",
-        "sv_lint_016"
+        "sv_lint_016",
+        "sv_lint_017",
+        "sv_lint_018"
       ]
     },
     {
@@ -2472,6 +2474,9 @@
         "sv_always_027",
         "sv_always_028",
         "sv_always_029",
+        "sv_always_030",
+        "sv_always_031",
+        "sv_always_032",
         "sv_case_001",
         "sv_case_002",
         "sv_case_003",
@@ -2484,6 +2489,7 @@
         "sv_case_010",
         "sv_case_011",
         "sv_case_012",
+        "sv_case_013",
         "sv_comment_001",
         "sv_comment_002",
         "sv_comment_003",
@@ -2492,10 +2498,13 @@
         "sv_comment_006",
         "sv_comment_007",
         "sv_comment_008",
+        "sv_comment_009",
+        "sv_comment_010",
         "sv_declaration_001",
         "sv_declaration_002",
         "sv_declaration_003",
         "sv_declaration_004",
+        "sv_declaration_005",
         "sv_dimension_001",
         "sv_dimension_002",
         "sv_dimension_003",
@@ -2551,6 +2560,9 @@
         "sv_module_015",
         "sv_module_016",
         "sv_module_017",
+        "sv_module_018",
+        "sv_module_019",
+        "sv_module_020",
         "sv_statement_001",
         "sv_statement_002",
         "sv_statement_003",
@@ -2602,6 +2614,7 @@
         "sv_statement_049",
         "sv_statement_050",
         "sv_statement_051",
+        "sv_statement_052",
         "sv_syntax_001",
         "sv_typedef_001",
         "sv_typedef_002",
@@ -64305,6 +64318,147 @@
       ]
     },
     {
+      "id": "sv_always_030",
+      "alias": "sv_always_read_before_assignment",
+      "category": "sv_always",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that a combinational always block assigns each variable on every path before it reads it. It is disabled by default; the do254 rule set enables it (CP10, SS3).",
+      "documentation": "sv_always_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_always_031",
+      "alias": "sv_always_variable_holds_state",
+      "category": "sv_always",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that an edge triggered always block assigns each variable it writes with blocking assignments on every path before it reads it. It is disabled by default; the do254 rule set enables it (CP10), and the do254_plus rule set (VAR).",
+      "documentation": "sv_always_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_always_032",
+      "alias": "sv_always_default_assignment",
+      "category": "sv_always",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that a combinational always block gives every signal it assigns in if, case and loop statements a default value at its start. It is disabled by default; the do254_plus rule set enables it (DEFAULT).",
+      "documentation": "sv_always_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
       "id": "sv_blank_line_001",
       "alias": "sv_blank_line_end_of_file",
       "category": "sv_blank_line",
@@ -64961,6 +65115,53 @@
       ]
     },
     {
+      "id": "sv_case_013",
+      "alias": "sv_case_state_reachability",
+      "category": "sv_case",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that every state of a state machine can be entered and left. It is disabled by default; the do254 rule set enables it (CP6).",
+      "documentation": "sv_case_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
       "id": "sv_comment_001",
       "alias": "sv_comment_tool_directives",
       "category": "sv_comment",
@@ -65364,6 +65565,105 @@
       ]
     },
     {
+      "id": "sv_comment_009",
+      "alias": "sv_comment_hidden_region",
+      "category": "sv_comment",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for regions of code hidden from synthesis or from coverage. It is disabled by default; the do254_plus rule set enables it (PRAGMA).",
+      "documentation": "sv_comment_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_comment_010",
+      "alias": "sv_comment_requirement_tag",
+      "category": "sv_comment",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that modules and always blocks carry a requirement tag, for traceability to the hardware requirements. It is disabled by default; the do254_plus rule set enables it (REQ).",
+      "documentation": "sv_comment_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "pattern",
+          "default": "\\bREQ\\s*:\\s*\\S+",
+          "definition": "pattern"
+        }
+      ]
+    },
+    {
       "id": "sv_declaration_001",
       "alias": "sv_declaration_explicit_parameter_storage_type",
       "category": "sv_declaration",
@@ -65512,6 +65812,53 @@
         "structure"
       ],
       "summary": "This rule checks for initial values on signals and output ports: the declaration of a variable of a module, or of an output or inout port, with an initial value, such as logic q = 1'b0. Synthesis may ignore the value or turn it into a power-on value of the target, so simulation and hardware can start differently; reset the register instead. Constants, nets, whose initial value is a continuous assignment, the variables of functions, tasks, classes and procedural blocks, and the default values of input ports are not reported; initial blocks are reported by sv_statement_004. It is disabled by default; the do254 rule set enables it (SS16).",
+      "documentation": "sv_declaration_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_declaration_005",
+      "alias": "sv_declaration_unique_names",
+      "category": "sv_declaration",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that names are not used twice in a module: a variable declared in a block, function or generate block, a loop variable or a block label with the name of a port, signal, parameter, type, instance, function or task of the module. It is disabled by default; the do254 rule set enables it (DR3).",
       "documentation": "sv_declaration_rules.rst",
       "options": [
         {
@@ -67871,6 +68218,100 @@
       ]
     },
     {
+      "id": "sv_lint_017",
+      "alias": "sv_lint_unconnected_input_port",
+      "category": "sv_lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that every input and inout port of an instance is connected. It implements DO-254 check CP11.",
+      "documentation": "sv_lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_lint_018",
+      "alias": "sv_lint_unconnected_output_port",
+      "category": "sv_lint",
+      "groups": [
+        "lint"
+      ],
+      "summary": "This rule checks that every output port of an instance is connected. It implements DO-254 check CP12.",
+      "documentation": "sv_lint_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 7,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
       "id": "sv_literal_001",
       "alias": "sv_literal_undersized_binary",
       "category": "sv_literal",
@@ -69164,6 +69605,177 @@
         "structure"
       ],
       "summary": "This rule checks that the outputs of a module are registered, not driven by logic of a continuous assignment or a combinational always block, as the STARC guide recommends (1.6.2.1) for basic blocks. An output assigned a signal as it is, such as assign y_o = q, is taken to be registered. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_module_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_module_018",
+      "alias": "sv_module_names_across_hierarchy",
+      "category": "sv_module",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that a signal connected to a port of an instance has the name of the port, apart from prefixes and suffixes, so a signal keeps its name through the hierarchy. It is disabled by default; the do254 rule set enables it (DR9).",
+      "documentation": "sv_module_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        },
+        {
+          "name": "strip_prefixes",
+          "default": [
+            "i_",
+            "o_",
+            "io_",
+            "s_",
+            "r_",
+            "w_"
+          ],
+          "definition": "strip_prefixes"
+        },
+        {
+          "name": "strip_suffixes",
+          "default": [
+            "_i",
+            "_o",
+            "_io",
+            "_ni",
+            "_no",
+            "_s",
+            "_r",
+            "_n",
+            "_d",
+            "_q",
+            "_reg",
+            "_sig"
+          ],
+          "definition": "strip_suffixes"
+        }
+      ]
+    },
+    {
+      "id": "sv_module_019",
+      "alias": "sv_module_parameter_assertion",
+      "category": "sv_module",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that a module with parameters checks their values with an assertion. It is disabled by default; the do254_plus rule set enables it (GENERIC).",
+      "documentation": "sv_module_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_module_020",
+      "alias": "sv_module_inout_port",
+      "category": "sv_module",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for inout ports. It is disabled by default; the do254_plus rule set enables it (PORT).",
       "documentation": "sv_module_rules.rst",
       "options": [
         {
@@ -72686,6 +73298,53 @@
         "structure"
       ],
       "summary": "This rule checks for chains of inverters: a continuous assignment that only inverts a signal that another such assignment drives, such as assign b = ~a; assign c = ~b;. Synthesis removes the chain, so a delay or a buffer written this way is not built; logic implied by a chain of inversions should be written as what it means. It is disabled by default; the do254 rule set enables it (SS1).",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_052",
+      "alias": "sv_statement_combinational_feedback",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for combinational feedback in continuous assignments: a signal assigned from an expression that reads the signal itself. It is disabled by default; the do254 rule set enables it (SS3), with sv_always_030 for always blocks.",
       "documentation": "sv_statement_rules.rst",
       "options": [
         {

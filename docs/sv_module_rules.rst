@@ -389,3 +389,96 @@ enables it.
 .. code-block:: systemverilog
 
    always_ff @(posedge clk_i) y_o <= a & b;
+
+sv_module_018
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_module_names_across_hierarchy`
+
+This rule checks that a signal connected to a port of an instance has the name of the port, apart from prefixes
+and suffixes, so a signal keeps its name through the hierarchy. It is disabled by default; the do254 rule set
+enables it (DR9).
+
+A signal renamed at each level of the hierarchy is hard to follow from the top to the bottom of the design. The
+**strip_prefixes** and **strip_suffixes** options list the parts that are ignored, such as i\_ and _o, which mark
+direction or kind; names are compared ignoring case. Only named connections of a signal by name are checked, not
+selects, expressions, .name or .* connections.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   fifo u_fifo (
+       .wr_data_i (payload)
+   );
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   fifo u_fifo (
+       .wr_data_i (wr_data)
+   );
+
+sv_module_019
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_module_parameter_assertion`
+
+This rule checks that a module with parameters checks their values with an assertion. It is disabled by default;
+the do254_plus rule set enables it (GENERIC).
+
+A parameter value outside the range a design supports, such as a width of zero, otherwise goes unnoticed until
+the hardware fails. The rule accepts any assertion in the file, an $error, $fatal or $finish, such as one in a
+generate if that tests the parameters, or a macro named like an assertion, such as the ASSERT macros of lowRISC; also in code an
+ifdef directive leaves out, such as one testing FORMAL. Local parameters are not checked.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   module fifo #(
+       parameter int Depth = 16
+   ) (
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   if (Depth & (Depth - 1)) begin : g_depth_check
+       $error("Depth must be a power of two");
+   end
+
+sv_module_020
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_module_inout_port`
+
+This rule checks for inout ports. It is disabled by default; the do254_plus rule set enables it (PORT).
+
+An inout port implies a tri-state driver and belongs only on the top level, for device pins. Justify the inout
+ports of the top level with a waiver.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   module bus_ctrl (
+       inout wire [7:0] data_io
+   );
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   module bus_ctrl (
+       input  logic [7:0] data_i,
+       output logic [7:0] data_o,
+       output logic       data_oe_o
+   );

@@ -302,3 +302,44 @@ starc rule set enables it.
 
    casez (sel)
        4'b10??: y = a;
+
+sv_case_013
+###########
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_case_state_reachability`
+
+This rule checks that every state of a state machine can be entered and left. It is disabled by default; the
+do254 rule set enables it (CP6).
+
+A state machine is a case statement on a variable of an enum type declared in the file, whose items assign the
+variable or another variable of its type, such as the next state. A state that no assignment of the module gives
+those variables, other than the first value of the type, can never be entered, other than by reset; a state
+whose case item assigns no other state can never be left. Both are usually mistakes, and a state that cannot be
+left hangs the machine. A default assignment of a state before the case statement leaves every state. Design
+analysis proves the same through the logic, see design_047 and design_048.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   typedef enum logic [1:0] {Idle, Run, Done, Error} state_e;
+   ...
+   case (state_q)
+       Idle:    if (start) state_d = Run;
+       Run:     if (last) state_d = Done;
+       Done:    ;                  // never left
+       default: state_d = Idle;    // Error is never entered
+   endcase
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   case (state_q)
+       Idle:    if (start) state_d = Run;
+       Run:     if (last) state_d = Done; else if (fault) state_d = Error;
+       Done:    state_d = Idle;
+       default: state_d = Idle;
+   endcase

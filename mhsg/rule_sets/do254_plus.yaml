@@ -26,7 +26,7 @@ checks:
   PRAGMA:
     title: Justify code hidden from synthesis or coverage
     severity: Note
-    rules: [lint_015]
+    rules: [lint_015, sv_comment_009]
   PROCALL:
     title: Use process (all) for combinational processes
     severity: Note
@@ -34,7 +34,7 @@ checks:
   DEFAULT:
     title: Give signals default values at the start of combinational processes
     severity: Note
-    rules: [lint_024]
+    rules: [lint_024, sv_always_032]
 
   # Types and arithmetic
 
@@ -64,7 +64,7 @@ checks:
   VAR:
     title: Avoid variables that hold state in clocked processes
     severity: Warning
-    rules: [lint_022]
+    rules: [lint_022, sv_always_031]
   REGOUT:
     title: Register module outputs
     severity: Note
@@ -94,7 +94,7 @@ checks:
   PORT:
     title: Avoid buffer ports, and inout ports below the top level
     severity: Warning
-    rules: [lint_019]
+    rules: [lint_019, sv_module_020]
   NAMED:
     title: Use named association in port and generic maps
     severity: Warning
@@ -111,7 +111,7 @@ checks:
   GENERIC:
     title: Check generic values with assertions
     severity: Note
-    rules: [lint_023]
+    rules: [lint_023, sv_module_019]
   IFACE:
     title: Document the interface of each module, including clock, reset, protocol and latency
     severity: Note
@@ -122,7 +122,7 @@ checks:
   REQ:
     title: Tag entities and processes with the requirements they implement
     severity: Note
-    rules: [lint_018]
+    rules: [lint_018, sv_comment_010]
   DEAD:
     title: Remove commented-out code
     severity: Note

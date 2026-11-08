@@ -200,3 +200,54 @@ comments, are not reported. It is disabled by default; the do254_plus rule set e
 
    // Wait for the FIFO to empty
    if (empty) data_q <= '0;
+
+sv_comment_009
+##############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_comment_hidden_region`
+
+This rule checks for regions of code hidden from synthesis or from coverage. It is disabled by default; the
+do254_plus rule set enables it (PRAGMA).
+
+Code between // synopsys translate_off and translate_on, or under an ifndef SYNTHESIS directive, is simulated but not
+synthesized, and code between // coverage off and coverage on is not counted in coverage. Each such region should
+be justified, with a waiver that gives the reason.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   // synopsys translate_off
+   initial $display("width %0d", Width);
+   // synopsys translate_on
+
+sv_comment_010
+##############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_comment_requirement_tag`
+
+This rule checks that modules and always blocks carry a requirement tag, for traceability to the hardware
+requirements. It is disabled by default; the do254_plus rule set enables it (REQ).
+
+One of the comment lines directly above the module or always block, or the first comment inside it, must match
+the **pattern** option, a regular expression. The default accepts tags such as // REQ: HWR-123. Set the pattern
+to the tag format of your project.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   // Output register
+   always_ff @(posedge clk_i) begin
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   // Output register
+   // REQ: HWR-123
+   always_ff @(posedge clk_i) begin

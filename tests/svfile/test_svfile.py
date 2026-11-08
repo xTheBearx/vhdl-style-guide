@@ -988,6 +988,53 @@ class test_rules(unittest.TestCase):
             [s for s in lOutput if "(sv_statement_008)" in s],
         )
 
+    def test_do254_checks_more(self):
+        # The DO-254 checks of SystemVerilog files that follow paths through the code, instances, states and comments
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "do254_plus", "--lint_only", "-ap"], "do254_more.sv")
+        lRules = (
+            "sv_always_030",
+            "sv_always_031",
+            "sv_always_032",
+            "sv_case_013",
+            "sv_comment_009",
+            "sv_comment_010",
+            "sv_declaration_005",
+            "sv_lint_017",
+            "sv_lint_018",
+            "sv_module_018",
+            "sv_module_019",
+            "sv_module_020",
+            "sv_statement_052",
+        )
+        self.assertEqual(
+            [
+                "WARNING: do254_more.sv(8)DO254PLUS-REQ (sv_comment_010) -- Add a requirement tag matching \\bREQ\\s*:\\s*\\S+ to the module",
+                "WARNING: do254_more.sv(9)DO254PLUS-GENERIC (sv_module_019) -- Check the parameters of leaf with an assertion",
+                "WARNING: do254_more.sv(20)DO254PLUS-REQ (sv_comment_010) -- Add a requirement tag matching \\bREQ\\s*:\\s*\\S+ to the module",
+                "WARNING: do254_more.sv(25)DO254PLUS-PORT (sv_module_020) -- Use inout ports only on the top level, for device pins",
+                "WARNING: do254_more.sv(38)DO254-DR9 (sv_module_018) -- Signal payload connected to port data_i of u_leaf has another name",
+                "WARNING: do254_more.sv(40)DO254-CP12 (sv_lint_018) -- Output port 'valid_o' is explicitly connected to nothing",
+                "ERROR: do254_more.sv(43)DO254-CP11 (sv_lint_017) -- Input port 'data_i' has no connection",
+                "WARNING: do254_more.sv(45)DO254-DR9 (sv_module_018) -- Signal data_o2 connected to port data_o of u_leaf_open has another name",
+                "ERROR: do254_more.sv(49)DO254-SS3 (sv_statement_052) -- hold is assigned from itself, a combinational loop",
+                "WARNING: do254_more.sv(52)DO254PLUS-PRAGMA (sv_comment_009) -- Code from here is hidden from synthesis; justify the region",
+                "WARNING: do254_more.sv(56)DO254PLUS-REQ (sv_comment_010) -- Add a requirement tag matching \\bREQ\\s*:\\s*\\S+ to the always block",
+                "ERROR: do254_more.sv(57)DO254-CP6 (sv_case_013) -- State Fault of state_q is never assigned, so the machine never enters it",
+                "WARNING: do254_more.sv(58)DO254PLUS-DEFAULT (sv_always_032) -- Give state_d a default value at the start of the block",
+                "ERROR: do254_more.sv(60)DO254-CP6 (sv_case_013) -- State Done of state_q assigns no other state, so the machine never leaves it",
+                "WARNING: do254_more.sv(65)DO254PLUS-REQ (sv_comment_010) -- Add a requirement tag matching \\bREQ\\s*:\\s*\\S+ to the always block",
+                "ERROR: do254_more.sv(66)DO254-DR3 (sv_declaration_005) -- Rename count: the module declares a signal count too",
+                "WARNING: do254_more.sv(68)DO254PLUS-DEFAULT (sv_always_032) -- Give sum a default value at the start of the block",
+                "ERROR: do254_more.sv(69)DO254-CP10/DO254-SS3 (sv_always_030) -- Assign sum on every path before reading it: the block reads the value of its last run",
+                "WARNING: do254_more.sv(76)DO254PLUS-REQ (sv_comment_010) -- Add a requirement tag matching \\bREQ\\s*:\\s*\\S+ to the always block",
+                "WARNING: do254_more.sv(78)DO254-CP10/DO254PLUS-VAR (sv_always_031) -- acc keeps its value from the previous clock edge, a hidden register: assign it before reading it, or use a nonblocking assignment",
+            ],
+            [s for s in lOutput if any(f"({r})" in s for r in lRules)],
+        )
+        # The same design written to pass: defaults, tags, an assertion and every state entered and left
+        _, lOutput, _ = self.run_mhsg(["--rule_set", "do254_plus", "--lint_only", "-ap"], "do254_more_clean.sv")
+        self.assertEqual([], [s for s in lOutput if any(f"({r})" in s for r in lRules)])
+
     def test_sensitivity_list_branches(self):
         # t is written in both branches before it is read; u only in one, so its old value is read
         _, lOutput, _ = self.run_mhsg(["--lint_only", "--rule_set", "none"], "sensitivity_branches.sv")
@@ -1121,7 +1168,7 @@ class test_rules(unittest.TestCase):
         self.assertEqual(
             [
                 "ERROR: top.sv(9)sv_lint_005 -- Unused variable 'spare'",
-                "ERROR: top.sv(11)sv_lint_009 -- Output port 'unused_o' has no connection (slang UnconnectedOutputPort)",
+                "ERROR: top.sv(11)sv_lint_018 -- Output port 'unused_o' has no connection",
                 "ERROR: top.sv(13)sv_lint_001 -- Implicit conversion of port connection truncates from 8 to 4 bits",
                 "ERROR: top.sv(18)sv_lint_005 -- Unused variable 'extra'",
                 "ERROR: sub.sv(5)sv_lint_010 -- Undriven output port 'unused_o'",
