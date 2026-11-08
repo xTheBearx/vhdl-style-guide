@@ -303,7 +303,7 @@ def describe_settings():
             "path": ["design", "cdc"],
             "type": "cdc_constraints",
             "label": "Clock domain crossing constraints",
-            "description": "Names of clock sources (clocks), groups of synchronous clocks (clock_groups), the clock domains of input ports (inputs) and crossings waived with a justification (waivers).",
+            "description": "Names of clock sources (clocks), groups of synchronous clocks (clock_groups), the clock domains of input ports and whether the bits of a vector input are independent (inputs), and crossings waived with a justification (waivers).",
             "default": {},
         },
         {

@@ -18,6 +18,7 @@ pointers that control it cross safely, which the analysis checks.
 
 import fnmatch
 
+from mhsg import exceptions
 from mhsg.design import black_box, graph, netlist
 
 TRANSPARENT_TYPES = {"$pos", "$buf", "$not"}
@@ -111,6 +112,38 @@ def gray_pairs(lPairs):
     return all(len(s) == 2 for s in lPairs[:-1])
 
 
+INPUT_KEYS = ("domain", "bits")
+INPUT_BITS = ("independent", "bus")
+
+
+def input_value(sPort, oValue):
+    """
+    Returns (domain, whether the bits are independent) of an input of the cdc section: a domain, such as async or the
+    name of a clock, or a map {domain: ..., bits: independent} for a vector whose bits are signals of their own.
+    A ConfigurationError if it is neither.
+    """
+    if isinstance(oValue, dict):
+        lUnknown = sorted(str(s) for s in oValue if s not in INPUT_KEYS)
+        if lUnknown:
+            raise exceptions.ConfigurationError(
+                f"ERROR: unknown keys for input {sPort} in the cdc section: {', '.join(lUnknown)}; expected {', '.join(INPUT_KEYS)}",
+            )
+        if oValue.get("domain") is None or isinstance(oValue["domain"], (dict, list)) or not str(oValue["domain"]).strip():
+            raise exceptions.ConfigurationError(f"ERROR: input {sPort} in the cdc section needs a domain: async or the name of a clock")
+        sBits = str(oValue.get("bits", "bus")).lower()
+        if sBits not in INPUT_BITS:
+            raise exceptions.ConfigurationError(f"ERROR: bits is independent or bus for input {sPort} in the cdc section, not {oValue['bits']}")
+        return str(oValue["domain"]), sBits == "independent"
+    if oValue is None or isinstance(oValue, list):
+        raise exceptions.ConfigurationError(f"ERROR: input {sPort} in the cdc section maps to a domain, or a map with its domain and bits")
+    return str(oValue), False
+
+
+def input_constraints(dConstraints):
+    """Returns {input port in lower case: (domain, whether its bits are independent)} of the inputs of the cdc section."""
+    return {str(k).lower(): input_value(k, v) for k, v in ((dConstraints or {}).get("inputs") or {}).items()}
+
+
 class Analysis:
     def __init__(self, oFlat, dConstraints=None, fLocate=None, oBlackBoxes=None):
         self.flat = oFlat
@@ -122,6 +155,8 @@ class Analysis:
         # Returns (file, line) of a cell and the signal it drives; the location of the cell itself by default
         self.locate = fLocate or self.cell_location
         self.constraints = dConstraints or {}
+        # {input port in lower case: (domain, whether its bits are independent signals)}
+        self.inputs = input_constraints(self.constraints)
         self.clocks = {}
         self.cell_clock = {}
         self.crossings = []
@@ -421,8 +456,7 @@ class Analysis:
         """Returns the Clock of a source point, the string "async" for an asynchronous input, or None if unknown."""
         oCell, sPort, _ = tPoint
         if oCell is None:
-            dInputs = {str(k).lower(): str(v) for k, v in (self.constraints.get("inputs") or {}).items()}
-            sDomain = dInputs.get(sPort.lower())
+            sDomain = self.inputs.get(sPort.lower(), (None, False))[0]
             if sDomain is None:
                 return None
             if sDomain.lower() == "async":
@@ -447,6 +481,10 @@ class Analysis:
         if oRole.kind == "async":
             return "async"
         return None
+
+    def independent(self, tPoint):
+        """Returns whether a source point is a bit of an input port whose bits the cdc section declares independent."""
+        return tPoint[0] is None and self.inputs.get(tPoint[1].lower(), (None, False))[1]
 
     @staticmethod
     def related(oFirst, oSecond):
@@ -645,6 +683,10 @@ class Analysis:
                 break
         if oCrossing.status == SYNCHRONIZED:
             oCrossing.detail = f"{oCrossing.stages} stages"
+            # The vector inputs declared independent, so that a reviewer sees why their bits are not a bus
+            lIndependent = sorted({t[1] for _, t in oCrossing.first_stages if self.independent(t) and len(self.flat.top_ports[t[1]][1]) > 1})
+            if lIndependent:
+                oCrossing.detail += f", the bits of {' and '.join(lIndependent)} are independent"
         elif oCrossing.status == UNSYNCHRONIZED:
             oCrossing.detail = "captured without a synchronizer" if oCrossing.stages < 2 else "enable or reset from another clock domain"
         elif oCrossing.status == LOGIC:
@@ -657,6 +699,9 @@ class Analysis:
             if oCrossing.status != SYNCHRONIZED:
                 continue
             for _, tSource in oCrossing.first_stages:
+                # The bits of an input port declared independent are signals of their own, not a bus
+                if self.independent(tSource):
+                    continue
                 # A top input port is a source of its own, by its name
                 oKey = id(tSource[0]) if tSource[0] is not None else ("port", tSource[1])
                 tKey = (oKey, oCrossing.clock.group)
@@ -739,7 +784,7 @@ class Analysis:
                 if oSourceDomain is None:
                     continue
                 sGroup = "async" if oSourceDomain == "async" else oSourceDomain.group
-                if sStatus in (GRAY, BUS):
+                if sStatus in (GRAY, BUS) and not self.independent(tSource):
                     # A top input port is a source of its own, by its name, see _find_buses
                     tBus = (id(tSource[0]) if tSource[0] is not None else ("port", tSource[1]), oCrossing.clock.group)
                     if tBus not in dBusTags:
@@ -1230,7 +1275,7 @@ class Analysis:
         for oCell in lRegisters:
             oRoot = self.reset_root(self.reset_source(oCell)[1])
             dGroups.setdefault(oRoot, []).append(oCell)
-        dInputs = {str(k).lower(): str(v).lower() for k, v in (self.constraints.get("inputs") or {}).items()}
+        dInputs = {k: t[0].lower() for k, t in self.inputs.items()}
         dFindings = {}
         for oRoot, lCells in dGroups.items():
             if not graph.is_variable(oRoot):
@@ -1713,6 +1758,11 @@ class Analysis:
                     "from": oDomain.parent.name if oDomain.parent else None,
                 },
             )
+        # The inputs as the cdc section declares them, with whether their bits are independent signals or a bus
+        dReturn["inputs"] = []
+        for sPort, oValue in sorted((self.constraints.get("inputs") or {}).items(), key=lambda t: str(t[0]).lower()):
+            sDomain, bIndependent = input_value(sPort, oValue)
+            dReturn["inputs"].append({"port": str(sPort), "domain": sDomain, "bits": "independent" if bIndependent else "bus"})
         for oCrossing in self.crossings:
             sFile, iLine = self.locate(oCrossing.cell, oCrossing.name.split(".")[-1])
             dReturn["crossings"].append(
@@ -1832,6 +1882,10 @@ def report_text(dReport):
         lLines.append(
             f"  {dClock['name']}: {dClock['kind']} {dClock['source'].split(' ', 1)[-1]}, group {dClock['group']}, {'1 register' if dClock['registers'] == 1 else str(dClock['registers']) + ' registers'}{sFrom}",
         )
+    if dReport.get("inputs"):
+        lLines += ["", "Inputs"]
+        for dInput in dReport["inputs"]:
+            lLines.append(f"  {dInput['port']}: {dInput['domain']}" + (", bits independent" if dInput["bits"] == "independent" else ""))
     lLines += ["", "Crossings"]
     if not dReport["crossings"]:
         lLines.append("  none")

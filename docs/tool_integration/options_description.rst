@@ -126,5 +126,5 @@ Some settings have a type of their own:
 * **generic_map**: an object which maps generic names to values.
 * **vendor_library_list**: a list of vendor names, maps with :code:`vendor` and optionally :code:`family` and :code:`path`, or maps with :code:`library` and :code:`files`. See :doc:`../design_analysis`.
 * **black_box_map**: an object which maps black box types, or instance paths, to declarations. See :doc:`../design_analysis`.
-* **cdc_constraints**: an object with the keys :code:`clocks`, :code:`clock_groups`, :code:`inputs` and :code:`waivers`. See :doc:`../design_analysis`.
+* **cdc_constraints**: an object with the keys :code:`clocks`, :code:`clock_groups`, :code:`inputs` and :code:`waivers`. An input maps to its domain, or to a map of its :code:`domain` and :code:`bits` (:code:`bus` or :code:`independent`). See :doc:`../design_analysis`.
 * **indent_table**: an object which maps a token group to token names, each with a :code:`token` and an :code:`after` value. The default is the complete built in table.

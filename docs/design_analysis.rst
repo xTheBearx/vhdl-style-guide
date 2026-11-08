@@ -306,7 +306,8 @@ A register of another, asynchronous domain is a crossing, classified as:
 | bus synchronized bit by bit    | Several bits of one register synchronized one by one, by one register or by     |
 |                                | registers of a bit each: they can arrive in different cycles. A bit synchronized|
 |                                | alone beside them, such as a flag of the same record, is a signal of its own.   |
-|                                | Reported by design_009.                                                         |
+|                                | So is each bit of an input port declared with independent bits, see             |
+|                                | Constraints. Reported by design_009.                                            |
 +--------------------------------+---------------------------------------------------------------------------------+
 | logic before synchronizer      | Logic between the domains feeds the first stage and can glitch. Reported by     |
 |                                | design_009.                                                                     |
@@ -326,6 +327,7 @@ design_016 reports a reconvergence; registers further on are not reported again.
 every meeting, whether or not a test exercises it.
 
 * The bits of one bus share a tag: a gray-coded bus is meant to be combined, and design_009 reports other buses.
+  Each bit of an input port declared with independent bits has a tag of its own.
 * A signal combined with a delayed copy of itself, as in an edge detector, carries one tag.
 * A synchronous reset, an input that loads a constant into two or more registers, is a reset path rather than data
   and is not followed, unless design_016 has :code:`follow_resets: true`. A set or clear of a single register is
@@ -358,6 +360,8 @@ clock is too (design_015), and a reset made by logic or by another register is i
          # The clock domain of input ports, or async; other inputs are not checked
          uart_rx: async
          sync_rst: sys_clk
+         # A vector whose bits are signals of their own, such as flags from unrelated sources
+         flags_i: {domain: async, bits: independent}
        waivers:
          - signal: u_status.flags_meta
            justification: Quasi-static status bits, read only after the run has stopped
@@ -371,6 +375,13 @@ clock is too (design_015), and a reset made by logic or by another register is i
            value: 0
            justification: The reset controller clears iso_n two cycles before it asserts rst_a
 
+An input is declared with its domain, or with a map of its **domain** and **bits**. The bits of a vector input are a bus
+by default, :code:`bits: bus`, as in :code:`uart_rx: async`: synchronized one by one, they can arrive in different cycles
+(design_009), and they share one reconvergence tag. With :code:`bits: independent` each bit is a signal of its own: the
+bits synchronized one by one are not a bus, and each has its own tag, so two of them combined after their
+synchronizers are a reconvergence (design_016). Declare it only for bits that the source does not change together,
+such as flags from unrelated logic; a value of several bits is a bus. The crossing report lists the inputs as declared,
+and says of a crossing that its bits are independent.
 A waiver names the destination register of a crossing, as the report names it, or a pattern such as ``u_status.*``.
 **clears** names registers, or patterns, that load a constant into other registers as a clear rather than a reset.
 design_016 does not follow a synchronous reset of two or more registers, unless :code:`follow_resets` is set; a clear
@@ -385,8 +396,8 @@ bits, and one bit is named with its position, such as :code:`u_ctrl.iso[2]`, as 
 A waiver without a justification is reported by design_008. Other findings of design analysis are waived with the
 waivers of the configuration, see :ref:`waivers`.
 
-**Report.** :code:`--cdc_report FILE` writes every clock and crossing, with its status, sources and location, and
-the reset findings: as JSON for a file ending in .json, otherwise as text. It ends with the record of the run, the
+**Report.** :code:`--cdc_report FILE` writes every clock, the inputs declared in the cdc section and every crossing,
+with its status, sources and location, and the reset findings: as JSON for a file ending in .json, otherwise as text. It ends with the record of the run, the
 versions of MHSG, GHDL and Yosys and the configuration used (see :ref:`the record of the run <run_record>`):
 
 .. code-block:: text
