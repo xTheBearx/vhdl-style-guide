@@ -465,3 +465,71 @@ module being part of the design.
 
    // global_parameters.svh
    `define BUS_WIDTH 32
+
+sv_lint_017
+###########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`sv_lint_unconnected_input_port`
+
+This rule checks that every input and inout port of an instance is connected. It implements DO-254 check CP11.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and reports what slang finds when it elaborates the file.
+
+An input port that is missing from the connections of an instance, or connected to nothing, as .addr(), floats or
+takes its default value. Ports of modules slang does not know, from files outside the run, are not checked.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   fifo u_fifo (
+       .clk_i  (clk_i),
+       .data_i (),
+       .data_o (data)
+   );
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   fifo u_fifo (
+       .clk_i  (clk_i),
+       .data_i (payload),
+       .data_o (data)
+   );
+
+sv_lint_018
+###########
+
+|phase_7| |disabled| |error| |unfixable| |lint|
+
+Alias: :code:`sv_lint_unconnected_output_port`
+
+This rule checks that every output port of an instance is connected. It implements DO-254 check CP12.
+
+.. NOTE:: This is a lint rule. It runs in lint mode and reports what slang finds when it elaborates the file.
+
+An output port that is missing from the connections of an instance, or connected to nothing, as .valid_o(), is
+not used. That is sometimes intended, for example for a debug output, and should then be justified with a waiver.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   fifo u_fifo (
+       .clk_i   (clk_i),
+       .data_o  (data),
+       .empty_o ()
+   );
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   fifo u_fifo (
+       .clk_i   (clk_i),
+       .data_o  (data),
+       .empty_o (empty)
+   );

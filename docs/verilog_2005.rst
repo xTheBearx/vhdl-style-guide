@@ -162,6 +162,15 @@ Of the 226 rules, 204 apply to both, 7 to both with Verilog advice and 15 to Sys
    * - :code:`sv_always_029`
      - Both
      - Named begin-end blocks: the same in Verilog-2005
+   * - :code:`sv_always_030`
+     - Both
+     - Combinational always blocks, always @*: the same in Verilog-2005
+   * - :code:`sv_always_031`
+     - Both
+     - Edge triggered always blocks: the same in Verilog-2005
+   * - :code:`sv_always_032`
+     - Both
+     - Combinational always blocks, always @*: the same in Verilog-2005
    * - :code:`sv_blank_line_001`
      - Both
      - Blank lines only: the same in Verilog-2005
@@ -201,6 +210,9 @@ Of the 226 rules, 204 apply to both, 7 to both with Verilog advice and 15 to Sys
    * - :code:`sv_case_012`
      - Both
      - Wildcards of casex and casez items: the same in Verilog-2005
+   * - :code:`sv_case_013`
+     - Both
+     - Case statements on enum variables: finds nothing in Verilog-2005, which has no enum types
    * - :code:`sv_comment_001`
      - Both
      - Comments only: the same in Verilog-2005
@@ -225,6 +237,12 @@ Of the 226 rules, 204 apply to both, 7 to both with Verilog advice and 15 to Sys
    * - :code:`sv_comment_008`
      - Both
      - Comments, read as SystemVerilog, which holds Verilog-2005: the same in Verilog-2005
+   * - :code:`sv_comment_009`
+     - Both
+     - Pragma comments and ifndef SYNTHESIS directives: the same in Verilog-2005
+   * - :code:`sv_comment_010`
+     - Both
+     - Comments of modules and always blocks: the same in Verilog-2005
    * - :code:`sv_declaration_001`
      - Both, Verilog advice
      - Verilog-2005 can type a parameter only as integer, real, realtime or time: a range or signed counts as a type, and the advice names integer or a range
@@ -237,6 +255,9 @@ Of the 226 rules, 204 apply to both, 7 to both with Verilog advice and 15 to Sys
    * - :code:`sv_declaration_004`
      - Both
      - Initial values of variables, such as reg q = 0: the same in Verilog-2005
+   * - :code:`sv_declaration_005`
+     - Both
+     - Names declared in blocks, functions and generate blocks: the same in Verilog-2005
    * - :code:`sv_dimension_001`
      - Both
      - Ranges of vectors: the same in Verilog-2005
@@ -381,6 +402,12 @@ Of the 226 rules, 204 apply to both, 7 to both with Verilog advice and 15 to Sys
    * - :code:`sv_lint_016`
      - Both
      - Macros of a run: the same in Verilog-2005
+   * - :code:`sv_lint_017`
+     - Both
+     - Port connections of instances: the same in Verilog-2005
+   * - :code:`sv_lint_018`
+     - Both
+     - Port connections of instances: the same in Verilog-2005
    * - :code:`sv_literal_001`
      - Both
      - Binary literals: the same in Verilog-2005
@@ -462,6 +489,15 @@ Of the 226 rules, 204 apply to both, 7 to both with Verilog advice and 15 to Sys
    * - :code:`sv_module_017`
      - Both, Verilog advice
      - Outputs driven by continuous assignments and combinational blocks: always_comb, or always @* and lists without edges in Verilog files
+   * - :code:`sv_module_018`
+     - Both
+     - Named port connections: the same in Verilog-2005
+   * - :code:`sv_module_019`
+     - Both
+     - Parameters and their checks: Verilog-2005 has no $error, and checks them with $finish
+   * - :code:`sv_module_020`
+     - Both
+     - Inout ports: the same in Verilog-2005
    * - :code:`sv_naming_001`
      - Both
      - Parameter names: the same in Verilog-2005
@@ -673,6 +709,9 @@ Of the 226 rules, 204 apply to both, 7 to both with Verilog advice and 15 to Sys
      - Both
      - Repeated expressions: the same in Verilog-2005
    * - :code:`sv_statement_051`
+     - Both
+     - Continuous assignments: the same in Verilog-2005
+   * - :code:`sv_statement_052`
      - Both
      - Continuous assignments: the same in Verilog-2005
    * - :code:`sv_syntax_001`

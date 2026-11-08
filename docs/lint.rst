@@ -5,9 +5,11 @@ Lint Mode
 
 Besides style, MHSG can check VHDL, Verilog and SystemVerilog for design problems such as latches, multiple drivers or incomplete case statements.
 These lint checks only report; they never change the code.
-For SystemVerilog and Verilog files the lint rules are :code:`sv_lint_001` to :code:`sv_lint_010`, which report
-what slang finds when it elaborates the file, and :code:`sv_lint_011` to :code:`sv_lint_013`, which report
-Verilator's warnings when Verilator is installed, see :doc:`systemverilog`. The **do254** rule set labels them with
+For SystemVerilog and Verilog files the lint rules are :code:`sv_lint_001` to :code:`sv_lint_010`,
+:code:`sv_lint_017` and :code:`sv_lint_018`, which report what slang finds when it elaborates the file,
+:code:`sv_lint_014` to :code:`sv_lint_016`, which check the files of a run against each other, and
+:code:`sv_lint_011` to :code:`sv_lint_013`, which report Verilator's warnings when Verilator is installed, see
+:doc:`systemverilog`. The **do254** rule set labels them with
 its checks too.
 
 Verilog files, :code:`.v` and :code:`.vh`, are read as Verilog-2005: a check whose rules all need SystemVerilog, such
@@ -250,7 +252,9 @@ The DO-254 rule set
 
 This table is generated from :code:`mhsg/rule_sets/do254.yaml`. The rules named sv\_ implement the checks for
 SystemVerilog and Verilog files, see :doc:`systemverilog`; under do254, sv_statement_008 nests at most 4 deep and
-sv_comment_007 asks for 20 percent of comments, the limits of lint_030 and lint_042.
+sv_comment_007 asks for 20 percent of comments, the limits of lint_030 and lint_042. Like lint_037, sv_case_013
+finds the state machines whose enum type the file declares; a type declared in a package of another file is not
+checked.
 DR13 lists the naming rules but does not enable them: configure the prefixes and suffixes of your project, then enable the naming rules.
 Some checks have options a project usually sets: the fields of the file header (lint_041, **required_fields**), the
 share of comments (lint_042, **minimum_percent**), the nesting limit (lint_030, **nesting_limit**), the direction of

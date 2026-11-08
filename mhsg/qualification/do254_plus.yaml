@@ -1436,6 +1436,47 @@ cases:
 - rule: sv_always_029
   file: examples/svfile/code_tags.sv
   expected: []
+- rule: sv_always_030
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 42
+    - 'Assign v on every path before reading it: the block reads the value of its last run'
+  - - 52
+    - 'Assign v on every path before reading it: the block reads the value of its last run'
+- rule: sv_always_030
+  file: examples/svfile/do254_more.sv
+  expected:
+  - - 69
+    - 'Assign sum on every path before reading it: the block reads the value of its last run'
+- rule: sv_always_030
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_always_031
+  file: examples/svfile/do254_more.sv
+  expected:
+  - - 78
+    - 'acc keeps its value from the previous clock edge, a hidden register: assign it before reading it, or use a nonblocking assignment'
+- rule: sv_always_031
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_always_032
+  file: examples/svfile/alignment.fixed.sv
+  expected:
+  - - 20
+    - Give valid a default value at the start of the block
+- rule: sv_always_032
+  file: examples/svfile/alignment.sv
+  expected:
+  - - 20
+    - Give valid a default value at the start of the block
+- rule: sv_always_032
+  file: examples/svfile/continuation.fixed.sv
+  expected:
+  - - 21
+    - Give flag a default value at the start of the block
+- rule: sv_always_032
+  file: examples/svfile/brackets.fixed.sv
+  expected: []
 - rule: sv_case_001
   file: examples/svfile/structure.fixed.sv
   expected:
@@ -1467,6 +1508,16 @@ cases:
   - - 33
     - Name the state encoding 2'd0 with a parameter
 - rule: sv_case_008
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_case_013
+  file: examples/svfile/do254_more.sv
+  expected:
+  - - 57
+    - State Fault of state_q is never assigned, so the machine never enters it
+  - - 60
+    - State Done of state_q assigns no other state, so the machine never leaves it
+- rule: sv_case_013
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_comment_003
@@ -1513,20 +1564,52 @@ cases:
 - rule: sv_comment_008
   file: examples/svfile/alignment.fixed.sv
   expected: []
+- rule: sv_comment_009
+  file: examples/svfile/do254_more.sv
+  expected:
+  - - 52
+    - Code from here is hidden from synthesis; justify the region
+- rule: sv_comment_009
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_comment_010
+  file: examples/svfile/alignment.fixed.sv
+  expected:
+  - - 1
+    - Add a requirement tag matching \bREQ\s*:\s*\S+ to the module
+  - - 18
+    - Add a requirement tag matching \bREQ\s*:\s*\S+ to the always block
+- rule: sv_comment_010
+  file: examples/svfile/alignment.sv
+  expected:
+  - - 1
+    - Add a requirement tag matching \bREQ\s*:\s*\S+ to the module
+  - - 18
+    - Add a requirement tag matching \bREQ\s*:\s*\S+ to the always block
+- rule: sv_comment_010
+  file: examples/svfile/brackets.fixed.sv
+  expected:
+  - - 1
+    - Add a requirement tag matching \bREQ\s*:\s*\S+ to the module
+  - - 11
+    - Add a requirement tag matching \bREQ\s*:\s*\S+ to the always block
+- rule: sv_comment_010
+  file: examples/svfile/do254_more_clean.sv
+  expected: []
 - rule: sv_declaration_003
   file: examples/svfile/declarations.sv
   expected:
   - - 23
     - Declare one signal per declaration
 - rule: sv_declaration_003
-  file: examples/svfile/indent.sv
+  file: examples/svfile/do254_more.sv
   expected:
-  - - 31
+  - - 29
     - Declare one signal per declaration
 - rule: sv_declaration_003
-  file: examples/svfile/lists.fixed.sv
+  file: examples/svfile/do254_more_clean.sv
   expected:
-  - - 3
+  - - 31
     - Declare one signal per declaration
 - rule: sv_declaration_003
   file: examples/svfile/alignment.fixed.sv
@@ -1539,6 +1622,14 @@ cases:
   - - 10
     - Remove the initial value of q_o, and reset it instead
 - rule: sv_declaration_004
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_declaration_005
+  file: examples/svfile/do254_more.sv
+  expected:
+  - - 66
+    - 'Rename count: the module declares a signal count too'
+- rule: sv_declaration_005
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_dimension_001
@@ -1663,15 +1754,15 @@ cases:
   - - 42
     - Latch inferred for 'v' because it is not assigned on all control paths
 - rule: sv_lint_002
+  file: examples/svfile/do254_more.sv
+  expected:
+  - - 58
+    - Latch inferred for 'state_d' because it is not assigned on all control paths
+- rule: sv_lint_002
   file: examples/svfile/lint.sv
   expected:
   - - 16
     - Latch inferred for 'l_o' because it is not assigned on all control paths
-- rule: sv_lint_002
-  file: examples/svfile/starc_more2.sv
-  expected:
-  - - 46
-    - Latch inferred for 't' because it is not assigned on all control paths
 - rule: sv_lint_002
   file: examples/svfile/alignment.fixed.sv
   expected: []
@@ -1860,6 +1951,22 @@ cases:
   expected:
   - - 12
     - Case values incompletely covered (example pattern 0x2) (Verilator CASEINCOMPLETE)
+- rule: sv_lint_017
+  file: examples/svfile/do254_more.sv
+  expected:
+  - - 43
+    - Input port 'data_i' has no connection
+- rule: sv_lint_017
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_lint_018
+  file: examples/svfile/do254_more.sv
+  expected:
+  - - 40
+    - Output port 'valid_o' is explicitly connected to nothing
+- rule: sv_lint_018
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
 - rule: sv_literal_010
   file: examples/svfile/declarations.sv
   expected:
@@ -1895,6 +2002,52 @@ cases:
   - - 12
     - Connect the ports by name
 - rule: sv_module_003
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_module_018
+  file: examples/svfile/alignment.fixed.sv
+  expected:
+  - - 15
+    - Signal data connected to port data_in_i of u_sub has another name
+- rule: sv_module_018
+  file: examples/svfile/alignment.sv
+  expected:
+  - - 15
+    - Signal data connected to port data_in_i of u_sub has another name
+- rule: sv_module_018
+  file: examples/svfile/do254_more.sv
+  expected:
+  - - 38
+    - Signal payload connected to port data_i of u_leaf has another name
+  - - 45
+    - Signal data_o2 connected to port data_o of u_leaf_open has another name
+- rule: sv_module_018
+  file: examples/svfile/brackets.fixed.sv
+  expected: []
+- rule: sv_module_019
+  file: examples/svfile/brackets.fixed.sv
+  expected:
+  - - 2
+    - Check the parameters of brackets with an assertion
+- rule: sv_module_019
+  file: examples/svfile/brackets.sv
+  expected:
+  - - 2
+    - Check the parameters of brackets with an assertion
+- rule: sv_module_019
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 10
+    - Check the parameters of declarations with an assertion
+- rule: sv_module_019
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_module_020
+  file: examples/svfile/do254_more.sv
+  expected:
+  - - 25
+    - Use inout ports only on the top level, for device pins
+- rule: sv_module_020
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: sv_naming_002
@@ -1949,14 +2102,14 @@ cases:
   - - 40
     - Remove the initial block from design code
 - rule: sv_statement_004
+  file: examples/svfile/do254_more.sv
+  expected:
+  - - 53
+    - Remove the initial block from design code
+- rule: sv_statement_004
   file: examples/svfile/starc_more4.sv
   expected:
   - - 26
-    - Remove the initial block from design code
-- rule: sv_statement_004
-  file: examples/svfile/starc_more5.sv
-  expected:
-  - - 41
     - Remove the initial block from design code
 - rule: sv_statement_004
   file: examples/svfile/alignment.fixed.sv
@@ -1996,6 +2149,14 @@ cases:
   - - 23
     - 'a_d inverts a_n, which inverts a signal too: remove the chain of inverters'
 - rule: sv_statement_051
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_052
+  file: examples/svfile/do254_more.sv
+  expected:
+  - - 49
+    - hold is assigned from itself, a combinational loop
+- rule: sv_statement_052
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: type_014

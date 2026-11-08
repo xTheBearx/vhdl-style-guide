@@ -184,6 +184,16 @@ a reset used with two polarities or styles (:code:`sv_always_028`, SS13), unlabe
 (:code:`sv_always_029`, DR1), initial values on signals and outputs (:code:`sv_declaration_004`, SS16), chains of
 inverters (:code:`sv_statement_051`, SS1) and commented-out code (:code:`sv_comment_008`, DEAD), with the SystemVerilog
 rules of the STARC rule set that match a check, such as numbers named with parameters (:code:`sv_literal_010`, CP3).
+Rules that follow the paths through an always block report variables read before every path assigns them: in a
+combinational block, a latch or a loop (:code:`sv_always_030`, CP10 and SS3), in a clocked block, a hidden register
+(:code:`sv_always_031`, VAR), and signals of a combinational block without a default value (:code:`sv_always_032`,
+DEFAULT). Others report states of a state machine never entered or never left (:code:`sv_case_013`, CP6),
+unconnected instance ports (:code:`sv_lint_017` and :code:`sv_lint_018`, CP11 and CP12), a continuous assignment
+that reads its own target (:code:`sv_statement_052`, SS3), names declared twice in a module
+(:code:`sv_declaration_005`, DR3), signals renamed at a port (:code:`sv_module_018`, DR9), parameters without an
+assertion (:code:`sv_module_019`, GENERIC), inout ports (:code:`sv_module_020`, PORT), code hidden from synthesis or
+coverage (:code:`sv_comment_009`, PRAGMA) and modules and always blocks without a requirement tag
+(:code:`sv_comment_010`, REQ).
 The line length, file length and tab rules check every language. The checks that only apply to VHDL, such as
 deferred constants (SS7), say so in the coverage tables of :doc:`lint`.
 

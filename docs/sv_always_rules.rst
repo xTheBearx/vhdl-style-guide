@@ -759,3 +759,107 @@ rule set enables it (DR1), with sv_generate_001 for the blocks of generate const
    always_ff @(posedge clk_i) begin : p_count
        count <= count + 1;
    end
+
+sv_always_030
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_read_before_assignment`
+
+This rule checks that a combinational always block assigns each variable on every path before it reads it. It is
+disabled by default; the do254 rule set enables it (CP10, SS3).
+
+A variable read before it is assigned holds the value of the last run of the block: synthesis makes a latch, or a
+combinational loop when the variable is a signal of the module, and simulation and hardware can differ. The rule
+follows the paths through if and case statements: an if without else, or a case without a default item that is
+not a unique or priority case, may assign nothing. Variables assigned through an element, a slice or a member
+are not checked.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_comb begin
+       if (enable) sum = a + b;
+       result = sum;
+   end
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_comb begin
+       sum = '0;
+       if (enable) sum = a + b;
+       result = sum;
+   end
+
+sv_always_031
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_variable_holds_state`
+
+This rule checks that an edge triggered always block assigns each variable it writes with blocking assignments
+on every path before it reads it. It is disabled by default; the do254 rule set enables it (CP10), and the
+do254_plus rule set (VAR).
+
+Such a variable keeps its value from the previous clock edge, so synthesis makes it a register. That register is
+easy to overlook, because no nonblocking assignment shows it. Assign the variable before reading it, or make the
+register explicit with a nonblocking assignment.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i) begin
+       count = count + 1;
+       count_o <= count;
+   end
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_ff @(posedge clk_i) begin
+       count_q <= count_q + 1;
+   end
+
+sv_always_032
+#############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_always_default_assignment`
+
+This rule checks that a combinational always block gives every signal it assigns in if, case and loop statements
+a default value at its start. It is disabled by default; the do254_plus rule set enables it (DEFAULT).
+
+A default assignment before the if and case statements makes sure every path assigns the signal, so no latch can be
+inferred, and shows the value of the signal when no branch changes it. Variables declared in the block, and loop
+variables, are not checked.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   always_comb begin
+       case (state_q)
+           Idle:    state_d = Start;
+           default: state_d = Idle;
+       endcase
+   end
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   always_comb begin
+       state_d = state_q;
+       case (state_q)
+           Idle:    state_d = Start;
+           default: state_d = Idle;
+       endcase
+   end

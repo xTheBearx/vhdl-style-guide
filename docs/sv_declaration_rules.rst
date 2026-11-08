@@ -100,3 +100,36 @@ sv_statement_004. It is disabled by default; the do254 rule set enables it (SS16
    always_ff @(posedge clk_i or negedge rst_ni)
        if (!rst_ni) busy <= 1'b0;
        else busy <= start_i;
+
+sv_declaration_005
+##################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_declaration_unique_names`
+
+This rule checks that names are not used twice in a module: a variable declared in a block, function or generate
+block, a loop variable or a block label with the name of a port, signal, parameter, type, instance, function or
+task of the module. It is disabled by default; the do254 rule set enables it (DR3).
+
+A variable with the name of a signal hides the signal in its block, so a reader cannot tell which one a statement
+uses; a label with the name of a signal makes messages and waveforms ambiguous. The ports of functions and tasks
+are not checked.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   logic [3:0] count;
+
+   always_comb begin
+       int count;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   logic [3:0] count;
+
+   always_comb begin
+       int count_v;

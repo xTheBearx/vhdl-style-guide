@@ -47,7 +47,7 @@ checks:
   CP6:
     title: Ensure safe FSM transitions
     severity: Error
-    rules: [lint_037]
+    rules: [lint_037, sv_case_013]
     note: 'Per file: states never entered, and states never left. Through the logic, with SymbiYosys, enabled on their own: design_025 proves branches never taken from reset, design_047 states never entered and design_048 states after which the machine never returns to its reset state.'
   CP7:
     title: Avoid mismatching ranges
@@ -64,15 +64,15 @@ checks:
   CP10:
     title: Assign value before using
     severity: Warning
-    rules: [lint_022, lint_028]
+    rules: [lint_022, lint_028, sv_always_030, sv_always_031]
   CP11:
     title: Avoid unconnected input ports
     severity: Error
-    rules: [lint_003]
+    rules: [lint_003, sv_lint_017]
   CP12:
     title: Avoid unconnected output ports
     severity: Note
-    rules: [lint_004]
+    rules: [lint_004, sv_lint_018]
   CP13:
     title: Declare objects before use
     severity: Error
@@ -104,7 +104,7 @@ checks:
   SS3:
     title: Avoid combinational feedback
     severity: Error
-    rules: [lint_008, design_003]
+    rules: [lint_008, design_003, sv_statement_052, sv_always_030]
   SS4:
     title: Avoid latch inference
     severity: Warning
@@ -203,7 +203,7 @@ checks:
   DR3:
     title: Ensure unique name spaces
     severity: Error
-    rules: [lint_039]
+    rules: [lint_039, sv_declaration_005]
   DR4:
     title: Use separate declaration style
     severity: Note
@@ -227,7 +227,7 @@ checks:
   DR9:
     title: Ensure consistent signal names across hierarchy
     severity: Warning
-    rules: [lint_040]
+    rules: [lint_040, sv_module_018]
   DR10:
     title: Ensure consistent file header
     severity: Warning

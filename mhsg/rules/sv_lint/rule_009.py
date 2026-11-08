@@ -10,6 +10,8 @@ from mhsg.rules.sv_lint.rule_005 import rule_005
 from mhsg.rules.sv_lint.rule_006 import rule_006
 from mhsg.rules.sv_lint.rule_007 import rule_007
 from mhsg.rules.sv_lint.rule_010 import rule_010
+from mhsg.rules.sv_lint.rule_017 import rule_017
+from mhsg.rules.sv_lint.rule_018 import rule_018
 
 # Warnings that style rules report: a case statement without default is sv_case_001, an unnamed generate block
 # sv_generate_001
@@ -39,7 +41,7 @@ class rule_009(Rule):
     def __init__(self):
         super().__init__()
         self.solution = "Correct the code slang warns about"
-        self.lOthers = [o() for o in (rule_001, rule_002, rule_003, rule_004, rule_005, rule_006, rule_007, rule_010)]
+        self.lOthers = [o() for o in (rule_001, rule_002, rule_003, rule_004, rule_005, rule_006, rule_007, rule_010, rule_017, rule_018)]
 
     def accepts(self, sName):
         # Verilator's warnings are sv_lint_011's, and the warnings of mhsg about parameters and macros those of sv_lint_014 to sv_lint_016

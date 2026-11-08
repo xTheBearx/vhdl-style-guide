@@ -1209,6 +1209,9 @@ sv_module_014: sv_module_synchronous_reset_modules
 sv_module_015: sv_module_hierarchy_only
 sv_module_016: sv_module_connection_order
 sv_module_017: sv_module_registered_outputs
+sv_module_018: sv_module_names_across_hierarchy
+sv_module_019: sv_module_parameter_assertion
+sv_module_020: sv_module_inout_port
 sv_always_004: sv_always_mixed_assignments
 sv_case_002: sv_case_default_last
 sv_file_001: sv_file_module_filename
@@ -1252,6 +1255,7 @@ sv_declaration_001: sv_declaration_explicit_parameter_storage_type
 sv_declaration_002: sv_declaration_parameter_default
 sv_declaration_003: sv_declaration_one_per_line
 sv_declaration_004: sv_declaration_no_initial_value
+sv_declaration_005: sv_declaration_unique_names
 sv_function_001: sv_function_explicit_function_lifetime
 sv_function_002: sv_function_explicit_task_lifetime
 sv_function_003: sv_function_explicit_function_task_parameter_type
@@ -1317,6 +1321,7 @@ sv_statement_048: sv_statement_common_expressions
 sv_statement_049: sv_statement_stimulus_offset
 sv_statement_050: sv_statement_shared_expressions
 sv_statement_051: sv_statement_inverter_chain
+sv_statement_052: sv_statement_combinational_feedback
 sv_case_003: sv_case_constant_selector
 sv_case_004: sv_case_items
 sv_case_005: sv_case_no_casex_casez
@@ -1327,6 +1332,7 @@ sv_case_009: sv_case_state_count
 sv_case_010: sv_case_one_state_machine
 sv_case_011: sv_case_table_size
 sv_case_012: sv_case_grouped_wildcards
+sv_case_013: sv_case_state_reachability
 sv_always_005: sv_always_single_event_control
 sv_always_006: sv_always_one_top_level_statement
 sv_always_007: sv_always_falling_edge_clock
@@ -1352,6 +1358,9 @@ sv_always_026: sv_always_unit_delay
 sv_always_027: sv_always_register_reset
 sv_always_028: sv_always_consistent_reset
 sv_always_029: sv_always_label
+sv_always_030: sv_always_read_before_assignment
+sv_always_031: sv_always_variable_holds_state
+sv_always_032: sv_always_default_assignment
 sv_comment_001: sv_comment_tool_directives
 sv_comment_002: sv_comment_line_comments
 sv_comment_003: sv_comment_file_header
@@ -1360,6 +1369,8 @@ sv_comment_005: sv_comment_ascii
 sv_comment_006: sv_comment_header_history
 sv_comment_007: sv_comment_density
 sv_comment_008: sv_comment_commented_out_code
+sv_comment_009: sv_comment_hidden_region
+sv_comment_010: sv_comment_requirement_tag
 sv_syntax_001: sv_syntax_error
 sv_lint_001: sv_lint_widths
 sv_lint_002: sv_lint_latches
@@ -1377,6 +1388,8 @@ sv_lint_013: sv_lint_verilator_incomplete_case
 sv_lint_014: sv_lint_partial_parameter_override
 sv_lint_015: sv_lint_reused_parameter_name
 sv_lint_016: sv_lint_global_macro_in_module_file
+sv_lint_017: sv_lint_unconnected_input_port
+sv_lint_018: sv_lint_unconnected_output_port
 sv_alignment_001: sv_alignment_port_declarations
 sv_alignment_002: sv_alignment_named_ports
 sv_alignment_003: sv_alignment_named_parameters
