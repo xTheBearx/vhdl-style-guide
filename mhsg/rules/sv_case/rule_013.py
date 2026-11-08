@@ -150,7 +150,7 @@ def value_reads(oExpression):
     """The names an expression reads, with the names written with their package, such as pkg::Idle, unqualified."""
     setReturn = {text(o.identifier) for o in reads(oExpression)}
     if oExpression is not None:
-        setReturn.update(unqualified(source(o)) for o in [oExpression, *descendants(oExpression)] if o.kind.name == "ScopedName")
+        setReturn.update(unqualified(source(o)) for o in [oExpression, *descendants(oExpression)] if o.kind.name == "ScopedName" and text(o.separator) == "::")
     return setReturn
 
 
