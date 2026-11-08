@@ -5,6 +5,21 @@ The releases of MHSG, with their packages, are on `GitHub <https://github.com/xT
 The releases of VSG, from which MHSG was forked, are listed `with VSG
 <https://github.com/jeremiah-c-leary/vhdl-style-guide/tags>`_.
 
+Unreleased
+----------
+
+**Verilog and SystemVerilog**
+
+* Verilog files, :code:`.v` and :code:`.vh`, are read as Verilog-2005, no longer as SystemVerilog: names that are
+  keywords only in SystemVerilog, such as logic and bit, are names, and the 15 rules that need SystemVerilog, such as
+  sv_always_001 asking for always_comb, are not applied to them. The rules that apply to both give Verilog files advice
+  they can follow, such as always @* in the finding of sv_lint_008, and their fixes keep the file Verilog-2005; see
+  :doc:`verilog_2005` for each rule. Verilator and Yosys read the files the same way.
+* **v_files: systemverilog** in the systemverilog section of the configuration reads :code:`.v` and :code:`.vh` files
+  as SystemVerilog, as before, for projects that write SystemVerilog in them.
+* Verilator 5 lints the timing controls of testbenches, such as an event control in an initial block, with
+  :code:`--timing`, instead of leaving such files out; an older Verilator gets neither timing option.
+
 4.0.0a1
 -------
 

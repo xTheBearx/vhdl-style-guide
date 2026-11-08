@@ -52,8 +52,9 @@ most are fixed with ``--fix``.
 **Style checks for Verilog and SystemVerilog.** More than 200 rules, read with `pyslang
 <https://github.com/MikePopoloski/pyslang>`_: indentation, whitespace, blank lines, alignment, the structure of always
 blocks, case statements, begin and end, generate blocks and labels, naming, literals, declarations and comments. Code
-in inactive ``ifdef`` branches and macro bodies is checked too. Files ending in ``.sv``, ``.svh``, ``.v`` and ``.vh``
-are SystemVerilog; VHDL and SystemVerilog files can be checked in one run.
+in inactive ``ifdef`` branches and macro bodies is checked too. Files ending in ``.sv`` and ``.svh`` are
+SystemVerilog, and files ending in ``.v`` and ``.vh`` Verilog-2005, which get the rules that do not need SystemVerilog;
+VHDL, Verilog and SystemVerilog files can be checked in one run.
 
 **Lint mode.** ``--lint`` and ``--lint_only`` report design problems that a single file shows, such as latches,
 incomplete sensitivity lists, unreachable case choices and states never entered. Findings are labelled with the

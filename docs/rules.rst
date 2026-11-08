@@ -113,7 +113,8 @@ The rules are divided into categories depending on the part of the VHDL code bei
 SystemVerilog and Verilog
 -------------------------
 
-These rules check SystemVerilog and Verilog files, see :doc:`systemverilog`.
+These rules check SystemVerilog and Verilog files, see :doc:`systemverilog`; those marked SystemVerilog only are not
+applied to Verilog files, see :doc:`verilog_2005`.
 The rules length_001, length_002, length_004, whitespace_001 and whitespace_002 check them as well.
 
 .. toctree::

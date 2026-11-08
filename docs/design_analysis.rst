@@ -112,7 +112,11 @@ and :code:`.svh`, alone or with VHDL files:
 A design of Verilog and SystemVerilog only needs Yosys, not GHDL. Yosys reads the files with the read_slang command of
 the `yosys-slang <https://github.com/povik/yosys-slang>`_ plugin when it has it, as in the YosysHQ OSS CAD Suite;
 without it, with its own reader, :code:`read_verilog -sv`, which reads Verilog and part of SystemVerilog: designs that
-use packages with typed parameters, casts or interfaces need the plugin. Yosys puts the source location on every
+use packages with typed parameters, casts or interfaces need the plugin. Verilog files, :code:`.v` and :code:`.vh`,
+are read as Verilog-2005, as the style and lint rules read them, see :doc:`verilog_2005`: by :code:`read_verilog`
+without :code:`-sv`, and by read_slang with slang's :code:`--map-keyword-version` when its slang has that option
+(slang 12 and later); an older read_slang reads them as SystemVerilog. **v_files** in the systemverilog section, set
+to :code:`systemverilog`, reads them as SystemVerilog, see :doc:`systemverilog`. Yosys puts the source location on every
 cell, and a finding is moved to the line of the assignment, as for VHDL.
 
 In a mixed design with a VHDL top, GHDL elaborates the VHDL as for a VHDL design and leaves the instances of
