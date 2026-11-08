@@ -525,6 +525,8 @@ class config:
         # {unit name: number of instances} of the entity and component instantiations of the files of a run, in lint
         # mode, see project_index.py
         self.project_instance_counts = {}
+        # Lower case names of the VHDL units the files of the run instantiate, in lint mode, or None if unknown, see top_level.py
+        self.project_instantiated_units = None
         # None, "lint" (lint rules in addition to style rules) or "lint_only"
         self.lint_mode = None
         # The rule set applied in lint mode, see rule_set.py, or None

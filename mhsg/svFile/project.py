@@ -113,9 +113,11 @@ def collect(lFiles, dConfig, bVerilator=False):
     oAnalysis.analyze(oCompilation)
     lDiagnostics.extend(oAnalysis.getDiagnostics())
     oEngine = pyslang.DiagnosticEngine(oCompilation.sourceManager)
-    # The enum types of the run, shared by the entries of all files, see enum_types
+    # The enum types of the run and the modules it instantiates, shared by the entries of all files, see enum_types
+    # and instance_counts
     dEnums = enum_types(lTrees)
-    # How often the run instantiates each module, shared the same way, see sv_module_018
+    # How often the run instantiates each module, shared the same way: sv_module_018 skips a module
+    # instantiated more than once, top_level.py takes a module nobody instantiates for a top level
     dInstances = instance_counts(oInstance for oTree in lTrees for oInstance in walk(oTree.root, "HierarchicalInstance"))
     dReturn = {sPath: {"hash": sHash, "diagnostics": [], "incomplete": False, "enums": dEnums, "instances": dInstances} for sPath, sHash in dBuffers.values()}
     for oTree in lTrees:

@@ -48,6 +48,8 @@ The design is described in the **design** section of a configuration file:
      ghdl_options: [-frelaxed-rules]
 
 * **top** is the top entity, and **architecture** optionally its architecture.
+  Lint mode reads it too: lint_019 and sv_module_020 leave out the inout ports of the top, the pins of the device,
+  and report those of every other entity or module, also one that no file of the run instantiates.
 * **standard** is the VHDL standard, one of 87, 93, 93c, 00, 02, 08 (the default) or 19.
 * **libraries** lists the libraries in the order they are analyzed, each with a **name** and its files, unless
   **order** is **auto**.

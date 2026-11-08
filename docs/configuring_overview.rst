@@ -122,7 +122,7 @@ index_file_list
 ---------------
 
 The index_file_list is a list of files which are read, but not analyzed.
-Some rules look at other files of the run: port_028 and generic_022 check whether an entity is instantiated with positional association before they move its ports or generics, and port_map_012 looks up the declaration of an instantiated entity or component.
+Some rules look at other files of the run: port_028 and generic_022 check whether an entity is instantiated with positional association before they move its ports or generics, port_map_012 looks up the declaration of an instantiated entity or component, and in lint mode lint_019 and sv_module_020 leave out the inout ports of the top level, an entity or module no file of the run or of the index files instantiates, when the run has more than one file or index files are given.
 Files such as testbenches, which are not analyzed, can be listed here so these rules also see them.
 It uses the same format as file_list, without rule configurations.
 The same files can be given on the command line with **--index_files**.

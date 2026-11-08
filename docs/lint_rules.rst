@@ -650,7 +650,16 @@ This rule checks for buffer and inout ports.
 .. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254_plus rule set.
 
 A buffer port can be replaced by an out port and an internal signal, which every tool handles the same way.
-An inout port implies a tri-state driver and belongs only on the top level, for device pins.
+An inout port implies a tri-state driver and belongs only on the top level, for device pins, so the inout ports
+of the top level are not reported. The top level is the entity the design section of the configuration names
+with top; without one, in lint mode with more than one file in the run or with index files given (--index_files
+or index_file_list), an entity that no file of the run or of the index files instantiates. A file checked on
+its own without index files, a run outside lint mode and a file read from standard input do not show the design:
+without the design section, every inout port is reported. The ports of a component declaration are those of
+the entity the component names.
+
+A testbench in the run instantiates the top level; name the top in the design section, so its pins are not
+reported.
 
 **Violation**
 

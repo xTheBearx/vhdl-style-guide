@@ -199,6 +199,10 @@ def main():
             oConfig.project_enumerated_types = project_index.collect_enumerated_types(lIndexFiles)
             # How often the run instantiates each entity or component, see lint_040
             oConfig.project_instance_counts = project_index.collect_instance_counts(lIndexFiles)
+            # The units the run instantiates, when the run shows the design: more than one file, or index files given,
+            # so a unit nothing instantiates is a top level, see top_level.py
+            if len(commandLineArguments.filename or []) > 1 or getattr(commandLineArguments, "index_files", None):
+                oConfig.project_instantiated_units = project_index.collect_instantiated_units(lIndexFiles)
             # The Verilog and SystemVerilog files of the run are compiled together once, see svFile/project.py
             oConfig.sv_lint_project = sv_project.collect(lIndexFiles, oConfig.dConfig, sv_project.verilator_enabled(oConfig))
         oConfig.project_positional_generic_entities = project_index.collect_positional_entity_instantiations(lIndexFiles, "generic")

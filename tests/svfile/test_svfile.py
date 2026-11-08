@@ -991,6 +991,8 @@ class test_rules(unittest.TestCase):
     def test_do254_checks_more(self):
         # The DO-254 checks of SystemVerilog files that follow paths through the code, instances, states and comments;
         # sv_module_018 does not check the instances of leaf, which is instantiated twice, see names_across_hierarchy.sv
+        # do254_more.sv is checked on its own, so its top module do254_more is not known as a top level and its inout
+        # port pad_io is reported, see test_inout_ports_of_the_top_level
         _, lOutput, _ = self.run_mhsg(["--rule_set", "do254_plus", "--lint_only", "-ap"], "do254_more.sv")
         lRules = (
             "sv_always_030",
@@ -1198,6 +1200,43 @@ class test_rules(unittest.TestCase):
         )
         # Without the package in the run the types are unknown, and the machines are not checked
         self.assertEqual([], [s for s in self.run_project(["fsm_user.sv"], lArguments) if "(sv_case_013)" in s])
+
+    def test_inout_ports_of_the_top_level(self):
+        # sv_module_020 leaves out the top level, a module no file of the run instantiates: its inout ports are the
+        # pins of the device
+        lArguments = ["--lint_only", "--rule_set", "do254_plus"]
+        sSub = "WARNING: io_sub.sv(4)DO254PLUS-PORT (sv_module_020) -- Use inout ports only on the top level, for device pins"
+        sTop = "WARNING: io_top.sv(4)DO254PLUS-PORT (sv_module_020) -- Use inout ports only on the top level, for device pins"
+        self.assertEqual([sSub], [s for s in self.run_project(["io_top.sv", "io_sub.sv"], lArguments) if "(sv_module_020)" in s])
+        # A file checked on its own does not show the design: its modules are not top levels, the top as the submodule
+        self.assertEqual([sSub], [s for s in self.run_project(["io_sub.sv"], lArguments) if "(sv_module_020)" in s])
+        self.assertEqual([sTop], [s for s in self.run_project(["io_top.sv"], lArguments) if "(sv_module_020)" in s])
+        # Index files show it: the top is left out when they instantiate nothing of it, the submodule reported when they
+        # instantiate it
+        lIndexTop = ["--index_files", os.path.join(sDirectory, "project", "io_top.sv")]
+        self.assertEqual([sSub], [s for s in self.run_project(["io_sub.sv"], lArguments + lIndexTop) if "(sv_module_020)" in s])
+        lIndexSub = ["--index_files", os.path.join(sDirectory, "project", "io_sub.sv")]
+        self.assertEqual([], [s for s in self.run_project(["io_top.sv"], lArguments + lIndexSub) if "(sv_module_020)" in s])
+        # So does the design section, for a file on its own
+        lDesign = ["-c", os.path.join(sDirectory, "project", "design.yaml")]
+        self.assertEqual([], [s for s in self.run_project(["io_top.sv"], lArguments + lDesign) if "(sv_module_020)" in s])
+        # A testbench in the run instantiates the top level, unless the design section names the top
+        lFiles = ["io_tb.sv", "io_top.sv", "io_sub.sv"]
+        self.assertEqual([sTop, sSub], [s for s in self.run_project(lFiles, lArguments) if "(sv_module_020)" in s])
+        self.assertEqual([sSub], [s for s in self.run_project(lFiles, lArguments + lDesign) if "(sv_module_020)" in s])
+        # Outside lint mode the run is not known, and every inout port is reported
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sConfiguration = os.path.join(sTemporary, "c.yaml")
+            with open(sConfiguration, "w", encoding="utf-8") as oFile:
+                oFile.write("rule:\n  sv_module_020:\n    disable: false\n")
+            lOutput = self.run_project(["io_top.sv", "io_sub.sv"], ["-c", sConfiguration])
+        self.assertEqual(
+            [
+                "ERROR: io_top.sv(4)sv_module_020 -- Use inout ports only on the top level, for device pins",
+                "ERROR: io_sub.sv(4)sv_module_020 -- Use inout ports only on the top level, for device pins",
+            ],
+            [s for s in lOutput if "sv_module_020" in s],
+        )
 
     def test_names_across_hierarchy_of_the_run(self):
         # sv_module_018 counts the instances of all the files of the run: hier_a.sv and hier_b.sv each instantiate
