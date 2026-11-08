@@ -1200,12 +1200,10 @@ cases:
   - - 15
     - Signal data connected to port data_in_i of u_sub has another name
 - rule: sv_module_018
-  file: examples/svfile/do254_more.sv
+  file: examples/svfile/indent_options.sv
   expected:
-  - - 38
-    - Signal payload connected to port data_i of u_leaf has another name
-  - - 45
-    - Signal data_o2 connected to port data_o of u_leaf_open has another name
+  - - 11
+    - Signal d_i connected to port a of u_sub has another name
 - rule: sv_module_018
   file: examples/svfile/brackets.fixed.sv
   expected: []

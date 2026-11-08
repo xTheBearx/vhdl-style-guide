@@ -403,8 +403,16 @@ enables it (DR9).
 
 A signal renamed at each level of the hierarchy is hard to follow from the top to the bottom of the design. The
 **strip_prefixes** and **strip_suffixes** options list the parts that are ignored, such as i\_ and _o, which mark
-direction or kind; names are compared ignoring case. Only named connections of a signal by name are checked, not
-selects, expressions, .name or .* connections.
+direction or kind; one prefix and one suffix, the longest that fits, are removed and the names compared ignoring
+case, as lint_040 does for VHDL, with the same defaults. The default suffixes include those of port names written
+by direction, the names sv_naming_016 asks for: _i, _o and _io, with _n or n before them for active low ports, so
+tick_o matches tick and tick_i, and rst_n_i or rst_ni matches rst_n. Only named connections of a signal by name
+are checked, not selects, expressions, .name or .* connections.
+
+The ports of a module instantiated more than once are not checked: each instance connects its own signals, which
+cannot all have the names of the ports. In lint mode the instances of all the files of the run are counted,
+otherwise those of the file; an instance array or an instance in a loop generate counts as more than one. lint_040
+does the same for VHDL.
 
 **Violation**
 

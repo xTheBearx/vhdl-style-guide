@@ -120,6 +120,58 @@ rePortMap = re.compile(r"\bport\s+map\s*\(", re.IGNORECASE)
 reGenericMap = re.compile(r"\bgeneric\s+map\s*\(", re.IGNORECASE)
 
 
+reInstantiation = re.compile(
+    r"\b[a-z][a-z0-9_]*\s*:\s*(?:entity\s+(?:[a-z][a-z0-9_]*\s*\.\s*)?([a-z][a-z0-9_]*)(?:\s*\(\s*[a-z][a-z0-9_]*\s*\))?|(?:component\s+)?([a-z][a-z0-9_]*))"
+    r"\s*(?:generic|port)\s+map\b",
+    re.IGNORECASE,
+)
+reGenerateWord = re.compile(r"\b(?:end\s+generate|generate|for|if|elsif|else|case)\b", re.IGNORECASE)
+
+
+def collect_instance_counts(lFilenames):
+    """
+    Returns {lower case entity or component name: number of instances} of the instantiations in the files, see
+    get_instance_counts, for the rules that treat a unit instantiated more than once differently, such as lint_040.
+    """
+    dReturn = {}
+    for sText in read_files(lFilenames):
+        for sName, iCount in get_instance_counts(sText).items():
+            dReturn[sName] = dReturn.get(sName, 0) + iCount
+    return dReturn
+
+
+def get_instance_counts(sText):
+    """
+    Returns {lower case entity or component name: number of instances} of the entity and component instantiations
+    with a generic or port map in a text. An instance in a for generate counts as two: it makes more than one.
+    """
+    sText = reComment.sub(" ", sText)
+    sText = reString.sub('""', sText)
+    # The positions of the for generate statements: (start, end) of the text between generate and end generate
+    lLoops = []
+    lStack = []
+    sLast = None
+    for oMatch in reGenerateWord.finditer(sText):
+        sWord = " ".join(oMatch.group(0).lower().split())
+        if sWord == "generate":
+            # A generate after for, if or case starts a generate statement; after elsif or else, a branch of one
+            if sLast in ("for", "if", "case"):
+                lStack.append((sLast == "for", oMatch.end()))
+        elif sWord == "end generate":
+            if lStack:
+                bLoop, iStart = lStack.pop()
+                if bLoop:
+                    lLoops.append((iStart, oMatch.start()))
+        else:
+            sLast = sWord
+    dReturn = {}
+    for oMatch in reInstantiation.finditer(sText):
+        sName = (oMatch.group(1) or oMatch.group(2)).lower()
+        bLoop = any(iStart <= oMatch.start() < iEnd for iStart, iEnd in lLoops)
+        dReturn[sName] = dReturn.get(sName, 0) + (2 if bLoop else 1)
+    return dReturn
+
+
 def read_files(lFilenames):
     for sFilename in lFilenames or []:
         try:

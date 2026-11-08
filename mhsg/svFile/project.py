@@ -115,7 +115,9 @@ def collect(lFiles, dConfig, bVerilator=False):
     oEngine = pyslang.DiagnosticEngine(oCompilation.sourceManager)
     # The enum types of the run, shared by the entries of all files, see enum_types
     dEnums = enum_types(lTrees)
-    dReturn = {sPath: {"hash": sHash, "diagnostics": [], "incomplete": False, "enums": dEnums} for sPath, sHash in dBuffers.values()}
+    # How often the run instantiates each module, shared the same way, see sv_module_018
+    dInstances = instance_counts(oInstance for oTree in lTrees for oInstance in walk(oTree.root, "HierarchicalInstance"))
+    dReturn = {sPath: {"hash": sHash, "diagnostics": [], "incomplete": False, "enums": dEnums, "instances": dInstances} for sPath, sHash in dBuffers.values()}
     for oTree in lTrees:
         lDiagnostics.extend(oTree.diagnostics)
     for oDiagnostic in lDiagnostics:
@@ -169,6 +171,24 @@ def enum_types(lTrees):
             elif sName not in dBare:
                 dBare[sName] = (sQualified, lValues)
     return {"qualified": dQualified, "bare": {s: t for s, t in dBare.items() if t is not None}}
+
+
+def instance_counts(lInstances):
+    """
+    {module name: number of instances} of instances, HierarchicalInstance nodes. An instance array, or an instance in
+    a loop generate, counts as two: it makes more than one instance of the module.
+    """
+    dReturn = {}
+    for oInstance in lInstances:
+        oInstantiation = oInstance.parent
+        if oInstantiation is None or oInstantiation.kind.name != "HierarchyInstantiation":
+            continue
+        sModule = oInstantiation.type.valueText
+        bMany = (oInstance.decl is not None and len(syntax_nodes(oInstance.decl.dimensions)) > 0) or any(
+            o.kind.name == "LoopGenerate" for o in ancestors(oInstance)
+        )
+        dReturn[sModule] = dReturn.get(sModule, 0) + (2 if bMany else 1)
+    return dReturn
 
 
 def ancestors(oNode):

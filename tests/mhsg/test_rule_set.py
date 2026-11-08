@@ -257,6 +257,56 @@ class test_state_types_in_packages(unittest.TestCase):
             self.assertEqual({"mode_t": ["A", "B"]}, project_index.collect_enumerated_types(lFiles))
 
 
+class test_instances_of_the_run(unittest.TestCase):
+    def run_mhsg(self, lNames):
+        sDirectory = os.path.join(sRoot, "tests", "lint", "instances_of_the_run")
+        lFiles = [os.path.join(sDirectory, s) for s in lNames]
+        oResult = subprocess.run(
+            [*utils.mhsg_exec(), "-f", *lFiles, "--rule_set", "do254", "--lint_only", "-of", "syntastic"],
+            cwd=sRoot,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        return [s.replace(sDirectory + os.sep, "") for s in oResult.stdout.splitlines() if "(lint_040)" in s]
+
+    def test_unit_instantiated_in_two_files(self):
+        # lint_040 counts the instances of all the files of the run: hier_a.vhd and hier_b.vhd each instantiate
+        # hier_sync once, so together their port maps are not checked, and alone those of hier_a.vhd are
+        self.assertEqual([], self.run_mhsg(["hier_a.vhd", "hier_b.vhd"]))
+        self.assertEqual(
+            [
+                "WARNING: hier_a.vhd(10)DO254-DR9 (lint_040) -- Signal a_i connected to port d of u_sync has another name",
+                "WARNING: hier_a.vhd(11)DO254-DR9 (lint_040) -- Signal a_o connected to port q of u_sync has another name",
+            ],
+            self.run_mhsg(["hier_a.vhd"]),
+        )
+
+    def test_instance_counts(self):
+        # Entity and component instantiations, an instance in a for generate counting as two; a branch of an if
+        # generate, a for loop and a commented-out instance do not
+        sText = "\n".join(
+            [
+                "architecture rtl of top is",
+                "begin",
+                "  u_a : entity work.sync port map (a => x);",
+                "  u_b : entity work.sync(rtl) generic map (W => 1) port map (a => y);",
+                "  u_c : component leaf port map (a => z);",
+                "  g_lane : for i in 0 to 3 generate",
+                "    u_d : lane port map (a => z);",
+                "  end generate;",
+                "  g_opt : if c generate",
+                "    u_e : entity lib.leaf port map (a => z);",
+                "  else generate",
+                "  end generate;",
+                "  p : process begin for i in 0 to 3 loop b <= c; end loop; wait; end process;",
+                "  -- u_f : entity work.sync port map (a => z);",
+                "end architecture;",
+            ],
+        )
+        self.assertEqual({"sync": 2, "leaf": 2, "lane": 2}, project_index.get_instance_counts(sText))
+
+
 class test_lint_fix(unittest.TestCase):
     def fix(self, lArguments):
         with tempfile.TemporaryDirectory() as sDirectory:

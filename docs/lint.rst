@@ -268,7 +268,9 @@ DR13 lists the naming rules but does not enable them: configure the prefixes and
 Some checks have options a project usually sets: the fields of the file header (lint_041, **required_fields**), the
 share of comments (lint_042, **minimum_percent**), the nesting limit (lint_030, **nesting_limit**), the direction of
 vector ranges (lint_031, **direction**) and the parts of names ignored when a signal is compared with its port
-(lint_040, **strip_prefixes** and **strip_suffixes**).
+(lint_040 and sv_module_018, **strip_prefixes** and **strip_suffixes**, the same defaults for both). Neither checks the
+ports of an entity or module instantiated more than once in the run, whose instances cannot all connect signals
+named like the ports.
 
 .. include:: do254_coverage.rst
 
