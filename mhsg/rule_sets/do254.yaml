@@ -195,6 +195,9 @@ checks:
       concurrent_005: {disable: true}
       case_019: {disable: true}
       case_020: {disable: true}
+      procedure_call_001: {disable: true}
+      procedure_call_002: {disable: true}
+      report_statement_001: {disable: true}
   DR2:
     title: Avoid mixed case naming for differentiation
     severity: Warning
@@ -239,6 +242,9 @@ checks:
     configuration:
       # The share of lint_042
       sv_comment_007: {minimum_comment_percent: 20}
+      # These remove or move the comments of port and generic maps and clauses, which count towards the share
+      port_map_010: {disable: true}
+      component_019: {disable: true}
   DR12:
     title: Ensure proper placement of comments
     severity: Note

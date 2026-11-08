@@ -244,6 +244,55 @@ class test_lint_fix(unittest.TestCase):
         self.assertIn("(12)DO254-SS4 (lint_009) -- Signal d is not assigned on every path of the combinational process, which infers a latch", sOutput)
 
 
+class test_rule_set_style(unittest.TestCase):
+    """The style rules a rule set configures so they agree with its checks (issue 90)."""
+
+    def run_mhsg(self, lFiles, lArguments):
+        return subprocess.run([*utils.mhsg_exec(), "-f", *lFiles, "-of", "syntastic", *lArguments], cwd=sRoot, capture_output=True, text=True, check=False)
+
+    def test_fix_converges_with_the_checks(self):
+        # Fixed with the default style and do254_plus, the files pass both: no style fix undoes a check, such as
+        # removing the comments of a port map (DR11), the labels of calls (DR1), the upper case of generics (NAMES),
+        # the entity instantiation (ENTITY) or the line between a requirement tag and its entity (REQ)
+        with tempfile.TemporaryDirectory() as sDirectory:
+            lFiles = []
+            for sFile in ("counter.vhd", "top.vhd"):
+                lFiles.append(os.path.join(sDirectory, sFile))
+                with open(os.path.join(sRoot, "tests", "mhsg", "rule_set_style", sFile), encoding="utf-8") as oSource, open(
+                    lFiles[-1],
+                    "w",
+                    encoding="utf-8",
+                ) as oCopy:
+                    oCopy.write(oSource.read())
+            for _ in range(2):
+                self.run_mhsg(lFiles, ["--rule_set", "do254_plus", "--fix"])
+            oResult = self.run_mhsg(lFiles, ["--rule_set", "do254_plus"])
+            self.assertEqual("", oResult.stdout)
+            self.assertEqual(0, oResult.returncode)
+            with open(lFiles[1], encoding="utf-8") as oFile:
+                sTop = oFile.read()
+            self.assertIn("WIDTH => 8 -- Byte wide", " ".join(sTop.split()))
+            self.assertIn("-- REQ: HWR-211\nentity top is", sTop)
+
+    def test_contradictions(self):
+        # Options the user sets against a check are reported once; options the rule set also sets are not
+        dConfig = {
+            "rule": {"case_019": {"disable": False}, "entity_003": {"style": "allow_comment"}},
+            "file_list": [{"top.vhd": {"rule": {"generic_map_002": {"case": "lower"}}}}],
+        }
+        lWarnings = rule_set.contradictions(rule_set.load("do254_plus"), dConfig)
+        self.assertEqual(
+            [
+                "WARNING: the configuration sets disable of case_019 to False, against check DO254-DR1 (Use statement labels), which sets it to True: "
+                "case_019 and the rules of the check can report the same code both ways",
+                "WARNING: the configuration of top.vhd sets case of generic_map_002 to 'lower', against check DO254PLUS-NAMES (Follow the naming conventions), "
+                "which sets it to 'upper': generic_map_002 and the rules of the check can report the same code both ways",
+            ],
+            lWarnings,
+        )
+        self.assertEqual([], rule_set.contradictions(None, dConfig))
+
+
 class test_rule_set_documentation(unittest.TestCase):
     def test_coverage_tables_are_up_to_date(self):
         """docs/<name>_coverage.rst is written with rule_set.coverage_table(rule_set.load(name))."""

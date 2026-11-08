@@ -144,6 +144,44 @@ def configure_lint_mode(oConfig, commandLineArguments):
     oConfig.rule_set = load(sRuleSet)
 
 
+def contradictions(oRuleSet, dConfig):
+    """
+    The warnings for the options of the user's configuration that contradict the options a check of the rule set gives
+    a style rule, such as case_019 enabled again while DR1 asks for labels. The user's options win, as they are applied
+    after the rule set, so the style rule and the check can then report the same code both ways.
+    """
+    if oRuleSet is None:
+        return []
+    lConfigurations = [("the configuration", (dConfig or {}).get("rule") or {})]
+    for dEntry in (dConfig or {}).get("file_list") or []:
+        if isinstance(dEntry, dict):
+            for sFile, dFile in dEntry.items():
+                if isinstance(dFile, dict) and isinstance(dFile.get("rule"), dict):
+                    lConfigurations.append((f"the configuration of {sFile}", dFile["rule"]))
+    lReturn = []
+    for oSet in oRuleSet.all_sets():
+        for oCheck in oSet.checks:
+            for sRule, dAttributes in oCheck.configuration.items():
+                for sWhere, dRules in lConfigurations:
+                    dUser = dRules.get(sRule)
+                    if not isinstance(dUser, dict):
+                        continue
+                    for sAttribute, oValue in (dAttributes or {}).items():
+                        if sAttribute in dUser and not same_value(dUser[sAttribute], oValue):
+                            lReturn.append(
+                                f"WARNING: {sWhere} sets {sAttribute} of {sRule} to {dUser[sAttribute]!r}, against check {oSet.label(oCheck)} "
+                                f"({oCheck.title}), which sets it to {oValue!r}: {sRule} and the rules of the check can report the same code both ways",
+                            )
+    return lReturn
+
+
+def same_value(oFirst, oSecond):
+    """Whether two option values are the same, ignoring the case of words such as upper."""
+    if isinstance(oFirst, str) and isinstance(oSecond, str):
+        return oFirst.lower() == oSecond.lower()
+    return oFirst == oSecond
+
+
 def rules_in_groups(oRuleList, lGroups):
     """Returns the identifiers of the rules in any of the groups, leaving out deprecated rules."""
     if not lGroups:
