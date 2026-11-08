@@ -10,7 +10,8 @@ class rule_017(Rule):
 
     .. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254_plus rule set.
 
-    A state machine is a case statement on a signal of an enumerated type declared in the file.
+    A state machine is a case statement on a signal of an enumerated type declared in the file or, in lint mode, in
+    another file of the run, such as a package.
     Its :code:`when others` choice must assign a state, so an illegal state caused by a single event upset leads back to a defined state.
     Synthesis tools remove that recovery logic unless told to keep it, so the :code:`attributes` option can list attributes,
     such as :code:`fsm_safe_state`, of which the state signal must have at least one.
@@ -49,7 +50,7 @@ class rule_017(Rule):
         for oArchitecture in oModel.architectures:
             for oProcess in oArchitecture.processes:
                 for oCase in [o for o in model.walk(oProcess.statements) if isinstance(o, model.Case)]:
-                    sState = state_signal(oCase, oDeclarations, oFile.lAllObjects)
+                    sState = state_signal(oCase, oDeclarations, oFile.lAllObjects, oFile)
                     if sState is None:
                         continue
                     lOthers = [o for o in oCase.alternatives if o.others]
@@ -65,8 +66,11 @@ class rule_017(Rule):
                         )
 
 
-def state_signal(oCase, oDeclarations, lTokens):
-    """Returns the signal a case statement selects on if its type is an enumerated type declared in the file, else None."""
+def state_signal(oCase, oDeclarations, lTokens, oFile=None):
+    """
+    Returns the signal a case statement selects on if its type is an enumerated type declared in the file or, with
+    oFile in lint mode, in another file of the run, such as a package; else None.
+    """
     lNames = model.names(oCase.selector)
     if len(lNames) != 1:
         return None
@@ -74,7 +78,7 @@ def state_signal(oCase, oDeclarations, lTokens):
     lFound = [o for o in oDeclarations.find(sName, oCase.index) if o.kind in ("signal", "variable")]
     if not lFound:
         return None
-    return sName if declared_type(lTokens, lFound[0].index) in enumerated_types(oDeclarations, lTokens) else None
+    return sName if declared_type(lTokens, lFound[0].index) in enumerated_types(oDeclarations, lTokens, oFile) else None
 
 
 def declared_type(lTokens, iIndex):
@@ -87,9 +91,20 @@ def declared_type(lTokens, iIndex):
     return None
 
 
-def enumerated_types(oDeclarations, lTokens):
-    """Returns the lower case names of the enumerated types declared in the file."""
+def run_enumerated_types(oFile):
+    """{lower case name: values} of the enumerated types of the files of the run, in lint mode, see project_index.py."""
+    return getattr(getattr(oFile, "configuration", None), "project_enumerated_types", None) or {}
+
+
+def enumerated_types(oDeclarations, lTokens, oFile=None):
+    """
+    Returns the lower case names of the enumerated types declared in the file and, with oFile, those of the other
+    files of the run, unless the file declares a type of that name itself.
+    """
     setReturn = set()
+    if oFile is not None:
+        setLocal = {o.lower_name for o in oDeclarations.declarations if o.kind == "type"}
+        setReturn.update(s for s in run_enumerated_types(oFile) if s not in setLocal)
     for oDeclaration in oDeclarations.declarations:
         if oDeclaration.kind != "type":
             continue
