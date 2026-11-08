@@ -411,7 +411,8 @@ selects, expressions, .name or .* connections.
 
 The ports of a module instantiated more than once are not checked: each instance connects its own signals, which
 cannot all have the names of the ports. In lint mode the instances of all the files of the run are counted,
-otherwise those of the file; an instance array or an instance in a loop generate counts as more than one.
+otherwise those of the file; an instance array or an instance in a loop generate counts as more than one. lint_040
+does the same for VHDL.
 
 **Violation**
 

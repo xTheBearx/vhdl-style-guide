@@ -182,6 +182,17 @@ class test_lint_rules(unittest.TestCase):
         oRule.analyze(vhdlFile.vhdlFile(lFile))
         self.assertEqual([(3, "Add the field Author to the file header")], [(o.get_line_number(), o.get_solution()) for o in oRule.violations])
 
+    def test_rule_040_instances(self):
+        # The ports of sync, instantiated twice, and of lane, in a for generate, are not checked; leaf is
+        # instantiated once, and foo connected to data_i is reported
+        oRule = lint.rule_040()
+        lFile, _ = vhdlFile.utils.read_vhdlfile(os.path.join(sTestDir, "rule_040b_test_input.vhd"))
+        oRule.analyze(vhdlFile.vhdlFile(lFile))
+        self.assertEqual(
+            [(10, "Signal foo connected to port data_i of u_leaf has another name")],
+            [(o.get_line_number(), o.get_solution()) for o in oRule.violations],
+        )
+
     def test_rule_017_without_attributes_option(self):
         oRule = lint.rule_017()
         oRule.analyze(read(17))

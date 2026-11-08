@@ -19,6 +19,11 @@ class rule_040(Rule):
     strip_prefixes and strip_suffixes options list the parts that are ignored, such as i\\_ and _o, which mark direction or kind.
     Only port maps that connect a signal by name, not a slice or an expression, are checked.
 
+    The ports of an entity or component instantiated more than once are not checked: each instance connects its own
+    signals, which cannot all have the names of the ports. The instances of the files of the run and of the index
+    files are counted; an instance in a for generate counts as more than one. This is
+    what sv_module_018 does for SystemVerilog.
+
     **Violation**
 
     .. code-block:: vhdl
@@ -47,8 +52,11 @@ class rule_040(Rule):
         self.configuration.append("strip_suffixes")
 
     def check(self, oModel, oFile):
+        dInstances = instance_counts(oModel, oFile)
         for oArchitecture in oModel.architectures:
             for oInstance in oArchitecture.instances:
+                if dInstances.get(oInstance.unit, 0) > 1:
+                    continue
                 for sFormal, sActual, iLine in oInstance.associations:
                     if sFormal is None or not reSimpleName.match(sActual) or sActual == "open":
                         continue
@@ -67,6 +75,22 @@ class rule_040(Rule):
                 sName = sName[: -len(sSuffix)]
                 break
         return sName
+
+
+def instance_counts(oModel, oFile):
+    """
+    {lower case unit name: number of instances}: of the files of the run and the index files, in lint mode, see
+    project_index.py, and of the file, whichever is more.
+    """
+    dReturn = {}
+    for oArchitecture in oModel.architectures:
+        for oInstance in oArchitecture.instances:
+            bLoop = any(model.kind(oModel.lTokens[iIndex]) == ("for_generate_statement", "for_keyword") for iIndex, _ in oInstance.generate)
+            dReturn[oInstance.unit] = dReturn.get(oInstance.unit, 0) + (2 if bLoop else 1)
+    dProject = getattr(getattr(oFile, "configuration", None), "project_instance_counts", None) or {}
+    for sUnit, iCount in dProject.items():
+        dReturn[sUnit] = max(iCount, dReturn.get(sUnit, 0))
+    return dReturn
 
 
 def formal_index(lTokens, oInstance, sFormal, iLine):

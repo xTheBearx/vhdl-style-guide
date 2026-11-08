@@ -197,6 +197,8 @@ def main():
             oConfig.project_port_modes = project_index.collect_port_modes(lIndexFiles)
             # The enumerated types of the run, such as state types declared in packages, see lint_017, lint_027 and lint_037
             oConfig.project_enumerated_types = project_index.collect_enumerated_types(lIndexFiles)
+            # How often the run instantiates each entity or component, see lint_040
+            oConfig.project_instance_counts = project_index.collect_instance_counts(lIndexFiles)
             # The Verilog and SystemVerilog files of the run are compiled together once, see svFile/project.py
             oConfig.sv_lint_project = sv_project.collect(lIndexFiles, oConfig.dConfig, sv_project.verilator_enabled(oConfig))
         oConfig.project_positional_generic_entities = project_index.collect_positional_entity_instantiations(lIndexFiles, "generic")

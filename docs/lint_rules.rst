@@ -1325,6 +1325,11 @@ A signal renamed at each level of the hierarchy is hard to follow from the top t
 strip_prefixes and strip_suffixes options list the parts that are ignored, such as i\_ and _o, which mark direction or kind.
 Only port maps that connect a signal by name, not a slice or an expression, are checked.
 
+The ports of an entity or component instantiated more than once are not checked: each instance connects its own
+signals, which cannot all have the names of the ports. The instances of the files of the run and of the index
+files are counted; an instance in a for generate counts as more than one. This is
+what sv_module_018 does for SystemVerilog.
+
 **Violation**
 
 .. code-block:: vhdl
