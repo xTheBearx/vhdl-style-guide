@@ -84,6 +84,37 @@ def get_type_names(sText):
     return {sName.lower() for sName in reTypeDeclaration.findall(sText)}
 
 
+reEnumeratedType = re.compile(r"\btype\s+([a-z][a-z0-9_]*)\s+is\s*\(([^()]*)\)\s*;", re.IGNORECASE)
+reEnumerationLiteral = re.compile(r"^(?:[a-z][a-z0-9_]*|'.')$", re.IGNORECASE)
+
+
+def collect_enumerated_types(lFilenames):
+    """
+    Returns {lower case type name: values as written, in order} for the enumerated types declared in the files, such
+    as the state type of a package, for the rules on state machines whose type another file declares. A name declared
+    with other values in two files is left out, as a rule cannot tell which one a file uses.
+    """
+    dReturn = {}
+    setAmbiguous = set()
+    for sText in read_files(lFilenames):
+        for sName, lValues in get_enumerated_types(sText).items():
+            if sName in dReturn and [s.lower() for s in dReturn[sName]] != [s.lower() for s in lValues]:
+                setAmbiguous.add(sName)
+            dReturn.setdefault(sName, lValues)
+    return {s: l for s, l in dReturn.items() if s not in setAmbiguous}
+
+
+def get_enumerated_types(sText):
+    sText = reComment.sub(" ", sText)
+    sText = reString.sub(" ", sText)
+    dReturn = {}
+    for sName, sValues in reEnumeratedType.findall(sText):
+        lValues = [s.strip() for s in sValues.split(",")]
+        if lValues and all(reEnumerationLiteral.match(s) for s in lValues):
+            dReturn[sName.lower()] = lValues
+    return dReturn
+
+
 reEntityInstantiation = re.compile(r"\bentity\s+[a-z][a-z0-9_]*\s*\.\s*([a-z][a-z0-9_]*)", re.IGNORECASE)
 rePortMap = re.compile(r"\bport\s+map\s*\(", re.IGNORECASE)
 reGenericMap = re.compile(r"\bgeneric\s+map\s*\(", re.IGNORECASE)

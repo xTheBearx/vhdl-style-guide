@@ -520,6 +520,8 @@ class config:
         self.project_port_orders = None
         # Ports with their modes of the entities and components declared in the files of the run, or None if unknown
         self.project_port_modes = None
+        # {type name: values} of the enumerated types of the files of a run, in lint mode, see project_index.py
+        self.project_enumerated_types = {}
         # None, "lint" (lint rules in addition to style rules) or "lint_only"
         self.lint_mode = None
         # The rule set applied in lint mode, see rule_set.py, or None

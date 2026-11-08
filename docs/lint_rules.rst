@@ -582,7 +582,8 @@ This rule checks that a state machine recovers from illegal states.
 
 .. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254_plus rule set.
 
-A state machine is a case statement on a signal of an enumerated type declared in the file.
+A state machine is a case statement on a signal of an enumerated type declared in the file or, in lint mode, in
+another file of the run, such as a package.
 Its :code:`when others` choice must assign a state, so an illegal state caused by a single event upset leads back to a defined state.
 Synthesis tools remove that recovery logic unless told to keep it, so the :code:`attributes` option can list attributes,
 such as :code:`fsm_safe_state`, of which the state signal must have at least one.
@@ -1217,7 +1218,8 @@ This rule checks that every state of a state machine can be entered and left.
 
 .. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254 rule set (CP6).
 
-A state machine is a case statement on a signal of an enumerated type declared in the file. A state that no
+A state machine is a case statement on a signal of an enumerated type declared in the file or, in lint mode, in
+another file of the run, such as a package. A state that no
 assignment of the file gives the state signal, or its next state, can never be entered, other than by reset; a
 state whose branch of the case statement assigns no other state can never be left. Both are usually mistakes,
 and a state that cannot be left hangs the machine.
