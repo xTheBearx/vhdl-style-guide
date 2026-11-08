@@ -1176,6 +1176,21 @@ class test_rules(unittest.TestCase):
             self.run_project(["top.sv", "sub.sv"], ["--lint_only", "--rule_set", "none"]),
         )
 
+    def test_state_machines_typed_in_a_package(self):
+        # sv_case_013 finds the enum types of the other files of the run, by the bare name a module imports or the
+        # name qualified with the package, and the states written either way
+        lArguments = ["--lint_only", "--rule_set", "do254"]
+        self.assertEqual(
+            [
+                "ERROR: fsm_user.sv(14)DO254-CP6 (sv_case_013) -- State Fault of state_q is never assigned, so the machine never enters it",
+                "ERROR: fsm_user.sv(17)DO254-CP6 (sv_case_013) -- State Done of state_q assigns no other state, so the machine never leaves it",
+                "ERROR: fsm_user.sv(38)DO254-CP6 (sv_case_013) -- State Done of state_q is never assigned, so the machine never enters it",
+            ],
+            [s for s in self.run_project(["fsm_user.sv", "fsm_pkg.sv"], lArguments) if "(sv_case_013)" in s],
+        )
+        # Without the package in the run the types are unknown, and the machines are not checked
+        self.assertEqual([], [s for s in self.run_project(["fsm_user.sv"], lArguments) if "(sv_case_013)" in s])
+
     def test_parameters_of_the_run(self):
         # sv_lint_014 and sv_lint_015 check the parameters of the modules of the run against each other, sv_lint_016
         # the macros one file defines and another uses

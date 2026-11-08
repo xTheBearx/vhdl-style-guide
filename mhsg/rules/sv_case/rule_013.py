@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 from mhsg.rule_group import structure
 from mhsg.rules.sv_flow import reads, targets
 from mhsg.rules.sv_nodes import ancestors, source, text
@@ -14,8 +16,9 @@ class rule_013(TreeRule, structure.Rule):
     This rule checks that every state of a state machine can be entered and left. It is disabled by default; the
     do254 rule set enables it (CP6).
 
-    A state machine is a case statement on a variable of an enum type declared in the file, whose items assign the
-    variable or another variable of its type, such as the next state. A state that no assignment of the module gives
+    A state machine is a case statement on a variable of an enum type, whose items assign the variable or another
+    variable of its type, such as the next state. The type is declared in the file or, in lint mode, in another file
+    of the run, such as a package; a state can be written with its package, as pkg::Idle. A state that no assignment of the module gives
     those variables, other than the first value of the type, can never be entered, other than by reset; a state
     whose case item assigns no other state can never be left. Both are usually mistakes, and a state that cannot be
     left hangs the machine. A default assignment of a state before the case statement leaves every state. Design
@@ -53,8 +56,9 @@ class rule_013(TreeRule, structure.Rule):
 
     def problems(self, oFile):
         dTypes = {text(o.name): enum_values(o.type) for o in oFile.nodes("TypedefDeclaration") if o.type is not None and o.type.kind.name == "EnumType"}
+        dRun = run_enum_types(oFile)
         for oModule in oFile.nodes("ModuleDeclaration"):
-            dVariables = state_variables(oModule, dTypes)
+            dVariables = state_variables(oModule, dTypes, dRun)
             if not dVariables:
                 continue
             lAssignments = assignments(oModule)
@@ -71,7 +75,7 @@ class rule_013(TreeRule, structure.Rule):
                 setEntered = set()
                 for oTarget, oRight in lAssignments:
                     if oTarget in setStates:
-                        setEntered.update(text(o.identifier) for o in reads(oRight))
+                        setEntered.update(value_reads(oRight))
                 setEntered.update(returned_values(oModule, sType))
                 oToken = oFile.token_at(oCase.getFirstToken())
                 for sValue in lValues[1:]:
@@ -80,7 +84,7 @@ class rule_013(TreeRule, structure.Rule):
                 if default_before(oCase, setStates, lValues):
                     continue
                 for oItem in lItems:
-                    lChoices = [source(o) for o in elements(oItem.expressions) if source(o) in lValues]
+                    lChoices = [s for s in (unqualified(source(o)) for o in elements(oItem.expressions)) if s in lValues]
                     if not lChoices or leaves(oItem.clause, setStates, lValues, lChoices):
                         continue
                     oItemToken = oFile.token_at(oItem.getFirstToken())
@@ -92,16 +96,42 @@ def enum_values(oEnum):
     return [text(o.name) for o in elements(oEnum.members)]
 
 
-def state_variables(oModule, dTypes):
-    """The variables of a module of an enum type declared in the file: name -> (type, values)."""
+def run_enum_types(oFile):
+    """The enum types of the files of the run, when lint mode compiled the run, see svFile/project.py."""
+    dProject = getattr(getattr(oFile, "configuration", None), "sv_lint_project", None) or {}
+    dEntry = dProject.get(os.path.abspath(oFile.filename)) if getattr(oFile, "filename", None) else None
+    if dEntry is None and dProject:
+        dEntry = next(iter(dProject.values()))
+    return (dEntry or {}).get("enums") or {"qualified": {}, "bare": {}}
+
+
+def named_type(oType, dTypes, dRun):
+    """(type, values) of a named type: an enum type of the file, else of the run, by its bare or qualified name."""
+    oName = oType.name
+    if oName.kind.name == "IdentifierName":
+        sName = text(oName.identifier)
+        if sName in dTypes:
+            return sName, dTypes[sName]
+        if sName in dRun["bare"]:
+            return dRun["bare"][sName]
+    elif oName.kind.name == "ScopedName":
+        sName = "".join(source(oName).split())
+        if sName in dRun["qualified"]:
+            return sName, dRun["qualified"][sName]
+    return None
+
+
+def state_variables(oModule, dTypes, dRun):
+    """The variables of a module of an enum type of the file or the run: name -> (type, values)."""
     dReturn = {}
     for oDeclaration in [o for o in descendants(oModule) if o.kind.name == "DataDeclaration"]:
         oType = oDeclaration.type
         if oType is None:
             continue
-        if oType.kind.name == "NamedType" and oType.name.kind.name == "IdentifierName" and text(oType.name.identifier) in dTypes:
-            sType = text(oType.name.identifier)
-            tType = (sType, dTypes[sType])
+        if oType.kind.name == "NamedType":
+            tType = named_type(oType, dTypes, dRun)
+            if tType is None:
+                continue
         elif oType.kind.name == "EnumType":
             tType = (f"@{oType.getFirstToken().location.offset}", enum_values(oType))
         else:
@@ -109,6 +139,19 @@ def state_variables(oModule, dTypes):
         for oDeclarator in elements(oDeclaration.declarators):
             dReturn[text(oDeclarator.name)] = tType
     return dReturn
+
+
+def unqualified(sName):
+    """A name without its package or class: Idle for pkg::Idle."""
+    return sName.split("::")[-1].strip()
+
+
+def value_reads(oExpression):
+    """The names an expression reads, with the names written with their package, such as pkg::Idle, unqualified."""
+    setReturn = {text(o.identifier) for o in reads(oExpression)}
+    if oExpression is not None:
+        setReturn.update(unqualified(source(o)) for o in [oExpression, *descendants(oExpression)] if o.kind.name == "ScopedName")
+    return setReturn
 
 
 def selector_name(oCase):
@@ -138,10 +181,16 @@ def returned_values(oModule, sType):
     setReturn = set()
     for oFunction in [o for o in descendants(oModule) if o.kind.name == "FunctionDeclaration"]:
         oReturnType = oFunction.prototype.returnType
-        if oReturnType is not None and oReturnType.kind.name == "NamedType" and source(oReturnType) == sType:
+        if oReturnType is not None and oReturnType.kind.name == "NamedType" and type_names(oReturnType) & {sType, unqualified(sType)}:
             for oReturn in [o for o in descendants(oFunction) if o.kind.name == "ReturnStatement"]:
-                setReturn.update(text(o.identifier) for o in reads(oReturn.returnValue))
+                setReturn.update(value_reads(oReturn.returnValue))
     return setReturn
+
+
+def type_names(oNamedType):
+    """The names of a named type as written: state_e, or pkg::state_e and state_e."""
+    sName = "".join(source(oNamedType).split())
+    return {sName, unqualified(sName)}
 
 
 def default_before(oCase, setStates, lValues):
@@ -152,7 +201,7 @@ def default_before(oCase, setStates, lValues):
     iCase = oCase.getFirstToken().location.offset
     for oChild in descendants(oProcedure):
         if oChild.kind.name in ASSIGNMENTS and oChild.left is not None and oChild.getFirstToken().location.offset < iCase:
-            if any(o.name in setStates for o in targets(oChild.left)) and any(text(o.identifier) in lValues for o in reads(oChild.right)):
+            if any(o.name in setStates for o in targets(oChild.left)) and value_reads(oChild.right) & set(lValues):
                 return True
     return False
 
@@ -165,7 +214,7 @@ def leaves(oStatement, setStates, lValues, lChoices):
     for sTarget, oRight in assignments(oStatement):
         if sTarget not in setStates:
             continue
-        setRead = {text(o.identifier) for o in reads(oRight)}
+        setRead = value_reads(oRight)
         if setRead & (set(lValues) - set(lChoices)):
             return True
         if any(o.kind.name == "InvocationExpression" for o in [oRight, *descendants(oRight)]):
