@@ -153,6 +153,15 @@ Of the 226 rules, 204 apply to both, 7 to both with Verilog advice and 15 to Sys
    * - :code:`sv_always_026`
      - Both
      - Delays of nonblocking assignments, as q <= #1 d: the same in Verilog-2005
+   * - :code:`sv_always_027`
+     - Both
+     - Registers of edge triggered always blocks: the same in Verilog-2005
+   * - :code:`sv_always_028`
+     - Both
+     - Resets of edge triggered always blocks: the same in Verilog-2005
+   * - :code:`sv_always_029`
+     - Both
+     - Named begin-end blocks: the same in Verilog-2005
    * - :code:`sv_blank_line_001`
      - Both
      - Blank lines only: the same in Verilog-2005
@@ -213,6 +222,9 @@ Of the 226 rules, 204 apply to both, 7 to both with Verilog advice and 15 to Sys
    * - :code:`sv_comment_007`
      - Both
      - Comments only: the same in Verilog-2005
+   * - :code:`sv_comment_008`
+     - Both
+     - Comments, read as SystemVerilog, which holds Verilog-2005: the same in Verilog-2005
    * - :code:`sv_declaration_001`
      - Both, Verilog advice
      - Verilog-2005 can type a parameter only as integer, real, realtime or time: a range or signed counts as a type, and the advice names integer or a range
@@ -222,6 +234,9 @@ Of the 226 rules, 204 apply to both, 7 to both with Verilog advice and 15 to Sys
    * - :code:`sv_declaration_003`
      - Both
      - Declarations of several signals: the same in Verilog-2005
+   * - :code:`sv_declaration_004`
+     - Both
+     - Initial values of variables, such as reg q = 0: the same in Verilog-2005
    * - :code:`sv_dimension_001`
      - Both
      - Ranges of vectors: the same in Verilog-2005
@@ -657,6 +672,9 @@ Of the 226 rules, 204 apply to both, 7 to both with Verilog advice and 15 to Sys
    * - :code:`sv_statement_050`
      - Both
      - Repeated expressions: the same in Verilog-2005
+   * - :code:`sv_statement_051`
+     - Both
+     - Continuous assignments: the same in Verilog-2005
    * - :code:`sv_syntax_001`
      - Both
      - Syntax errors of the file in its language: in a Verilog file, SystemVerilog constructs are errors

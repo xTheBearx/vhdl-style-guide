@@ -248,7 +248,9 @@ A rule that implements checks of different severities gets the most severe one.
 The DO-254 rule set
 -------------------
 
-This table is generated from :code:`mhsg/rule_sets/do254.yaml`.
+This table is generated from :code:`mhsg/rule_sets/do254.yaml`. The rules named sv\_ implement the checks for
+SystemVerilog and Verilog files, see :doc:`systemverilog`; under do254, sv_statement_008 nests at most 4 deep and
+sv_comment_007 asks for 20 percent of comments, the limits of lint_030 and lint_042.
 DR13 lists the naming rules but does not enable them: configure the prefixes and suffixes of your project, then enable the naming rules.
 Some checks have options a project usually sets: the fields of the file header (lint_041, **required_fields**), the
 share of comments (lint_042, **minimum_percent**), the nesting limit (lint_030, **nesting_limit**), the direction of

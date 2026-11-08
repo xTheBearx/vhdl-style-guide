@@ -22,7 +22,7 @@ checks:
   SIM:
     title: Avoid simulation-only constructs in synthesizable code
     severity: Warning
-    rules: [lint_014]
+    rules: [lint_014, sv_statement_004, sv_statement_005, sv_statement_016]
   PRAGMA:
     title: Justify code hidden from synthesis or coverage
     severity: Note
@@ -30,7 +30,7 @@ checks:
   PROCALL:
     title: Use process (all) for combinational processes
     severity: Note
-    rules: [lint_025]
+    rules: [lint_025, sv_always_001]
   DEFAULT:
     title: Give signals default values at the start of combinational processes
     severity: Note
@@ -42,12 +42,14 @@ checks:
     title: Use numeric_std, not the non-standard arithmetic packages
     severity: Error
     rules: [use_clause_001]
+    note: 'VHDL only: SystemVerilog has its arithmetic in the language.'
     configuration:
       use_clause_001: {names: [std_logic_arith, std_logic_unsigned, std_logic_signed, std_logic_misc]}
   INT:
     title: Give integer signals and ports a range
     severity: Warning
     rules: [lint_016]
+    note: 'VHDL only: the integer types of SystemVerilog have fixed widths.'
   SIGNED:
     title: Convert explicitly between signed, unsigned and std_logic_vector
     severity: Warning
@@ -58,7 +60,7 @@ checks:
   CLK:
     title: Use rising_edge or falling_edge, and one clock edge per process
     severity: Warning
-    rules: [lint_020]
+    rules: [lint_020, sv_always_012]
   VAR:
     title: Avoid variables that hold state in clocked processes
     severity: Warning
@@ -81,7 +83,7 @@ checks:
   FSMSAFE:
     title: Recover from illegal states, and keep the recovery logic in synthesis
     severity: Error
-    rules: [lint_017]
+    rules: [lint_017, sv_case_001]
   FSMDOC:
     title: Document states and transitions in a diagram
     severity: Note
@@ -96,15 +98,16 @@ checks:
   NAMED:
     title: Use named association in port and generic maps
     severity: Warning
-    rules: [port_map_008, generic_map_008]
+    rules: [port_map_008, generic_map_008, sv_module_003]
   ENTITY:
     title: Instantiate entities directly
     severity: Note
     rules: [lint_026]
+    note: 'VHDL only: SystemVerilog instantiates modules directly.'
   FILE:
     title: One entity per file, named after the entity
     severity: Note
-    rules: [lint_021]
+    rules: [lint_021, sv_file_001, sv_file_003]
   GENERIC:
     title: Check generic values with assertions
     severity: Note
@@ -123,11 +126,11 @@ checks:
   DEAD:
     title: Remove commented-out code
     severity: Note
-    rules: [comment_013]
+    rules: [comment_013, sv_comment_008]
   NAMES:
     title: Follow the naming conventions
     severity: Note
-    rules: [instantiation_601, type_600, constant_004, generic_007]
+    rules: [instantiation_601, type_600, constant_004, generic_007, sv_naming_002, sv_naming_003]
     configuration:
       instantiation_601: {prefixes: [u_]}
       type_600: {suffixes: [_t]}

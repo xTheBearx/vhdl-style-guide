@@ -169,3 +169,34 @@ disabled by default; the starc rule set enables it.
 **Fix**
 
 Describe the ports, signals and blocks of the module in comments.
+
+sv_comment_008
+##############
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_comment_commented_out_code`
+
+This rule checks for comments which contain commented-out code. A line comment on a line of its own is reported
+if it ends like a statement or declaration, with a semicolon or a keyword such as begin, end or else, it parses as
+SystemVerilog, as a module item or a statement, and its words are keywords or names used in the code of the file;
+with a symbol of code, such as =, <= or (, half of its words are enough, as commented-out code can name what was
+removed. Comments written as sentences do not parse, and directives of tools, such as synopsys or verilator
+comments, are not reported. It is disabled by default; the do254_plus rule set enables it (DEAD).
+
+.. NOTE:: This rule only reports the comments: deciding whether to delete them is left to the user.
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   // Wait for the FIFO to empty
+   // if (rd_en) data_q <= data_d;
+   if (empty) data_q <= '0;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   // Wait for the FIFO to empty
+   if (empty) data_q <= '0;

@@ -1,7 +1,7 @@
 {
   "format": "mhsg-options",
   "format_version": 1,
-  "mhsg_version": "4.0.0a1.post7+git.868f7329",
+  "mhsg_version": "3.35.0.post634+git.e6945a69",
   "documentation_url": "https://github.com/xTheBearx/vhdl-style-guide/blob/master/docs/",
   "settings": [
     {
@@ -2469,6 +2469,9 @@
         "sv_always_024",
         "sv_always_025",
         "sv_always_026",
+        "sv_always_027",
+        "sv_always_028",
+        "sv_always_029",
         "sv_case_001",
         "sv_case_002",
         "sv_case_003",
@@ -2488,9 +2491,11 @@
         "sv_comment_005",
         "sv_comment_006",
         "sv_comment_007",
+        "sv_comment_008",
         "sv_declaration_001",
         "sv_declaration_002",
         "sv_declaration_003",
+        "sv_declaration_004",
         "sv_dimension_001",
         "sv_dimension_002",
         "sv_dimension_003",
@@ -2596,6 +2601,7 @@
         "sv_statement_048",
         "sv_statement_049",
         "sv_statement_050",
+        "sv_statement_051",
         "sv_syntax_001",
         "sv_typedef_001",
         "sv_typedef_002",
@@ -64158,6 +64164,147 @@
       ]
     },
     {
+      "id": "sv_always_027",
+      "alias": "sv_always_register_reset",
+      "category": "sv_always",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that every register has a reset: an edge triggered always block without an asynchronous reset holds registers without reset, but for those assigned in the reset branch of an if at the top level of the block that tests a synchronous reset. Resets are told by the words of their names, as for port_028. Registers written through an index that is a name, such as mem[addr], are memories and are not checked; the registers of an always block with a reset are checked by sv_always_016. Registers without a reset on purpose, such as the flip-flops of a synchronizer, should be justified. It is disabled by default; the do254 rule set enables it (SS14).",
+      "documentation": "sv_always_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_always_028",
+      "alias": "sv_always_consistent_reset",
+      "category": "sv_always",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that a reset is used with one polarity and one style throughout a file: active low or active high, and asynchronous or synchronous. The asynchronous resets of an edge triggered always block are the events of its event control that its first if tests, active low on negedge; its synchronous reset is a signal with a reset name, as for port_028, that the first if of a block with one clock tests. A reset that is active low in one block and active high in another, or both asynchronous and synchronous, behaves unexpectedly around reset. It is disabled by default; the do254 rule set enables it (SS13).",
+      "documentation": "sv_always_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_always_029",
+      "alias": "sv_always_label",
+      "category": "sv_always",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks that always blocks are labelled: their statement is a begin-end block with a name, such as begin : p_count, so that reports, waveforms and reviews can name the block. It is disabled by default; the do254 rule set enables it (DR1), with sv_generate_001 for the blocks of generate constructs.",
+      "documentation": "sv_always_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
       "id": "sv_blank_line_001",
       "alias": "sv_blank_line_end_of_file",
       "category": "sv_blank_line",
@@ -65170,6 +65317,53 @@
       ]
     },
     {
+      "id": "sv_comment_008",
+      "alias": "sv_comment_commented_out_code",
+      "category": "sv_comment",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for comments which contain commented-out code. A line comment on a line of its own is reported if it ends like a statement or declaration, with a semicolon or a keyword such as begin, end or else, it parses as SystemVerilog, as a module item or a statement, and its words are keywords or names used in the code of the file; with a symbol of code, such as =, <= or (, half of its words are enough, as commented-out code can name what was removed. Comments written as sentences do not parse, and directives of tools, such as synopsys or verilator comments, are not reported. It is disabled by default; the do254_plus rule set enables it (DEAD).",
+      "documentation": "sv_comment_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
       "id": "sv_declaration_001",
       "alias": "sv_declaration_explicit_parameter_storage_type",
       "category": "sv_declaration",
@@ -65271,6 +65465,53 @@
         "structure"
       ],
       "summary": "This rule checks that a declaration names one signal, as the STARC guide recommends (3.1.3.4), so each can have its own comment. It is disabled by default; the starc rule set enables it.",
+      "documentation": "sv_declaration_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
+        }
+      ]
+    },
+    {
+      "id": "sv_declaration_004",
+      "alias": "sv_declaration_no_initial_value",
+      "category": "sv_declaration",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for initial values on signals and output ports: the declaration of a variable of a module, or of an output or inout port, with an initial value, such as logic q = 1'b0. Synthesis may ignore the value or turn it into a power-on value of the target, so simulation and hardware can start differently; reset the register instead. Constants, nets, whose initial value is a continuous assignment, the variables of functions, tasks, classes and procedural blocks, and the default values of input ports are not reported; initial blocks are reported by sv_statement_004. It is disabled by default; the do254 rule set enables it (SS16).",
       "documentation": "sv_declaration_rules.rst",
       "options": [
         {
@@ -72434,6 +72675,53 @@
           "name": "maximum_uses",
           "default": 2,
           "definition": "maximum_uses"
+        }
+      ]
+    },
+    {
+      "id": "sv_statement_051",
+      "alias": "sv_statement_inverter_chain",
+      "category": "sv_statement",
+      "groups": [
+        "structure"
+      ],
+      "summary": "This rule checks for chains of inverters: a continuous assignment that only inverts a signal that another such assignment drives, such as assign b = ~a; assign c = ~b;. Synthesis removes the chain, so a delay or a buffer written this way is not built; logic implied by a chain of inversions should be written as what it means. It is disabled by default; the do254 rule set enables it (SS1).",
+      "documentation": "sv_statement_rules.rst",
+      "options": [
+        {
+          "name": "indent_style",
+          "default": "spaces",
+          "definition": "indent_style"
+        },
+        {
+          "name": "indent_size",
+          "default": 4,
+          "definition": "indent_size"
+        },
+        {
+          "name": "phase",
+          "default": 1,
+          "definition": "phase"
+        },
+        {
+          "name": "disable",
+          "default": true,
+          "definition": "disable"
+        },
+        {
+          "name": "fixable",
+          "default": false,
+          "definition": "fixable"
+        },
+        {
+          "name": "severity",
+          "default": "Error",
+          "definition": "severity"
+        },
+        {
+          "name": "user_error_message",
+          "default": "",
+          "definition": "user_error_message"
         }
       ]
     },

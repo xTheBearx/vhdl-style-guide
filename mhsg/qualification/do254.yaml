@@ -649,6 +649,89 @@ cases:
     - Change READ_SIZE to read_size
   - - 11
     - Change WRITE_size to write_size
+- rule: sv_always_016
+  file: examples/svfile/starc_more4.sv
+  expected:
+  - - 18
+    - Reset s too, or assign it in an always block without reset
+- rule: sv_always_016
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_always_017
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 16
+    - 'Assign q once: it is already assigned before in the block'
+- rule: sv_always_017
+  file: examples/svfile/structure.fixed.sv
+  expected:
+  - - 29
+    - 'Assign q once: it is already assigned before in the block'
+  - - 32
+    - 'Assign q once: it is already assigned before in the block'
+  - - 37
+    - 'Assign q once: it is already assigned before in the block'
+- rule: sv_always_017
+  file: examples/svfile/structure.sv
+  expected:
+  - - 31
+    - 'Assign q once: it is already assigned before in the block'
+  - - 34
+    - 'Assign q once: it is already assigned before in the block'
+  - - 39
+    - 'Assign q once: it is already assigned before in the block'
+- rule: sv_always_017
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_always_027
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 50
+    - 'The register v has no reset: give it a reset, or justify it without one'
+- rule: sv_always_027
+  file: examples/svfile/directives.fixed.sv
+  expected:
+  - - 16
+    - 'The register a_q has no reset: give it a reset, or justify it without one'
+- rule: sv_always_027
+  file: examples/svfile/directives.sv
+  expected:
+  - - 16
+    - 'The register a_q has no reset: give it a reset, or justify it without one'
+- rule: sv_always_027
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_always_028
+  file: examples/svfile/do254.sv
+  expected:
+  - - 39
+    - Use rst_ni as on line 32, active low and asynchronous, not active high and synchronous
+- rule: sv_always_028
+  file: examples/svfile/starc_more4.sv
+  expected:
+  - - 14
+    - Use rst_ni as on line 11, active high and asynchronous, not active low and asynchronous
+- rule: sv_always_028
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_always_029
+  file: examples/svfile/alignment.fixed.sv
+  expected:
+  - - 18
+    - 'Label the always block, with begin : name'
+- rule: sv_always_029
+  file: examples/svfile/alignment.sv
+  expected:
+  - - 18
+    - 'Label the always block, with begin : name'
+- rule: sv_always_029
+  file: examples/svfile/brackets.fixed.sv
+  expected:
+  - - 11
+    - 'Label the always block, with begin : name'
+- rule: sv_always_029
+  file: examples/svfile/code_tags.sv
+  expected: []
 - rule: sv_case_001
   file: examples/svfile/structure.fixed.sv
   expected:
@@ -667,10 +750,148 @@ cases:
 - rule: sv_case_001
   file: examples/svfile/alignment.fixed.sv
   expected: []
+- rule: sv_case_008
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 34
+    - Name the state encoding 2'b00 with a parameter
+- rule: sv_case_008
+  file: examples/svfile/starc_more6.sv
+  expected:
+  - - 32
+    - Name the state encoding 2'd0 with a parameter
+  - - 33
+    - Name the state encoding 2'd0 with a parameter
+- rule: sv_case_008
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_comment_003
+  file: examples/svfile/alignment.fixed.sv
+  expected:
+  - - 1
+    - Start the file with a header comment
+- rule: sv_comment_003
+  file: examples/svfile/alignment.sv
+  expected:
+  - - 1
+    - Start the file with a header comment
+- rule: sv_comment_003
+  file: examples/svfile/brackets.fixed.sv
+  expected:
+  - - 1
+    - Start the file with a header comment
+- rule: sv_comment_003
+  file: examples/svfile/do254.sv
+  expected: []
+- rule: sv_comment_007
+  file: examples/svfile/alignment.fixed.sv
+  expected:
+  - - 1
+    - 'Comment the module more: 0 of its 25 lines have a comment'
+- rule: sv_comment_007
+  file: examples/svfile/alignment.sv
+  expected:
+  - - 1
+    - 'Comment the module more: 0 of its 25 lines have a comment'
+- rule: sv_comment_007
+  file: examples/svfile/brackets.fixed.sv
+  expected:
+  - - 1
+    - 'Comment the module more: 1 of its 19 lines have a comment'
+- rule: sv_comment_007
+  file: examples/svfile/code_tags.sv
+  expected: []
+- rule: sv_declaration_003
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 23
+    - Declare one signal per declaration
+- rule: sv_declaration_003
+  file: examples/svfile/indent.sv
+  expected:
+  - - 31
+    - Declare one signal per declaration
+- rule: sv_declaration_003
+  file: examples/svfile/lists.fixed.sv
+  expected:
+  - - 3
+    - Declare one signal per declaration
+- rule: sv_declaration_003
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_declaration_004
+  file: examples/svfile/do254.sv
+  expected:
+  - - 15
+    - Remove the initial value of busy, and reset it instead
+  - - 10
+    - Remove the initial value of q_o, and reset it instead
+- rule: sv_declaration_004
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_dimension_001
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 14
+    - Write the packed dimension as [msb:lsb]
+- rule: sv_dimension_001
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_function_008
+  file: examples/svfile/indent.sv
+  expected:
+  - - 91
+    - Do not wait for a clock edge in a task
+- rule: sv_function_008
+  file: examples/svfile/starc_more2.sv
+  expected:
+  - - 25
+    - Do not wait for a clock edge in a task
+- rule: sv_function_008
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_function_009
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 32
+    - End the function parity by assigning its result
+- rule: sv_function_009
+  file: examples/svfile/starc_more4.sv
+  expected:
+  - - 22
+    - End the function parity by assigning its result
+- rule: sv_function_009
+  file: examples/svfile/starc_more6.sv
+  expected:
+  - - 34
+    - End the function f by assigning its result
+- rule: sv_function_009
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_generate_001
+  file: examples/svfile/structure.fixed.sv
+  expected:
+  - - 15
+    - Label the generate block
+- rule: sv_generate_001
+  file: examples/svfile/structure.sv
+  expected:
+  - - 16
+    - Label the generate block
+- rule: sv_generate_001
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
 - rule: sv_lint_001
   file: examples/svfile/lint.sv
   expected:
   - - 14
+    - Implicit conversion truncates from 8 to 4 bits
+- rule: sv_lint_001
+  file: examples/svfile/lint_unparsed.sv
+  expected:
+  - - 9
+    - Implicit conversion truncates from 8 to 4 bits
+  - - 13
     - Implicit conversion truncates from 8 to 4 bits
 - rule: sv_lint_001
   file: examples/svfile/starc_more7.sv
@@ -854,10 +1075,10 @@ cases:
   - - 6
     - Undriven output port 'd_o'
 - rule: sv_lint_010
-  file: examples/svfile/project/sub.sv
+  file: examples/svfile/do254.sv
   expected:
-  - - 5
-    - Undriven output port 'unused_o'
+  - - 19
+    - Variable 'addr' is never assigned a value
 - rule: sv_lint_010
   file: examples/svfile/alignment.fixed.sv
   expected: []
@@ -866,6 +1087,11 @@ cases:
   expected:
   - - 42
     - 'Variable also written to in always_comb (IEEE 1800-2017 9.2.2.2): ''r'' (Verilator MULTIDRIVEN)'
+- rule: sv_lint_012
+  file: examples/svfile/starc_more8.sv
+  expected:
+  - - 31
+    - 'Variable written to in always_comb also written by other process (IEEE 1800-2017 9.2.2.2): ''t'' (Verilator MULTIDRIVEN)'
 - rule: sv_lint_012
   file: examples/svfile/alignment.fixed.sv
   expected: []
@@ -882,6 +1108,30 @@ cases:
   expected:
   - - 12
     - Case values incompletely covered (example pattern 0x2) (Verilator CASEINCOMPLETE)
+- rule: sv_literal_010
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 62
+    - Name 2 with a parameter
+  - - 29
+    - Name 4'hFF with a parameter
+  - - 31
+    - Name 'h1_0000_0000 with a parameter
+- rule: sv_literal_010
+  file: examples/svfile/do254.sv
+  expected:
+  - - 34
+    - Name 4'd5 with a parameter
+- rule: sv_literal_010
+  file: examples/svfile/indent.sv
+  expected:
+  - - 77
+    - Name 8 with a parameter
+  - - 108
+    - Name 64 with a parameter
+- rule: sv_literal_010
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
 - rule: sv_naming_012
   file: examples/svfile/declarations.sv
   expected:
@@ -910,6 +1160,40 @@ cases:
   - - 43
     - Move the statement to its own line
 - rule: sv_statement_003
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_004
+  file: examples/svfile/declarations.sv
+  expected:
+  - - 40
+    - Remove the initial block from design code
+- rule: sv_statement_004
+  file: examples/svfile/starc_more4.sv
+  expected:
+  - - 26
+    - Remove the initial block from design code
+- rule: sv_statement_004
+  file: examples/svfile/starc_more5.sv
+  expected:
+  - - 41
+    - Remove the initial block from design code
+- rule: sv_statement_004
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_008
+  file: examples/svfile/do254_nesting.sv
+  expected:
+  - - 17
+    - Nest if statements at most 4 deep
+- rule: sv_statement_008
+  file: examples/svfile/alignment.fixed.sv
+  expected: []
+- rule: sv_statement_051
+  file: examples/svfile/do254.sv
+  expected:
+  - - 23
+    - 'a_d inverts a_n, which inverts a signal too: remove the chain of inverters'
+- rule: sv_statement_051
   file: examples/svfile/alignment.fixed.sv
   expected: []
 - rule: type_014

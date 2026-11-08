@@ -177,6 +177,16 @@ they implement:
    $ mhsg -f rtl/fifo.sv --lint_only
    WARNING: rtl/fifo.sv(16)DO254-SS4 (sv_lint_002) -- Latch inferred for 'l_o' because it is not assigned on all control paths
 
+**DO-254.** The **do254** and **do254_plus** rule sets check SystemVerilog and Verilog files as well as VHDL ones:
+each check lists the rules of both languages, and a rule runs on the files of its language. For SystemVerilog these
+are the slang rules above and rules written for the checks: registers without a reset (:code:`sv_always_027`, SS14),
+a reset used with two polarities or styles (:code:`sv_always_028`, SS13), unlabelled always blocks
+(:code:`sv_always_029`, DR1), initial values on signals and outputs (:code:`sv_declaration_004`, SS16), chains of
+inverters (:code:`sv_statement_051`, SS1) and commented-out code (:code:`sv_comment_008`, DEAD), with the SystemVerilog
+rules of the STARC rule set that match a check, such as numbers named with parameters (:code:`sv_literal_010`, CP3).
+The line length, file length and tab rules check every language. The checks that only apply to VHDL, such as
+deferred constants (SS7), say so in the coverage tables of :doc:`lint`.
+
 The Verilog and SystemVerilog files of a run are compiled together, once, each in its language, with the files of
 the systemverilog section and of :code:`--index_files`, so each file is checked against the others: an instance
 against the ports of its module, a package against the files that use it. A file that still uses a module, package or macro the run does not know is not

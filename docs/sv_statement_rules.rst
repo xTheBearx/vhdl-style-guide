@@ -1199,3 +1199,28 @@ signal of its own. It is disabled by default; the starc rule set enables it.
    assign x = ab;
    assign y = ab | c;
    assign z = ab ^ d;
+
+sv_statement_051
+################
+
+|phase_1| |disabled| |error| |unfixable| |structure|
+
+Alias: :code:`sv_statement_inverter_chain`
+
+This rule checks for chains of inverters: a continuous assignment that only inverts a signal that another such
+assignment drives, such as assign b = ~a; assign c = ~b;. Synthesis removes the chain, so a delay or a buffer
+written this way is not built; logic implied by a chain of inversions should be written as what it means. It is
+disabled by default; the do254 rule set enables it (SS1).
+
+**Violation**
+
+.. code-block:: systemverilog
+
+   assign a_n = ~a;
+   assign a_d = ~a_n;
+
+**Fix**
+
+.. code-block:: systemverilog
+
+   assign a_d = a;

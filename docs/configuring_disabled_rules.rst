@@ -228,6 +228,9 @@ Rules Disabled by Default
 * `sv_always_024 <sv_always_rules.html#sv-always-024>`_
 * `sv_always_025 <sv_always_rules.html#sv-always-025>`_
 * `sv_always_026 <sv_always_rules.html#sv-always-026>`_
+* `sv_always_027 <sv_always_rules.html#sv-always-027>`_
+* `sv_always_028 <sv_always_rules.html#sv-always-028>`_
+* `sv_always_029 <sv_always_rules.html#sv-always-029>`_
 * `sv_case_003 <sv_case_rules.html#sv-case-003>`_
 * `sv_case_004 <sv_case_rules.html#sv-case-004>`_
 * `sv_case_005 <sv_case_rules.html#sv-case-005>`_
@@ -245,8 +248,10 @@ Rules Disabled by Default
 * `sv_comment_005 <sv_comment_rules.html#sv-comment-005>`_
 * `sv_comment_006 <sv_comment_rules.html#sv-comment-006>`_
 * `sv_comment_007 <sv_comment_rules.html#sv-comment-007>`_
+* `sv_comment_008 <sv_comment_rules.html#sv-comment-008>`_
 * `sv_declaration_002 <sv_declaration_rules.html#sv-declaration-002>`_
 * `sv_declaration_003 <sv_declaration_rules.html#sv-declaration-003>`_
+* `sv_declaration_004 <sv_declaration_rules.html#sv-declaration-004>`_
 * `sv_dimension_003 <sv_dimension_rules.html#sv-dimension-003>`_
 * `sv_dimension_004 <sv_dimension_rules.html#sv-dimension-004>`_
 * `sv_file_003 <sv_file_rules.html#sv-file-003>`_
@@ -361,6 +366,7 @@ Rules Disabled by Default
 * `sv_statement_048 <sv_statement_rules.html#sv-statement-048>`_
 * `sv_statement_049 <sv_statement_rules.html#sv-statement-049>`_
 * `sv_statement_050 <sv_statement_rules.html#sv-statement-050>`_
+* `sv_statement_051 <sv_statement_rules.html#sv-statement-051>`_
 * `type_015 <type_rules.html#type-015>`_
 * `type_100 <type_rules.html#type-100>`_
 * `type_200 <type_rules.html#type-200>`_
