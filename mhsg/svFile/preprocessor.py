@@ -37,13 +37,13 @@ def settings(dConfig):
     return lDefines, lIncludes
 
 
-def options(dConfig, sLanguage=None):
+def options(dConfig, sLanguageName=None):
     """
     Returns the pyslang options bag for the preprocessor settings of a configuration, and for a Verilog file the
     version of the language, or None for none.
     """
     lDefines, lIncludes = settings(dConfig)
-    bVerilog = sLanguage == language.VERILOG
+    bVerilog = sLanguageName == language.VERILOG
     if not lDefines and not lIncludes and not bVerilog:
         return None
     oOptions = PreprocessorOptions()

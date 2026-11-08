@@ -74,8 +74,8 @@ class svFile(vhdl.vhdlFile):
     language = LANGUAGE
 
     def _processFile(self):
-        sLanguage = language.of_file(self.filename, getattr(self.configuration, "dConfig", None))
-        self.language = sLanguage if sLanguage in language.VERILOG_LANGUAGES else LANGUAGE
+        sLanguageName = language.of_file(self.filename, getattr(self.configuration, "dConfig", None))
+        self.language = sLanguageName if sLanguageName in language.VERILOG_LANGUAGES else LANGUAGE
         # Lines come without their line ends from the command line, and with them from tests and the API
         lLines = [sLine.rstrip("\r\n") for sLine in self.filecontent]
         self.parse("\n".join(lLines) + "\n" if lLines else "")

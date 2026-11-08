@@ -192,7 +192,9 @@ Alias: :code:`sv_lint_sensitivity_list`
 
 This rule checks that the sensitivity list of a combinational always block names every signal and port of the
 file that the block reads. A missing signal makes simulation differ from synthesis; always_comb or always @*
-avoids the list altogether. The finding of a Verilog file, which has no always_comb, names always @*.
+avoids the list altogether.
+
+The finding of a Verilog file, which has no always_comb, names always @* instead of always_comb.
 
 The signals a function or task of the file reads count as read by the blocks that call it. A hierarchical name,
 such as u_sub.valid, must be listed as written; a member of a signal, such as cfg.mode, needs the signal. A
