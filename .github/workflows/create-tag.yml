@@ -1,0 +1,65 @@
+# Creates a tag on GitHub, run by hand (Actions ▸ Create tag ▸ Run workflow) or through the GitHub API.
+# It exists because pushes from the cloud sessions that work on this repository may update branches only:
+# a session asks for a tag by starting this workflow with the tag's name and commit.
+# It refuses a name git does not accept, a commit that does not exist and a tag that is already there,
+# so it never moves or replaces a tag.
+name: Create tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag name, for example 4.0.0a2"
+        required: true
+        type: string
+      commit:
+        description: "Full commit SHA, or a branch name, to tag"
+        required: true
+        type: string
+      message:
+        description: "Message for an annotated tag (leave empty for a lightweight tag)"
+        required: false
+        type: string
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: create-tag
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create and push the tag
+        env:
+          TAG: ${{ inputs.tag }}
+          COMMIT: ${{ inputs.commit }}
+          MESSAGE: ${{ inputs.message }}
+        run: |
+          set -euo pipefail
+          if ! git check-ref-format "refs/tags/${TAG}"; then
+            echo "::error::'${TAG}' is not a valid tag name"; exit 1
+          fi
+          if ! SHA=$(git rev-parse --verify --quiet "${COMMIT}^{commit}") \
+             && ! SHA=$(git rev-parse --verify --quiet "origin/${COMMIT}^{commit}"); then
+            echo "::error::No commit or branch '${COMMIT}' in this repository"; exit 1
+          fi
+          if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null; then
+            echo "::error::Tag '${TAG}' already exists; it is not moved"; exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -n "${MESSAGE}" ]; then
+            git tag -a "${TAG}" "${SHA}" -m "${MESSAGE}"
+          else
+            git tag "${TAG}" "${SHA}"
+          fi
+          git push origin "refs/tags/${TAG}"
+          echo "Tagged ${SHA} as ${TAG}" >> "$GITHUB_STEP_SUMMARY"
