@@ -103,6 +103,9 @@ checks:
     title: Instantiate entities directly
     severity: Note
     rules: [lint_026]
+    configuration:
+      # The style rule asks for component instantiations by default
+      instantiation_034: {method: entity}
     note: 'VHDL only: SystemVerilog instantiates modules directly.'
   FILE:
     title: One entity per file, named after the entity
@@ -123,6 +126,9 @@ checks:
     title: Tag entities and processes with the requirements they implement
     severity: Note
     rules: [lint_018, sv_comment_010]
+    configuration:
+      # The tag in the comment lines directly above an entity: a blank line between them would separate the tag
+      entity_003: {style: allow_comment}
   DEAD:
     title: Remove commented-out code
     severity: Note
@@ -136,6 +142,8 @@ checks:
       type_600: {suffixes: [_t]}
       constant_004: {case: upper}
       generic_007: {case: upper}
+      # The generics of generic maps in the case of their declarations
+      generic_map_002: {case: upper}
   LINE:
     title: Keep lines short enough to review
     severity: Note

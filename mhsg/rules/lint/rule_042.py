@@ -58,4 +58,5 @@ class rule_042(Rule):
             return
         fPercent = 100.0 * len(setComment) / iLines
         if fPercent < float(self.minimum_percent):
-            self.report(oFile, iFirst, f"Comments are on {fPercent:.0f}% of the lines; add comments to reach {self.minimum_percent}%")
+            # Rounded down, so a share just below the minimum does not read as the minimum
+            self.report(oFile, iFirst, f"Comments are on {int(fPercent)}% of the lines; add comments to reach {self.minimum_percent}%")
