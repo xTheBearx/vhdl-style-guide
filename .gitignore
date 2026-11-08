@@ -24,3 +24,6 @@ tests/external_repos/repos
 
 # Real world check
 .real_world_cache/
+
+# uv marks its git checkouts with this file; untracked, it would make the version read .dirty
+/.ok
