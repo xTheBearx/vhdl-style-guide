@@ -3,12 +3,14 @@ architecture rtl of top is
 
 begin
 
-  -- Instantiated once: data is the port name, foo is a rename
+  -- Instantiated once: rst_n is the name of the active low ports, data is the port name, foo is a rename
   u_leaf : entity work.leaf
     port map (
-      clk_i  => clk,
-      data_i => foo,
-      tick_o => tick
+      clk_i   => clk,
+      rst_n_i => rst_n,
+      rst_ni  => rst_n,
+      data_i  => foo,
+      tick_o  => tick
     );
 
   -- Instantiated twice: the instances cannot both connect signals named like the ports

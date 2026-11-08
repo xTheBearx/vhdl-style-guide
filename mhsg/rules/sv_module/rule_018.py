@@ -3,6 +3,7 @@
 import os
 
 from mhsg.rule_group import structure
+from mhsg.rules import hierarchy_names
 from mhsg.rules.sv_nodes import text
 from mhsg.rules.sv_tree import Problem, TreeRule, elements
 from mhsg.svFile import project
@@ -17,10 +18,10 @@ class rule_018(TreeRule, structure.Rule):
     A signal renamed at each level of the hierarchy is hard to follow from the top to the bottom of the design. The
     **strip_prefixes** and **strip_suffixes** options list the parts that are ignored, such as i\\_ and _o, which mark
     direction or kind; one prefix and one suffix, the longest that fits, are removed and the names compared ignoring
-    case, as lint_040 does for VHDL. The default suffixes include those of port names written by direction, the
-    names sv_naming_016 asks for: _i, _o and _io, with _n or n before them for active low ports, so tick_o matches
-    tick and tick_i, and rst_n_i or rst_ni matches rst_n. Only named connections of a signal by name are checked, not
-    selects, expressions, .name or .* connections.
+    case, as lint_040 does for VHDL, with the same defaults. The default suffixes include those of port names written
+    by direction, the names sv_naming_016 asks for: _i, _o and _io, with _n or n before them for active low ports, so
+    tick_o matches tick and tick_i, and rst_n_i or rst_ni matches rst_n. Only named connections of a signal by name
+    are checked, not selects, expressions, .name or .* connections.
 
     The ports of a module instantiated more than once are not checked: each instance connects its own signals, which
     cannot all have the names of the ports. In lint mode the instances of all the files of the run are counted,
@@ -48,9 +49,10 @@ class rule_018(TreeRule, structure.Rule):
         super().__init__()
         self.disable = True
         self.solution = "Name the signal after the port"
-        self.strip_prefixes = ["i_", "o_", "io_", "s_", "r_", "w_"]
+        # The defaults of lint_040 too, see hierarchy_names.py
+        self.strip_prefixes = list(hierarchy_names.STRIP_PREFIXES)
         self.configuration.append("strip_prefixes")
-        self.strip_suffixes = ["_i", "_o", "_io", "_ni", "_no", "_nio", "_n_i", "_n_o", "_n_io", "_s", "_r", "_n", "_d", "_q", "_reg", "_sig"]
+        self.strip_suffixes = list(hierarchy_names.STRIP_SUFFIXES)
         self.configuration.append("strip_suffixes")
 
     def problems(self, oFile):
@@ -72,17 +74,8 @@ class rule_018(TreeRule, structure.Rule):
                         yield Problem(oToken, f"Signal {sSignal} connected to port {sPort} of {sInstance} has another name")
 
     def stem(self, sName):
-        """The name in lower case without one of the prefixes and one of the suffixes."""
-        sName = sName.lower()
-        for sPrefix in sorted(self.strip_prefixes, key=len, reverse=True):
-            if sName.startswith(sPrefix.lower()) and len(sName) > len(sPrefix):
-                sName = sName[len(sPrefix) :]
-                break
-        for sSuffix in sorted(self.strip_suffixes, key=len, reverse=True):
-            if sName.endswith(sSuffix.lower()) and len(sName) > len(sSuffix):
-                sName = sName[: -len(sSuffix)]
-                break
-        return sName
+        """The name in lower case without one of the prefixes and one of the suffixes, see hierarchy_names.py."""
+        return hierarchy_names.stem(sName, self.strip_prefixes, self.strip_suffixes)
 
 
 def instances(oFile):

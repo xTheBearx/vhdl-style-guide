@@ -184,12 +184,13 @@ class test_lint_rules(unittest.TestCase):
 
     def test_rule_040_instances(self):
         # The ports of sync, instantiated twice, and of lane, in a for generate, are not checked; leaf is
-        # instantiated once, and foo connected to data_i is reported
+        # instantiated once: rst_n matches its active low ports rst_n_i and rst_ni, and foo connected to data_i is
+        # reported
         oRule = lint.rule_040()
         lFile, _ = vhdlFile.utils.read_vhdlfile(os.path.join(sTestDir, "rule_040b_test_input.vhd"))
         oRule.analyze(vhdlFile.vhdlFile(lFile))
         self.assertEqual(
-            [(10, "Signal foo connected to port data_i of u_leaf has another name")],
+            [(12, "Signal foo connected to port data_i of u_leaf has another name")],
             [(o.get_line_number(), o.get_solution()) for o in oRule.violations],
         )
 

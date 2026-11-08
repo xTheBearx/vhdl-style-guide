@@ -1322,8 +1322,12 @@ prefixes and suffixes, so a signal keeps its name through the hierarchy.
 .. NOTE:: This is a lint rule. It runs in lint mode and is part of the do254 rule set (DR9).
 
 A signal renamed at each level of the hierarchy is hard to follow from the top to the bottom of the design. The
-strip_prefixes and strip_suffixes options list the parts that are ignored, such as i\_ and _o, which mark direction or kind.
-Only port maps that connect a signal by name, not a slice or an expression, are checked.
+strip_prefixes and strip_suffixes options list the parts that are ignored, such as i\_ and _o, which mark direction or kind;
+one prefix and one suffix, the longest that fits, are removed and the names compared ignoring case. The defaults
+are those of sv_module_018, so a signal is compared with its port the same way in VHDL and SystemVerilog: they
+include the suffixes of port names written by direction, _i, _o and _io, with _n or n before them for active
+low ports, so rst_n_i or rst_ni matches rst_n. Only port maps that connect a signal by name, not a slice or an
+expression, are checked.
 
 The ports of an entity or component instantiated more than once are not checked: each instance connects its own
 signals, which cannot all have the names of the ports. The instances of the files of the run and of the index
