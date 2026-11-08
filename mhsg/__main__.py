@@ -173,6 +173,8 @@ def main():
     oConfig = config.New(commandLineArguments)
     try:
         rule_set.configure_lint_mode(oConfig, commandLineArguments)
+        for sWarning in rule_set.contradictions(oConfig.rule_set, oConfig.dConfig):
+            print(sWarning, file=sys.stderr)
         oConfig.waivers = waivers.from_configuration(oConfig.dConfig)
         # The language of .v files, checked once before the files are read
         language.v_files(oConfig.dConfig)

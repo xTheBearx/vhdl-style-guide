@@ -80,7 +80,16 @@ Whether **--fix** fixes a rule still follows the rule's own severity, its defaul
 |                      | and tabs for **do254**                                     |                              |
 +----------------------+------------------------------------------------------------+------------------------------+
 
-A rule set can also change which rules run: **do254** disables the rules that remove labels, since DR1 asks for labels.
+A rule set can also change which rules run and how the style rules are set, so that fixing the style does not undo
+a check: **do254** disables the rules that remove labels (DR1) and the comments of port maps and component
+declarations (DR11), and **do254_plus** asks for generics in upper case in generic maps (NAMES), for entity
+instantiations (ENTITY) and allows a requirement tag directly above an entity (REQ). The style rules get these settings
+whenever the rule set is chosen, on the command line or with the **rule_set** key of a configuration, so a fix with
+the rule set and the default style gives code that passes both.
+
+The options of your configuration are applied after those of the rule set, and win. An option that contradicts the
+rule set, such as :code:`case_019: {disable: false}` under do254, is reported once at the start of the run, with the
+check it contradicts, as the style rule and the check can then report the same code both ways.
 Setting the severity of a rule in a configuration file replaces the severity from the rule set.
 
 Output
@@ -230,7 +239,7 @@ Each check has:
 
 * **title** and **severity**, one of Error, Warning or Note, or a severity defined in the configuration;
 * **rules** and **groups**: the rules that implement the check, by identifier and by rule group;
-* **configuration**: options set on rules, for example to disable a rule that conflicts with the check;
+* **configuration**: options set on rules, for example to disable a style rule that conflicts with the check;
 * **enable**: false labels the rules without enabling them, for checks that need project settings first;
 * **status**: for a check without rules, one of planned, design or manual.
 
