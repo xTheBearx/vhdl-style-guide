@@ -319,4 +319,7 @@ Code tags, see :doc:`code_tags`, are written in a :code:`//` comment:
 Configuration
 -------------
 
-Rules are configured as for VHDL, see :doc:`configuring`; the same configuration applies to both languages.
+Rules are configured as for VHDL, see :doc:`configuring`; the same configuration applies to both languages. One
+configuration can configure the rules of every language: a rule of another language, such as entity_001 for a
+SystemVerilog file or sv_case_001 for a VHDL file, and a SystemVerilog only rule for a file read as Verilog-2005, are
+left out for that file. A name that is no rule of any language is still an error.
