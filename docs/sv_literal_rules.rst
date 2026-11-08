@@ -1,7 +1,7 @@
 .. include:: includes.rst
 
-SystemVerilog Literal Rules
----------------------------
+Verilog and SystemVerilog Literal Rules
+---------------------------------------
 
 sv_literal_001
 ##############

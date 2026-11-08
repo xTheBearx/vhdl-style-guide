@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from mhsg import language
 from mhsg.rule_group import structure
 from mhsg.rules.sv_tree import Problem, TreeRule
 
@@ -33,6 +34,8 @@ class rule_001(TreeRule, structure.Rule):
 
     def __init__(self):
         super().__init__()
+        # SystemVerilog only: it checks end labels, which Verilog-2005 does not have
+        self.languages = (language.SYSTEMVERILOG,)
         self.fixable = True
         self.solution = "Make the end label match the begin label"
 

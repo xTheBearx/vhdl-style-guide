@@ -42,7 +42,7 @@ class rule_002(Rule):
 
     def __init__(self):
         super().__init__(lTokens)
-        self.languages = (language.SYSTEMVERILOG,)
+        self.languages = language.VERILOG_LANGUAGES
         self.continuation_indent = 1
         self.configuration.append("continuation_indent")
 

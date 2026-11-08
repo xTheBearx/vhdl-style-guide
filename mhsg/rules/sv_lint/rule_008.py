@@ -4,7 +4,7 @@ from pyslang.syntax import SyntaxNode  # pylint: disable=import-error
 
 from mhsg import language
 from mhsg.lint.rule import Rule
-from mhsg.rules.sv_nodes import declared_names, text
+from mhsg.rules.sv_nodes import declared_names, is_verilog, text
 from mhsg.rules.sv_tree import descendants, elements
 
 IDENTIFIERS = ("IdentifierName", "IdentifierSelectName")
@@ -15,7 +15,7 @@ class rule_008(Rule):
     """
     This rule checks that the sensitivity list of a combinational always block names every signal and port of the
     file that the block reads. A missing signal makes simulation differ from synthesis; always_comb or always @*
-    avoids the list altogether.
+    avoids the list altogether. The finding of a Verilog file, which has no always_comb, names always @*.
 
     The signals a function or task of the file reads count as read by the blocks that call it. A hierarchical name,
     such as u_sub.valid, must be listed as written; a member of a signal, such as cfg.mode, needs the signal. A
@@ -43,8 +43,8 @@ class rule_008(Rule):
 
     def __init__(self):
         super().__init__()
-        self.languages = (language.SYSTEMVERILOG,)
-        self.solution = "Add the signals to the sensitivity list, or use always_comb"
+        self.languages = language.VERILOG_LANGUAGES
+        self.solution = "Add the signals to the sensitivity list, or use always_comb (always @* in Verilog)"
 
     def check(self, oModel, oFile):
         if getattr(oFile, "dNodes", None) is None or oFile.syntax_errors:
@@ -67,7 +67,8 @@ class rule_008(Rule):
             lMissing = sorted(n for n in setRead if (n in setSignals or "." in n) and n not in setListed)
             oToken = oFile.token_at(oControl.getFirstToken())
             if lMissing and oToken is not None and id(oToken) in dIndexes:
-                self.report(oFile, dIndexes[id(oToken)], "Add " + ", ".join(lMissing) + " to the sensitivity list, or use always_comb")
+                sInstead = "always @*" if is_verilog(oFile) else "always_comb"
+                self.report(oFile, dIndexes[id(oToken)], "Add " + ", ".join(lMissing) + f" to the sensitivity list, or use {sInstead}")
 
 
 class Subprogram:

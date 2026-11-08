@@ -21,6 +21,7 @@ Welcome to vhdl-style-guide's documentation!
    design_analysis
    qualification
    systemverilog
+   verilog_2005
    code_tags
    continuous_integration_servers
    editor_integration/editor_integration

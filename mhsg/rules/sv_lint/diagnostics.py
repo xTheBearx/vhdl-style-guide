@@ -17,7 +17,7 @@ class Rule(LintRule):
 
     def __init__(self):
         super().__init__()
-        self.languages = (language.SYSTEMVERILOG,)
+        self.languages = language.VERILOG_LANGUAGES
 
     def accepts(self, sName):
         raise NotImplementedError

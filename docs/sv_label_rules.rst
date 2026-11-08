@@ -1,7 +1,7 @@
 .. include:: includes.rst
 
-SystemVerilog Label Rules
--------------------------
+Verilog and SystemVerilog Label Rules
+-------------------------------------
 
 sv_label_001
 ############
@@ -9,6 +9,8 @@ sv_label_001
 |phase_1| |error| |structure|
 
 Alias: :code:`sv_label_mismatched`
+
+SystemVerilog only: this rule is not applied to Verilog files, see :ref:`verilog_2005`.
 
 This rule checks that the label after end matches the label of its begin. An end label without a begin label is
 removed.

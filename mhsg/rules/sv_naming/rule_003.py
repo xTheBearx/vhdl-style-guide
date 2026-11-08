@@ -2,6 +2,7 @@
 
 import re
 
+from mhsg import language
 from mhsg.rule_group import naming
 from mhsg.rules.sv_nodes import text
 from mhsg.rules.sv_tree import Problem, TreeRule
@@ -27,6 +28,8 @@ class rule_003(TreeRule, naming.Rule):
 
     def __init__(self):
         super().__init__()
+        # SystemVerilog only: it checks struct and union types, which Verilog-2005 does not have
+        self.languages = (language.SYSTEMVERILOG,)
         self.solution = "See the rule documentation"
         self.pattern = "[a-z_0-9]+_t"
         self.configuration.append("pattern")

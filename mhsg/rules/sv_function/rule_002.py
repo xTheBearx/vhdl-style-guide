@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from mhsg import language
 from mhsg.rule_group import structure
 from mhsg.rules.sv_nodes import add_automatic, missing_lifetime
 from mhsg.rules.sv_tree import TreeRule
@@ -25,6 +26,9 @@ class rule_002(TreeRule, structure.Rule):
 
     def __init__(self):
         super().__init__()
+        # SystemVerilog only: Verilog-2005 cannot declare a task static, and one without automatic is static, so its
+        # lifetime is never unclear
+        self.languages = (language.SYSTEMVERILOG,)
         self.fixable = True
         self.solution = "Declare the task automatic or static"
 

@@ -2,7 +2,7 @@
 
 from mhsg.rule_group import structure
 from mhsg.rules.sv_always.rule_012 import clock_events
-from mhsg.rules.sv_nodes import text
+from mhsg.rules.sv_nodes import combinational_blocks, text
 from mhsg.rules.sv_tree import Problem, TreeRule, descendants, elements
 
 
@@ -44,7 +44,7 @@ class rule_023(TreeRule, structure.Rule):
                     oToken = oFile.token_at(oFirst)
                     if oToken is not None:
                         yield Problem(oToken, f"Make the reset {text(oFirst)} in a reset module, not with logic here")
-        for oBlock in oFile.nodes("AlwaysCombBlock"):
+        for oBlock in combinational_blocks(oFile):
             for oAssignment in descendants(oBlock):
                 if oAssignment.kind.name in ("AssignmentExpression", "NonblockingAssignmentExpression") and oAssignment.left is not None:
                     oFirst = oAssignment.left.getFirstToken()

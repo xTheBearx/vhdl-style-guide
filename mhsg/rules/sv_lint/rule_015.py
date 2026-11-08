@@ -8,8 +8,8 @@ class rule_015(Rule):
     """
     This rule checks that the parameters of a module are not named like parameters of another module of the run.
 
-    .. NOTE:: This is a lint rule. It runs in lint mode, on the SystemVerilog files of a run compiled together. It is
-              disabled by default: a design need not follow it.
+    .. NOTE:: This is a lint rule. It runs in lint mode, on the Verilog and SystemVerilog files of a run compiled
+              together. It is disabled by default: a design need not follow it.
 
     A name used for parameters of several modules is easily set in the wrong module, and a defparam or a search for
     the name finds them all. Parameters and localparam declarations are both checked; the first module of the run

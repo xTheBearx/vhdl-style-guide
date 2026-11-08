@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from mhsg import language
 from mhsg.rule_group import structure
 from mhsg.rules.sv_tree import Problem, TreeRule
 
@@ -24,6 +25,8 @@ class rule_005(TreeRule, structure.Rule):
 
     def __init__(self):
         super().__init__()
+        # SystemVerilog only: Verilog-2005 cannot declare a genvar in its for loop
+        self.languages = (language.SYSTEMVERILOG,)
         self.solution = "Declare the genvar in the for loop"
 
     def problems(self, oFile):

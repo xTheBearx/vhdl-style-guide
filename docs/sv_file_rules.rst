@@ -1,7 +1,7 @@
 .. include:: includes.rst
 
-SystemVerilog File Rules
-------------------------
+Verilog and SystemVerilog File Rules
+------------------------------------
 
 sv_file_001
 ###########
@@ -33,6 +33,8 @@ sv_file_002
 |phase_1| |error| |unfixable| |structure|
 
 Alias: :code:`sv_file_package_filename`
+
+SystemVerilog only: this rule is not applied to Verilog files, see :ref:`verilog_2005`.
 
 This rule checks a file holding a package is named after it, as Verible's package-filename rule does:
 fifo_pkg.sv holds package fifo_pkg.
@@ -130,7 +132,8 @@ sv_file_006
 Alias: :code:`sv_file_timescale`
 
 This rule checks that a file holding modules declares their time unit, with a timescale directive or timeunit, as
-the STARC guide recommends (4.1.2.4). It is disabled by default; the starc rule set enables it.
+the STARC guide recommends (4.1.2.4); Verilog files, which have no timeunit, are asked for a timescale directive.
+It is disabled by default; the starc rule set enables it.
 
 **Violation**
 

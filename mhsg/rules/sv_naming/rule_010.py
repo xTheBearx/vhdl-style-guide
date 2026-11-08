@@ -8,8 +8,8 @@ from mhsg.rules.sv_tree import Problem, TreeRule
 class rule_010(TreeRule, naming.Rule):
     """
     This rule checks that no name is a VHDL keyword, in any case, as the STARC guide asks (1.1.1.3), so the
-    design can be translated or mixed with VHDL. SystemVerilog keywords cannot be names. It is disabled by
-    default; the starc rule set enables it.
+    design can be translated or mixed with VHDL. The keywords of the language of the file cannot be names. It is
+    disabled by default; the starc rule set enables it.
 
     **Violation**
 

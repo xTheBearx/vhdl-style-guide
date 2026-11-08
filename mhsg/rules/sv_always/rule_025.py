@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from mhsg import language
 from mhsg.rule_group import structure
 from mhsg.rules.port.rule_028 import clock_reset_rank
 from mhsg.rules.sv_always.rule_015 import first_if
@@ -31,6 +32,8 @@ class rule_025(TreeRule, structure.Rule):
 
     def __init__(self):
         super().__init__()
+        # SystemVerilog only: it checks always_latch blocks, which Verilog-2005 does not have
+        self.languages = (language.SYSTEMVERILOG,)
         self.disable = True
         self.solution = "See the rule documentation"
 

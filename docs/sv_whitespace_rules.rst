@@ -1,7 +1,7 @@
 .. include:: includes.rst
 
-SystemVerilog Whitespace Rules
-------------------------------
+Verilog and SystemVerilog Whitespace Rules
+------------------------------------------
 
 sv_whitespace_001
 #################

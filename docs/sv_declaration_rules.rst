@@ -1,7 +1,7 @@
 .. include:: includes.rst
 
-SystemVerilog Declaration Rules
--------------------------------
+Verilog and SystemVerilog Declaration Rules
+-------------------------------------------
 
 sv_declaration_001
 ##################
@@ -11,7 +11,8 @@ sv_declaration_001
 Alias: :code:`sv_declaration_explicit_parameter_storage_type`
 
 This rule checks that parameters and localparams are declared with a type, such as int or logic [7:0], as
-Verible's explicit-parameter-storage-type rule does.
+Verible's explicit-parameter-storage-type rule does. In a Verilog file, which can give a parameter only the types
+integer, real, realtime and time, a range or signed is taken as its type, as in parameter [7:0] Mask.
 
 **Violation**
 

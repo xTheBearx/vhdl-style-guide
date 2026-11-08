@@ -1,7 +1,7 @@
 .. include:: includes.rst
 
-SystemVerilog Always Rules
---------------------------
+Verilog and SystemVerilog Always Rules
+--------------------------------------
 
 sv_always_001
 #############
@@ -9,6 +9,8 @@ sv_always_001
 |phase_1| |error| |structure|
 
 Alias: :code:`sv_always_comb`
+
+SystemVerilog only: this rule is not applied to Verilog files, see :ref:`verilog_2005`.
 
 This rule checks that combinational logic uses always_comb rather than always @* or always @(*).
 
@@ -35,7 +37,9 @@ sv_always_002
 
 Alias: :code:`sv_always_comb_blocking`
 
-This rule checks that always_comb blocks use blocking assignments (=), not nonblocking ones (<=).
+This rule checks that always_comb blocks use blocking assignments (=), not nonblocking ones (<=). In a Verilog
+file, which has no always_comb, it checks the always blocks of combinational logic: always @*, and those whose
+event control has no edge.
 
 **Violation**
 
@@ -621,6 +625,8 @@ sv_always_025
 |phase_1| |disabled| |error| |unfixable| |structure|
 
 Alias: :code:`sv_always_no_latch_reset`
+
+SystemVerilog only: this rule is not applied to Verilog files, see :ref:`verilog_2005`.
 
 This rule checks for latches with an asynchronous reset or set, an always_latch block whose first if tests a
 reset, as the STARC guide asks (2.4.1.3). Resets are told by the words of their names, as for port_028. It is

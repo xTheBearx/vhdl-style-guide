@@ -20,8 +20,9 @@ class rule_011(Rule):
     The verilator_warnings option lists the warnings reported, by Verilator's names; by default those whose checks
     slang does not make, but for MULTIDRIVEN and CASEINCOMPLETE, which sv_lint_012 and sv_lint_013 report.
 
-    Verilator lints the SystemVerilog files of a run together; the systemverilog section of the configuration turns
-    it off with :code:`verilator: false`, or names the program with :code:`verilator: /path/to/verilator`.
+    Verilator lints the Verilog and SystemVerilog files of a run together; the systemverilog section of the
+    configuration turns it off with :code:`verilator: false`, or names the program with
+    :code:`verilator: /path/to/verilator`.
 
     .. NOTE:: This is a lint rule. It runs in lint mode and reports what Verilator finds; without Verilator it
        reports nothing.

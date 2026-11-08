@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from mhsg.rule_group import structure
-from mhsg.rules.sv_nodes import integer_of
+from mhsg.rules.sv_nodes import integer_of, is_verilog
 from mhsg.rules.sv_tree import Problem, TreeRule
 
 
 class rule_002(TreeRule, structure.Rule):
     """
     This rule checks that unpacked dimensions are written as [0:N-1] or [N], as Verible's
-    unpacked-dimensions-range-ordering rule does.
+    unpacked-dimensions-range-ordering rule does. Verilog files, which cannot write [N], are asked for [0:N-1].
 
     **Violation**
 
@@ -38,4 +38,4 @@ class rule_002(TreeRule, structure.Rule):
             if (iLeft is not None and iRight is not None and iLeft > iRight) or (iRight == 0 and iLeft is None):
                 oToken = oFile.token_at(oDimension.openBracket)
                 if oToken is not None:
-                    yield Problem(oToken, "Write the unpacked dimension as [0:N-1] or [N]")
+                    yield Problem(oToken, "Write the unpacked dimension as [0:N-1]" if is_verilog(oFile) else "Write the unpacked dimension as [0:N-1] or [N]")

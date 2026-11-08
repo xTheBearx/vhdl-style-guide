@@ -1,7 +1,7 @@
 .. include:: includes.rst
 
-SystemVerilog Comment Rules
----------------------------
+Verilog and SystemVerilog Comment Rules
+---------------------------------------
 
 sv_comment_001
 ##############

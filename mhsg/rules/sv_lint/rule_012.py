@@ -6,8 +6,8 @@ from mhsg.rules.sv_lint.verilator_rule import Rule
 class rule_012(Rule):
     """
     This rule reports signals assigned in always blocks of different clocks (Verilator's MULTIDRIVEN), which
-    synthesis cannot build as one register. Verilator lints the SystemVerilog files of a run when it is installed, see
-    sv_lint_011.
+    synthesis cannot build as one register. Verilator lints the Verilog and SystemVerilog files of a run when it is
+    installed, see sv_lint_011.
 
     .. NOTE:: This is a lint rule. It runs in lint mode and reports what Verilator finds; without Verilator it
        reports nothing.

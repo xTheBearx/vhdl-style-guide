@@ -35,7 +35,7 @@ class Rule(whitespace.Rule):
 
     def __init__(self):
         super().__init__()
-        self.languages = (language.SYSTEMVERILOG,)
+        self.languages = language.VERILOG_LANGUAGES
         self.configuration_documentation_link = None
 
     def spacing(self, oLeft, oRight):

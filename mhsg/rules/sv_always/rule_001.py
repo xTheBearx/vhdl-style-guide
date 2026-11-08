@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from mhsg import language
 from mhsg.rule_group import structure
 from mhsg.rules.sv_tree import Problem, TreeRule, first_token, last_token
 from mhsg.svFile import tokens
@@ -28,6 +29,9 @@ class rule_001(TreeRule, structure.Rule):
 
     def __init__(self):
         super().__init__()
+        # SystemVerilog only: always_comb does not exist in Verilog-2005, where always @* is the way to write
+        # combinational logic
+        self.languages = (language.SYSTEMVERILOG,)
         self.fixable = True
         self.solution = "Use always_comb"
 

@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 
 from mhsg.rule_group import structure
+from mhsg.rules.sv_nodes import is_verilog
 from mhsg.rules.sv_tree import Problem, TreeRule
 
 
 class rule_006(TreeRule, structure.Rule):
     """
     This rule checks that a file holding modules declares their time unit, with a timescale directive or timeunit, as
-    the STARC guide recommends (4.1.2.4). It is disabled by default; the starc rule set enables it.
+    the STARC guide recommends (4.1.2.4); Verilog files, which have no timeunit, are asked for a timescale directive.
+    It is disabled by default; the starc rule set enables it.
 
     **Violation**
 
@@ -33,4 +35,4 @@ class rule_006(TreeRule, structure.Rule):
         if lModules and not oFile.nodes("TimeScaleDirective", "TimeUnitsDeclaration"):
             oToken = oFile.token_at(lModules[0].header.moduleKeyword)
             if oToken is not None:
-                yield Problem(oToken, "Declare the time unit with `timescale or timeunit")
+                yield Problem(oToken, "Declare the time unit with `timescale" if is_verilog(oFile) else "Declare the time unit with `timescale or timeunit")

@@ -26,7 +26,7 @@ class rule_001(blank_line.Rule):
 
     def __init__(self):
         super().__init__()
-        self.languages = (language.SYSTEMVERILOG,)
+        self.languages = language.VERILOG_LANGUAGES
         self.configuration_documentation_link = None
         self.solution = "Remove blank lines at the end of the file"
 
