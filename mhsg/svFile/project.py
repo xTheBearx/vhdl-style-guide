@@ -113,9 +113,11 @@ def collect(lFiles, dConfig, bVerilator=False):
     oAnalysis.analyze(oCompilation)
     lDiagnostics.extend(oAnalysis.getDiagnostics())
     oEngine = pyslang.DiagnosticEngine(oCompilation.sourceManager)
-    # The enum types of the run, shared by the entries of all files, see enum_types
+    # The enum types of the run and the modules it instantiates, shared by the entries of all files, see enum_types
+    # and instantiated_modules
     dEnums = enum_types(lTrees)
-    dReturn = {sPath: {"hash": sHash, "diagnostics": [], "incomplete": False, "enums": dEnums} for sPath, sHash in dBuffers.values()}
+    setInstances = instantiated_modules(lTrees)
+    dReturn = {sPath: {"hash": sHash, "diagnostics": [], "incomplete": False, "enums": dEnums, "instances": setInstances} for sPath, sHash in dBuffers.values()}
     for oTree in lTrees:
         lDiagnostics.extend(oTree.diagnostics)
     for oDiagnostic in lDiagnostics:
@@ -169,6 +171,14 @@ def enum_types(lTrees):
             elif sName not in dBare:
                 dBare[sName] = (sQualified, lValues)
     return {"qualified": dQualified, "bare": {s: t for s, t in dBare.items() if t is not None}}
+
+
+def instantiated_modules(lTrees):
+    """
+    The names of the modules, interfaces and programs the files of a run instantiate, in generate blocks and bind
+    directives too. A module no file instantiates is a top level, see top_level.py.
+    """
+    return {oInstance.type.valueText for oTree in lTrees for oInstance in walk(oTree.root, "HierarchyInstantiation")}
 
 
 def ancestors(oNode):

@@ -257,6 +257,66 @@ class test_state_types_in_packages(unittest.TestCase):
             self.assertEqual({"mode_t": ["A", "B"]}, project_index.collect_enumerated_types(lFiles))
 
 
+class test_top_level_inout_ports(unittest.TestCase):
+    sDirectory = os.path.join(sRoot, "tests", "lint", "top_level")
+    sSub = "WARNING: io_sub.vhd(9)DO254PLUS-PORT (lint_019) -- Use inout ports only on the top level, for device pins"
+    sTop = "WARNING: io_top.vhd(9)DO254PLUS-PORT (lint_019) -- Use inout ports only on the top level, for device pins"
+
+    def run_lint(self, lFiles, lArguments=()):
+        oResult = subprocess.run(
+            [
+                *utils.mhsg_exec(),
+                "-f",
+                *[os.path.join(self.sDirectory, s) for s in lFiles],
+                "--rule_set",
+                "do254_plus",
+                "--lint_only",
+                "-of",
+                "syntastic",
+                *lArguments,
+            ],
+            cwd=sRoot,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        return [s.replace(self.sDirectory + os.sep, "") for s in oResult.stdout.splitlines() if "(lint_019)" in s]
+
+    def test_top_level_of_the_run(self):
+        # lint_019 leaves out the top level, an entity no file of the run instantiates: its inout ports are the pins of
+        # the device
+        self.assertEqual([self.sSub], self.run_lint(["io_top.vhd", "io_sub.vhd"]))
+        # Checked without the file that instantiates it, an entity is the top level of the run, unless an index file
+        # instantiates it
+        self.assertEqual([], self.run_lint(["io_sub.vhd"]))
+        self.assertEqual([self.sSub], self.run_lint(["io_sub.vhd"], ["--index_files", os.path.join(self.sDirectory, "io_top.vhd")]))
+
+    def test_top_level_of_the_design_section(self):
+        # The testbench instantiates io_top, so io_top is no longer a top level of the run, and the inout port of its
+        # component is reported too; the design section names the top, and only its ports, those of the entity and
+        # of its component, are left out
+        sComponent = "WARNING: io_tb.vhd(14)DO254PLUS-PORT (lint_019) -- Use inout ports only on the top level, for device pins"
+        lFiles = ["io_tb.vhd", "io_top.vhd", "io_sub.vhd"]
+        self.assertEqual([sComponent, self.sTop, self.sSub], self.run_lint(lFiles))
+        self.assertEqual([self.sSub], self.run_lint(lFiles, ["-c", os.path.join(self.sDirectory, "design.yaml")]))
+
+    def test_instantiated_units(self):
+        # Entity, component and configuration instantiations, not those in comments
+        sText = (
+            "u1 : entity work.Alpha port map (a => b);\n"
+            "u2 : component beta generic map (N => 1) port map (a => b);\n"
+            "u3 : gamma port map (a => b);\n"
+            "u4 : configuration work.delta_cfg;\n"
+            "configuration delta_cfg of delta is for rtl end for; end configuration;\n"
+            "-- u5 : epsilon port map (a => b);\n"
+        )
+        with tempfile.TemporaryDirectory() as sTemporary:
+            sFile = os.path.join(sTemporary, "a.vhd")
+            with open(sFile, "w", encoding="utf-8") as oFile:
+                oFile.write(sText)
+            self.assertEqual({"alpha", "beta", "gamma", "delta"}, project_index.collect_instantiated_units([sFile]))
+
+
 class test_lint_fix(unittest.TestCase):
     def fix(self, lArguments):
         with tempfile.TemporaryDirectory() as sDirectory:

@@ -5,6 +5,8 @@ Names declared in the files of a run, so a rule checking one file can recognize 
 
 import re
 
+from mhsg import language
+
 # Types and subtypes declared in the standard and IEEE packages
 STANDARD_TYPE_NAMES = {
     # std.standard
@@ -127,6 +129,37 @@ def read_files(lFilenames):
                 yield oFile.read()
         except OSError:
             continue
+
+
+reComponentInstantiation = re.compile(r"\b[a-z][a-z0-9_]*\s*:\s*(?:component\s+)?([a-z][a-z0-9_]*)\s+(?:generic|port)\s+map\b", re.IGNORECASE)
+reConfigurationInstantiation = re.compile(r"\bconfiguration\s+[a-z][a-z0-9_]*\s*\.\s*([a-z][a-z0-9_]*)", re.IGNORECASE)
+reConfigurationDeclaration = re.compile(r"\bconfiguration\s+([a-z][a-z0-9_]*)\s+of\s+([a-z][a-z0-9_]*)\s+is\b", re.IGNORECASE)
+
+
+def collect_instantiated_units(lFilenames):
+    """
+    Returns the lower case names of the units the VHDL files instantiate: the entities of entity instantiations and
+    of the bindings of configurations (entity lib.name), the components of component instantiations, and the entities
+    of the configurations instantiated. A unit no file instantiates is a top level, see top_level.py.
+    """
+    setReturn = set()
+    dConfigurations = {}
+    lConfigurations = []
+    for sFilename in lFilenames or []:
+        if language.is_verilog(sFilename):
+            continue
+        try:
+            with open(sFilename, encoding="utf-8", errors="replace") as oFile:
+                sText = oFile.read()
+        except OSError:
+            continue
+        sText = reString.sub('""', reComment.sub(" ", sText))
+        setReturn.update(s.lower() for s in reEntityInstantiation.findall(sText))
+        setReturn.update(s.lower() for s in reComponentInstantiation.findall(sText))
+        lConfigurations.extend(s.lower() for s in reConfigurationInstantiation.findall(sText))
+        dConfigurations.update((sConfiguration.lower(), sEntity.lower()) for sConfiguration, sEntity in reConfigurationDeclaration.findall(sText))
+    setReturn.update(dConfigurations.get(s, s) for s in lConfigurations)
+    return setReturn
 
 
 def collect_positional_entity_instantiations(lFilenames, sMap="port"):

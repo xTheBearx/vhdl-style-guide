@@ -191,7 +191,7 @@ DEFAULT). Others report states of a state machine never entered or never left (:
 unconnected instance ports (:code:`sv_lint_017` and :code:`sv_lint_018`, CP11 and CP12), a continuous assignment
 that reads its own target (:code:`sv_statement_052`, SS3), names declared twice in a module
 (:code:`sv_declaration_005`, DR3), signals renamed at a port (:code:`sv_module_018`, DR9), parameters without an
-assertion (:code:`sv_module_019`, GENERIC), inout ports (:code:`sv_module_020`, PORT), code hidden from synthesis or
+assertion (:code:`sv_module_019`, GENERIC), inout ports below the top level (:code:`sv_module_020`, PORT), code hidden from synthesis or
 coverage (:code:`sv_comment_009`, PRAGMA) and modules and always blocks without a requirement tag
 (:code:`sv_comment_010`, REQ).
 The line length, file length and tab rules check every language. The checks that only apply to VHDL, such as

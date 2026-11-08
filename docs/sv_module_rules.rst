@@ -462,8 +462,16 @@ Alias: :code:`sv_module_inout_port`
 
 This rule checks for inout ports. It is disabled by default; the do254_plus rule set enables it (PORT).
 
-An inout port implies a tri-state driver and belongs only on the top level, for device pins. Justify the inout
-ports of the top level with a waiver.
+An inout port implies a tri-state driver and belongs only on the top level, for device pins, so the inout ports
+of the top level are not reported. The top level is the module the design section of the configuration names
+with top; without one, in lint mode, a module that no file of the run instantiates, nor the files given with
+--index_files or index_file_list. Outside lint mode, or for a file read from standard input, without the design
+section the top level is not known, and every inout port is reported.
+
+In lint mode a module checked without the files that instantiate it is a top level: give those files with
+--index_files, or name the top in the design section, to check the inout ports of a submodule on its own. A
+testbench in the run instantiates the top level; name the top in the design section, so its pins are not
+reported.
 
 **Violation**
 
