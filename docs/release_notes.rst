@@ -5,6 +5,34 @@ The releases of MHSG, with their packages, are on `GitHub <https://github.com/xT
 The releases of VSG, from which MHSG was forked, are listed `with VSG
 <https://github.com/jeremiah-c-leary/vhdl-style-guide/tags>`_.
 
+4.0.3
+-----
+
+**Design analysis**
+
+* The bits of a vector input can be declared independent signals: :code:`cdc: inputs: {d_i: {domain: async, bits:
+  independent}}`. Each bit is then a signal of its own, with its own reconvergence tag, so design_009 does not take
+  the bits as one bus synchronized bit by bit; two of them combined after their synchronizers are still reported by
+  design_016. :code:`bits: bus` is the default, the meaning of a plain :code:`d_i: async`. The crossing report lists
+  the declared inputs. An input given as anything but a domain or such a map, which was silently left unchecked, is
+  now a configuration error. (`#92 <https://github.com/xTheBearx/vhdl-style-guide/issues/92>`_)
+
+**DO-254 checks**
+
+* DR9, consistent signal names across the hierarchy (lint_040 for VHDL, sv_module_018 for Verilog and SystemVerilog),
+  no longer checks the ports of a unit instantiated more than once in the run, whose connections cannot all carry the
+  port's names, and the two rules share one comparison of names: one prefix and one suffix removed, the active-low
+  suffixes such as :code:`_n_i` among them, so :code:`rst_n_i => rst_n` matches. A different name is still reported.
+  (`#93 <https://github.com/xTheBearx/vhdl-style-guide/issues/93>`_)
+* PORT, no inout ports (lint_019, sv_module_020), leaves out the top level: the unit the design section names as
+  :code:`top`, or, in lint mode with more than one file or with index files, a unit nothing in the run instantiates.
+  A file checked alone without index files has its inout ports reported, as before.
+  (`#94 <https://github.com/xTheBearx/vhdl-style-guide/issues/94>`_)
+* CP3, numbers named (sv_literal_010), no longer reports parameter value assignments of instances, named or ordered,
+  like parameter declarations, and checks the statements of every case item alike, :code:`default` included, as
+  lint_034 does for VHDL. A number in the statement of a numbered case item, which was missed, is now reported.
+  (`#95 <https://github.com/xTheBearx/vhdl-style-guide/issues/95>`_)
+
 4.0.2
 -----
 
