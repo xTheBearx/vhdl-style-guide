@@ -286,10 +286,15 @@ class test_top_level_inout_ports(unittest.TestCase):
         # lint_019 leaves out the top level, an entity no file of the run instantiates: its inout ports are the pins of
         # the device
         self.assertEqual([self.sSub], self.run_lint(["io_top.vhd", "io_sub.vhd"]))
-        # Checked without the file that instantiates it, an entity is the top level of the run, unless an index file
-        # instantiates it
-        self.assertEqual([], self.run_lint(["io_sub.vhd"]))
+        # A file checked on its own does not show the design: its entities are not top levels, the top as the lower one
+        self.assertEqual([self.sSub], self.run_lint(["io_sub.vhd"]))
+        self.assertEqual([self.sTop], self.run_lint(["io_top.vhd"]))
+        # Index files show it: the top is left out when they instantiate nothing of it, the lower entity reported when
+        # they instantiate it
         self.assertEqual([self.sSub], self.run_lint(["io_sub.vhd"], ["--index_files", os.path.join(self.sDirectory, "io_top.vhd")]))
+        self.assertEqual([], self.run_lint(["io_top.vhd"], ["--index_files", os.path.join(self.sDirectory, "io_sub.vhd")]))
+        # So does the design section, for a file on its own
+        self.assertEqual([], self.run_lint(["io_top.vhd"], ["-c", os.path.join(self.sDirectory, "design.yaml")]))
 
     def test_top_level_of_the_design_section(self):
         # The testbench instantiates io_top, so io_top is no longer a top level of the run, and the inout port of its

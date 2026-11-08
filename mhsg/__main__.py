@@ -197,8 +197,10 @@ def main():
             oConfig.project_port_modes = project_index.collect_port_modes(lIndexFiles)
             # The enumerated types of the run, such as state types declared in packages, see lint_017, lint_027 and lint_037
             oConfig.project_enumerated_types = project_index.collect_enumerated_types(lIndexFiles)
-            # The units the run instantiates, so the top level is known, see top_level.py
-            oConfig.project_instantiated_units = project_index.collect_instantiated_units(lIndexFiles)
+            # The units the run instantiates, when the run shows the design: more than one file, or index files given,
+            # so a unit nothing instantiates is a top level, see top_level.py
+            if len(commandLineArguments.filename or []) > 1 or getattr(commandLineArguments, "index_files", None):
+                oConfig.project_instantiated_units = project_index.collect_instantiated_units(lIndexFiles)
             # The Verilog and SystemVerilog files of the run are compiled together once, see svFile/project.py
             oConfig.sv_lint_project = sv_project.collect(lIndexFiles, oConfig.dConfig, sv_project.verilator_enabled(oConfig))
         oConfig.project_positional_generic_entities = project_index.collect_positional_entity_instantiations(lIndexFiles, "generic")

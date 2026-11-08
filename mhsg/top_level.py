@@ -6,9 +6,10 @@ sv_module_020, which allow inout ports on the top level only, for the pins of th
 A top level is:
 
 * the unit the design section of the configuration names with top, when it names one;
-* otherwise, in lint mode, a unit that no file of the run instantiates, nor the files given with --index_files or
-  index_file_list;
-* otherwise none: without the design section and the files of the run, the top level is not known.
+* otherwise, in lint mode with more than one file in the run or with index files given (--index_files or
+  index_file_list), a unit that no file of the run or of the index files instantiates;
+* otherwise none: a file checked alone, outside lint mode or read from standard input shows no design, so its
+  top level is not known and its units are not top levels.
 """
 
 
@@ -26,7 +27,7 @@ def is_top(oFile, sName, bVerilog):
         return False
     if bVerilog:
         return sName not in setVerilog and sName.lower() not in setVhdl
-    return sName.lower() not in setVhdl and sName.lower() not in {s.lower() for s in setVerilog}
+    return sName.lower() not in setVhdl and not any(sName.lower() == s.lower() for s in setVerilog)
 
 
 def design_top(oConfiguration):
@@ -39,7 +40,8 @@ def design_top(oConfiguration):
 def instantiated(oConfiguration):
     """
     The names of the units the files of the run instantiate, as (VHDL names in lower case, Verilog and SystemVerilog
-    names), or (None, None) when the run is not known: outside lint mode, or for a file read from standard input.
+    names), or (None, None) when the run does not show the design: a file checked alone without index files, outside
+    lint mode, or a file read from standard input.
     """
     setVhdl = getattr(oConfiguration, "project_instantiated_units", None)
     if setVhdl is None:
@@ -47,4 +49,4 @@ def instantiated(oConfiguration):
     # Every entry of the compiled Verilog and SystemVerilog files holds the modules the run instantiates, see svFile/project.py
     dProject = getattr(oConfiguration, "sv_lint_project", None) or {}
     dEntry = next(iter(dProject.values()), None) or {}
-    return setVhdl, dEntry.get("instances") or set()
+    return setVhdl, dEntry.get("instances") or ()

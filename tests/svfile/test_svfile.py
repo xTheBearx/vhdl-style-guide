@@ -990,8 +990,8 @@ class test_rules(unittest.TestCase):
 
     def test_do254_checks_more(self):
         # The DO-254 checks of SystemVerilog files that follow paths through the code, instances, states and comments
-        # do254_more instantiates leaf and nothing instantiates it: it is the top level of the run, and sv_module_020
-        # leaves out its inout port pad_io, see test_inout_ports_of_the_top_level
+        # do254_more.sv is checked on its own, so its top module do254_more is not known as a top level and its inout
+        # port pad_io is reported, see test_inout_ports_of_the_top_level
         _, lOutput, _ = self.run_mhsg(["--rule_set", "do254_plus", "--lint_only", "-ap"], "do254_more.sv")
         lRules = (
             "sv_always_030",
@@ -1013,6 +1013,7 @@ class test_rules(unittest.TestCase):
                 "WARNING: do254_more.sv(8)DO254PLUS-REQ (sv_comment_010) -- Add a requirement tag matching \\bREQ\\s*:\\s*\\S+ to the module",
                 "WARNING: do254_more.sv(9)DO254PLUS-GENERIC (sv_module_019) -- Check the parameters of leaf with an assertion",
                 "WARNING: do254_more.sv(20)DO254PLUS-REQ (sv_comment_010) -- Add a requirement tag matching \\bREQ\\s*:\\s*\\S+ to the module",
+                "WARNING: do254_more.sv(25)DO254PLUS-PORT (sv_module_020) -- Use inout ports only on the top level, for device pins",
                 "WARNING: do254_more.sv(38)DO254-DR9 (sv_module_018) -- Signal payload connected to port data_i of u_leaf has another name",
                 "WARNING: do254_more.sv(40)DO254-CP12 (sv_lint_018) -- Output port 'valid_o' is explicitly connected to nothing",
                 "ERROR: do254_more.sv(43)DO254-CP11 (sv_lint_017) -- Input port 'data_i' has no connection",
@@ -1199,15 +1200,21 @@ class test_rules(unittest.TestCase):
         sSub = "WARNING: io_sub.sv(4)DO254PLUS-PORT (sv_module_020) -- Use inout ports only on the top level, for device pins"
         sTop = "WARNING: io_top.sv(4)DO254PLUS-PORT (sv_module_020) -- Use inout ports only on the top level, for device pins"
         self.assertEqual([sSub], [s for s in self.run_project(["io_top.sv", "io_sub.sv"], lArguments) if "(sv_module_020)" in s])
-        # Checked without the file that instantiates it, a module is the top level of the run, unless an index file
-        # instantiates it
-        self.assertEqual([], [s for s in self.run_project(["io_sub.sv"], lArguments) if "(sv_module_020)" in s])
-        lIndex = ["--index_files", os.path.join(sDirectory, "project", "io_top.sv")]
-        self.assertEqual([sSub], [s for s in self.run_project(["io_sub.sv"], lArguments + lIndex) if "(sv_module_020)" in s])
+        # A file checked on its own does not show the design: its modules are not top levels, the top as the submodule
+        self.assertEqual([sSub], [s for s in self.run_project(["io_sub.sv"], lArguments) if "(sv_module_020)" in s])
+        self.assertEqual([sTop], [s for s in self.run_project(["io_top.sv"], lArguments) if "(sv_module_020)" in s])
+        # Index files show it: the top is left out when they instantiate nothing of it, the submodule reported when they
+        # instantiate it
+        lIndexTop = ["--index_files", os.path.join(sDirectory, "project", "io_top.sv")]
+        self.assertEqual([sSub], [s for s in self.run_project(["io_sub.sv"], lArguments + lIndexTop) if "(sv_module_020)" in s])
+        lIndexSub = ["--index_files", os.path.join(sDirectory, "project", "io_sub.sv")]
+        self.assertEqual([], [s for s in self.run_project(["io_top.sv"], lArguments + lIndexSub) if "(sv_module_020)" in s])
+        # So does the design section, for a file on its own
+        lDesign = ["-c", os.path.join(sDirectory, "project", "design.yaml")]
+        self.assertEqual([], [s for s in self.run_project(["io_top.sv"], lArguments + lDesign) if "(sv_module_020)" in s])
         # A testbench in the run instantiates the top level, unless the design section names the top
         lFiles = ["io_tb.sv", "io_top.sv", "io_sub.sv"]
         self.assertEqual([sTop, sSub], [s for s in self.run_project(lFiles, lArguments) if "(sv_module_020)" in s])
-        lDesign = ["-c", os.path.join(sDirectory, "project", "design.yaml")]
         self.assertEqual([sSub], [s for s in self.run_project(lFiles, lArguments + lDesign) if "(sv_module_020)" in s])
         # Outside lint mode the run is not known, and every inout port is reported
         with tempfile.TemporaryDirectory() as sTemporary:

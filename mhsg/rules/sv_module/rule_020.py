@@ -12,13 +12,12 @@ class rule_020(TreeRule, structure.Rule):
 
     An inout port implies a tri-state driver and belongs only on the top level, for device pins, so the inout ports
     of the top level are not reported. The top level is the module the design section of the configuration names
-    with top; without one, in lint mode, a module that no file of the run instantiates, nor the files given with
-    --index_files or index_file_list. Outside lint mode, or for a file read from standard input, without the design
-    section the top level is not known, and every inout port is reported.
+    with top; without one, in lint mode with more than one file in the run or with index files given (--index_files
+    or index_file_list), a module that no file of the run or of the index files instantiates. A file checked on
+    its own without index files, a run outside lint mode and a file read from standard input do not show the design:
+    without the design section, every inout port is reported.
 
-    In lint mode a module checked without the files that instantiate it is a top level: give those files with
-    --index_files, or name the top in the design section, to check the inout ports of a submodule on its own. A
-    testbench in the run instantiates the top level; name the top in the design section, so its pins are not
+    A testbench in the run instantiates the top level; name the top in the design section, so its pins are not
     reported.
 
     **Violation**

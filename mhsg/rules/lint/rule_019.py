@@ -14,14 +14,13 @@ class rule_019(Rule):
     A buffer port can be replaced by an out port and an internal signal, which every tool handles the same way.
     An inout port implies a tri-state driver and belongs only on the top level, for device pins, so the inout ports
     of the top level are not reported. The top level is the entity the design section of the configuration names
-    with top; without one, in lint mode, an entity that no file of the run instantiates, nor the files given with
-    --index_files or index_file_list. Outside lint mode, or for a file read from standard input, without the design
-    section the top level is not known, and every inout port is reported. The ports of a component declaration are
-    those of the entity the component names.
+    with top; without one, in lint mode with more than one file in the run or with index files given (--index_files
+    or index_file_list), an entity that no file of the run or of the index files instantiates. A file checked on
+    its own without index files, a run outside lint mode and a file read from standard input do not show the design:
+    without the design section, every inout port is reported. The ports of a component declaration are those of
+    the entity the component names.
 
-    In lint mode an entity checked without the files that instantiate it is a top level: give those files with
-    --index_files, or name the top in the design section, to check the inout ports of a lower entity on its own. A
-    testbench in the run instantiates the top level; name the top in the design section, so its pins are not
+    A testbench in the run instantiates the top level; name the top in the design section, so its pins are not
     reported.
 
     **Violation**
