@@ -625,7 +625,9 @@ class Analysis:
                 continue
             oNet, _, _ = self.strip(oCrossing.cell, iIndex)
             tDriver = self.flat.driver(oNet) if graph.is_variable(oNet) else None
-            bDirect = tDriver is not None and tDriver in lForeign and tDriver[0] is not None and is_register(tDriver[0])
+            # The first stage is driven straight from the other domain: by a register there, or by a top input port of
+            # that domain or declared async, without a gate between
+            bDirect = tDriver is not None and tDriver in lForeign and (tDriver[0] is None or is_register(tDriver[0]))
             iStages = self.stages_after(oCrossing.cell, iIndex)
             oCrossing.stages = max(oCrossing.stages, iStages)
             if bDirect and iStages >= 2:
@@ -655,10 +657,13 @@ class Analysis:
             if oCrossing.status != SYNCHRONIZED:
                 continue
             for _, tSource in oCrossing.first_stages:
-                tKey = (id(tSource[0]), oCrossing.clock.group)
+                # A top input port is a source of its own, by its name
+                oKey = id(tSource[0]) if tSource[0] is not None else ("port", tSource[1])
+                tKey = (oKey, oCrossing.clock.group)
                 dBySource.setdefault(tKey, []).append((oCrossing, tSource))
         for lMembers in dBySource.values():
             oSource = lMembers[0][1][0]
+            sSource = self.flat.cell_name(oSource) if oSource is not None else lMembers[0][1][1]
             # The bits a register synchronizes together form a bus; so do bits each synchronized by a register of its
             # own. A bit synchronized alone, beside a bus from the same source register, such as a flag in the record
             # that also holds a gray coded pointer, is a signal of its own
@@ -673,10 +678,11 @@ class Analysis:
                 setBits = set().union(*(t[1] for t in lGroup))
                 if len(setBits) < 2:
                     continue
-                sStatus = GRAY if self.gray_coded(oSource, setBits) else BUS
+                # The bits of an input port come from outside the design, where the rule cannot see a gray code
+                sStatus = GRAY if oSource is not None and self.gray_coded(oSource, setBits) else BUS
                 for oCrossing, _ in lGroup:
                     oCrossing.status = sStatus
-                    oCrossing.detail = f"{len(setBits)} bits of {self.flat.cell_name(oSource)}" + (", gray coded" if sStatus == GRAY else " cross separately")
+                    oCrossing.detail = f"{len(setBits)} bits of {sSource}" + (", gray coded" if sStatus == GRAY else " cross separately")
 
     def box_gray_buses(self):
         """
@@ -734,15 +740,18 @@ class Analysis:
                     continue
                 sGroup = "async" if oSourceDomain == "async" else oSourceDomain.group
                 if sStatus in (GRAY, BUS):
-                    tBus = (id(tSource[0]), oCrossing.clock.group)
+                    # A top input port is a source of its own, by its name, see _find_buses
+                    tBus = (id(tSource[0]) if tSource[0] is not None else ("port", tSource[1]), oCrossing.clock.group)
                     if tBus not in dBusTags:
                         dBusTags[tBus] = len(self.sync_tags)
-                        self.sync_tags.append((self.flat.cell_name(tSource[0]), oCrossing.name, oSourceDomain, (sGroup, oCrossing.clock.group)))
+                        sBus = self.flat.cell_name(tSource[0]) if tSource[0] is not None else tSource[1]
+                        self.sync_tags.append((sBus, oCrossing.name, oSourceDomain, (sGroup, oCrossing.clock.group)))
                     iTag = dBusTags[tBus]
                 else:
+                    # The name of a bit of an input port has its index already
                     sSource = self.point_name(tSource)
                     sFirst = oCrossing.name
-                    if len(tSource[0].connections.get("Q", [])) > 1:
+                    if tSource[0] is not None and len(tSource[0].connections.get("Q", [])) > 1:
                         sSource += f"({tSource[2]})"
                     if len(oCrossing.cell.connections.get("Q", [])) > 1:
                         sFirst += f"({iIndex})"

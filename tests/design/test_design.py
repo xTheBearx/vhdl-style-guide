@@ -1362,6 +1362,24 @@ class test_design_analysis(unittest.TestCase):
             lReturn.append((sFile, int(sLineNumber), sRule, sMessage))
         return lReturn
 
+    def test_asynchronous_inputs(self):
+        # A port declared async straight into two registers is synchronized; through a gate it is logic before the
+        # synchronizer, into one register unsynchronized, and a vector synchronized bit by bit a bus (issue 91)
+        dCdc = {"inputs": {s: "async" for s in ("a_i", "b_i", "c_i", "d_i", "e_i")}}
+        self.assertEqual(
+            [
+                ("async_in.vhd", 39, "design_009", "Logic on b_i (async), c_i (async) before synchronizer bc_meta (clk) can glitch"),
+                ("async_in.vhd", 41, "design_008", "d_r (clk) captures d_i (async) without a synchronizer"),
+                (
+                    "async_in.vhd",
+                    42,
+                    "design_009",
+                    "e_i(0) (async), e_i(1) (async) is synchronized bit by bit into e_meta (clk); the bits can arrive in different cycles",
+                ),
+            ],
+            self.findings("async_in_top", "async_in.vhd", dCdc=dCdc),
+        )
+
     def test_verilog_top(self):
         # The Verilog top uses a VHDL synchronizer: Yosys elaborates the entity with the ghdl command before reading
         # the Verilog. The crossing through it is synchronized; the one in the Verilog is not
