@@ -31,6 +31,15 @@ class test_verilator(unittest.TestCase):
         ]
         self.assertEqual(["a_pkg.sv", "b_pkg.sv", "top.sv", "other.sv"], [s for s, _ in verilator.compile_order(lFiles)])
 
+    def test_hierarchical_names_are_not_packages(self):
+        # u_report.check calls a task of an instance; p_pkg::W uses a package (issue 88)
+        oTree = tree(
+            "module tb; rep u_report(); initial begin u_report.check(1'b1); x = p_pkg::W; end endmodule module rep; task check(input ok); endtask endmodule",
+        )
+        self.assertEqual((set(), {"p_pkg"}), verilator.packages(oTree))
+        oBench = tree("module tb; rep u_report(); initial u_report.check(1'b1); endmodule module rep; task check(input ok); endtask endmodule")
+        self.assertEqual(["tb.v"], [s for s, _ in verilator.without_unknown_packages([("tb.v", oBench)])])
+
     def test_stubs_for_unknown_modules(self):
         lTrees = [tree("module top; logic a; known u0 (); vcell #(.W(8)) u1 (.x(a), .y()); prim #(2) u2 (a, a); endmodule"), tree("module known; endmodule")]
         self.assertEqual(
