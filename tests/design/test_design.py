@@ -1580,6 +1580,35 @@ class test_design_analysis(unittest.TestCase):
         # follow each other as a chain
         self.assertEqual([], self.findings("vector_sync", "vector_sync.vhd", dCdc={"clocks": {"clk_a": "a", "clk_b": "b"}}))
 
+    def handshake_stages(self, iStage):
+        """Returns the status of each crossing and the findings of handshake_stages with its enable from stage iStage."""
+        with tempfile.TemporaryDirectory() as sDirectory:
+            sReport = os.path.join(sDirectory, "cdc.json")
+            lFindings = self.findings(
+                "handshake_stages",
+                "handshake_stages.vhd",
+                lArguments=["--cdc_report", sReport],
+                dGenerics={"ENABLE_STAGE": iStage},
+                dCdc={"clocks": {"clk_a": "a", "clk_b": "b"}},
+            )
+            with open(sReport, encoding="utf-8") as oFile:
+                dReport = json.load(oFile)
+        return {d["destination"]: d["status"] for d in dReport["crossings"]}, lFindings
+
+    def test_handshake_enable_from_a_later_stage(self):
+        # The data is qualified by an enable from the second or any later stage of the request's chain (issue 96)
+        for iStage in (2, 3, 4):
+            with self.subTest(iStage):
+                dStatus, lFindings = self.handshake_stages(iStage)
+                self.assertEqual({"data_b": cdc.QUALIFIED, "req_b": cdc.SYNCHRONIZED}, dStatus)
+                self.assertEqual([], lFindings)
+
+    def test_handshake_enable_from_the_first_stage(self):
+        # The first stage can be metastable: an enable from it does not qualify the data
+        dStatus, lFindings = self.handshake_stages(1)
+        self.assertEqual(cdc.UNSYNCHRONIZED, dStatus["data_b"])
+        self.assertIn(("handshake_stages.vhd", 44, "design_008", "data_b (clk_b) captures data_a (clk_a) without a synchronizer"), lFindings)
+
     def test_clears(self):
         # A clear listed under clears is followed like data: x_a meets y_a in the registers it clears. Without the
         # list it is taken for a reset, as the synchronized reset of r3_b and r4_b is

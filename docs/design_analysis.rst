@@ -303,7 +303,8 @@ A register of another, asynchronous domain is a crossing, classified as:
 |                                | value, or a choice between such codes, so only one bit changes at a time.       |
 +--------------------------------+---------------------------------------------------------------------------------+
 | qualified by enable            | Data held stable and captured when an enable synchronized to the destination    |
-|                                | clock allows it, as in a handshake.                                             |
+|                                | clock allows it, as in a handshake. The enable comes from the second or a later |
+|                                | stage of a synchronizer, or from a synchronizer black box.                      |
 +--------------------------------+---------------------------------------------------------------------------------+
 | bus synchronized bit by bit    | Several bits of one register synchronized one by one, by one register or by     |
 |                                | registers of a bit each: they can arrive in different cycles. A bit synchronized|
