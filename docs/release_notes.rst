@@ -5,6 +5,17 @@ The releases of MHSG, with their packages, are on `GitHub <https://github.com/xT
 The releases of VSG, from which MHSG was forked, are listed `with VSG
 <https://github.com/jeremiah-c-leary/vhdl-style-guide/tags>`_.
 
+4.0.4
+-----
+
+**Design analysis**
+
+* design_008, data captured without a synchronizer, takes data loaded when an enable from the second or any later
+  stage of a synchronizer allows it as qualified by enable. Only an enable from the second stage was taken, so a
+  handshake whose data register follows the third or fourth stage of the request's synchronizer was reported. An
+  enable from the first stage is still reported.
+  (`#96 <https://github.com/xTheBearx/vhdl-style-guide/issues/96>`_)
+
 4.0.3
 -----
 
