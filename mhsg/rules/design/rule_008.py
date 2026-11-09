@@ -12,7 +12,7 @@ class rule_008(Rule):
 
     A register that captures a signal from an asynchronous clock domain can go metastable.
     A single-bit crossing needs a synchronizer: two or more registers in series in the destination domain, the first fed directly from a register of the source domain and feeding only the next.
-    Data captured while an enable synchronized to the destination clock holds it, as in a handshake, is safe.
+    Data captured while an enable synchronized to the destination clock holds it, as in a handshake, is safe: the enable comes from the second or a later stage of a synchronizer.
     Clocks are asynchronous unless the design section groups them, see the design analysis documentation, where crossings can also be waived with a justification.
     A waiver without a justification is reported by this rule.
 

@@ -617,21 +617,31 @@ class Analysis:
             oCell, iIndex = oNext, iNext
 
     def is_synchronizer_output(self, oNet):
-        """Returns whether a net is the output of the second or a later stage of a synchronizer."""
+        """
+        Returns whether a net is the output of the second or a later stage of a synchronizer: walking back from its
+        register through registers of the same clock, each loaded straight from the one before, the walk reaches a
+        first stage, at least one stage back, that samples an unrelated domain.
+        """
         tDriver = self.flat.driver(oNet)
         if tDriver is None or not is_register(tDriver[0]):
             return False
         oCell, _, iIndex = tDriver
         oDomain = self.cell_clock.get(id(oCell))
-        oData, _, _ = self.strip(oCell, iIndex)
-        tPrevious = self.flat.driver(oData) if graph.is_variable(oData) else None
-        if tPrevious is None or not is_register(tPrevious[0]) or self.cell_clock.get(id(tPrevious[0])) is not oDomain:
-            return False
-        oFirst, _, iFirst = tPrevious
-        oFirstData, _, _ = self.strip(oFirst, iFirst)
-        if not graph.is_variable(oFirstData):
-            return False
-        return any(not self.related(self.domain_of(t), oDomain) for t in self.sources(oFirstData))
+        setSeen = {(id(oCell), iIndex)}
+        while True:
+            oData, _, _ = self.strip(oCell, iIndex)
+            tPrevious = self.flat.driver(oData) if graph.is_variable(oData) else None
+            if tPrevious is None or not is_register(tPrevious[0]) or self.cell_clock.get(id(tPrevious[0])) is not oDomain:
+                return False
+            oCell, _, iIndex = tPrevious
+            if (id(oCell), iIndex) in setSeen:
+                return False
+            setSeen.add((id(oCell), iIndex))
+            oPreviousData, _, _ = self.strip(oCell, iIndex)
+            if not graph.is_variable(oPreviousData):
+                return False
+            if any(not self.related(self.domain_of(t), oDomain) for t in self.sources(oPreviousData)):
+                return True
 
     def qualified(self, oCell, iIndex, oDomain):
         """Returns whether a register bit is loaded only when an enable synchronized to its own clock allows it."""
